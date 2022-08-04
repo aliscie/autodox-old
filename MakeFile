@@ -1,0 +1,2 @@
+run:
+	cargo tauri dev
