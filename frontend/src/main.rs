@@ -10,6 +10,9 @@ fn main() {
 #[wasm_bindgen(module = "/public/glue.js")]
 extern "C" {
     #[wasm_bindgen(js_name = invokeHello, catch)]
+    pub async fn minimize_window(name: String) -> Result<JsValue, JsValue>;
+
+    #[wasm_bindgen(js_name = invokeHello, catch)]
     pub async fn hello(name: String) -> Result<JsValue, JsValue>;
 }
 
@@ -33,8 +36,14 @@ pub fn app() -> Html {
 
     let message = (*welcome).clone();
 
+    let _onclick: Callback<MouseEvent> = Callback::from(|e: MouseEvent| {
+    });
+
     html! {
         <div>
+            <button
+            onclick={_onclick}
+            >{"-"}</button>
             <h2 class={"heading"}>{message}</h2>
         </div>
     }
@@ -46,6 +55,22 @@ fn update_welcome_message(welcome: UseStateHandle<String>, name: String) {
         // back-end command and return the `Result<String, String>` as
         // `Result<JsValue, JsValue>`.
         match hello(name).await {
+            Ok(message) => {
+                welcome.set(message.as_string().unwrap());
+            }
+            Err(e) => {
+                let window = window().unwrap();
+                window
+                    .alert_with_message(&format!("Error: {:?}", e))
+                    .unwrap();
+            }
+        }
+    });
+}
+
+fn min_window(welcome: UseStateHandle<String>, name: String) {
+    spawn_local(async move {
+        match minimize_window(name).await {
             Ok(message) => {
                 welcome.set(message.as_string().unwrap());
             }
