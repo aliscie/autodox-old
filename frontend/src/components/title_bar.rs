@@ -17,7 +17,8 @@ pub fn title_bar(props: &TitleBarProps) -> Html {
             <div class="buttons">
             {props.children.clone()}
             </div>
-            {props.title.clone()}
+            <span style="margin-left:5%">{props.title.clone()}</span>
+
           </div>
     }
 }

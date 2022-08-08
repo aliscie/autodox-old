@@ -1,0 +1,45 @@
+ul, #myUL {
+    list-style-type: none;
+    transition: 0.3s;
+}
+
+/*#myUL ul {*/
+/*    dra: true;*/
+/*}*/
+
+#myUL {
+    margin: 10px;
+    padding: 0;
+    transition: 0.3s;
+}
+
+.caret {
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari 3.1+ */
+    -moz-user-select: none; /* Firefox 2+ */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;
+}
+
+.caret::before {
+    content: "⪢";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+    transition: 0.3s;
+}
+
+.caret-down::before {
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -webkit-transform: rotate(90deg); /* Safari */
+' transform: rotate(90 deg);
+}
+
+.nested {
+    display: none;
+    transition: 0.3s;
+}
+
+.active {
+    display: block;
+}
