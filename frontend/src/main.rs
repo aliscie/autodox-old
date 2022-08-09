@@ -8,8 +8,8 @@ mod components;
 use components::{TitleBarButton, TitleBar, TreeList};
 use web_sys::{Element, MouseEvent, window, Document};
 
-mod backend;
-use backend::{get_users_data};
+// mod backend;
+// use backend::{get_users_data};
 
 fn main() {
     yew::start_app::<App>();
@@ -119,6 +119,7 @@ pub fn app() -> Html {
 
 fn update_welcome_message(welcome: UseStateHandle<String>, name: String) {
     spawn_local(async move {
+        // let x = main.await;
         // This will call our glue code all the way through to the tauri
         // back-end command and return the `Result<String, String>` as
         // `Result<JsValue, JsValue>`.

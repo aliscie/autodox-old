@@ -1,6 +1,6 @@
 use serde::Deserialize;
 use reqwest::Error;
-
+use web_sys::console::log_1;
 #[derive(Deserialize, Debug)]
 struct User {
     login: String,
@@ -8,7 +8,7 @@ struct User {
 }
 
 #[tokio::main]
-async fn get_users_data() -> Result<(), Error> {
+async fn main() -> Result<(), Error> {
     let request_url = format!("https://api.github.com/repos/{owner}/{repo}/stargazers",
                               owner = "rust-lang-nursery",
                               repo = "rust-cookbook");
@@ -16,6 +16,6 @@ async fn get_users_data() -> Result<(), Error> {
     let response = reqwest::get(&request_url).await?;
 
     let users: Vec<User> = response.json().await?;
-    println!("{:?}", users);
+    log_1(&format!("{:#?}", users).into());
     Ok(())
 }

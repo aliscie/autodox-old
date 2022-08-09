@@ -21,10 +21,6 @@ fn hello(name: &str) -> Result<String, String> {
     }
 }
 
-// #[tauri::command]
-// fn minimize_window(window: tauri::Window) {
-//     window.minimize();
-// }
 
 #[tauri::command]
 fn minimize_window(name: &str) -> Result<String, String>{
