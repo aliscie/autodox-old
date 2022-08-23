@@ -14,7 +14,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "tauri-yew-demo",
+      "identifier": "AUTODOX",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -52,7 +52,7 @@
     },
     "windows": [
       {
-        "title": "Tauri Yew Demo",
+        "title": "AutoDox",
         "width": 800,
         "height": 600,
         "resizable": true,

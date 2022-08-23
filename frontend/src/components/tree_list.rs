@@ -3,7 +3,7 @@ use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen::prelude::Closure;
 use web_sys::{Element, MouseEvent, window, Document};
 use web_sys::console::log_1;
-
+use std::collections::HashMap;
 
 pub trait MyNewTrait {
     fn target_element<'a>(&self) -> Option<Element>;
@@ -18,35 +18,52 @@ impl MyNewTrait for MouseEvent {
     }
 }
 
+#[derive(PartialEq, Properties)]
+pub struct Props {
+    pub title: String,
+    pub children: Children,
+    // pub files: Vec<HashMap>,
+
+}
+
+// data structure
+    // [
+    //     {
+    //         "name":"filename",
+    //         "id":234,
+    //         "children":[
+    //             {
+    //             "name":"filename",
+    //             "id":234,
+    //             }
+    //
+    //         ]
+    //     },
+    //     {
+    //         "name":"filename2",
+    //         "id":224,
+    //         ]
+    //     },
+    //     {
+    //         "name":"filename3",
+    //         "id":224,
+    //         ]
+    //     },
+    // ]
+
 
 #[function_component(TreeList)]
 pub fn tree_list() -> Html {
-    // let doc = window().unwrap_throw().document().unwrap_throw();
-    // let body = &doc.query_selector("#myUL").unwrap().unwrap();
-    // let body_closure = Closure::wrap(Box::new(move |e: MouseEvent| {
-    //     let curr = e.target_element().unwrap();
-    //     curr.class_list().toggle("caret-down");
-    //
-    //     &curr.parent_element().unwrap().query_selector(".nested").unwrap().unwrap().class_list().toggle("active");
-    // }) as Box<dyn FnMut(_)>);
-    // &body.add_event_listener_with_callback("click", body_closure.as_ref().unchecked_ref()).unwrap_throw();
-    // body_closure.forget();
-    // draggable="true"
-
-
-    // let on_mouse_over: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-    // });
-
-    // let on_leave: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-    // });
-
-    // let toggle_caret: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-    // });
-
-
     html! {
-        <span>
-                    <ul  id="myUL">
+
+                    //  {
+                    //     props.files.into_iter().map(|file| {
+
+                    //         <li >{file["name"]} <span style="background: gray;">{":"}</span> </li>
+                    //         if file.contains_key("children") {<ul class="nested"><TreeList files={file["children"]}/></ul>}
+                    //     }).collect::<Html>()
+                    // }
+
                     <li><span class="caret">{"Beverages"}</span>
                     <ul class="nested">
                         <li >{"Water"} <span style="background: gray;">{":"}</span> </li>
@@ -67,10 +84,9 @@ pub fn tree_list() -> Html {
                         </li>
                     </ul>
                     </li>
-                </ul>
 
 
 
-        </span>
+
     }
 }

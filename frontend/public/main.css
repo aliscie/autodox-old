@@ -37,31 +37,37 @@ a {
 }
 
 .titlebar {
-    float: left;
-    position: fixed;
-    z-index: 300;
+    opacity: 0;
+    /*float: left;*/
+    /*position: fixed;*/
+    /*z-index: 300;*/
 
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #ebebeb, color-stop(1.0, #d5d5d5)));
-    background: -webkit-linear-gradient(top, #ebebeb, #d5d5d5);
-    background: -moz-linear-gradient(top, #ebebeb, #d5d5d5);
-    background: -ms-linear-gradient(top, #ebebeb, #d5d5d5);
-    background: -o-linear-gradient(top, #ebebeb, #d5d5d5);
-    background: linear-gradient(top, #ebebeb, #d5d5d5);
-    color: #4d494d;
-    font-size: 11pt;
-    line-height: 20px;
-    width: 100%;
-    height: 20px;
-    border-top: 1px solid #f3f1f3;
-    border-bottom: 1px solid #b1aeb1;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    cursor: default;
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #ebebeb, color-stop(1.0, #d5d5d5)));*/
+    /*background: -webkit-linear-gradient(top, #ebebeb, #d5d5d5);*/
+    /*background: -moz-linear-gradient(top, #ebebeb, #d5d5d5);*/
+    /*background: -ms-linear-gradient(top, #ebebeb, #d5d5d5);*/
+    /*background: -o-linear-gradient(top, #ebebeb, #d5d5d5);*/
+    /*background: linear-gradient(top, #ebebeb, #d5d5d5);*/
+    /*color: #4d494d;*/
+    /*font-size: 11pt;*/
+    /*line-height: 20px;*/
+    /*width: 100%;*/
+    /*height: 0;*/
+    /*border-top: 1px solid #f3f1f3;*/
+    /*border-bottom: 1px solid #b1aeb1;*/
+    /*border-top-left-radius: 6px;*/
+    /*border-top-right-radius: 6px;*/
+    /*user-select: none;*/
+    /*-webkit-user-select: none;*/
+    /*-moz-user-select: none;*/
+    /*-ms-user-select: none;*/
+    /*-o-user-select: none;*/
+    /*cursor: default;*/
+}
+
+.titlebar:hover {
+    opacity: 1;
+    transition: 0.3s;
 }
 
 .buttons {
@@ -98,43 +104,43 @@ a {
 
 
 .share {
-    background: rgb(243,109,23);
+    background: rgb(243, 109, 23);
 }
 
 
 .share:active {
-    background: rgb(243,109,23);
-    border: 1px solid rgb(243,109,23);
+    background: rgb(243, 109, 23);
+    border: 1px solid rgb(243, 109, 23);
 }
 
 .next_back {
-    background: rgb(242,49,141);
+    background: rgb(242, 49, 141);
 }
 
 
 .next_back:active {
-    background: rgb(242,49,141);
-    border: 1px solid rgb(242,49,141);
+    background: rgb(242, 49, 141);
+    border: 1px solid rgb(242, 49, 141);
 }
 
 .star {
-    background: rgb(147,55,150);
+    background: rgb(147, 55, 150);
 }
 
 
 .star:active {
-    background: rgb(147,55,150);
-    border: 1px solid rgb(147,55,150);
+    background: rgb(147, 55, 150);
+    border: 1px solid rgb(147, 55, 150);
 }
 
 .toggle {
-    background: rgb(143,143,143);
+    background: rgb(143, 143, 143);
 }
 
 
 .toggle:active {
-    background: rgb(143,143,143);
-    border: 1px solid rgb(143,143,143);
+    background: rgb(143, 143, 143);
+    border: 1px solid rgb(143, 143, 143);
 }
 
 
@@ -222,9 +228,8 @@ aside {
     float: left;
     top: 20px;
     bottom: 0;
-    background-color: #e2e2e2;
     z-index: 299;
-    box-shadow: 13px 0px 20px #acacac;
+    box-shadow: 0px 10px 5px 3px #888;
     transition: 0.5s;
 }
 

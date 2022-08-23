@@ -8,7 +8,9 @@ struct User {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Error> {
+async fn get_data() -> Result<(), Error> {
+    //TODO
+    // call a graphql api from hre
     let request_url = format!("https://api.github.com/repos/{owner}/{repo}/stargazers",
                               owner = "rust-lang-nursery",
                               repo = "rust-cookbook");

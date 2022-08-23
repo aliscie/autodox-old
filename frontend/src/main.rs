@@ -9,7 +9,7 @@ use components::{TitleBarButton, TitleBar, TreeList};
 use web_sys::{Element, MouseEvent, window, Document};
 
 // mod backend;
-// use backend::{get_users_data};
+// use backend::{get_data};
 
 fn main() {
     yew::start_app::<App>();
@@ -27,9 +27,6 @@ extern "C" {
 
 #[function_component(App)]
 pub fn app() -> Html {
-
-
-
     let aside_bar_taggol = use_state_eq(|| "".to_string());
     let article_position = use_state_eq(|| "".to_string());
 
@@ -67,24 +64,28 @@ pub fn app() -> Html {
     html! {
         <div>
         <TitleBar title="current_path/current_file">
-            <div>
-            <TitleBarButton button_type="close">{"x"}</TitleBarButton>
-            <TitleBarButton button_type="minimize">{"-"}</TitleBarButton>
-            <TitleBarButton button_type="zoom">{"⤢"}</TitleBarButton>
+            <div style="margin-left:60px">
+            // <TitleBarButton button_type="close">{"x"}</TitleBarButton>
+            // <TitleBarButton button_type="minimize">{"-"}</TitleBarButton>
+            // <TitleBarButton button_type="zoom">{"⤢"}</TitleBarButton>
             <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{"☰"}</TitleBarButton>
-            <TitleBarButton button_type="next_back">{"←"}</TitleBarButton>
-            <TitleBarButton button_type="next_back">{"→"}</TitleBarButton>
-            <TitleBarButton button_type="share">{"⤿"}</TitleBarButton>
-            <TitleBarButton button_type="star">{"★"}</TitleBarButton>
-            <TitleBarButton button_type="toggle">{"👨‍💼"}</TitleBarButton>
-            <TitleBarButton button_type="toggle">{"💬"}</TitleBarButton>
-            <TitleBarButton button_type="toggle">{"..."}</TitleBarButton>
+            // <TitleBarButton button_type="next_back">{"←"}</TitleBarButton>
+            // <TitleBarButton button_type="next_back">{"→"}</TitleBarButton>
+            // <TitleBarButton button_type="share">{"⤿"}</TitleBarButton>
+            // <TitleBarButton button_type="star">{"★"}</TitleBarButton>
+            // <TitleBarButton button_type="toggle">{"👨‍💼"}</TitleBarButton>
+            // <TitleBarButton button_type="toggle">{"💬"}</TitleBarButton>
+            // <TitleBarButton button_type="toggle">{"..."}</TitleBarButton>
             </div>
         </TitleBar>
 
 
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
-        <TreeList/>
+
+        <ul  id="myUL"><TreeList
+        // files={files}
+        /></ul>
+
         </aside>
 
         <article contenteditable="true" style={format!("{}",(*article_position).clone())}>
