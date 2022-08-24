@@ -42,7 +42,13 @@ dfx config --help
 
 ## Running the project locally
 ### configurations
-1. $`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+1. check [tauri prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites/)
+    especially the following prerequisites.
+    1. $`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+        - or run $`curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh`
+    1. install xcode
+       - to check that run $`xcode-select --install`
+    1. make sure to have c++ 
 
 ### running the project
 1. $`cd Desktop`
