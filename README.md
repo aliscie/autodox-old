@@ -41,15 +41,11 @@ dfx config --help
 ```
 
 ## Running the project locally
+### configurations
+1. $`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 
-If you want to test your project locally, you can use the following commands:
-
-```bash
-# Starts the replica, running in the background
-dfx start --background
-
-# Deploys your canisters to the replica and generates your candid interface
-dfx deploy
-```
-
-Once the job completes, your application will be available at `http://localhost:8000?canisterId={asset_canister_id}`.
+### running the project
+1. $`cd Desktop`
+1. $`git clone https://github.com/aliscie/autodox-tauri`
+1. $`cd autodox-tauri`
+1. $`cargo tauri dev`
