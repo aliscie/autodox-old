@@ -1,9 +1,7 @@
+use crate::utils::FileNode;
+use wasm_bindgen::UnwrapThrowExt;
+use web_sys::{window, Element, MouseEvent, console};
 use yew::prelude::*;
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use wasm_bindgen::prelude::Closure;
-use web_sys::{Element, MouseEvent, window, Document};
-use web_sys::console::log_1;
-use std::collections::HashMap;
 
 pub trait MyNewTrait {
     fn target_element<'a>(&self) -> Option<Element>;
@@ -23,37 +21,61 @@ pub struct Props {
     pub title: String,
     pub children: Children,
     // pub files: Vec<HashMap>,
-
 }
 
 // data structure
-    // [
-    //     {
-    //         "name":"filename",
-    //         "id":234,
-    //         "children":[
-    //             {
-    //             "name":"filename",
-    //             "id":234,
-    //             }
-    //
-    //         ]
-    //     },
-    //     {
-    //         "name":"filename2",
-    //         "id":224,
-    //         ]
-    //     },
-    //     {
-    //         "name":"filename3",
-    //         "id":224,
-    //         ]
-    //     },
-    // ]
-
+// [
+//     {
+//         "name":"filename",
+//         "id":234,
+//         "children":[
+//             {
+//             "name":"filename",
+//             "id":234,
+//             }
+//
+//         ]
+//     },
+//     {
+//         "name":"filename2",
+//         "id":224,
+//         ]
+//     },
+//     {
+//         "name":"filename3",
+//         "id":224,
+//         ]
+//     },
+// ]
 
 #[function_component(TreeList)]
 pub fn tree_list() -> Html {
+    let mut root = FileNode::new(0, "root".into());
+    // later we will get these data from some external api as json
+    let some_data = r#"
+     [
+         {
+             "name":"filename",
+             "id":234,
+             "children":[
+                 {
+                 "name":"filename",
+                 "id":234
+                 }
+             ]
+         },
+         {
+             "name":"filename2",
+             "id":224
+         },
+         {
+             "name":"filename3",
+             "id":224
+         }
+     ]
+        "#;
+    root.children = serde_json::from_str(some_data).unwrap();
+    //console::log_1(serde_json::to_string(&root).into());
     html! {
 
                     //  {
