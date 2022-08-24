@@ -27,7 +27,19 @@ impl FileNode {
         }
     }
     pub fn to_html(&self) -> Html{
-        html!{
+        if self.children.len() > 0{
+            return html!{
+                <>
+                <li class = "caret">{&self.name}</li>
+                <ul class = "nested">{
+                    (&self.children).into_iter().map(|file| file.to_html()).collect::<Html>()
+                } </ul>
+                </>
+            }
+        } else{
+            return html!{
+                <li>{&self.name}</li>
+            }
         }
     }
 }

@@ -34,8 +34,8 @@ pub fn tree_list() -> Html {
              "id":234,
              "children":[
                  {
-                 "name":"filename",
-                 "id":234
+                 "name":"filename4",
+                 "id":235
                  }
              ]
          },
@@ -51,39 +51,32 @@ pub fn tree_list() -> Html {
         "#;
     root.children = serde_json::from_str(some_data).unwrap();
     //console::log_1(serde_json::to_string(&root).into());
-    html! {
+    //html! {
 
-                    //  {
-                    //     props.files.into_iter().map(|file| {
-
-                    //         <li >{file["name"]} <span style="background: gray;">{":"}</span> </li>
-                    //         if file.contains_key("children") {<ul class="nested"><TreeList files={file["children"]}/></ul>}
-                    //     }).collect::<Html>()
-                    // }
-
-                    <li><span class="caret">{"Beverages"}</span>
-                    <ul class="nested">
-                        <li >{"Water"} <span style="background: gray;">{":"}</span> </li>
-                        <li >{"Coffee"}</li>
-                        <li><span class="caret">{"Tea"}</span>
-                        <ul class="nested">
-                            <li>{"Black Tea"}</li>
-                            <li>{"White Tea"}</li>
-                            <li><span class="caret">{"Green Tea"}</span>
-                            <ul class="nested">
-                                <li>{"Sencha"}</li>
-                                <li>{"Gyokuro"}</li>
-                                <li>{"Matcha"}</li>
-                                <li>{"Pi Lo Chun"}</li>
-                            </ul>
-                            </li>
-                        </ul>
-                        </li>
-                    </ul>
-                    </li>
+                    //<li><span class="caret">{"Beverages"}</span>
+                    //<ul class="nested">
+                        //<li >{"Water"} <span style="background: gray;">{":"}</span> </li>
+                        //<li >{"Coffee"}</li>
+                        //<li><span class="caret">{"Tea"}</span>
+                        //<ul class="nested">
+                            //<li>{"Black Tea"}</li>
+                            //<li>{"White Tea"}</li>
+                            //<li><span class="caret">{"Green Tea"}</span>
+                            //<ul class="nested">
+                                //<li>{"Sencha"}</li>
+                                //<li>{"Gyokuro"}</li>
+                                //<li>{"Matcha"}</li>
+                                //<li>{"Pi Lo Chun"}</li>
+                            //</ul>
+                            //</li>
+                        //</ul>
+                        //</li>
+                    //</ul>
+                    //</li>
 
 
 
 
-    }
+    //}
+    root.to_html()
 }
