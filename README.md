@@ -32,13 +32,6 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 - [Candid Introduction](https://smartcontracts.org/docs/candid-guide/candid-intro.html)
 - [JavaScript API Reference](https://erxue-5aaaa-aaaab-qaagq-cai.raw.ic0.app)
 
-If you want to start working on your project right away, you might want to try the following commands:
-
-```bash
-cd AUTODOX/
-dfx help
-dfx config --help
-```
 
 ## Running the project locally
 ### configurations
