@@ -65,13 +65,20 @@ pub fn app() -> Html {
         }
     });
 
+    let toggle_maximize: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+        //TODO
+        // run a tauri command here.
+    });
+
     html! {
         <div>
         <TitleBar title="current_path/current_file">
             <div style="margin-left:60px">
             // <TitleBarButton button_type="close">{"x"}</TitleBarButton>
             // <TitleBarButton button_type="minimize">{"-"}</TitleBarButton>
-            // <TitleBarButton button_type="zoom">{"⤢"}</TitleBarButton>
+            <TitleBarButton
+            onclick={toggle_maximize}
+            button_type="zoom">{"⤢"}</TitleBarButton>
             <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{"☰"}</TitleBarButton>
             // <TitleBarButton button_type="next_back">{"←"}</TitleBarButton>
             // <TitleBarButton button_type="next_back">{"→"}</TitleBarButton>

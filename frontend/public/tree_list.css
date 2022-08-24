@@ -36,7 +36,8 @@ ul, #myUL {
 }
 
 .nested {
-    display: none;
+    display: block;
+    /*display: none;*/
     transition: 0.3s;
 }
 

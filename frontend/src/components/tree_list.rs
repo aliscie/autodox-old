@@ -23,31 +23,6 @@ pub struct Props {
     // pub files: Vec<HashMap>,
 }
 
-// data structure
-// [
-//     {
-//         "name":"filename",
-//         "id":234,
-//         "children":[
-//             {
-//             "name":"filename",
-//             "id":234,
-//             }
-//
-//         ]
-//     },
-//     {
-//         "name":"filename2",
-//         "id":224,
-//         ]
-//     },
-//     {
-//         "name":"filename3",
-//         "id":224,
-//         ]
-//     },
-// ]
-
 #[function_component(TreeList)]
 pub fn tree_list() -> Html {
     let mut root = FileNode::new(0, "root".into());
