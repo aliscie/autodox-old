@@ -4,6 +4,7 @@ use yew::prelude::*;
 use web_sys::console::log_1;
 
 mod components;
+mod backend;
 
 use components::{TitleBarButton, TitleBar, TreeList};
 use web_sys::{Element, MouseEvent, window, Document};

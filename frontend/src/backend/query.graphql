@@ -1,0 +1,12 @@
+query RepoView($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    stargazers(first :100){
+      edges{
+        node{
+          name
+          login
+        }
+      }
+    }
+  }
+}
