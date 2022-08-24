@@ -3,6 +3,7 @@ all(not(debug_assertions), target_os = "windows"),
 windows_subsystem = "windows"
 )]
 
+#[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
 use tauri::{Runtime, Window};
 use tauri::Manager;
@@ -53,6 +54,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![hello,minimize_window])
         .setup(|app| {
             let win = app.get_window("main").unwrap();
+            // TODO: implement this for linux and windows
+            #[cfg(target_os = "macos")]
             win.set_transparent_titlebar(true);
 
             Ok(())
