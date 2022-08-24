@@ -13,12 +13,11 @@ pub struct TitleBarProps {
 #[function_component(TitleBar)]
 pub fn title_bar(props: &TitleBarProps) -> Html {
     html! {
-        <div class="titlebar">
-            <div class="buttons">
+    <div class="custom_title_bar">
+       <div class="buttons">
             {props.children.clone()}
-            </div>
-            <span style="margin-left:5%">{props.title.clone()}</span>
-
-          </div>
+        </div>
+        <span style="margin-left:5%">{props.title.clone()}</span>
+    </div>
     }
 }
