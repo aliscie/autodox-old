@@ -48,8 +48,7 @@ pub fn tree_list() -> Html {
              "id":224
          }
      ]
-        "#
-
+        "#;
     root.children = serde_json::from_str(some_data).unwrap();
     (root.children).into_iter().map(|file| file.to_html()).collect::<Html>()
 }
