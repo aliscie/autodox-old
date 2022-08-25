@@ -30,17 +30,21 @@ ul, #myUL {
 }
 
 .caret-down::before {
+    transition: 0.3s;
     -ms-transform: rotate(90deg); /* IE 9 */
     -webkit-transform: rotate(90deg); /* Safari */
 ' transform: rotate(90 deg);
 }
 
 .nested {
-    display: block;
-    /*display: none;*/
-    transition: 0.3s;
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: display 0.3s, visibility 0s, opacity 0.3s linear;
 }
 
 .active {
     display: block;
+    visibility: visible;
+    opacity: 1;
 }

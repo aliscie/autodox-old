@@ -1,4 +1,4 @@
-use backend::get_users::get_data;
+// use backend::get_users::get_data;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console::log_1;
@@ -8,6 +8,7 @@ mod backend;
 mod components;
 mod test;
 mod utils;
+mod extensions;
 
 use components::{TitleBar, TitleBarButton, TreeList};
 use web_sys::{window, Document, Element, MouseEvent};

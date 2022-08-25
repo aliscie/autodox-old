@@ -1,6 +1,15 @@
 use serde::{Deserialize, Serialize};
 use yew::{Html, html};
 
+use wasm_bindgen::prelude::*;
+use wasm_bindgen_futures::spawn_local;
+use yew::prelude::*;
+use web_sys::{Element, MouseEvent, window, Document};
+
+// TODO
+//  Can we make this global (we should not need to use this line everytime we need it in a file)
+use crate::extensions::TargetElement;
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FileNode {
     pub id: u64,
@@ -26,20 +35,27 @@ impl FileNode {
             parent: None,
         }
     }
-    pub fn to_html(&self) -> Html{
-        if self.children.len() > 0{
-            return html!{
+    pub fn to_html(&self) -> Html {
+        if self.children.len() > 0 {
+            let handle_toggle: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+                let curr = e.target_element().unwrap();
+                curr.class_list().toggle("caret-down");
+                &curr.parent_element().unwrap().query_selector(".nested").unwrap().unwrap().class_list().toggle("active");
+            });
+
+            return html! {
                 <>
-                <li class = "caret">{&self.name}</li>
+                <li onclick={handle_toggle}class = "caret">{&self.name}</li>
+
                 <ul class = "nested">{
                     (&self.children).into_iter().map(|file| file.to_html()).collect::<Html>()
                 } </ul>
                 </>
-            }
-        } else{
-            return html!{
+            };
+        } else {
+            return html! {
                 <li>{&self.name}</li>
-            }
+            };
         }
     }
 }

@@ -27,6 +27,8 @@ pub struct Props {
 pub fn tree_list() -> Html {
     let mut root = FileNode::new(0, "root".into());
     // later we will get these data from some external api as json
+    // TODO
+    //  remove root
     let some_data = r#"
      [
          {
@@ -50,33 +52,5 @@ pub fn tree_list() -> Html {
      ]
         "#;
     root.children = serde_json::from_str(some_data).unwrap();
-    //console::log_1(serde_json::to_string(&root).into());
-    //html! {
-
-                    //<li><span class="caret">{"Beverages"}</span>
-                    //<ul class="nested">
-                        //<li >{"Water"} <span style="background: gray;">{":"}</span> </li>
-                        //<li >{"Coffee"}</li>
-                        //<li><span class="caret">{"Tea"}</span>
-                        //<ul class="nested">
-                            //<li>{"Black Tea"}</li>
-                            //<li>{"White Tea"}</li>
-                            //<li><span class="caret">{"Green Tea"}</span>
-                            //<ul class="nested">
-                                //<li>{"Sencha"}</li>
-                                //<li>{"Gyokuro"}</li>
-                                //<li>{"Matcha"}</li>
-                                //<li>{"Pi Lo Chun"}</li>
-                            //</ul>
-                            //</li>
-                        //</ul>
-                        //</li>
-                    //</ul>
-                    //</li>
-
-
-
-
-    //}
     root.to_html()
 }
