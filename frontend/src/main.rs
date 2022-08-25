@@ -1,17 +1,19 @@
+use backend::get_users::get_data;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
-use yew::prelude::*;
 use web_sys::console::log_1;
+use yew::prelude::*;
 
-mod components;
 mod backend;
+mod components;
+mod test;
+mod utils;
 
-use components::{TitleBarButton, TitleBar, TreeList};
-use web_sys::{Element, MouseEvent, window, Document};
+use components::{TitleBar, TitleBarButton, TreeList};
+use web_sys::{window, Document, Element, MouseEvent};
 
 // mod backend;
 // use backend::{get_data};
-
 fn main() {
     yew::start_app::<App>();
 }
@@ -25,7 +27,6 @@ extern "C" {
     pub async fn hello(name: String) -> Result<JsValue, JsValue>;
 }
 
-
 #[function_component(App)]
 pub fn app() -> Html {
     let aside_bar_taggol = use_state_eq(|| "".to_string());
@@ -33,6 +34,9 @@ pub fn app() -> Html {
 
     let welcome = use_state_eq(|| "".to_string());
     let name = use_state_eq(|| "World".to_string());
+    //spawn_local(async{
+        //log_1(&format!("{:?}" ,get_data().await).into());
+    //});
 
     // Execute tauri command via effects.
     // The effect will run every time `name` changes.
@@ -65,7 +69,6 @@ pub fn app() -> Html {
         //TODO
         // run a tauri command here.
     });
-
 
     html! {
         <div>

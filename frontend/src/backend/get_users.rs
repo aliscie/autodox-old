@@ -4,6 +4,8 @@ use reqwest::Client;
 use serde_derive::{Deserialize, Serialize};
 use web_sys::console::log_1;
 
+use self::repo_view::ResponseData;
+
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "src/backend/schema.graphql",
@@ -12,7 +14,7 @@ use web_sys::console::log_1;
 )]
 pub struct RepoView;
 
-async fn get_data() -> Result<(), Error> {
+pub async fn get_data() -> Result<Response<ResponseData>, Error> {
     let github_token = std::env::var("GITHUB_API_TOKEN").expect("Github api token not found!");
     let (owner, repo) = ("lunchspider", "quark");
     let variables = repo_view::Variables {
@@ -33,5 +35,5 @@ async fn get_data() -> Result<(), Error> {
     let res = client.post("https://api.github.com/graphql").json(&request_body).send().await?;
     let response_body: Response<repo_view::ResponseData> = res.json().await?;
     log_1(&format!("{:?}", response_body).into());
-    Ok(())
+    Ok(response_body)
 }
