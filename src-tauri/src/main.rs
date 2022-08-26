@@ -51,12 +51,12 @@ impl<R: Runtime> WindowExt for Window<R> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![hello,minimize_window, maximize_window])
+        .invoke_handler(tauri::generate_handler![hello,minimize_window, maximize_window, close_window])
         .setup(|app| {
             let win = app.get_window("main").unwrap();
             // TODO: implement this for linux and windows
             #[cfg(target_os = "macos")]
-            win.set_transparent_titlebar(true);
+                win.set_transparent_titlebar(true);
 
             Ok(())
         })
@@ -75,13 +75,20 @@ fn hello(name: &str) -> Result<String, String> {
     }
 }
 
+#[tauri::command]
+fn close_window(window: Window) -> Result<(), tauri::Error> {
+    return window.close();
+}
 
 #[tauri::command]
-fn minimize_window(window : Window) -> Result<(), tauri::Error> {
+fn minimize_window(window: Window) -> Result<(), tauri::Error> {
     return window.minimize();
 }
 
 #[tauri::command]
-fn maximize_window(window : Window) -> Result<(), tauri::Error>{
-    return window.maximize();
+fn maximize_window(window: Window) -> Result<(), tauri::Error> {
+    if window.is_fullscreen().unwrap() {
+        return window.set_fullscreen(false);
+    }
+    window.set_fullscreen(true)
 }

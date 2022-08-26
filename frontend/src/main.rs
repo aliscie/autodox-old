@@ -22,12 +22,11 @@ fn main() {
 
 #[wasm_bindgen(module = "/public/glue.js")]
 extern "C" {
-    #[wasm_bindgen(js_name = invokeHello, catch)]
-    pub async fn minimize_window(name: String) -> Result<JsValue, JsValue>;
+    // #[wasm_bindgen(js_name = invokeHello, catch)]
+    // pub async fn minimize_window(name: String) -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(js_name = invokeHello, catch)]
     pub async fn hello(name: String) -> Result<JsValue, JsValue>;
-
 }
 
 #[function_component(App)]
@@ -38,7 +37,7 @@ pub fn app() -> Html {
     let welcome = use_state_eq(|| "".to_string());
     let name = use_state_eq(|| "World".to_string());
     //spawn_local(async{
-        //log_1(&format!("{:?}" ,get_data().await).into());
+    //log_1(&format!("{:?}" ,get_data().await).into());
     //});
 
     // Execute tauri command via effects.
@@ -68,23 +67,29 @@ pub fn app() -> Html {
         }
     });
 
-    let toggle_maximize: Callback<MouseEvent> = Callback::from(move |_ : MouseEvent| {
+    let toggle_maximize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
         invoke::<String>("maximize_window".into(), None);
     });
-    let toggle_minimize: Callback<MouseEvent> = Callback::from(move |_ : MouseEvent| {
+    let toggle_minimize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
         invoke::<String>("minimize_window".into(), None);
+    });
+
+    let close_window: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
+        invoke::<String>("close_window".into(), None);
     });
 
     html! {
         <div>
         <TitleBar title="current_path/current_file">
-            <div style="margin-left:60px">
-            // <TitleBarButton button_type="close">{"x"}</TitleBarButton>
-            <TitleBarButton onclick = {toggle_minimize} button_type="minimize">{"-"}</TitleBarButton>
+            <div
+            // style="margin-left:60px"
+            >
+            <TitleBarButton onclick = {close_window} button_type="close">{""}</TitleBarButton>
+            <TitleBarButton onclick = {toggle_minimize} button_type="minimize">{""}</TitleBarButton>
             <TitleBarButton
             onclick={toggle_maximize}
-            button_type="zoom">{"⤢"}</TitleBarButton>
-            <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{"☰"}</TitleBarButton>
+            button_type="zoom">{""}</TitleBarButton>
+            <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}</TitleBarButton>
             // <TitleBarButton button_type="next_back">{"←"}</TitleBarButton>
             // <TitleBarButton button_type="next_back">{"→"}</TitleBarButton>
             // <TitleBarButton button_type="share">{"⤿"}</TitleBarButton>
