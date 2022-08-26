@@ -18,6 +18,8 @@ reqwest = { version = "0.11.11", features = ["json"]}
 tokio = { version = "1.20.1", features = ["rt", "macros"]}
 graphql_client = "0.11.0"
 anyhow = "1.0.62"
+cfg-if = "1.0.0"
+
 [dependencies.web-sys]
 version = "0.3.56"
 
@@ -43,3 +45,7 @@ features = [
     "console",
     "DomTokenList", #for class_list
 ]
+
+[features]
+
+web= []
