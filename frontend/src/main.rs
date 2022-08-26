@@ -1,18 +1,19 @@
+use utils::{alert, invoke_async};
 // use backend::get_users::get_data;
+use serde_json::json;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::console::log_1;
 use yew::prelude::*;
 
 mod backend;
 mod components;
+mod extensions;
 mod test;
 mod utils;
-mod extensions;
 
+use crate::utils::invoke;
 use components::{TitleBar, TitleBarButton, TreeList};
 use web_sys::{window, Document, Element, MouseEvent};
-use crate::utils::invoke;
 
 // mod backend;
 // use backend::{get_data};
@@ -68,14 +69,14 @@ pub fn app() -> Html {
     });
 
     let toggle_maximize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        invoke::<String>("maximize_window".into(), None);
+        let _ = invoke::<String>("maximize_window".into(), None).map_err(|e| alert(&e));
     });
     let toggle_minimize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        invoke::<String>("minimize_window".into(), None);
+        let _ = invoke::<String>("minimize_window".into(), None).map_err(|e| alert(&e));
     });
 
     let close_window: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        invoke::<String>("close_window".into(), None);
+        let _ = invoke::<String>("close_window".into(), None).map_err(|e| alert(&e));
     });
 
     html! {
@@ -145,23 +146,7 @@ fn update_welcome_message(welcome: UseStateHandle<String>, name: String) {
         // This will call our glue code all the way through to the tauri
         // back-end command and return the `Result<String, String>` as
         // `Result<JsValue, JsValue>`.
-        match hello(name).await {
-            Ok(message) => {
-                welcome.set(message.as_string().unwrap());
-            }
-            Err(e) => {
-                let window = window().unwrap();
-                window
-                    .alert_with_message(&format!("Error: {:?}", e))
-                    .unwrap();
-            }
-        }
-    });
-}
-
-fn min_window(welcome: UseStateHandle<String>, name: String) {
-    spawn_local(async move {
-        match minimize_window(name).await {
+        match invoke_async("hello".to_string(), Some(&json!({ "name": name }))).await {
             Ok(message) => {
                 welcome.set(message.as_string().unwrap());
             }

@@ -9,31 +9,19 @@ extern "C" {
     async fn invoke_inner_async(command: String, args: String) -> Result<JsValue, JsValue>;
 }
 
-pub fn invoke<T: serde::Serialize>(command: String, args: Option<&T>) {
+pub fn invoke<T: serde::Serialize>(command: String, args: Option<&T>) -> Result<JsValue, JsValue>{
     let res = match args {
         Some(v) => invoke_inner(command, serde_json::to_string(v).unwrap()),
         None => invoke_inner(command, "".into()),
     };
-    if let Err(e) = res {
-        let window = window().unwrap();
-        window
-            .alert_with_message(&format!("Error: {:?}", e))
-            .unwrap();
-    }
+    return res;
 }
 
-pub fn invoke_async<T: serde::Serialize>(command: String, args: Option<&T>) {
+pub async fn invoke_async<T: serde::Serialize>(command: String, args: Option<&T>) -> Result<JsValue, JsValue>{
     let arg: String = match args {
         Some(v) => serde_json::to_string(v).unwrap(),
         None => "".into(),
     };
-    spawn_local(async move {
-        let res = invoke_inner_async(command, arg).await;
-        if let Err(e) = res {
-            let window = window().unwrap();
-            window
-                .alert_with_message(&format!("Error: {:?}", e))
-                .unwrap();
-        }
-    });
+    let res = invoke_inner_async(command, arg).await;
+    return res;
 }
