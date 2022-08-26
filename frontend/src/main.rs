@@ -12,6 +12,7 @@ mod extensions;
 
 use components::{TitleBar, TitleBarButton, TreeList};
 use web_sys::{window, Document, Element, MouseEvent};
+use crate::utils::invoke;
 
 // mod backend;
 // use backend::{get_data};
@@ -26,6 +27,7 @@ extern "C" {
 
     #[wasm_bindgen(js_name = invokeHello, catch)]
     pub async fn hello(name: String) -> Result<JsValue, JsValue>;
+
 }
 
 #[function_component(App)]
@@ -66,9 +68,11 @@ pub fn app() -> Html {
         }
     });
 
-    let toggle_maximize: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-        //TODO
-        // run a tauri command here.
+    let toggle_maximize: Callback<MouseEvent> = Callback::from(move |_ : MouseEvent| {
+        invoke::<String>("maximize_window".into(), None);
+    });
+    let toggle_minimize: Callback<MouseEvent> = Callback::from(move |_ : MouseEvent| {
+        invoke::<String>("minimize_window".into(), None);
     });
 
     html! {
@@ -76,7 +80,7 @@ pub fn app() -> Html {
         <TitleBar title="current_path/current_file">
             <div style="margin-left:60px">
             // <TitleBarButton button_type="close">{"x"}</TitleBarButton>
-            // <TitleBarButton button_type="minimize">{"-"}</TitleBarButton>
+            <TitleBarButton onclick = {toggle_minimize} button_type="minimize">{"-"}</TitleBarButton>
             <TitleBarButton
             onclick={toggle_maximize}
             button_type="zoom">{"⤢"}</TitleBarButton>
