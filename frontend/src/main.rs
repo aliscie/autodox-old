@@ -1,4 +1,4 @@
-use utils::{alert, invoke_async};
+use utils::alert;
 // use backend::get_users::get_data;
 use serde_json::json;
 use wasm_bindgen::prelude::*;
@@ -11,23 +11,18 @@ mod extensions;
 mod test;
 mod utils;
 
-use crate::utils::invoke;
-use components::{TitleBar, TitleBarButton, TreeList};
+#[cfg(not(feature = "web"))]
+use crate::utils::{invoke, invoke_async};
+
+use components::{TitleBar, TitleBarButton};
+
+use crate::components::TreeList;
 use web_sys::{window, Document, Element, MouseEvent};
 
 // mod backend;
 // use backend::{get_data};
 fn main() {
     yew::start_app::<App>();
-}
-
-#[wasm_bindgen(module = "/public/glue.js")]
-extern "C" {
-    // #[wasm_bindgen(js_name = invokeHello, catch)]
-    // pub async fn minimize_window(name: String) -> Result<JsValue, JsValue>;
-
-    #[wasm_bindgen(js_name = invokeHello, catch)]
-    pub async fn hello(name: String) -> Result<JsValue, JsValue>;
 }
 
 #[function_component(App)]
@@ -41,7 +36,6 @@ pub fn app() -> Html {
     //log_1(&format!("{:?}" ,get_data().await).into());
     //});
 
-    // Execute tauri command via effects.
     // The effect will run every time `name` changes.
     {
         let welcome = welcome.clone();
@@ -56,52 +50,10 @@ pub fn app() -> Html {
 
     let message = (*welcome).clone();
     let x = aside_bar_taggol.clone();
-    let article_position_value = article_position.clone();
-
-    let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-        if x.chars().count() > 1 {
-            x.set("".to_string());
-            article_position_value.set("".to_string());
-        } else {
-            x.set("width:250px".to_string());
-            article_position_value.set("margin-left:270px".to_string());
-        }
-    });
-
-    let toggle_maximize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        let _ = invoke::<String>("maximize_window".into(), None).map_err(|e| alert(&e));
-    });
-    let toggle_minimize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        let _ = invoke::<String>("minimize_window".into(), None).map_err(|e| alert(&e));
-    });
-
-    let close_window: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        let _ = invoke::<String>("close_window".into(), None).map_err(|e| alert(&e));
-    });
 
     html! {
         <div>
-        <TitleBar title="current_path/current_file">
-            <div
-            // style="margin-left:60px"
-            >
-            <TitleBarButton onclick = {close_window} button_type="close">{""}</TitleBarButton>
-            <TitleBarButton onclick = {toggle_minimize} button_type="minimize">{""}</TitleBarButton>
-            <TitleBarButton
-            onclick={toggle_maximize}
-            button_type="zoom">{""}</TitleBarButton>
-            <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}</TitleBarButton>
-            // <TitleBarButton button_type="next_back">{"←"}</TitleBarButton>
-            // <TitleBarButton button_type="next_back">{"→"}</TitleBarButton>
-            // <TitleBarButton button_type="share">{"⤿"}</TitleBarButton>
-            // <TitleBarButton button_type="star">{"★"}</TitleBarButton>
-            // <TitleBarButton button_type="toggle">{"👨‍💼"}</TitleBarButton>
-            // <TitleBarButton button_type="toggle">{"💬"}</TitleBarButton>
-            // <TitleBarButton button_type="toggle">{"..."}</TitleBarButton>
-            </div>
-        </TitleBar>
-
-
+        { get_titlebar(article_position.clone(), x) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
 
         <ul  id="myUL"><TreeList
@@ -141,21 +93,75 @@ pub fn app() -> Html {
 }
 
 fn update_welcome_message(welcome: UseStateHandle<String>, name: String) {
-    spawn_local(async move {
-        // let x = main.await;
-        // This will call our glue code all the way through to the tauri
-        // back-end command and return the `Result<String, String>` as
-        // `Result<JsValue, JsValue>`.
-        match invoke_async("hello".to_string(), Some(&json!({ "name": name }))).await {
-            Ok(message) => {
-                welcome.set(message.as_string().unwrap());
-            }
-            Err(e) => {
-                let window = window().unwrap();
-                window
-                    .alert_with_message(&format!("Error: {:?}", e))
-                    .unwrap();
-            }
+    if name.contains(' ') {
+        let window = window().unwrap();
+        window
+            .alert_with_message("Error: Name should not contain sapces!")
+            .unwrap();
+    } else {
+        welcome.set(name);
+    }
+}
+
+fn get_titlebar(article_position : UseStateHandle<String>, x : UseStateHandle<String>) -> Html {
+    let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+        if x.chars().count() > 1 {
+            x.set("".to_string());
+            article_position.set("".to_string());
+        } else {
+            x.set("width:250px".to_string());
+            article_position.set("margin-left:270px".to_string());
         }
     });
+    cfg_if::cfg_if! {
+        if #[cfg(not(feature = "web"))]{
+        let toggle_maximize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
+            let _ = invoke::<String>("maximize_window".into(), None).map_err(|e| alert(&e));
+        });
+        let toggle_minimize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
+            let _ = invoke::<String>("minimize_window".into(), None).map_err(|e| alert(&e));
+        });
+        let close_window: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
+            let _ = invoke::<String>("close_window".into(), None).map_err(|e| alert(&e));
+        });
+
+            return html!{
+
+                <TitleBar title="current_path/current_file">
+                <div
+                // style="margin-left:60px"
+                >
+                <TitleBarButton onclick = {close_window} button_type="close">{""}
+                </TitleBarButton>
+                <TitleBarButton onclick = {toggle_minimize} button_type="minimize">{""}
+                </TitleBarButton>
+                <TitleBarButton
+                onclick={toggle_maximize}
+                button_type="zoom">{""}
+                </TitleBarButton>
+                <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}
+                </TitleBarButton>
+                // <TitleBarButton button_type="next_back">{"←"}</TitleBarButton>
+                // <TitleBarButton button_type="next_back">{"→"}</TitleBarButton>
+                // <TitleBarButton button_type="share">{"⤿"}</TitleBarButton>
+                // <TitleBarButton button_type="star">{"★"}</TitleBarButton>
+                // <TitleBarButton button_type="toggle">{"👨‍💼"}</TitleBarButton>
+                // <TitleBarButton button_type="toggle">{"💬"}</TitleBarButton>
+                // <TitleBarButton button_type="toggle">{"..."}</TitleBarButton>
+                </div>
+                </TitleBar>
+
+            }
+        }
+        else {
+            return html!{
+                <TitleBar title="current_path/current_file">
+                <div
+                >
+                <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}</TitleBarButton>
+                </div>
+                </TitleBar>
+            }
+        }
+    }
 }
