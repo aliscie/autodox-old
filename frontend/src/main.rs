@@ -12,7 +12,7 @@ mod test;
 mod utils;
 
 #[cfg(not(feature = "web"))]
-use crate::utils::{invoke, invoke_async};
+use crate::utils::invoke;
 
 use components::{TitleBar, TitleBarButton};
 
@@ -103,7 +103,7 @@ fn update_welcome_message(welcome: UseStateHandle<String>, name: String) {
     }
 }
 
-fn get_titlebar(article_position : UseStateHandle<String>, x : UseStateHandle<String>) -> Html {
+fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<String>) -> Html {
     let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if x.chars().count() > 1 {
             x.set("".to_string());
@@ -126,8 +126,7 @@ fn get_titlebar(article_position : UseStateHandle<String>, x : UseStateHandle<St
         });
 
             return html!{
-
-                <TitleBar title="current_path/current_file">
+                <TitleBar  title="current_path/current_file">
                 <div
                 // style="margin-left:60px"
                 >
@@ -150,7 +149,6 @@ fn get_titlebar(article_position : UseStateHandle<String>, x : UseStateHandle<St
                 // <TitleBarButton button_type="toggle">{"..."}</TitleBarButton>
                 </div>
                 </TitleBar>
-
             }
         }
         else {

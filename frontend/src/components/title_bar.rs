@@ -12,7 +12,7 @@ pub struct TitleBarProps {
 #[function_component(TitleBar)]
 pub fn title_bar(props: &TitleBarProps) -> Html {
     return html! {
-        <div class="custom_title_bar">
+        <div data-tauri-drag-region="true" class="custom_title_bar">
            <div class="buttons">
                 {props.children.clone()}
             </div>
