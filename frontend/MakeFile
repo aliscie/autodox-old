@@ -1,5 +1,5 @@
 server:
-	trunk serve --open
+	trunk serve --features web
 
 run:
 	cargo run
