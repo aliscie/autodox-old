@@ -74,7 +74,10 @@ impl FileNode {
 }
 
 /// Type for storing file data we will get it from backend
-pub type FileData = HashMap<u64, String>;
+#[derive(Debug, Serialize, Deserialize, Default, PartialEq, Store, Clone)]
+pub struct FileMap{
+    pub data : HashMap<u64, String>,
+}
 
 /// For easier navigation
 #[derive(Debug)]

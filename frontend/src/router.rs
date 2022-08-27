@@ -1,6 +1,8 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::FileData;
+
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
     #[at("/")]
@@ -15,7 +17,7 @@ pub enum Route {
 pub fn switch(routes: &Route) -> Html {
     match routes {
         Route::Home => html! {<h1>{"home"}</h1>},
-        Route::File {id} => html!{ <p>{format!("You are looking at Post {}", id)}</p> },
+        Route::File {id} => html!{ <FileData id = { *id }/>},
         Route::NotFound => html! { <h1>{ "404" }</h1> },
     }
 }
