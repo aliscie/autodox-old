@@ -19,6 +19,8 @@ tokio = { version = "1.20.1", features = ["rt", "macros"]}
 graphql_client = "0.11.0"
 anyhow = "1.0.62"
 cfg-if = "1.0.0"
+yewdux = "0.8"
+
 
 [dependencies.web-sys]
 version = "0.3.56"

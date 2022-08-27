@@ -1,7 +1,8 @@
 use crate::utils::FileNode;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, Element, MouseEvent, console};
+use web_sys::{window, Element, MouseEvent};
 use yew::prelude::*;
+use yewdux::prelude::use_store;
 
 pub trait MyNewTrait {
     fn target_element<'a>(&self) -> Option<Element>;
@@ -25,6 +26,7 @@ pub struct Props {
 
 #[function_component(TreeList)]
 pub fn tree_list() -> Html {
+    //let (root, dispatch) = use_store::<FileNode>();
     let mut root = FileNode::new(0, "root".into());
     // later we will get these data from some external api as json
     let some_data = r#"
@@ -50,5 +52,6 @@ pub fn tree_list() -> Html {
      ]
         "#;
     root.children = serde_json::from_str(some_data).unwrap();
+    //dispatch.reduce_mut(move |r| r.children = serde_json::from_str(some_data).unwrap());
     (root.children).into_iter().map(|file| file.to_html()).collect::<Html>()
 }

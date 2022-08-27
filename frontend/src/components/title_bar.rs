@@ -1,7 +1,4 @@
 use yew::prelude::*;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen_futures::spawn_local;
-use web_sys::{window, Document, Element, MouseEvent};
 
 #[derive(PartialEq, Properties)]
 pub struct TitleBarProps {
