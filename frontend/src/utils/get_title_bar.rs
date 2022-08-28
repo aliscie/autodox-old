@@ -8,7 +8,6 @@ use crate::utils::{invoke, invoke_async};
 
 use crate::components::{TitleBar, TitleBarButton};
 
-use crate::components::TreeList;
 use web_sys::{window, Document, Element, MouseEvent};
 
 
@@ -59,7 +58,7 @@ pub fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<
         }
         else {
             return html!{
-                <TitleBar title="current_path/current_file">
+                <TitleBar title="filename/filename4">
                 <div>
                 <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}</TitleBarButton>
                 </div>
