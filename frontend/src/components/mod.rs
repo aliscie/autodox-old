@@ -9,3 +9,6 @@ pub use title_bar::TitleBar;
 
 mod tree_list;
 pub use tree_list::TreeList;
+
+mod file_data;
+pub use file_data::FileData;

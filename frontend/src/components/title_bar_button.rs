@@ -1,7 +1,5 @@
-use wasm_bindgen::prelude::*;
-use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
-use web_sys::{Element, MouseEvent, window, Document};
+use web_sys::MouseEvent;
 
 #[derive(PartialEq, Properties)]
 pub struct Props {

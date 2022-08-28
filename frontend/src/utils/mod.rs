@@ -1,5 +1,5 @@
 mod filenode;
-pub use filenode::{FileNode, FileNavigableNode};
+pub use filenode::{FileNode, FileNavigableNode, FileMap};
 
 
 cfg_if::cfg_if!{

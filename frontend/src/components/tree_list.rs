@@ -1,7 +1,9 @@
-use crate::utils::FileNode;
+use crate::utils::{ FileNode, FileMap};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, Element, MouseEvent, console};
+use web_sys::{window, Element, MouseEvent};
 use yew::prelude::*;
+use yewdux::prelude::*;
+
 
 pub trait MyNewTrait {
     fn target_element<'a>(&self) -> Option<Element>;
@@ -25,7 +27,13 @@ pub struct Props {
 
 #[function_component(TreeList)]
 pub fn tree_list() -> Html {
-    let mut root = FileNode::new(0, "root".into());
+    let (root, dispatch) = use_store::<FileNode>();
+    let d = Dispatch::<FileMap>::new();
+    d.reduce_mut(|r| r.data.insert(234, "file one!".into()));
+    d.reduce_mut(|r| r.data.insert(235, "file two!".into()));
+    d.reduce_mut(|r| r.data.insert(224, "file three!".into()));
+    d.reduce_mut(|r| r.data.insert(225, "file four!".into()));
+    //let mut root = FileNode::new(0, "root".into());
     // later we will get these data from some external api as json
     let some_data = r#"
      [
@@ -45,10 +53,11 @@ pub fn tree_list() -> Html {
          },
          {
              "name":"filename3",
-             "id":224
+             "id":225
          }
      ]
         "#;
-    root.children = serde_json::from_str(some_data).unwrap();
-    (root.children).into_iter().map(|file| file.to_html()).collect::<Html>()
+    //root.children = serde_json::from_str(some_data).unwrap();
+    dispatch.reduce_mut(move |r| r.children = serde_json::from_str(some_data).unwrap());
+    (&root.children).into_iter().map(|file| file.to_html()).collect::<Html>()
 }
