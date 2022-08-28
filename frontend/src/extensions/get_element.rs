@@ -15,7 +15,8 @@ pub struct FileNode {
     pub children: Vec<FileNode>,
 }
 
-
+// this is not required we can do 
+// let t : Element = event.target_unchecked_into();
 pub trait TargetElement {
     fn target_element<'a>(&self)-> Option<Element>;
 
