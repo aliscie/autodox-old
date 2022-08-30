@@ -1,32 +1,18 @@
 [package]
-name = "frontend"
+name = "editor"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-[workspace]
-members = [
-    "./editor",
-    # "../extend_traits",
-]
-
 
 [dependencies]
-yew = "0.19.3"
-yew-router = "0.16.0"
-wasm-bindgen = "0.2.78"
-wasm-bindgen-futures = "0.4.28"
-js-sys = "0.3.59"
-serde = "1.0.144"
-serde_json = "1.0.85"
-serde_derive = "1.0.144"
-reqwest = { version = "0.11.11", features = ["json"]}
-tokio = { version = "1.20.1", features = ["rt", "macros"]}
-graphql_client = "0.11.0"
-anyhow = "1.0.62"
-cfg-if = "1.0.0"
-yewdux = "0.8"
-editor = { path = "editor" }
+table-extract = "0.2.2"
+yew = "0.19"
+wasm-bindgen = "0.2"
+html-minifier = "3.0.15"
+js-sys = "0.3.56"
+markup5ever_rcdom = "0.1.0"
+#extend_traits = { path = "../extend_traits" }
 
 
 [dependencies.web-sys]
@@ -52,9 +38,10 @@ features = [
     "Selection",
     "Range",
     "console",
-    "DomTokenList", #for class_list
 ]
 
-[features]
-
-web= []
+#[workspace]
+#members = [
+#    "./workspaces/extend_triats",
+#    "./workspaces/web_socket",
+#]
