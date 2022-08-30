@@ -16,10 +16,10 @@ pub struct RepoView;
 
 pub async fn get_data() -> Result<Response<ResponseData>, Error> {
     let github_token = std::env::var("GITHUB_API_TOKEN").expect("Github api token not found!");
-    let (owner, repo) = ("lunchspider", "quark");
+    // let (owner, repo) = ("lunchspider", "quark");
     let variables = repo_view::Variables {
-        owner: owner.into(),
-        name: repo.into(),
+        // owner: owner.into(),
+        // name: repo.into(),
     };
     let request_body = RepoView::build_query(variables);
     let client = Client::builder()
@@ -32,7 +32,8 @@ pub async fn get_data() -> Result<Response<ResponseData>, Error> {
             .collect(),
         )
         .build()?;
-    let res = client.post("https://api.github.com/graphql").json(&request_body).send().await?;
+    // let res = client.post("https://api.github.com/graphql").json(&request_body).send().await?;
+    let res = client.post("http://0.0.0.0:8000/").json(&request_body).send().await?;
     let response_body: Response<repo_view::ResponseData> = res.json().await?;
     log_1(&format!("{:?}", response_body).into());
     Ok(response_body)

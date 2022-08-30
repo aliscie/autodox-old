@@ -1,5 +1,4 @@
 use utils::alert;
-// use backend::get_users::get_data;
 use serde_json::json;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;

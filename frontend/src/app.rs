@@ -37,6 +37,20 @@ pub fn app() -> Html {
                  {
                  "name":"my file",
                  "id":235
+                 },
+                 {
+                 "name":"my other file",
+                 "id":236,
+                 "children":[
+                     {
+                     "name":"my file",
+                     "id":237
+                     },
+                     {
+                     "name":"my other file",
+                     "id":238
+                     }
+                 ]
                  }
              ]
          },
@@ -52,6 +66,8 @@ pub fn app() -> Html {
         "#;
     let (root, dispatch) = use_store::<FileNode>();
     let d = Dispatch::<FileMap>::new();
+    // TODO
+    //  call get_files::get_data().await
     dispatch.reduce_mut(move |r| r.children = serde_json::from_str(some_data).unwrap());
 
     html! {
