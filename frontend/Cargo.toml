@@ -11,6 +11,13 @@ members = [
 ]
 
 
+[workspace]
+members = [
+    "./editor",
+    # "../extend_traits",
+]
+
+
 [dependencies]
 yew = "0.19.3"
 yew-router = "0.16.0"

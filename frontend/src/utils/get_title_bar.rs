@@ -1,5 +1,4 @@
 use crate::utils::alert;
-// use backend::get_users::get_data;
 use wasm_bindgen::prelude::*;
 use yew::prelude::*;
 
@@ -9,7 +8,6 @@ use crate::utils::{invoke, invoke_async};
 
 use crate::components::{TitleBar, TitleBarButton};
 
-use crate::components::TreeList;
 use web_sys::{window, Document, Element, MouseEvent};
 
 
@@ -45,9 +43,7 @@ pub fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<
                 // <TitleBarButton onclick = {toggle_minimize} button_type="minimize">{""}
                 // </TitleBarButton>
                 // <TitleBarButton onclick={toggle_maximize}button_type="zoom">{""}</TitleBarButton>
-                <span>{"desktop app"}</span>
-                <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}
-                </TitleBarButton>
+                <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}</TitleBarButton>
                 // <TitleBarButton button_type="next_back">{"←"}</TitleBarButton>
                 // <TitleBarButton button_type="next_back">{"→"}</TitleBarButton>
                 // <TitleBarButton button_type="share">{"⤿"}</TitleBarButton>
@@ -62,9 +58,8 @@ pub fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<
         }
         else {
             return html!{
-                <TitleBar title="current_path/current_file">
-                <div
-                >
+                <TitleBar title="filename/filename4">
+                <div>
                 <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}</TitleBarButton>
                 </div>
                 </TitleBar>
@@ -72,3 +67,4 @@ pub fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<
         }
     }
 }
+

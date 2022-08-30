@@ -345,3 +345,7 @@ h2 {
     }
 }
 
+[contenteditable] {
+    outline: 0;
+    border: 0;
+}

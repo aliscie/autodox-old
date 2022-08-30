@@ -2,6 +2,12 @@ use yew::prelude::*;
 #[cfg(not(feature = "web"))]
 use crate::utils::{invoke, invoke_async};
 
+use yew_router::prelude::*;
+
+
+use crate::utils::{FileNode, FileMap};
+use yewdux::prelude::*;
+use crate::components::{TitleBar, TitleBarButton};
 use crate::router::*;
 
 use crate::utils::{ FileNode, FileTree};
@@ -9,6 +15,7 @@ use crate::components::TreeList;
 use editor::Editor;
 use yewdux::prelude::*;
 use yew_router::prelude::*;
+use web_sys::{window, Document, Element, MouseEvent};
 
 
 #[function_component(App)]
@@ -59,13 +66,13 @@ pub fn app() -> Html {
             <TreeList/>
         </ul>
         </aside>
+
         <article style={format!("{}",(*article_position).clone())}>
         <h2 contenteditable="true" class={"heading"}>
           <Switch<Route> render={Switch::render(switch)} />
           </h2>
           <Editor/>
         </article>
-
         </div>
         </BrowserRouter>
     }

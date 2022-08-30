@@ -1,12 +1,28 @@
-query RepoView($owner: String!, $name: String!) {
-  repository(owner: $owner, name: $name) {
-    stargazers(first :100){
-      edges{
-        node{
-          name
-          login
+#max allowed recursions is 5
+query RepoView{
+    files {
+        id
+        name
+        content
+        children {
+            id
+            name
+            content
+            children {
+                id
+                name
+                content
+                children {
+                    id
+                    name
+                    content
+                    children {
+                        id
+                        name
+                        content
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
