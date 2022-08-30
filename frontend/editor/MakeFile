@@ -1,0 +1,14 @@
+server:
+	trunk serve
+
+run:
+	cargo run
+
+kill:
+	kill -INT $(lsof -t -i :8080)
+
+update:
+	cargo update
+
+install_cli:
+	cargo install tauri-cli
