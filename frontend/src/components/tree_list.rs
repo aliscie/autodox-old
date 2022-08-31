@@ -1,6 +1,7 @@
-use crate::utils::{FileNode, FileMap};
+
+use crate::utils::{FileNode, FileTree};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, Element, MouseEvent};
+use web_sys::{window, Element, MouseEvent, console};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -21,16 +22,20 @@ impl MyNewTrait for MouseEvent {
 pub struct TreeListProps {
     pub title: Option<String>,
     pub children: Option<Children>,
-    pub files: Vec<FileNode>,
 }
 
 #[function_component(TreeList)]
 pub fn tree_list(props: &TreeListProps) -> Html {
-    let d = Dispatch::<FileMap>::new();
-    d.reduce_mut(|r| r.data.insert(234, "file one!".into()));
-    d.reduce_mut(|r| r.data.insert(235, "file two!".into()));
-    d.reduce_mut(|r| r.data.insert(224, "file three!".into()));
-    d.reduce_mut(|r| r.data.insert(225, "file four!".into()));
+    let (tree, dispatch) = use_store::<FileTree>();
+    console::log_1(&format!("{:?}", dispatch.get()).into());
+    //d.reduce_mut(|r| r.data.insert(235, "file two!".into()));
+    //d.reduce_mut(|r| r.data.insert(224, "file three!".into()));
+    //d.reduce_mut(|r| r.data.insert(225, "file four!".into()));
 
-    (props.files.clone()).into_iter().map(|file| file.to_html()).collect::<Html>()
+    //(props.files.clone()).into_iter().map(|file| file.to_html()).collect::<Html>()
+    html! {
+        <>
+        {  tree.adjacency.get(&0).unwrap().into_iter().map(|f| tree.to_html(*f)).collect::<Html>() }
+        </>
+    }
 }
