@@ -12,6 +12,7 @@ use web_sys::{window, Document, Element, MouseEvent};
 
 
 pub fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<String>) -> Html {
+    let is_expanded = x.clone().chars().count();
     let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if x.chars().count() > 1 {
             x.set("".to_string());
@@ -43,7 +44,9 @@ pub fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<
                 // <TitleBarButton onclick = {toggle_minimize} button_type="minimize">{""}
                 // </TitleBarButton>
                 // <TitleBarButton onclick={toggle_maximize}button_type="zoom">{""}</TitleBarButton>
-                <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}</TitleBarButton>
+                <TitleBarButton onclick={toggle_asidebar} button_type="toggle">
+                {""}
+                </TitleBarButton>
                 // <TitleBarButton button_type="next_back">{"←"}</TitleBarButton>
                 // <TitleBarButton button_type="next_back">{"→"}</TitleBarButton>
                 // <TitleBarButton button_type="share">{"⤿"}</TitleBarButton>
@@ -60,7 +63,9 @@ pub fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<
             return html!{
                 <TitleBar title="filename/filename4">
                 <div>
-                <TitleBarButton onclick={toggle_asidebar} button_type="toggle">{""}</TitleBarButton>
+                <TitleBarButton onclick={toggle_asidebar} button_type="toggle">
+                {if is_expanded > 1{"X"} else{"="}}
+                </TitleBarButton>
                 </div>
                 </TitleBar>
             }

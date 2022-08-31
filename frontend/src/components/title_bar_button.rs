@@ -13,7 +13,8 @@ pub fn title_bar_button(props: &Props) -> Html {
     html! {
         <div
         onclick={props.onclick.clone()}
-         class={format!("barr_button {}",props.button_type)}>
+         class={format!("barr_button {}",props.button_type)}
+         >
         <a class="barr_button_content" href="#"><span>{props.children.clone()}</span></a>
         </div>
     }

@@ -5,12 +5,11 @@ use crate::utils::{invoke, invoke_async};
 use yew_router::prelude::*;
 
 
-use crate::utils::{FileNode, FileMap};
+use crate::utils::{FileNode,FileTree};
 use yewdux::prelude::*;
 use crate::components::{TitleBar, TitleBarButton};
 use crate::router::*;
 
-use crate::utils::{ FileNode, FileTree};
 use crate::components::TreeList;
 use editor::Editor;
 use yewdux::prelude::*;
