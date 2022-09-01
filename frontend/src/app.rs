@@ -1,3 +1,4 @@
+use gloo::console::console;
 use yew::prelude::*;
 #[cfg(not(feature = "web"))]
 use crate::utils::{invoke, invoke_async};
@@ -5,7 +6,7 @@ use crate::utils::{invoke, invoke_async};
 use yew_router::prelude::*;
 
 
-use crate::utils::{FileNode,FileTree};
+use crate::utils::{FileNode,FileTree, on_mouse_move};
 use yewdux::prelude::*;
 use crate::components::{TitleBar, TitleBarButton};
 use crate::router::*;
@@ -57,7 +58,7 @@ pub fn app() -> Html {
 
     html! {
         <BrowserRouter>
-        <div>
+        <div id = "app" onmousemove = { on_mouse_move() }>
         { super::utils::get_titlebar(article_position.clone(), x) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
 

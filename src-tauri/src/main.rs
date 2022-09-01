@@ -3,10 +3,23 @@ all(not(debug_assertions), target_os = "windows"),
 windows_subsystem = "windows"
 )]
 
+use std::collections::HashMap;
+
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
-use tauri::{Runtime, Window};
+use tauri::async_runtime::Mutex;
+use tauri::{Runtime, Window, State};
 use tauri::Manager;
+
+#[derive(Debug, Clone, Copy, Default)]
+struct MouseLoc{
+    x : i32,
+    y : i32,
+}
+
+struct Storage{
+    store : Mutex<HashMap<u32, MouseLoc>>
+}
 
 pub trait WindowExt {
     #[cfg(target_os = "macos")]
@@ -51,7 +64,8 @@ impl<R: Runtime> WindowExt for Window<R> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![hello,minimize_window, maximize_window, close_window])
+        .manage(Storage { store : Mutex::new(HashMap::new())})
+        .invoke_handler(tauri::generate_handler![hello,minimize_window, maximize_window, close_window, mouse_move])
         .setup(|app| {
             let win = app.get_window("main").unwrap();
             // TODO: implement this for linux and windows
@@ -91,4 +105,12 @@ fn maximize_window(window: Window) -> Result<(), tauri::Error> {
         return window.set_fullscreen(false);
     }
     window.set_fullscreen(true)
+}
+
+#[tauri::command]
+async fn mouse_move(x : i32, y : i32, state : State<'_, Storage>) -> Result<(), ()>{
+    let mut w = state.store.lock().await;
+    w.insert(0, MouseLoc{ x , y});
+    println!("{:?}", w.entry(0));
+    Ok(())
 }
