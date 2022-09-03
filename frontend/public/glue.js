@@ -1,4 +1,5 @@
 export const invoke = window.__TAURI__.invoke
+export const emit = window.__TAURI__.emit;
 
 export async function invokeHello(name) {
     return await invoke("hello", {name: name});

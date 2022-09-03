@@ -17,3 +17,6 @@ pub fn alert<T : std::fmt::Debug>(message : &T){
 
 mod get_title_bar;
 pub use get_title_bar::get_titlebar;
+
+mod mouse_move;
+pub use mouse_move::on_mouse_move;

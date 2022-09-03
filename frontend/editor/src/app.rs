@@ -20,6 +20,5 @@ pub fn editor() -> Html {
         <div contenteditable="true">
         {"text editor"}
         </div>
-
     }
 }
