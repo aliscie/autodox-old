@@ -54,6 +54,7 @@ features = [
     "Range",
     "console",
     "DomTokenList", #for class_list
+    "UiEvent",
 ]
 
 [features]
