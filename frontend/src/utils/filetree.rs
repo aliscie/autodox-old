@@ -12,62 +12,8 @@ use crate::router::Route;
 use yewdux::prelude::*;
 
 use crate::extensions::*;
+use crate::components::FileComponent;
 
-#[derive(PartialEq, Properties)]
-pub struct FileComponentProps {
-    pub onclick: Callback<MouseEvent>,
-    pub name: String,
-    pub class: String,
-}
-
-
-#[function_component(FileComponent)]
-pub fn file_component(props: &FileComponentProps) -> Html {
-    // let classname = use_state_eq(|| "dropdown-content".to_string());
-
-    let handle_dragenter: Callback<DragEvent> = Callback::from(move |e: DragEvent| {
-        // let target = e.terget().unwrap();
-        // TODO
-        //  target.set_attribute("style", "background:lightblue");
-    });
-
-    let handle_dragleave: Callback<DragEvent> = Callback::from(move |e: DragEvent| {
-        // let target = e.target().unwrap();
-        // TODO
-        //  target.set_attribute("style", "background:none");
-    });
-
-    //
-    // let f = classname.clone();
-    // let handle_mousedown: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-    //     &e.prevent_default();
-    //     let doc = window().unwrap_throw().document().unwrap_throw();
-    //     if e.which() == 3 {
-    //         f.set("show dropdown-content".to_string())
-    //     } else {
-    //         f.set("show dropdown-content".to_string())
-    //     }
-    // });
-
-    // log_1(&format!("{:?}", *classname).into());
-
-    html! {
-    <>
-        <li
-         // onmousedown={handle_mousedown}
-         ondragleave={handle_dragleave}
-         ondragenter={handle_dragenter}
-         draggable="true"
-         class={props.class.clone()}
-         onclick = { props.onclick.clone() } style="flex: 1 1 auto; white-space: nowrap; min-width: 0px; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;"><div class="notranslate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{props.name.clone()}</div></li>
-        <div class={"dropdown-content"}>
-        <a href="#">{"☁"}</a>
-        <a href="#">{"🗑"}</a>
-        <a href="#">{"👁"}</a>
-        </div>
-    </>
-    }
-}
 
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Store)]
