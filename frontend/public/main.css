@@ -204,35 +204,37 @@ h3 {
 aside {
     overflow: hidden;
     width: 0px;
+    top:25px;
     margin: 0px;
     position: fixed;
-    float: left;
-    top: 20px;
     bottom: 0;
+
+    background-color: #e2e2e2 !important;
     z-index: 299;
-    box-shadow: 0px 10px 5px 3px #888;
-
-: 0.5s;
-}
-
-
-article {
-    overflow: hidden;
-    margin-top: 30px;
-    outline: none;
-    float: left;
-    margin-left: calc(15%);
-    margin-left: -moz-calc(15%);
-    margin-left: -webkit-calc(15%);
-    margin-right: 15%;
-
-    /*width: calc(82% - 230px);*/
-    /*width: -moz-calc(82% - 230px);*/
-    /*width: -webkit-calc(82% - 230px);*/
-
-    padding-bottom: 150px;
+    box-shadow: 13px 0px 20px #acacac;
     transition: 0.5s;
 }
+.file_component:hover {
+    font-size: 20px;
+}
+
+/*article {*/
+/*    overflow: hidden;*/
+/*    margin-top: 30px;*/
+/*    outline: none;*/
+/*    !*float: left;*!*/
+/*    !*margin-left: calc(15%);*!*/
+/*    !*margin-left: -moz-calc(15%);*!*/
+/*    !*margin-left: -webkit-calc(15%);*!*/
+/*    !*margin-right: 15%;*!*/
+
+/*    !*width: calc(82% - 230px);*!*/
+/*    !*width: -moz-calc(82% - 230px);*!*/
+/*    !*width: -webkit-calc(82% - 230px);*!*/
+
+/*    padding-bottom: 150px;*/
+/*    transition: 0.5s;*/
+/*}*/
 
 nav {
     display: block;
@@ -288,7 +290,8 @@ h2 {
         position: fixed;
         float: left;
         bottom: 0;
-        background-color: #e2e2e2;
+
+        background-color: #e2e2e2 !important;
         z-index: 299;
         box-shadow: 13px 0px 20px #acacac;
         transition: 0.5s;
@@ -338,12 +341,12 @@ h2 {
         padding-top: 0;
     }
 
-    article {
-        float: left;
-        width: 90%;
-        margin-left: 5% !important;
-        margin-right: 5%;
-    }
+    /*article {*/
+    /*    float: left;*/
+    /*    width: 90%;*/
+    /*    !*margin-left: 5% !important;*!*/
+    /*    !*margin-right: 5%;*!*/
+    /*}*/
 }
 
 .file_component {

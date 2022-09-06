@@ -6,7 +6,7 @@ use crate::utils::{invoke, invoke_async};
 use yew_router::prelude::*;
 
 
-use crate::utils::{FileNode,FileTree, on_mouse_move};
+use crate::utils::{FileNode, FileTree};
 use yewdux::prelude::*;
 use crate::components::{TitleBar, TitleBarButton};
 use crate::router::*;
@@ -21,7 +21,6 @@ use web_sys::{window, Document, Element, MouseEvent};
 #[function_component(App)]
 pub fn app() -> Html {
     let aside_bar_taggol = use_state_eq(|| "".to_string());
-    let article_position = use_state_eq(|| "".to_string());
     let x = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
     dispatch.reduce_mut(|r| {
@@ -58,8 +57,11 @@ pub fn app() -> Html {
 
     html! {
         <BrowserRouter>
-        <div id = "app" onmousemove = { on_mouse_move() }>
-        { super::utils::get_titlebar(article_position.clone(), x) }
+
+        <div id = "app"
+        // onmousemove = { on_mouse_move() }
+        >
+        { super::utils::get_titlebar( x) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
 
         <ul  id="myUL">
@@ -67,12 +69,12 @@ pub fn app() -> Html {
         </ul>
         </aside>
 
-        <article style={format!("{}",(*article_position).clone())}>
         <h2 contenteditable="true" class={"heading"}>
           <Switch<Route> render={Switch::render(switch)} />
           </h2>
           <Editor/>
-        </article>
+
+
         </div>
         </BrowserRouter>
     }

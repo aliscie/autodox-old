@@ -11,15 +11,18 @@ use crate::components::{TitleBar, TitleBarButton};
 use web_sys::{window, Document, Element, MouseEvent};
 
 
-pub fn get_titlebar(article_position: UseStateHandle<String>, x: UseStateHandle<String>) -> Html {
+pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let is_expanded = x.clone().chars().count();
+    let doc = window().unwrap_throw().document().unwrap_throw();
+
+
     let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if x.chars().count() > 1 {
             x.set("".to_string());
-            article_position.set("".to_string());
+            doc.query_selector(".text_editor_container").unwrap().unwrap().set_attribute("style", "margin-left:0px;");
         } else {
             x.set("width:250px".to_string());
-            article_position.set("margin-left:270px".to_string());
+            doc.query_selector(".text_editor_container").unwrap().unwrap().set_attribute("style", "margin-left:250px; margin-right:2%;");
         }
     });
     cfg_if::cfg_if! {
