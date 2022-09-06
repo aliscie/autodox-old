@@ -1,3 +1,15 @@
+.light-mode {
+    --color: rgb(12, 0, 0);
+    --main-color: #dedede;
+    /* violet */
+    --primary-color: rgb(73, 27, 255);
+
+    /* white */
+    --text-color: black;
+
+    --ground: #d5d5d5;
+}
+
 /* ©2015 Johannes Jakob
    Made with <3 in Germany */
 
@@ -14,7 +26,7 @@ a {
 
 body {
     background: #ecf0f1;
-    color: #000;
+    color :rgba(var(--color), 1);
     font-family: HelveticaNeue, 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
 }
 
@@ -204,7 +216,7 @@ h3 {
 aside {
     overflow: hidden;
     width: 0px;
-    top:25px;
+    top: 25px;
     margin: 0px;
     position: fixed;
     bottom: 0;
@@ -214,6 +226,7 @@ aside {
     box-shadow: 13px 0px 20px #acacac;
     transition: 0.5s;
 }
+
 .file_component:hover {
     font-size: 20px;
 }
