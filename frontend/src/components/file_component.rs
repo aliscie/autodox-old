@@ -26,7 +26,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let onmousedown = {
         let display = display.clone();
         move |e: MouseEvent| {
-            // display.set("display: block".to_string());
+            if e.which() == 3 {
+                display.set("display: block".to_string());
+            }
         }
     };
 
@@ -52,7 +54,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
     let ondragleave = {
         move |e: DragEvent| {
-        // background:none
+            // background:none
         }
     };
 
@@ -76,7 +78,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 </div>
             </li>
         <div
-        // style={*display}
+            // TODO style={*display}
          class={"dropdown-content"}>
         <a href="#">{"☁"}</a>
         <a href="#">{"🗑"}</a>

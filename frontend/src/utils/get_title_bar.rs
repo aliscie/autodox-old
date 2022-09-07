@@ -1,12 +1,14 @@
 use crate::utils::alert;
 use wasm_bindgen::prelude::*;
 use yew::prelude::*;
+use crate::router::*;
+use yew_router::prelude::*;
 
 
 #[cfg(not(feature = "web"))]
 use crate::utils::{invoke, invoke_async};
 
-use crate::components::{TitleBar, TitleBarButton};
+use crate::components::{TitleBar, TitleBarButton, CurrDirectory};
 
 use web_sys::{window, Document, Element, MouseEvent};
 
@@ -36,12 +38,10 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
         let close_window: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
             let _ = invoke::<String>("close_window".into(), None).map_err(|e| alert(&e));
         });
-
+            let current_directory = html!{<CurrDirectory/>};
             return html!{
-                <TitleBar title="current_path/current_file">
-                <div
-                style="margin-left:60px"
-                >
+                <TitleBar title={current_directory}>
+                <div style="margin-left:60px" >
                 // <TitleBarButton onclick = {close_window} button_type="close">{""}
                 // </TitleBarButton>
                 // <TitleBarButton onclick = {toggle_minimize} button_type="minimize">{""}

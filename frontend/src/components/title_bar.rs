@@ -2,7 +2,7 @@ use yew::prelude::*;
 
 #[derive(PartialEq, Properties)]
 pub struct TitleBarProps {
-    pub title: String,
+    pub title: Html,
     pub children: Children,
 }
 

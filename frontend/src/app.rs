@@ -14,7 +14,6 @@ use crate::router::*;
 use crate::components::TreeList;
 use editor::Editor;
 use yewdux::prelude::*;
-use yew_router::prelude::*;
 use web_sys::{window, Document, Element, MouseEvent};
 
 
@@ -69,12 +68,7 @@ pub fn app() -> Html {
         </ul>
         </aside>
 
-        <h2 contenteditable="true" class={"heading"}>
-          <Switch<Route> render={Switch::render(switch)} />
-          </h2>
-          <Editor/>
-
-
+        <Editor/>
         </div>
         </BrowserRouter>
     }

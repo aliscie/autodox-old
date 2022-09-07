@@ -20,3 +20,7 @@ pub use file_data::FileData;
 
 mod file_component;
 pub use file_component::FileComponent;
+
+
+mod directory;
+pub use directory::CurrDirectory;
