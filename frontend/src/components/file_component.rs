@@ -25,8 +25,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let display = use_state(|| "display: none;".to_string());
     let onmousedown = {
         let display = display.clone();
-        move |e: MouseEvent| {
-            // display.set("display: block".to_string());
+        move |_e: MouseEvent| {
+            display.set("display: block".to_string());
         }
     };
 
@@ -76,7 +76,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 </div>
             </li>
         <div
-        // style={*display}
+        style = { (*display).clone() }
          class={"dropdown-content"}>
         <a href="#">{"☁"}</a>
         <a href="#">{"🗑"}</a>
