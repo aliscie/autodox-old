@@ -1,21 +1,14 @@
-use gloo::console::console;
 use yew::prelude::*;
-#[cfg(not(feature = "web"))]
-use crate::utils::{invoke, invoke_async};
 
 use yew_router::prelude::*;
 
 
 use crate::utils::{FileNode, FileTree};
 use yewdux::prelude::*;
-use crate::components::{TitleBar, TitleBarButton};
 use crate::router::*;
 
 use crate::components::TreeList;
 use editor::Editor;
-use yewdux::prelude::*;
-use yew_router::prelude::*;
-use web_sys::{window, Document, Element, MouseEvent};
 
 
 #[function_component(App)]

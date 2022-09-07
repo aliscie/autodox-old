@@ -1850,8 +1850,13 @@ dependencies = [
 name = "shared"
 version = "0.1.0"
 dependencies = [
+ "cfg-if",
+ "js-sys",
  "serde",
  "serde_derive",
+ "serde_json",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
  "yewdux",
 ]
 
