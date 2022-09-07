@@ -5,7 +5,18 @@
 AUTODOX or AUTODOX not decieded about the name yet.
 
 This app is Notion.so clone, roamresearch clone and obsidian clone. The main purpose of this app is not to just clone these note taking apps but to make an all in one **Open source note taking app** with automation features.
-## Goals
+
+I am looking for investors.
+
+1. [overview](https://lnkd.in/eUh_4JfV)
+2. [the code](https://lnkd.in/eQyebWnH)
+3. [project plan](https://lnkd.in/eUvpVi5P)
+4. [privacy plan](https://lnkd.in/e6wC_-fW)
+5. [drag and drop](https://lnkd.in/e9XDMjie)
+6. [live collaboration](https://lnkd.in/ekTH46iu)
+
+
+## features:
 1. **Plugins** : plugins or extensions are customizations that you can add to your AUTODOX application. For example, you can add grammar correction plugin like grammarly, or a machine learning plugin that help you abbreviation your text.
 2. **Components** : In notion you may noticed that you can import a table when you hit `/` then type table then hit enter. The table called a component. In AUTODOX you can create your own custom components. For example you can create flash cards. Also, you can use plugins to enhance your components. For example, you can use google translator plugin with flash card component so everytime you add a word you will get automatic translation.
 3. **Services** : the is the core goal of AUTODOX where you can create a google translator plugin and create flashcard components then put them all in one workspace (page) and you can publish that page so other people can use it. In other word you don't need to create new plugin and component for every user, instead one user can create all of them and share it with others.
