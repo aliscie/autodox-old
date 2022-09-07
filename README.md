@@ -28,10 +28,13 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 
 5. **spreadsheet** : similar to microsoft excel you will have a spreadsheet where you can store your data and implement formulas. Also, with plugins you can implement custom formulas like a stock market plugin. Last but not least, you can use these spreadsheets as a backend for your services. In other word the components will act as a frontend that interact with this spreadsheet.
 5. **Ownership** : when you create a component, or a plugin or a service you will own it as an NFT. Hence, you can make money from it. There are three ways to make money with NFTs. One by selling it. Second, by getting percentage on every sell. Third, by requiring subscriptions fees like 7$ a month without selling the plugin or the service.
-6. **benefits and vision** :
-6.1 First of all, i believe this new system will replace microsoft office and apple iwork.
-6.2 Users, will have safe place to store their data on the blockchain on IC. 6.3 Users can do whatever they can imagine with all these customizations.
-6.4 there are more feature that I will work one like live-time connection so you can share your documents and update them in real time. or like page components so you can have an entire page as a spreadsheet.
+
+6. **Privacy** : You will have the option to upload your data on the block-chain internet computer in order to share it with other people.
+ 
+7. **benefits and vision** :
+8.1 First of all, i believe this new system will replace microsoft office and apple iwork.
+9.2 Users, will have safe place to store their data on the blockchain on IC. 6.3 Users can do whatever they can imagine with all these customizations.
+10.4 there are more feature that I will work one like live-time connection so you can share your documents and update them in real time. or like page components so you can have an entire page as a spreadsheet.
 
 
 - [Quick Start](https://smartcontracts.org/docs/quickstart/quickstart-intro.html)
