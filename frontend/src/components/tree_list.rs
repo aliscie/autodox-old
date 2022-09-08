@@ -1,7 +1,6 @@
-
 use crate::utils::{FileNode, FileTree};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, Element, MouseEvent, console};
+use web_sys::{console, window, Element, MouseEvent};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -33,5 +32,11 @@ pub fn tree_list(props: &TreeListProps) -> Html {
     //d.reduce_mut(|r| r.data.insert(225, "file four!".into()));
 
     //(props.files.clone()).into_iter().map(|file| file.to_html()).collect::<Html>()
-    tree.adjacency.get(&0).unwrap().into_iter().map(|f| tree.to_html(*f)).collect::<Html>()
+    tree.files
+        .adjacency
+        .get(&0)
+        .unwrap()
+        .into_iter()
+        .map(|f| tree.to_html(*f))
+        .collect::<Html>()
 }

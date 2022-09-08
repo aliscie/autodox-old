@@ -79,13 +79,12 @@ impl FileTree {
             if has_children {
                 let curr: Element = e.target_unchecked_into();
                 curr.class_list().toggle("caret-down");
-
                 let _ = &curr
                     .parent_element()
                     .unwrap()
                     .query_selector(".nested")
                     .unwrap()
-                    .unwrap() //TODO if .parent_element().unwrap().query_selector(".nested").unwrap() != None {__.class_list().toggle("active");}
+                    .unwrap()
                     .class_list()
                     .toggle("active");
             }
@@ -99,7 +98,7 @@ impl FileTree {
 
         return html! {
         <>
-            <FileComponent class={format!("right_click file_component hovering {}",class_name)} onclick={handle_click} name={self.vertices.get(&start).unwrap().name.clone()}/>
+            <FileComponent class={format!("file_component hovering {}",class_name)} onclick={handle_click} name={self.vertices.get(&start).unwrap().name.clone()}/>
 
             if let Some(nodes) = nodes {
                 { if has_children{

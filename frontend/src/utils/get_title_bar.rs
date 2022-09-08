@@ -6,7 +6,7 @@ use yew_router::prelude::*;
 
 
 #[cfg(not(feature = "web"))]
-use crate::utils::{invoke, invoke_async};
+use shared::invoke;
 
 use crate::components::{TitleBar, TitleBarButton, CurrDirectory};
 

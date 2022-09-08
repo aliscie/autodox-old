@@ -349,6 +349,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
+ "shared",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -1843,6 +1844,20 @@ checksum = "d98238b800e0d1576d8b6e3de32827c2d74bee68bb97748dcf5071fb53965432"
 dependencies = [
  "nodrop",
  "stable_deref_trait",
+]
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "yewdux",
 ]
 
 [[package]]
