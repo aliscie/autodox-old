@@ -1,5 +1,7 @@
-# AUTODOX
-## SAVES YOUR TIME
+<h1 align="center">AUTODOX</h1>
+<h3 align="center">SAVES YOUR TIME</h3>
+
+
 * this project is owned as an NFT by Ali Husam Shakir AlKaraawi. You can have shares of it by participating to the project. As you own a share the smartcontract will automaticly distribute the earning of autodox by the value of the share.
 
 <img align="left" src="readmeFiles/logo2.png" height="100%">
@@ -32,7 +34,7 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 
 6. **Privacy** : You will have the option to upload your data on the block-chain internet computer in order to share it with other people.
  
-7. **benefits and vision** :
+## Benefits and vision
 - First of all, i believe this new system will replace microsoft office and apple iwork.
 - Users, will have safe place to store their data on the blockchain on IC.
 - Users can do whatever they can imagine with all these customizations.
@@ -40,7 +42,7 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 - Success: I belive autodox will be secceful because the market is already huge, if I just take all docs apps like evernotes, microsoft words and notion then I put all of their featres in one place, of course I will get at least few users.
 - Doablity: Because I am using rust and wasm everything became duable and easy, even the code editor. With rust I can exicute any program langauge seamlessly.
 
-
+## Development:
 - [Quick Start](https://smartcontracts.org/docs/quickstart/quickstart-intro.html)
 - [SDK Developer Tools](https://smartcontracts.org/docs/developers-guide/sdk-guide.html)
 - [Rust Canister Devlopment Guide](https://smartcontracts.org/docs/rust-guide/rust-intro.html)
