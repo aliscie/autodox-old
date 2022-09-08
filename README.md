@@ -41,7 +41,7 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 - there are more feature that I will work one like Real time data, so you can share your documents and update them in real time. or like page components so you can have an entire page as a spreadsheet.
 - Success: I belive autodox will be secceful because the market is already huge, if I just take all docs apps like evernotes, microsoft words and notion then I put all of their featres in one place, of course I will get at least few users.
 - Doablity: Because I am using rust and wasm everything became duable and easy, even the code editor. With rust I can exicute any program langauge seamlessly.
-- I also ran few exmpent before building this project in order to reach to the ultmate way.
+- I also ran few **experiment** before building this project in order to reach to the ultmate way.
     - [experiment 1](https://github.com/aliscie/autodox-tauri-react)
     - [other experiment](https://github.com/aliscie/autodox2)
     - [other experiment](https://github.com/aliscie/autdox)
