@@ -10,6 +10,7 @@ AUTODOX
 This app is Notion.so clone, roamresearch clone and obsidian clone. The main purpose of this app is not to just clone these note taking apps but to make an all in one **Open source note taking app** with automation features.
 
 # learn about autodox here.
+1. [documentations](https://docs.google.com/document/d/1lOJONK7QhtGGkzSGia37pD7fytTbpIoh5R8lXGuJ7Hw/edit)
 1. [overview](https://lnkd.in/eUh_4JfV)
 2. [the code](https://lnkd.in/eQyebWnH)
 3. [project plan](https://lnkd.in/eUvpVi5P)
