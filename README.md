@@ -32,9 +32,12 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 6. **Privacy** : You will have the option to upload your data on the block-chain internet computer in order to share it with other people.
  
 7. **benefits and vision** :
-8.1 First of all, i believe this new system will replace microsoft office and apple iwork.
-9.2 Users, will have safe place to store their data on the blockchain on IC. 6.3 Users can do whatever they can imagine with all these customizations.
-10.4 there are more feature that I will work one like live-time connection so you can share your documents and update them in real time. or like page components so you can have an entire page as a spreadsheet.
+- First of all, i believe this new system will replace microsoft office and apple iwork.
+- Users, will have safe place to store their data on the blockchain on IC.
+- Users can do whatever they can imagine with all these customizations.
+- there are more feature that I will work one like Real time data, so you can share your documents and update them in real time. or like page components so you can have an entire page as a spreadsheet.
+- Success: I belive autodox will be secceful because the market is already huge, if I just take all docs apps like evernotes, microsoft words and notion then I put all of their featres in one place, of course I will get at least few users.
+- Doablity: Because I am using rust and wasm everything became duable and easy, even the code editor. With rust I can exicute any program langauge seamlessly.
 
 
 - [Quick Start](https://smartcontracts.org/docs/quickstart/quickstart-intro.html)
