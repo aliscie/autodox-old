@@ -48,3 +48,7 @@ ul, #myUL {
     visibility: visible;
     opacity: 1;
 }
+
+.dropdown-content a:hover {
+    background: lightblue
+}

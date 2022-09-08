@@ -19,7 +19,7 @@ pub fn editor() -> Html {
 
     let onmousemove = {
         move |e: MouseEvent| {
-            log_1(&format!("xxxxxxxxxxxxxxxxxx {:?}", e.page_y()).into());
+            // log_1(&format!("xxxxxxxxxxxxxxxxxx {:?}", e.page_y()).into());
             // display.set("display: block".to_string());
         }
     };
