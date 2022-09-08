@@ -26,7 +26,7 @@ a {
 
 body {
     background: #ecf0f1;
-    color :rgba(var(--color), 1);
+    color: rgba(var(--color), 1);
     font-family: HelveticaNeue, 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
 }
 
@@ -49,7 +49,6 @@ a {
 }
 
 .custom_title_bar {
-    background: #e2e2e2;
     position: fixed;
     width: 100%;
     height: 20px;
@@ -363,6 +362,7 @@ h2 {
 }
 
 .file_component {
+    cursor: context-menu;
     transition: 0.3s;
     border-radius: 5px;
 }
@@ -375,10 +375,6 @@ h2 {
     background: lightblue !important;
 }
 
-[contenteditable] {
-    outline: 0;
-    border: 0;
-}
 
 
 .dropbtn:hover, .dropbtn:focus {

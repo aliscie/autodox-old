@@ -49,14 +49,15 @@ pub fn curr_directory() -> Html {
 
 
     html! {
-    <span>
-        <span class="hovering file_component">
-        {"parent/"}
+    <>
+        <span
+         class="hovering file_component">
+        {"parent file"}
         </span>
+        {"/"}
         <span class="hovering file_component">
         <Switch<Route> render={Switch::render(switch)} />
         </span>
-
-    </span>
+    </>
     }
 }

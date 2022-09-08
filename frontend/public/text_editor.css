@@ -19,10 +19,14 @@
 
 @media (max-width: 730px) {
     .text_editor_container {
-        float: left;
         padding-left: calc(10px + env(safe-area-inset-left));
         padding-right: calc(10px + env(safe-area-inset-left));
         transition: 0.3s;
     }
+}
 
+
+[contenteditable] {
+    outline: 0;
+    border: 0;
 }
