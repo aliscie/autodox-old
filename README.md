@@ -42,9 +42,16 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 - Success: I belive autodox will be secceful because the market is already huge, if I just take all docs apps like evernotes, microsoft words and notion then I put all of their featres in one place, of course I will get at least few users.
 - Doablity: Because I am using rust and wasm everything became duable and easy, even the code editor. With rust I can exicute any program langauge seamlessly.
 - I also ran few exmpent before building this project in order to reach to the ultmate way.
-    - [expermnet 2](https://github.com/aliscie/Learning-webstack-from-cloning-notion.so) 
-    - [expermnet 3](https://github.com/AlenSci/autodox1) [also see demo](https://www.youtube.com/watch?v=zXdL4B73Rkc) [and this](https://www.youtube.com/playlist?list=PLZ54FkZk9dwGrJSxLIm4-NLvHlhyQKL6T)
-    - [expermnet 4](https://github.com/AlenSci/autodox) 
+    - [experiment 1](https://github.com/aliscie/autodox-tauri-react)
+    - [other experiment](https://github.com/aliscie/autodox2)
+    - [other experiment](https://github.com/aliscie/autdox)
+    - [notion clone](https://github.com/aliscie/Notion.so-clone)
+    - [second notion clone](https://github.com/aliscie/notion-clone-1)
+    - [Other experment](https://github.com/AlenSci/autodox-1)
+    - [experiment 2](https://github.com/aliscie/Learning-webstack-from-cloning-notion.so) 
+    - [experiment 3](https://github.com/AlenSci/autodox1) [also see demo](https://www.youtube.com/watch?v=zXdL4B73Rkc) [and this](https://www.youtube.com/playlist?list=PLZ54FkZk9dwGrJSxLIm4-NLvHlhyQKL6T)
+    - [experiment 4](https://github.com/AlenSci/autodox) 
+    - [experiment 5](https://github.com/aliscie/autodox-rust)
 
 
 
