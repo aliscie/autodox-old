@@ -1,8 +1,11 @@
-# AUTODOX
-* this project is owned as an NFT by Ali Husam Shakir AlKaraawi. You can have shares of it by participating to the project.
+<h1 align="center">AUTODOX</h1>
+<h3 align="center">SAVES YOUR TIME</h3>
+
+
+* this project is owned as an NFT by Ali Husam Shakir AlKaraawi. You can have shares of it by participating to the project. As you own a share the smartcontract will automaticly distribute the earning of autodox by the value of the share.
 
 <img align="left" src="readmeFiles/logo2.png" height="100%">
-AUTODOX or AUTODOX not decieded about the name yet.
+AUTODOX
 
 This app is Notion.so clone, roamresearch clone and obsidian clone. The main purpose of this app is not to just clone these note taking apps but to make an all in one **Open source note taking app** with automation features.
 
@@ -31,12 +34,28 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 
 6. **Privacy** : You will have the option to upload your data on the block-chain internet computer in order to share it with other people.
  
-7. **benefits and vision** :
-8.1 First of all, i believe this new system will replace microsoft office and apple iwork.
-9.2 Users, will have safe place to store their data on the blockchain on IC. 6.3 Users can do whatever they can imagine with all these customizations.
-10.4 there are more feature that I will work one like live-time connection so you can share your documents and update them in real time. or like page components so you can have an entire page as a spreadsheet.
+## Benefits and vision
+- First of all, i believe this new system will replace microsoft office and apple iwork.
+- Users, will have safe place to store their data on the blockchain on IC.
+- Users can do whatever they can imagine with all these customizations.
+- there are more feature that I will work one like Real time data, so you can share your documents and update them in real time. or like page components so you can have an entire page as a spreadsheet.
+- Success: I belive autodox will be secceful because the market is already huge, if I just take all docs apps like evernotes, microsoft words and notion then I put all of their featres in one place, of course I will get at least few users.
+- Doablity: Because I am using rust and wasm everything became duable and easy, even the code editor. With rust I can exicute any program langauge seamlessly.
+- I also ran few **experiment** before building this project in order to reach to the ultmate way.
+    - [experiment 1](https://github.com/aliscie/autodox-tauri-react)
+    - [other experiment](https://github.com/aliscie/autodox2)
+    - [other experiment](https://github.com/aliscie/autdox)
+    - [notion clone](https://github.com/aliscie/Notion.so-clone)
+    - [second notion clone](https://github.com/aliscie/notion-clone-1)
+    - [Other experment](https://github.com/AlenSci/autodox-1)
+    - [experiment 2](https://github.com/aliscie/Learning-webstack-from-cloning-notion.so) 
+    - [experiment 3](https://github.com/AlenSci/autodox1) [also see demo](https://www.youtube.com/watch?v=zXdL4B73Rkc) [and this](https://www.youtube.com/playlist?list=PLZ54FkZk9dwGrJSxLIm4-NLvHlhyQKL6T)
+    - [experiment 4](https://github.com/AlenSci/autodox) 
+    - [experiment 5](https://github.com/aliscie/autodox-rust)
 
 
+
+## Development:
 - [Quick Start](https://smartcontracts.org/docs/quickstart/quickstart-intro.html)
 - [SDK Developer Tools](https://smartcontracts.org/docs/developers-guide/sdk-guide.html)
 - [Rust Canister Devlopment Guide](https://smartcontracts.org/docs/rust-guide/rust-intro.html)
