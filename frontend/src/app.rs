@@ -1,7 +1,5 @@
 use gloo::console::console;
 use yew::prelude::*;
-#[cfg(not(feature = "web"))]
-use crate::utils::{invoke, invoke_async};
 
 use yew_router::prelude::*;
 
@@ -24,7 +22,7 @@ pub fn app() -> Html {
     let x = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
     dispatch.reduce_mut(|r| {
-        r.push_vertex(
+        r.files.push_vertex(
             234,
             FileNode {
                 id: 234,
@@ -32,7 +30,7 @@ pub fn app() -> Html {
                 data: "File one".into(),
             },
         );
-        r.push_vertex(
+        r.files.push_vertex(
             235,
             FileNode {
                 id: 235,
@@ -40,7 +38,7 @@ pub fn app() -> Html {
                 data: "File tow".into(),
             },
         );
-        r.push_vertex(
+        r.files.push_vertex(
             225,
             FileNode {
                 id: 225,
@@ -50,9 +48,9 @@ pub fn app() -> Html {
         );
     });
     dispatch.reduce_mut(|r| {
-        r.push_edge(0, 234);
-        r.push_edge(234, 235);
-        r.push_edge(0, 225);
+        r.files.push_edge(0, 234);
+        r.files.push_edge(234, 235);
+        r.files.push_edge(0, 225);
     });
 
     html! {
