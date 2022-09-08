@@ -1,20 +1,17 @@
-use gloo::console::console;
-use yew::prelude::*;
-
-use yew_router::prelude::*;
-
-
-use crate::utils::{FileNode, FileTree};
-use yewdux::prelude::*;
-use crate::components::{TitleBar, TitleBarButton};
-use crate::router::*;
-
-use crate::components::TreeList;
 use editor::Editor;
-use yewdux::prelude::*;
+use gloo::console::console;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use web_sys::{Document, Element, MouseEvent, window};
+use yew::prelude::*;
 use yew_router::prelude::*;
-use web_sys::{window, Document, Element, MouseEvent};
-
+use yew_router::prelude::*;
+use yewdux::prelude::*;
+use yewdux::prelude::*;
+use web_sys::console::log_1;
+use crate::components::{TitleBar, TitleBarButton};
+use crate::components::TreeList;
+use crate::router::*;
+use crate::utils::{FileNode, FileTree};
 
 #[function_component(App)]
 pub fn app() -> Html {

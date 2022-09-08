@@ -62,7 +62,7 @@ impl FileTree {
                     .parent_element()
                     .unwrap()
                     .query_selector(".nested")
-                    .unwrap()
+                    .unwrap() //TODO if curr.parent_element().unwrap().query_selector(".nested").unwrap() != None {.unwrap().class_list().toggle("active");}
                     .unwrap()
                     .class_list()
                     .toggle("active");

@@ -7,7 +7,6 @@ use web_sys::{window, Element, MouseEvent, DragEvent};
 use yew::prelude::*;
 use yew_router::prelude::*;
 use wasm_bindgen::{UnwrapThrowExt, JsCast};
-
 use crate::router::Route;
 use yewdux::prelude::*;
 
@@ -22,11 +21,15 @@ pub struct FileComponentProps {
 
 #[function_component(FileComponent)]
 pub fn file_component(props: &FileComponentProps) -> Html {
+    log_1(&format!("render {:?}", "render only once").into()); // TODO why this rerender for every click .
+
     let display = use_state(|| "display: none;".to_string());
     let onmousedown = {
         let display = display.clone();
-        move |e: MouseEvent| {
-            // display.set("display: block".to_string());
+        move |_e: MouseEvent| {
+            if _e.which() == 3 {
+                display.set("display: block".to_string());
+            }
         }
     };
 
@@ -52,9 +55,23 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
     let ondragleave = {
         move |e: DragEvent| {
-        // background:none
+            // background:none
         }
     };
+    // TODO Be carefully previously the app freeze when I uncomment this?
+    //  it freeze after clicking 3 time son a file.
+
+    let doc = window().unwrap_throw().document().unwrap();
+    let x = display.clone();
+    let click_away_handler = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+        log_1(&format!("hide menue {:?}", &x).into()); // TODO watch console log this should not log when this is no menue
+        &x.set("display: none".to_string());
+    }) as Box<dyn FnMut(_)>);
+
+    if (*display).clone() == "display: block".to_string() {
+        let _ = &doc.query_selector("#app").unwrap().unwrap().add_event_listener_with_callback("click", &click_away_handler.as_ref().unchecked_ref());
+    }
+    click_away_handler.forget();
 
 
     html! {
@@ -76,8 +93,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 </div>
             </li>
         <div
-        // style={*display}
-         class={"dropdown-content"}>
+        style={(*display).clone()}
+        class={"dropdown-content"}>
         <a href="#">{"☁"}</a>
         <a href="#">{"🗑"}</a>
         <a href="#">{"👁"}</a>
