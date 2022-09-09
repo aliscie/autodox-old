@@ -64,13 +64,12 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let doc = window().unwrap_throw().document().unwrap();
     let x = display.clone();
     let click_away_handler = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-        log_1(&format!("hide menue {:?}", &x).into()); // TODO watch console log this should not log when this is no menue
-        &x.set("display: none".to_string());
+        if (*x).clone() == "display: block".to_string() {
+            &x.set("display: none".to_string());
+        }
     }) as Box<dyn FnMut(_)>);
 
-    if (*display).clone() == "display: block".to_string() {
-        let _ = &doc.query_selector("#app").unwrap().unwrap().add_event_listener_with_callback("click", &click_away_handler.as_ref().unchecked_ref());
-    }
+    let _ = &doc.query_selector("#app").unwrap().unwrap().add_event_listener_with_callback("click", &click_away_handler.as_ref().unchecked_ref());
     click_away_handler.forget();
 
 

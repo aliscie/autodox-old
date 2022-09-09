@@ -53,9 +53,7 @@ pub fn app() -> Html {
     html! {
         <BrowserRouter>
 
-        <div id = "app"
-        // onmousemove = { on_mouse_move() }
-        >
+        <div id = "app">
         { super::utils::get_titlebar( x) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
 
@@ -63,11 +61,10 @@ pub fn app() -> Html {
             <TreeList/>
         </ul>
         </aside>
-
-        <h2 contenteditable="true" class={"heading"}>
-          <Switch<Route> render={Switch::render(switch)} />
-          </h2>
-          <Editor/>
+            <h2 contenteditable="true" class={"editor_title heading"}>
+            <Switch<Route> render={Switch::render(switch)} />
+            </h2>
+      <Editor/>
 
 
         </div>

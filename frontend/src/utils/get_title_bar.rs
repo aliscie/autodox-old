@@ -21,9 +21,11 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if x.chars().count() > 1 {
             x.set("".to_string());
+            doc.query_selector(".editor_title").unwrap().unwrap().set_attribute("style", "margin-left:0px; width:100%");
             doc.query_selector(".text_editor_container").unwrap().unwrap().set_attribute("style", "margin-left:0px; width:100%");
         } else {
             x.set("width:250px".to_string());
+            doc.query_selector(".editor_title").unwrap().unwrap().set_attribute("style", "margin-left:250px; margin-right:2%; width:80%");
             doc.query_selector(".text_editor_container").unwrap().unwrap().set_attribute("style", "margin-left:250px; margin-right:2%; width:80%");
         }
     });
