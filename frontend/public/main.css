@@ -362,9 +362,12 @@ h2 {
 }
 
 .file_component {
-    cursor: context-menu;
     transition: 0.3s;
     border-radius: 5px;
+}
+
+.right_clickable {
+    cursor: context-menu;
 }
 
 .hovering:hover {
@@ -374,7 +377,6 @@ h2 {
 .drag_over {
     background: lightblue !important;
 }
-
 
 
 .dropbtn:hover, .dropbtn:focus {

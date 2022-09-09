@@ -56,18 +56,15 @@ pub fn editor() -> Html {
         }
     };
 
-
     html! {
     <span
     {onmousemove}
     contenteditable="true"
     class="text_editor_container"
     >
-
-        <div
-        class="text_editor"
-             >
-            {r#"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
+        <div class="text_editor">
+            <bold>{"text"}</bold>
+            <p>{r#"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
                 molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
                 numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
                 optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis
@@ -88,7 +85,7 @@ pub fn editor() -> Html {
                 modi minima sunt esse temporibus sint culpa, recusandae aliquam numquam
                 totam ratione voluptas quod exercitationem fuga. Possimus quis earum veniam
                 quasi aliquam eligendi, placeat qui corporis!
-                "#}
+                "#}</p>
         </div>
     </span>
     }

@@ -34,30 +34,48 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     };
 
 
-    let ondragstart = {
-        move |e: DragEvent| {
-            // opacity:0.5
-        }
-    };
+    let ondragstart: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        // TODO make
+        //  curr.style.add("opacity", "0.6")
+        //  in order to not to replace the old styles
+        curr.set_attribute("style", "opacity: 0.4");
+    });
 
-    let ondragend = {
-        move |e: DragEvent| {
-            // opacity:1
-        }
-    };
+    let ondragend: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        // TODO make
+        //  curr.style.remove("opacity")
+        //  in order to keep the old styles
+        curr.set_attribute("style", "opacity: 1");
+    });
 
-    let ondragenter = {
-        move |e: DragEvent| {
-            // background:lightblue
-        }
-    };
+    let ondragover: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        _e.prevent_default();
+    });
+
+    let ondragenter: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", "background: lightblue");
+    });
 
 
-    let ondragleave = {
-        move |e: DragEvent| {
-            // background:none
-        }
-    };
+    let ondragleave: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", "background: none");
+    });
+
+    let ondragend: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", "background: none");
+    });
+
+    let ondrop: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        _e.prevent_default();
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", "background: none"); // TODO this is not working?
+    });
+
     // TODO Be carefully previously the app freeze when I uncomment this?
     //  it freeze after clicking 3 time son a file.
 
@@ -76,6 +94,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     html! {
         <>
             <li
+                {ondragover}
+                {ondrop}
                 {ondragstart}
                 {ondragend}
                 {ondragenter}
