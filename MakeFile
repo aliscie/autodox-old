@@ -12,3 +12,6 @@ update:
 
 install_cli:
 	cargo install tauri-cli
+
+clean:
+	cargo clean

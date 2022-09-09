@@ -63,7 +63,12 @@ pub fn editor() -> Html {
     class="text_editor_container"
     >
         <div class="text_editor">
-            <bold>{"text"}</bold>
+            // TODO instead of  { 'value': 'bold text', 'attrs': {'bold': true} },
+            //  you MUST use { 'text': 'bold', 'attrs': {'style': font-weight: bold;} }
+            //  Because this will help reduce the amount of code required for rendering and conversion.
+            //  rendering mean: convert from the database to html
+            //  conversion: is to convert to html into the database
+            <span style="font-weight: bold;">{"bold text"}</span>
             <p>{r#"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
                 molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
                 numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium

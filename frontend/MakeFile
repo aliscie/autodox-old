@@ -10,5 +10,8 @@ kill:
 update:
 	cargo update
 
-install_cli:
-	cargo install tauri-cli
+
+clean:
+	rm -rf ~/.cargo/registry/index/*
+	rm -rf ~/.cargo/.package-cache
+	cargo clean

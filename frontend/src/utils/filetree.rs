@@ -77,7 +77,9 @@ impl FileTree {
 
         return html! {
         <>
-            <FileComponent class={format!("right_clickable file_component hovering {}",class_name)} onclick={handle_click} name={self.files.vertices.get(&start).unwrap().name.clone()}/>
+            <FileComponent
+            id={start}
+            class={format!("right_clickable file_component hovering {}",class_name)} onclick={handle_click} name={self.files.vertices.get(&start).unwrap().name.clone()}/>
 
             if let Some(nodes) = nodes {
                 { if has_children{

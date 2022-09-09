@@ -57,6 +57,9 @@ features = [
     "console",
     "DomTokenList", #for class_list
     "UiEvent",
+    "HtmlTextAreaElement",
+    "NamedNodeMap",
+    "Attr",
 ]
 
 [features]
