@@ -5,12 +5,6 @@
     transition: 0.3s;
 }
 
-.caret {
-    -webkit-user-select: none; /* Safari 3.1+ */
-    -moz-user-select: none; /* Firefox 2+ */
-    -ms-user-select: none; /* IE 10+ */
-    user-select: none;
-}
 
 .nested {
     opacity: 0;
@@ -31,22 +25,15 @@
 .crate_button {
     left: 0;
     top: 50%;
+    width: 20px;
     position: absolute;
     -webkit-transform: translateY(-50%);
     color: black;
     display: inline-block;
+    z-index: 999;
     transition: 0.3s;
 }
 
-.caret {
-    left: 0;
-    top: 50%;
-    position: absolute;
-    -webkit-transform: translateY(-50%);
-    color: black;
-    display: inline-block;
-    transition: 0.3s;
-}
 
 .caret-down {
     transition: 0.3s;

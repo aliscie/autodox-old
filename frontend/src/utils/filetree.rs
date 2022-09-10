@@ -8,7 +8,7 @@ use yew_router::prelude::*;
 use crate::router::Route;
 use yewdux::prelude::*;
 
-use crate::components::FileComponent;
+use crate::app_components::FileComponent;
 
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Store)]
@@ -53,8 +53,13 @@ impl FileTree {
         }
         let display = use_state(|| "".to_string());
         let _display = display.clone();
-        let handle_click: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+        
+        let onclickfile: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
             history.push(Route::File { id: start });
+        });
+        
+        let handle_click_toggle: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+            // history.push(Route::File { id: start });
             if has_children {
                 if _display.len() == 0 {
                     _display.set("active".to_string());
@@ -74,7 +79,8 @@ impl FileTree {
         <>
             <FileComponent
             id={start}
-            class={format!("right_clickable file_component hovering {}",class_name)} onclick={handle_click} name={self.files.vertices.get(&start).unwrap().name.clone()}/>
+            class={format!(" {}",class_name)}
+            {onclickfile} onclick={handle_click_toggle} name={self.files.vertices.get(&start).unwrap().name.clone()}/>
 
             if let Some(nodes) = nodes {
                 { if has_children{

@@ -1,5 +1,6 @@
 mod backend;
 mod components;
+mod app_components;
 mod extensions;
 mod test;
 mod utils;

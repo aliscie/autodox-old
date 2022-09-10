@@ -59,7 +59,11 @@ pub fn app() -> Html {
 
         <ul  id="myUL">
             <TreeList/>
-            <button style="width:100%">{"Add file +"}</button>
+            <buttom_buttons>
+                <button >{"Add file +."}</button>
+                <button >{"Market place."}</button>
+            </buttom_buttons>
+
         </ul>
         </aside>
             <h2 contenteditable="true" class={"editor_title heading"}>
