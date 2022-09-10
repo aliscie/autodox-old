@@ -22,6 +22,8 @@
     background: lightblue
 }
 
+
+
 .crate_button {
     left: 0;
     top: 50%;
@@ -30,16 +32,29 @@
     -webkit-transform: translateY(-50%);
     color: black;
     display: inline-block;
-    z-index: 999;
+    z-index: 299;
     transition: 0.3s;
 }
 
+
+
+.create_file {
+    right: 0;
+    top: 50%;
+    width: 20px;
+    position: absolute;
+    -webkit-transform: translateY(-50%);
+    color: black;
+    display: inline-block;
+    z-index: 299;
+    transition: 0.3s;
+}
 
 .caret-down {
     transition: 0.3s;
     -ms-transform: rotate(90deg); /* IE 9 */
     -webkit-transform: translateY(-50%) rotate(90deg); /* Safari */
-' transform: rotate(90 deg);
+    ' transform: rotate(90 deg);
 }
 
 .dragging_over {

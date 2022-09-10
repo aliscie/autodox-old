@@ -33,7 +33,7 @@ pub fn menu(props: &MenuProps) -> Html {
 
     html! {
     <div
-        style={format!("z-index: -1; {}", _display)}
+        style={format!("z-index: 99; {}", _display)}
         class={"dropdown-content"}
     >
         <a href="#"><i class="gg-software-upload"/>{"Share."}</a>

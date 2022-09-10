@@ -99,8 +99,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     html! {
-        <div
-        style="position: relative; width:100%">
+        <div>
             // if firts_file{
             //     <div
             //         ondrop={ondrop_b}
@@ -108,30 +107,31 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             //         ondragleave={ondragleave_b}
             //         style="width: 100%; height: 5px; background:red; opacity:0;"/>
             // }
+            <div style="position: relative; width:100%">
+                    {if props.class.contains("caret"){
+                        html!{<button class={format!("{} crate_button",(*caret))} onmouseup={toggle_caret} onclick = { props.onclick.clone() } ><span class={format!("caret {}",(*caret).clone())}>{"➤"}</span></button>}
+                    } else{ html!{} }
+                    }
 
-            {if props.class.contains("caret"){
-                html!{<button class={format!("{} crate_button",(*caret))} onmouseup={toggle_caret} onclick = { props.onclick.clone() } ><span class={format!("caret {}",(*caret).clone())}>{"➤"}</span></button>}
-            } else{ html!{} }
-            }
+                    <li
+                        {ondrop}
+                        {ondragenter}
+                        {ondragleave}
+                        {ondragstart}
+                        {ondragend}
+                        {onmousedown}
+                        onclick={props.onclickfile.clone()}
+                        draggable="true"
+                        class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(), (*is_enter).clone(), "")}
+                        style="margin-left: 30px; flex: 1 1 auto; white-space: nowrap; min-width: 0px; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;"
+                        >
+                        <div class="notranslate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {props.name.clone()}
+                        </div>
+                        <span class="create_file" >{"+"}</span>
+                    </li>
 
-            <li
-                {ondrop}
-                {ondragenter}
-                {ondragleave}
-                {ondragstart}
-                {ondragend}
-                {onmousedown}
-                onclick={props.onclickfile.clone()}
-                draggable="true"
-                class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(), (*is_enter).clone(), "")}
-                style="margin-left: 30px; flex: 1 1 auto; white-space: nowrap; min-width: 0px; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;"
-                >
-                <div class="notranslate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    {props.name.clone()}
-                </div>
-                <span style="right:0; top:50%; position: absolute; -webkit-transform: translateY(-50%)" >{"+"}</span>
-            </li>
-
+            </div>
 
         <div
                 ondrop={ondrop_b}
