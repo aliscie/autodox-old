@@ -1,0 +1,7 @@
+.is_dragging {
+    opacity: 0.4
+}
+
+.is_drag_over {
+    background: lightblue;
+}

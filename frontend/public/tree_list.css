@@ -1,11 +1,3 @@
-ul, #myUL {
-    list-style-type: none;
-    transition: 0.3s;
-}
-
-/*#myUL ul {*/
-/*    dra: true;*/
-/*}*/
 
 #myUL {
     margin: 10px;
@@ -20,34 +12,57 @@ ul, #myUL {
     user-select: none;
 }
 
-.caret::before {
-    content: "⪢";
-    color: black;
-    display: inline-block;
-    margin-right: 6px;
-    transition: 0.3s;
-}
-
-.caret-down::before {
-    transition: 0.3s;
-    -ms-transform: rotate(90deg); /* IE 9 */
-    -webkit-transform: rotate(90deg); /* Safari */
-' transform: rotate(90 deg);
-}
-
 .nested {
-    display: none;
-    visibility: hidden;
     opacity: 0;
-    transition: display 0.3s, visibility 0s, opacity 0.3s linear;
+    height: 0;
+    transition: 0.3s;
 }
 
 .active {
-    display: block;
-    visibility: visible;
     opacity: 1;
+    height: 20px;
+    transition: 0.3s;
 }
 
 .dropdown-content a:hover {
     background: lightblue
+}
+
+.crate_button {
+    left: 0;
+    top: 50%;
+    position: absolute;
+    -webkit-transform: translateY(-50%);
+    color: black;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.caret {
+    left: 0;
+    top: 50%;
+    position: absolute;
+    -webkit-transform: translateY(-50%);
+    color: black;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.caret-down {
+    transition: 0.3s;
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -webkit-transform: translateY(-50%) rotate(90deg); /* Safari */
+' transform: rotate(90 deg);
+}
+
+.dragging_over {
+    background: lightblue
+}
+
+.dragged {
+    opacity: 0.4;
+}
+
+.drag_under {
+    transition: 0.3s;
 }

@@ -23,9 +23,11 @@ pub struct FileComponentProps {
 #[function_component(FileComponent)]
 pub fn file_component(props: &FileComponentProps) -> Html {
     let doc = window().unwrap_throw().document().unwrap();
+    let is_dragged = use_state(|| "".to_string());
+    let is_enter = use_state(|| "".to_string());
 
-    log_1(&format!("render {:?}", "render only once").into()); // TODO why this rerender for every click .
     let display = use_state(|| "display: none;".to_string());
+    let caret = use_state(|| "".to_string());
     let id = props.id.clone().to_string();
 
     let onmousedown = {
@@ -36,56 +38,45 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             }
         }
     };
+    let _caret = caret.clone();
+    let toggle_caret = {
+        let display = display.clone();
+        move |_e: MouseEvent| {
+            if _caret.len()==0{
+                _caret.set("caret-down".to_string())
+            } else{
+                _caret.set("".to_string())
+            }
+        }
+    };
 
-
+    let _is_dragged = is_dragged.clone();
     let ondragstart: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr: Element = _e.target_unchecked_into();
-        // TODO make
-        //  curr.style.add("opacity", "0.6")
-        //  in order to not to replace the old styles
-        // _e.data_transfer().unwrap().set_data("dragged_id", &id);
-        curr.set_attribute("style", "opacity: 0.4");
+        _is_dragged.set("dragged".to_string())
     });
 
+    let _is_dragged = is_dragged.clone();
     let ondragend: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr: Element = _e.target_unchecked_into();
-        // TODO make
-        //  curr.style.remove("opacity")
-        //  in order to keep the old styles
-        curr.set_attribute("style", "opacity: 1");
+        _is_dragged.set("".to_string())
     });
 
-    let ondragover: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _e.prevent_default();
-        // let curr: Element = _e.target_unchecked_into();
-    });
-
+    let _is_enter = is_enter.clone();
     let ondragenter: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        // use web_sys::Element;
-        let curr = _e.target_unchecked_into::<Element>();
-        let curr: Element = _e.target_unchecked_into();
-        // TODO
-        //  curr.style().set_background("lightblue");
-        curr.set_attribute("style", "background: lightblue");
+        _is_enter.set("dragging_over".to_string());
     });
 
-
+    let _is_enter = is_enter.clone();
     let ondragleave: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style", "background: none");
+        _is_enter.set("".to_string());
     });
 
-    let ondragend: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style", "background: none");
-    });
     let _doc = &doc.clone();
     let ondrop: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _e.prevent_default();
         use web_sys::Element;
         let elem = _e.target_unchecked_into::<Element>();
         log_1(&format!("dragged_id {:?}", elem).into());
-        elem.set_attribute("style", "background: none");
+        // elem.set_attribute("style", "background: none");
     });
 
     // TODO Be carefully previously the app freeze when I uncomment this?
@@ -103,40 +94,72 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     click_away_handler.forget();
 
 
-    html! {
-        <>
-            <li
-            ondragover={ondragover.clone()}
-            ondrop={ondrop.clone()}
-            ondragenter={ondragenter.clone()}
-            ondragleave={ondragleave.clone()}
+    let ondragenter_b: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr = _e.target_unchecked_into::<Element>();
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", "width: 100%; height: 20px; background:lightblue;");
+    });
 
+
+    let ondrop_b: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        _e.prevent_default();
+        use web_sys::Element;
+        let curr = _e.target_unchecked_into::<Element>();
+        curr.set_attribute("style", "width: 100%; height: 5px; background:red; opacity:0;");
+    });
+
+
+    let ondragleave_b: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", "width: 100%; height: 5px; background:red; opacity:0;");
+    });
+
+    html! {
+        <div class={format!("active {} {} {}",(*is_dragged).clone(), (*is_enter).clone(), props.class.clone())}  style="position: relative; width:100%">
+            // if firts_file{
+            //     <div
+            //         ondrop={ondrop_b}
+            //         ondragenter={ondragenter_b}
+            //         ondragleave={ondragleave_b}
+            //         style="width: 100%; height: 5px; background:red; opacity:0;"/>
+            // }
+
+            {if props.class.contains("caret"){
+                html!{<button class="crate_button" onmouseup={toggle_caret} onclick = { props.onclick.clone() } ><span class={format!("caret {}",(*caret).clone())}>{"➤"}</span></button>}
+            } else{ html!{} }
+            }
+
+            <li
+                {ondrop}
+                {ondragenter}
+                {ondragleave}
                 {ondragstart}
                 {ondragend}
                 {onmousedown}
                 draggable="true"
-                class={props.class.clone()}
-                onclick = { props.onclick.clone() }
-                style="flex: 1 1 auto; white-space: nowrap; min-width: 0px; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;"
+
+                style="margin-left: 30px; flex: 1 1 auto; white-space: nowrap; min-width: 0px; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;"
                 >
                 <div class="notranslate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     {props.name.clone()}
                 </div>
             </li>
-            <div
-                ondragover={ondragover.clone()}
-                ondrop={ondrop.clone()}
-                ondragenter={ondragenter.clone()}
-                ondragleave={ondragleave.clone()}
-                style="width: 100%; height: 2px;"/> // handle drag bellow
+        <button style="right:0; top:50%; position: absolute; -webkit-transform: translateY(-50%)" >{"+"}</button>
+
+        <div
+                ondrop={ondrop_b}
+                ondragenter={ondragenter_b}
+                ondragleave={ondragleave_b}
+                class="drag_under"
+                style="width: 100%; height: 20px;"/>
 
         <div
         style={(*display).clone()}
         class={"dropdown-content"}>
-        <a href="#">{"☁"}</a>
-        <a href="#">{"🗑"}</a>
-        <a href="#">{"👁"}</a>
+        <a href="#"><i class="gg-software-upload"/>{"Share."}</a>
+        <a href="#"><i class="gg-trash"/>{"Delete."}</a>
+        <a href="#"><i class="gg-eye-alt"></i>{"Who can see."}</a>
         </div>
-    </>
+    </div>
     }
 }

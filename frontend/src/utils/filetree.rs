@@ -11,10 +11,9 @@ use yewdux::prelude::*;
 use crate::components::FileComponent;
 
 
-
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Store)]
 pub struct FileTree {
-    pub files : Tree<u64, FileNode>,
+    pub files: Tree<u64, FileNode>,
 }
 
 impl Default for FileTree {
@@ -35,7 +34,7 @@ impl Default for FileTree {
 impl FileTree {
     pub fn new() -> Self {
         Self {
-            files : Tree::new(),
+            files: Tree::new(),
         }
     }
     pub fn to_html(&self, start: u64) -> Html {
@@ -52,20 +51,16 @@ impl FileTree {
                 class_name = "caret"
             }
         }
-
+        let display = use_state(|| "".to_string());
+        let _display = display.clone();
         let handle_click: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
             history.push(Route::File { id: start });
             if has_children {
-                let curr: Element = e.target_unchecked_into();
-                let _ = curr.class_list().toggle("caret-down");
-                let _ = &curr
-                    .parent_element()
-                    .unwrap()
-                    .query_selector(".nested")
-                    .unwrap() //TODO if curr.parent_element().unwrap().query_selector(".nested").unwrap() != None {.unwrap().class_list().toggle("active");}
-                    .unwrap()
-                    .class_list()
-                    .toggle("active");
+                if _display.len() == 0 {
+                    _display.set("active".to_string());
+                } else {
+                    _display.set("".to_string());
+                }
             }
         });
 
@@ -84,7 +79,7 @@ impl FileTree {
             if let Some(nodes) = nodes {
                 { if has_children{
 
-                html!{<ul class = "nested">
+                html!{<ul class ={format!("nested {}", (*display).clone())}>
                     { nodes.into_iter().map(|id| self.to_html(*id)).collect::<Html>()}
                 </ul>}
             } else{ html!{"+ Create new file."}}}

@@ -34,9 +34,13 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let web_and_desk_title_bar: Html = html! {
     <>
         <div class="buttons">
-        <TitleBarButton onclick={toggle_asidebar} button_type="toggle">
-        {if is_expanded > 1{"X"} else{"="}}
-        </TitleBarButton>
+        <button style="width: 25px; font-size:1px;" onclick={toggle_asidebar} button_type="toggle">
+        {if is_expanded > 1{
+            html!{<i class="gg-close"></i>}
+        } else{
+            html!{<i class="gg-menu"></i>}
+        }}
+        </button>
         </div>
     </>
      };
@@ -64,7 +68,7 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
             <TitleBar title={current_directory}>
             {web_and_desk_title_bar}
             <div style="position:fixed;right:200px;">
-                <button>{"Download"}</button>
+                <button><i class="gg-software-download"></i>{"Download"}</button>
             </div>
 
             </TitleBar>

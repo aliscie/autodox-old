@@ -59,6 +59,7 @@ pub fn app() -> Html {
 
         <ul  id="myUL">
             <TreeList/>
+            <button style="width:100%">{"Add file +"}</button>
         </ul>
         </aside>
             <h2 contenteditable="true" class={"editor_title heading"}>
