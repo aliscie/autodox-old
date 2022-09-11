@@ -128,8 +128,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                         <div class="notranslate" style="white-space: nowrap;">
                             {props.name.clone()}
                         </div>
-                        <button class="create_file" >{"+"}</button>
                     </li>
+                    <button class="create_file" >{"+"}</button>
 
             </div>
 
