@@ -8,7 +8,8 @@ use yew_router::prelude::*;
 #[cfg(not(feature = "web"))]
 use shared::invoke;
 
-use crate::components::{TitleBar, TitleBarButton, CurrDirectory};
+use crate::components::{TitleBar, TitleBarButton, CurrDirectory, Avatar};
+use crate::app_components::{TitleAvatarComponent};
 
 use web_sys::{window, Document, Element, MouseEvent};
 
@@ -31,49 +32,30 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     });
 
     let current_directory = html! {<CurrDirectory/>};
-    let web_and_desk_title_bar: Html = html! {
-    <>
-        <div class="buttons">
-        <button style="width: 25px; font-size:1px;" onclick={toggle_asidebar} button_type="toggle">
-        {if is_expanded > 1{
-            html!{<i class="gg-close"></i>}
-        } else{
-            html!{<i class="gg-menu"></i>}
-        }}
-        </button>
-        </div>
-    </>
-     };
-
-    cfg_if::cfg_if! {
-        if #[cfg(not(feature = "web"))]{
-        // let toggle_maximize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        //     let _ = invoke::<String>("maximize_window".into(), None).map_err(|e| alert(&e));
-        // });
-        // let toggle_minimize: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        //     let _ = invoke::<String>("minimize_window".into(), None).map_err(|e| alert(&e));
-        // });
-        // let close_window: Callback<MouseEvent> = Callback::from(move |_: MouseEvent| {
-        //     let _ = invoke::<String>("close_window".into(), None).map_err(|e| alert(&e));
-        // });
-
-            return html!{
-                <TitleBar title={current_directory}>
-                {web_and_desk_title_bar}
-                </TitleBar>
-            }
-        }
-        else {
-            return html!{
-            <TitleBar title={current_directory}>
-            {web_and_desk_title_bar}
-            <div style="position:fixed;right:200px;">
-                <button><i class="gg-software-download"></i>{"Download"}</button>
+    let mut is_web = true;
+    #[cfg(not(feature = "web"))] {
+        is_web = false;
+    }
+    return html! {
+        <TitleBar
+        style={format!("{}",if is_web==false {"margin-left: 75px"} else {""})}
+         title={current_directory}>
+            <div class="buttons">
+            <button style="width: 25px; font-size:1px;" onclick={toggle_asidebar} button_type="toggle">
+            {if is_expanded > 1{
+                html!{<i class="gg-close"></i>}
+            } else{
+                html!{<i class="gg-menu"></i>}
+            }}
+            </button>
             </div>
 
-            </TitleBar>
-            }
-        }
-    }
+            <div style="position:fixed;right:8%;">
+                {if is_web { html!{<button><i class="gg-software-download"></i>{"Download"}</button>} } else {html!{""}}}
+                <TitleAvatarComponent/>
+            </div>
+
+        </TitleBar >
+    };
 }
 

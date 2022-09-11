@@ -43,11 +43,20 @@ pub fn app() -> Html {
                 data: "File three".into(),
             },
         );
+        r.files.push_vertex(
+            226,
+            FileNode {
+                id: 226,
+                name: "File4".into(),
+                data: "File 4".into(),
+            },
+        );
     });
     dispatch.reduce_mut(|r| {
         r.files.push_edge(0, 234);
         r.files.push_edge(234, 235);
         r.files.push_edge(0, 225);
+        r.files.push_edge(0, 226);
     });
 
     html! {
@@ -59,10 +68,10 @@ pub fn app() -> Html {
 
         <ul  id="myUL">
             <TreeList/>
-            <buttom_buttons>
-                <button >{"Add file +."}</button>
-                <button >{"Market place."}</button>
-            </buttom_buttons>
+            <bottom_buttons>
+                <button >{"Add file +"}</button>
+                <button >{"Market place"}</button>
+            </bottom_buttons>
 
         </ul>
         </aside>

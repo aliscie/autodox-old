@@ -123,12 +123,12 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                         onclick={props.onclickfile.clone()}
                         draggable="true"
                         class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(), (*is_enter).clone(), "")}
-                        style="margin-left: 30px; flex: 1 1 auto; white-space: nowrap; min-width: 0px; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;"
+                        style="margin-left: 30px; min-width: 0px; align-items: center;"
                         >
-                        <div class="notranslate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <div class="notranslate" style="white-space: nowrap;">
                             {props.name.clone()}
                         </div>
-                        <span class="create_file" >{"+"}</span>
+                        <button class="create_file" >{"+"}</button>
                     </li>
 
             </div>
@@ -138,10 +138,15 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 ondragenter={ondragenter_b}
                 ondragleave={ondragleave_b}
                 class="drag_under"
-                style="width: 100%; height: 20px; background: red; opacity: 0"/>
+                style="width: 100%; height: 5px; background: red; opacity: 0;"/>
 
 
-        <Menu {display}/>
+        <Menu
+        items={vec![
+        html! {<><i class="gg-software-upload"/>{"Share."}</>},
+        html! {<><i class="gg-software-upload"/>{"Share."}</>}
+        ]}
+        {display}/>
     </div>
     }
 }

@@ -25,3 +25,7 @@ pub use directory::CurrDirectory;
 
 mod menu;
 pub use menu::Menu;
+
+
+mod avatar;
+pub use avatar::Avatar;

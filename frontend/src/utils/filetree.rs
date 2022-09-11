@@ -85,7 +85,7 @@ impl FileTree {
             if let Some(nodes) = nodes {
                 { if has_children{
 
-                html!{<ul class ={format!("nested {}", (*display).clone())}>
+                html!{<ul  class ={format!("nested {}", (*display).clone())}>
                     { nodes.into_iter().map(|id| self.to_html(*id)).collect::<Html>()}
                 </ul>}
             } else{ html!{"+ Create new file."}}}

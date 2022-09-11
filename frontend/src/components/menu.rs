@@ -9,6 +9,7 @@ use crate::router::Route;
 #[derive(PartialEq, Properties)]
 pub struct MenuProps {
     pub display: UseStateHandle<bool>,
+    pub items:  Vec<Html>,
 }
 
 
@@ -36,9 +37,14 @@ pub fn menu(props: &MenuProps) -> Html {
         style={format!("z-index: 99; {}", _display)}
         class={"dropdown-content"}
     >
-        <a href="#"><i class="gg-software-upload"/>{"Share."}</a>
-        <a href="#"><i class="gg-trash"/>{"Delete."}</a>
-        <a href="#"><i class="gg-eye-alt"></i>{"Who can see."}</a>
+        {
+            props.items.clone().into_iter().map(|item| {
+                html!{
+                <a href="#">{item}</a>
+                }
+            }).collect::<Html>()
+        }
+
     </div>
      }
 }

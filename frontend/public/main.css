@@ -224,13 +224,11 @@ aside {
     font-size: 20px;
 }
 
-buttom_buttons {
+bottom_buttons {
     width: 100%;
-    bottom: 10px;
-    position: absolute;
 }
 
-buttom_buttons button {
+bottom_buttons button {
     display: block;
     width: 100%;
 }
@@ -400,7 +398,7 @@ h2 {
     min-width: 100px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 300;
+    z-index: 400;
 }
 
 

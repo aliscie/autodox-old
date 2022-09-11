@@ -58,8 +58,7 @@ pub fn curr_directory() -> Html {
         <span class="hovering file_component">
         <Switch<Route> render={Switch::render(switch)} />
         </span>
-
-        <button style="cursor: alias; margin-left:5px;">{"⤿"}</button>
+        <button style="width: 35px"><i class="gg-share"></i></button>
     </>
     }
 }

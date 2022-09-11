@@ -25,6 +25,7 @@
 
 
 .crate_button {
+    color: gray;
     left: 0;
     top: 50%;
     width: 20px;
@@ -32,7 +33,6 @@
     -webkit-transform: translateY(-50%);
     color: black;
     display: inline-block;
-    z-index: 299;
     transition: 0.3s;
 }
 
