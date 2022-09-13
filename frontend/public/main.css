@@ -1,13 +1,26 @@
-.light-mode {
-    --color: rgb(12, 0, 0);
-    --main-color: #dedede;
-    /* violet */
-    --primary-color: rgb(73, 27, 255);
+@property --rotate {
+    syntax: "<angle>";
+    initial-value: 132deg;
+    inherits: false;
+}
 
-    /* white */
+:root {
+    --background: rgb(255, 255, 255);
+    --color: rgb(0, 0, 0);
+    --main-color: #a4a4a4;
+    --primary-color: rgb(109, 109, 109);
     --text-color: black;
+    --card-height: 65vh;
+    --card-width: calc(var(--card-height) / 1.5);
+    --bg-image: url('https://images.unsplash.com/photo-1538370965046-79c0d6907d47?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80');
+}
 
-    --ground: #d5d5d5;
+.night-mod {
+    --background: rgb(0, 0, 0);
+    --color: rgb(219, 219, 219);
+    --main-color: #5d5d5d;
+    --primary-color: rgb(196, 196, 196);
+    --text-color: white;
 }
 
 /* ©2015 Johannes Jakob
@@ -24,10 +37,11 @@ a {
 /* ©2015 Johannes Jakob
    Made with <3 in Germany */
 
-body {
-    background: #ecf0f1;
-    color: rgba(var(--color), 1);
+#app {
+    background: var(--background);
+    color: var(--color);
     font-family: HelveticaNeue, 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
+    transition: 0.5s;
 }
 
 /* window BEGIN */
@@ -123,16 +137,6 @@ a {
     border: 1px solid rgb(147, 55, 150);
 }
 
-.toggle {
-    background: rgb(143, 143, 143);
-}
-
-
-.toggle:active {
-    background: rgb(143, 143, 143);
-    border: 1px solid rgb(143, 143, 143);
-}
-
 
 .close {
     background: #ff5c5c;
@@ -209,12 +213,12 @@ h3 {
 aside {
     overflow: hidden;
     width: 0px;
-    top: 25px;
+    top: 35px;
     margin: 0px;
     position: fixed;
     bottom: 0;
 
-    background-color: #e2e2e2 !important;
+    background: #e2e2e2 !important;
     z-index: 299;
     box-shadow: 13px 0px 20px #acacac;
     transition: 0.5s;
@@ -306,7 +310,7 @@ h2 {
         float: left;
         bottom: 0;
 
-        background-color: #e2e2e2 !important;
+        background: #e2e2e2 !important;
         z-index: 299;
         box-shadow: 13px 0px 20px #acacac;
         transition: 0.5s;
@@ -374,7 +378,7 @@ h2 {
 }
 
 .hovering:hover {
-    background-color: lightgray;
+    background: lightgray;
 }
 
 .drag_over {
@@ -383,7 +387,7 @@ h2 {
 
 
 .dropbtn:hover, .dropbtn:focus {
-    background-color: #2980B9;
+    background: #2980B9;
 }
 
 .dropdown {
@@ -394,7 +398,7 @@ h2 {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f1f1f1;
+    background: #f1f1f1;
     min-width: 100px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -419,7 +423,7 @@ i {
 }
 
 .dropdown button:hover {
-    background-color: #ddd;
+    background: #ddd;
 }
 
 .show {
@@ -428,18 +432,41 @@ i {
 
 
 button {
+    border: none;
     padding: 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+
     border-radius: 5px;
     margin-left: 5px;
-    border: none;
-    background-color: rgba(195, 195, 195, 0.3);
+    background: rgba(195, 195, 195, 0.3);
     color: black;
-    text-decoration: none;
     height: 30px;
     transition: all 0.4s ease-in-out;
 }
 
 button:hover {
-    background-color: rgba(195, 195, 195, 0.7);
+    background: rgba(195, 195, 195, 0.7);
 
+}
+
+.btn {
+    border: none;
+    color: white;
+    padding: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: grab;
+}
+
+.btn:hover {
+    background: var(--primary-color);
 }

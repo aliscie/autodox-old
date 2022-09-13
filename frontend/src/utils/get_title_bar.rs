@@ -15,9 +15,20 @@ use web_sys::{window, Document, Element, MouseEvent};
 
 
 pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
+    let light_mod = use_state(|| true);
+
+
     let is_expanded = x.clone().chars().count();
     let doc = window().unwrap_throw().document().unwrap_throw();
     let current_directory = html! {<CurrDirectory/>};
+
+
+    let _light_mod = light_mod.clone();
+    let _doc = doc.clone();
+    let handle_light_mod: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+        _doc.query_selector("#app").unwrap().unwrap().class_list().toggle("night-mod");
+        _light_mod.set(!(*_light_mod));
+    });
 
     let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if x.chars().count() > 1 {
@@ -36,25 +47,41 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     #[cfg(not(feature = "web"))] {
         is_web = false;
     }
+
+    let right_content: Html = html! {
+         <>
+            {if is_web { html!{<span class="btn" ><i class="gg-software-download"></i>{"Download"}</span>} } else {html!{""}}}
+                <span
+                class="btn"
+                 onclick={handle_light_mod}
+                 style="height: 30px; width: 30px;"
+                 >
+                    <i class={
+                        format!("{}",
+                            if (*light_mod).clone() {"gg-moon"} else {"gg-sun"}
+                        )
+                    }></i>
+                </span>
+                <TitleAvatarComponent/>
+
+                <span class="btn">
+                    <i class="gg-more-vertical-alt"></i>
+                </span>
+         </>
+         };
     return html! {
         <TitleBar
-        style={format!("{}",if is_web==false {"margin-left: 75px"} else {""})}
-         title={current_directory}>
-            <div class="buttons">
-            <button style="width: 25px; font-size:1px;" onclick={toggle_asidebar} button_type="toggle">
+            style={format!("{}",if is_web==false {"padding-left: 75px"} else {""})}
+            title={current_directory}
+            {right_content}
+         >
+            <li class="bnt active" onclick={toggle_asidebar} button_type="toggle">
             {if is_expanded > 1{
                 html!{<i class="gg-close"></i>}
             } else{
                 html!{<i class="gg-menu"></i>}
             }}
-            </button>
-            </div>
-
-            <div style="position:fixed;right:8%;">
-                {if is_web { html!{<button><i class="gg-software-download"></i>{"Download"}</button>} } else {html!{""}}}
-                <TitleAvatarComponent/>
-            </div>
-
+            </li>
         </TitleBar >
     };
 }

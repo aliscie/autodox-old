@@ -9,7 +9,7 @@ use crate::router::Route;
 #[derive(PartialEq, Properties)]
 pub struct MenuProps {
     pub display: UseStateHandle<bool>,
-    pub items:  Vec<Html>,
+    pub items: Vec<Html>,
 }
 
 
@@ -28,13 +28,14 @@ pub fn menu(props: &MenuProps) -> Html {
     }) as Box<dyn FnMut(_)>);
 
     let doc = window().unwrap_throw().document().unwrap();
-    let _ = &doc.query_selector("#app").unwrap().unwrap().add_event_listener_with_callback("click", &click_away_handler.as_ref().unchecked_ref());
+    let _ = &doc.query_selector("#app").unwrap().unwrap().add_event_listener_with_callback("mousedown", &click_away_handler.as_ref().unchecked_ref());
     click_away_handler.forget();
-    let _display =  if *props.display {"display: block"} else {"display: none"};
+    let _display = if *props.display { "display: block" } else { "display: none" };
+
 
     html! {
     <div
-        style={format!("z-index: 99; {}", _display)}
+        style={format!(" {}", _display)}
         class={"dropdown-content"}
     >
         {

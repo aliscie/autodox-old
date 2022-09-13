@@ -1,8 +1,8 @@
 .avatar {
-  vertical-align: middle;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
 }
 
 .active-icon {
@@ -13,4 +13,84 @@
     border-radius: 50%;
     right: 0px;
     border: 1px solid white;
-  }
+}
+
+.main_avatar:hover {
+
+}
+
+
+
+
+
+/*------------------------------------------------------------  */
+:root{
+  --text-shadow: 0 0 10px rgb(0,0,0,0.25);
+}
+
+*{
+  box-sizing: border-box;
+}
+
+.right-container{
+  display: flex;
+  align-items:center;
+  gap: 0.5rem;
+
+}
+
+.right-container svg{
+    color: white;
+    height: 1.25rem;
+    width: 1.25rem;
+    text-shadow: var(--text-shadow);
+}
+
+.wrapper{
+  font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color: white;
+  font-size: 0.85rem;
+  position: relative;
+}
+
+.header__container{
+  height: 1.5rem;
+  display: flex;
+  align-items:center;
+  position: fixed;
+  top:0;
+  left:0;
+  background: rgb(40,40,40,0.25);
+  backdrop-filter: blur(15px);
+  width: 100%;
+  padding: 0 0.5rem;
+  display: flex;
+  align-items:center;
+  justify-content: space-between;
+}
+
+.logo{
+  height: 1rem;
+}
+
+li{
+  display: inline-block;
+  margin-left: 1rem;
+  cursor: pointer;
+  text-shadow: var(--text-shadow);
+  color: white;
+
+}
+
+li .active {
+    font-weight: 600;
+}
+
+nav{
+  display: flex;
+  align-items:center;
+}
+
+p{
+  text-shadow: var(--text-shadow);
+}

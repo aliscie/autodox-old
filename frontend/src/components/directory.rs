@@ -51,14 +51,17 @@ pub fn curr_directory() -> Html {
     html! {
     <>
         <span
-         class="hovering file_component">
+           class="hovering file_component">
         {"parent file"}
         </span>
         {"/"}
         <span class="hovering file_component">
-        <Switch<Route> render={Switch::render(switch)} />
+           <Switch
+           <Route>
+           render={Switch::render(switch)} />
         </span>
         <button style="width: 35px"><i class="gg-share"></i></button>
+
     </>
     }
 }

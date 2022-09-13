@@ -1,15 +1,14 @@
 use yew::prelude::*;
 use crate::components::{Menu, Avatar};
+use web_sys::console::log_1;
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
     let display: UseStateHandle<bool> = use_state(|| false);
 
     let _display = display.clone();
-    let onmousedown: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        if _e.which() == 3{
+    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _display.set(true);
-        }
 
     });
     let items: Vec<Html> = vec![
@@ -18,11 +17,9 @@ pub fn title_avatar_component() -> Html {
     ];
 
     html! { <>
-
-    <span class="right_clickable" {onmousedown}>
+    <Menu  {items} {display}/>
+    <span class="right_clickable main_avatar" {onmouseup}>
     <Avatar />
     </span>
-
-    <Menu {items} {display}/>
     </>}
 }
