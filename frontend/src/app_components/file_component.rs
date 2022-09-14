@@ -9,7 +9,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::Menu;
+use crate::components::{Menu, DropUnder};
 use crate::router::Route;
 
 #[derive(PartialEq, Properties)]
@@ -83,43 +83,17 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
 
-    let ondragenter_b: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr = _e.target_unchecked_into::<Element>();
-        let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style", "height: 20px; opacity:1;");
-    });
-
-
-    let ondrop_b: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _e.prevent_default();
-        use web_sys::Element;
-        let curr = _e.target_unchecked_into::<Element>();
-        curr.set_attribute("style", " height: 5px; opacity:0;");
-        // TODO
-        //  get dragged item by dataframes
-        //  do reorder the item or move it from parent to parent
-        //     cases
-        //     drag from place to place
-        //     drag from paren to another paren
-        //     drag from root to a parent..
-    });
-
-
-    let ondragleave_b: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style", " height: 5px; opacity:0;");
-    });
-
     html! {
         <div>
         // TODO
-        //     if firts_file{
-        //         <div
-        //             ondrop={ondrop_b}
-        //             ondragenter={ondragenter_b}
-        //             ondragleave={ondragleave_b}
-        //             style="width: 100%; height: 5px; background:red; opacity:0;"/>
-        //     }
+        //  {if is_first_file {
+        //         html!{
+        //         <DropUnder
+        //             // {getdrop}
+        //             />
+        //         }
+        //  }}
+
         <div style="position: relative; width:100%; display: block;">
            {if props.class.contains("caret"){
            html!{<button class={format!("{} crate_button",(*caret))} onmouseup={toggle_caret} onclick = { props.onclick.clone() } ><span class={format!("caret {}",(*caret).clone())}>{"➤"}</span></button>}
@@ -143,14 +117,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            </li>
            <button class="create_file" >{"+"}</button>
         </div>
-
-        <div
-           ondrop={ondrop_b}
-           ondragenter={ondragenter_b}
-           ondragleave={ondragleave_b}
-           class="drag_under" />
-
-
+            <DropUnder />
            <Menu
            items={vec![
            html! {<><i class="gg-software-upload"/>{"Share."}</>},

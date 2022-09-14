@@ -27,3 +27,6 @@ pub use menu::Menu;
 
 mod avatar;
 pub use avatar::Avatar;
+
+mod drop_under;
+pub use drop_under::DropUnder;

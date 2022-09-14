@@ -77,7 +77,7 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
          >
             <li class="btn" onclick={toggle_asidebar}>
             {if is_expanded > 1{
-                html!{<i class="fa-duotone fa-x"></i>}
+                html!{<i class="fa-solid fa-x"></i>}
             } else{
                 html!{<i class="fa-solid fa-bars"></i>}
             }}
