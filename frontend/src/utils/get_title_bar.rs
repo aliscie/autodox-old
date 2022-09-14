@@ -8,7 +8,7 @@ use yew_router::prelude::*;
 #[cfg(not(feature = "web"))]
 use shared::invoke;
 
-use crate::components::{TitleBar, TitleBarButton, CurrDirectory, Avatar};
+use crate::components::{TitleBar, CurrDirectory, Avatar};
 use crate::app_components::{TitleAvatarComponent};
 
 use web_sys::{window, Document, Element, MouseEvent};
@@ -50,7 +50,7 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
 
     let right_content: Html = html! {
          <>
-            {if is_web { html!{<span class="btn" ><i class="gg-software-download"></i>{"Download"}</span>} } else {html!{""}}}
+            {if is_web { html!{<span class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>} } else {html!{""}}}
                 <span
                 class="btn"
                  onclick={handle_light_mod}
@@ -58,14 +58,14 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
                  >
                     <i class={
                         format!("{}",
-                            if (*light_mod).clone() {"gg-moon"} else {"gg-sun"}
+                            if (*light_mod).clone() {"fa-solid fa-moon"} else {"fa-solid fa-sun"}
                         )
                     }></i>
                 </span>
                 <TitleAvatarComponent/>
 
                 <span class="btn">
-                    <i class="gg-more-vertical-alt"></i>
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
                 </span>
          </>
          };
@@ -75,11 +75,11 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
             title={current_directory}
             {right_content}
          >
-            <li class="bnt active" onclick={toggle_asidebar} button_type="toggle">
+            <li class="btn" onclick={toggle_asidebar}>
             {if is_expanded > 1{
-                html!{<i class="gg-close"></i>}
+                html!{<i class="fa-duotone fa-x"></i>}
             } else{
-                html!{<i class="gg-menu"></i>}
+                html!{<i class="fa-solid fa-bars"></i>}
             }}
             </li>
         </TitleBar >

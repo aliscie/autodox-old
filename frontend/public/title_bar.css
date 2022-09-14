@@ -19,78 +19,61 @@
 
 }
 
-
-
+.main_avatar img {
+    height: 1.5rem;
+    width: 1.5rem
+}
 
 
 /*------------------------------------------------------------  */
-:root{
-  --text-shadow: 0 0 10px rgb(0,0,0,0.25);
+:root {
+    --text-shadow: 0 0 10px rgb(0, 0, 0, 0.25);
 }
 
-*{
-  box-sizing: border-box;
+* {
+    box-sizing: border-box;
 }
 
-.right-container{
-  display: flex;
-  align-items:center;
-  gap: 0.5rem;
+.right-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 
 }
 
-.right-container svg{
-    color: white;
-    height: 1.25rem;
-    width: 1.25rem;
+.right-container svg {
+    height: 1.5rem;
+    width: 1.5rem;
     text-shadow: var(--text-shadow);
 }
-
-.wrapper{
-  font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  color: white;
-  font-size: 0.85rem;
-  position: relative;
+.wrapper span{
+    height: 1.5rem;
 }
 
-.header__container{
-  height: 1.5rem;
-  display: flex;
-  align-items:center;
-  position: fixed;
-  top:0;
-  left:0;
-  background: rgb(40,40,40,0.25);
-  backdrop-filter: blur(15px);
-  width: 100%;
-  padding: 0 0.5rem;
-  display: flex;
-  align-items:center;
-  justify-content: space-between;
+
+.wrapper {
+    cursor: grab;
+    align-items: center;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 0.85rem;
+    position: relative;
 }
 
-.logo{
-  height: 1rem;
+.header__container {
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(40, 40, 40, 0.25);
+    backdrop-filter: blur(15px);
+    width: 100%;
+    padding: 0 0.5rem;
+    justify-content: space-between;
 }
 
-li{
-  display: inline-block;
-  margin-left: 1rem;
-  cursor: pointer;
-  text-shadow: var(--text-shadow);
-  color: white;
-
+.logo {
+    height: 1rem;
 }
 
-li .active {
-    font-weight: 600;
-}
-
-nav{
-  display: flex;
-  align-items:center;
-}
-
-p{
-  text-shadow: var(--text-shadow);
-}

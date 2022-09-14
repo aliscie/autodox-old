@@ -8,7 +8,7 @@ use yew_router::prelude::*;
 use yewdux::prelude::*;
 use yewdux::prelude::*;
 use web_sys::console::log_1;
-use crate::components::{TitleBar, TitleBarButton};
+use crate::components::{TitleBar};
 use crate::components::TreeList;
 use crate::router::*;
 use crate::utils::{FileNode, FileTree};
