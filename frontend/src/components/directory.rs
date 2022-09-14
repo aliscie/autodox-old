@@ -60,7 +60,7 @@ pub fn curr_directory() -> Html {
            <Route>
            render={Switch::render(switch)} />
         </span>
-        <button style="width: 35px"><i class="gg-share"></i></button>
+        <span class="btn" style="width: 35px"><i class="fa-solid fa-share"></i></span>
 
     </>
     }

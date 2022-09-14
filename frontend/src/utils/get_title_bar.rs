@@ -71,7 +71,7 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
          };
     return html! {
         <TitleBar
-            style={format!("{}",if is_web==false {"padding-left: 75px"} else {""})}
+            style={format!("{}",if is_web==false {"padding-left: 75px; cursor: grab;"} else {""})}
             title={current_directory}
             {right_content}
          >

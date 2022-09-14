@@ -12,8 +12,8 @@ pub fn title_avatar_component() -> Html {
 
     });
     let items: Vec<Html> = vec![
-        html! {<><i class="gg-eye-alt"></i>{"Who can find me"}</>},
-        html! {<><i class="gg-log-off"/>{"logout"}</>},
+        html! {<><i class="fa-solid fa-eye"></i>{"Who can find me"}</>},
+        html! {<><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</>},
     ];
 
     html! { <>
