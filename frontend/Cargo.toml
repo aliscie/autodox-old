@@ -60,6 +60,7 @@ features = [
     "HtmlTextAreaElement",
     "NamedNodeMap",
     "Attr",
+    "MouseEvent",
 ]
 
 [features]

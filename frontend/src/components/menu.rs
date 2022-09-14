@@ -3,39 +3,46 @@ use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen::prelude::Closure;
 use web_sys::{DragEvent, Element, MouseEvent, window};
 use yew::prelude::*;
-
+use web_sys::console::log_1;
 use crate::router::Route;
 
 #[derive(PartialEq, Properties)]
 pub struct MenuProps {
     pub display: UseStateHandle<bool>,
     pub items: Vec<Html>,
+    pub position: Option<UseStateHandle<String>>,
+
 }
 
 
 #[function_component(Menu)]
 pub fn menu(props: &MenuProps) -> Html {
-
-    // TODO Be carefully previously the app freeze when I uncomment this?
-    //  it freeze after clicking 3 time son a file.
+    let doc = window().unwrap_throw().document().unwrap();
 
 
-    let x = props.display.clone();
+
+    let _display = props.display.clone();
     let click_away_handler = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-        if (*x).clone() == true {
-            &x.set(false);
+        if (*_display).clone() == true {
+            &_display.set(false);
         }
     }) as Box<dyn FnMut(_)>);
 
-    let doc = window().unwrap_throw().document().unwrap();
+
     let _ = &doc.query_selector("#app").unwrap().unwrap().add_event_listener_with_callback("mousedown", &click_away_handler.as_ref().unchecked_ref());
     click_away_handler.forget();
     let _display = if *props.display { "display: block" } else { "display: none" };
+    let mut p = "".to_string();
 
+    // TODO 🔴
+    //     get mouse position from yewdux
+    if props.position.clone() != None {
+        p = props.position.clone().unwrap().to_string();
+    };
 
     html! {
     <div
-        style={format!(" {}", _display)}
+        style={format!("position: absolute; {}; {}", _display, p)}
         class={"dropdown-content"}
     >
         {

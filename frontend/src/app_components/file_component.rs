@@ -33,8 +33,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
     let _display = display.clone();
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        log_1(&format!("{:?}", "response_body").into());
         if _e.which() == 3 {
+
             _display.set(true);
         }
     });

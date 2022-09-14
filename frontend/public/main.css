@@ -360,11 +360,13 @@ h2 {
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 400;
+    transition: 0.3s;
 }
 
 
 .dropdown-content a:hover {
-    background: lightblue
+    background: lightblue;
+    transition: 0.3s;
 }
 
 .dropdown-content a {
