@@ -117,6 +117,21 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
 
+
+    let ondragleave_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr = _e.target_unchecked_into::<Element>();
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", "height: 20px; opacity:1;");
+    });
+
+    let ondrop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        _e.prevent_default();
+        use web_sys::Element;
+        let curr = _e.target_unchecked_into::<Element>();
+        curr.set_attribute("style", " height: 5px; opacity:0;");
+    });
+
+
     let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         let curr: Element = _e.target_unchecked_into();
         curr.set_attribute("style", " height: 5px; opacity:0;");
@@ -151,11 +166,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            onclick={props.onclickfile.clone()}
            draggable="true"
            class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(),(*is_enter).clone(), "")}
-           style="margin-left: 30px; min-width: 0px; align-items: center;"
+           style="margin-left: 30px; min-width: 0px; align-items: center; height: 100%; display: block;"
            >
-           <div class="notranslate" style="white-space: nowrap;">
-              {props.name.clone()}
-           </div>
+           {props.name.clone()}
            </li>
            <button class="create_file" >{"+"}</button>
         </div>

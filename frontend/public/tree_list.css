@@ -8,13 +8,13 @@
 
 .nested {
     opacity: 0;
-    height: 0;
+    display: none;
     transition: 0.3s;
 }
 
 .active {
+    display: block;
     opacity: 1;
-    height: 20px;
     transition: 0.3s;
 }
 
