@@ -9,7 +9,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::{Menu, DropUnder};
+use crate::components::{Menu};
 use crate::router::Route;
 
 #[derive(PartialEq, Properties)]
@@ -24,6 +24,15 @@ pub struct FileComponentProps {
 
 #[function_component(FileComponent)]
 pub fn file_component(props: &FileComponentProps) -> Html {
+    // HasMap
+    // {
+    // type:"dropover", // or dropunder or dropbellow,
+    // dragged_id: uuid,
+    // target_id: uuid
+    // }
+    let drop_data = use_state(|| "".to_string());
+
+
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
     let position: UseStateHandle<String> = use_state(|| "".to_string());
@@ -84,14 +93,33 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
 
-    let handle_drop_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        // TODO
-        //     handle drop above
+
+    let ondragenter_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr = _e.target_unchecked_into::<Element>();
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", "height: 20px; opacity:1;");
     });
 
-    let handle_drop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+    let ondrop_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        _e.prevent_default();
+        use web_sys::Element;
+        let curr = _e.target_unchecked_into::<Element>();
+        curr.set_attribute("style", " height: 5px; opacity:0;");
+        // TODO call this here
+
         // TODO
-        //     handle drop above
+        //  get dragged item by dataframes
+        //  do reorder the item or move it from parent to parent
+        //     cases
+        //     drag from place to place
+        //     drag from paren to another paren
+        //     drag from root to a parent..
+    });
+
+
+    let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style", " height: 5px; opacity:0;");
     });
 
 
@@ -100,10 +128,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         // TODO
         //  {if is_first_file {
         //         html!{
-        //         <DropUnder
-        //             ondrop={handle_drop_above.clone()}
-        //             // {getdrop}
-        //             />
+        //         <div
+        //            ondrop={ondrop_above}
+        //            ondragenter={ondragenter_above}
+        //            ondragleave={ondragleave_above}
+        //            class="drag_under" />
         //         }
         //  }}
 
@@ -131,9 +160,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            <button class="create_file" >{"+"}</button>
         </div>
 
-            <DropUnder
-            ondrop={handle_drop_under.clone()}
-             />
+            <div
+           ondrop={ondrop_under}
+           ondragenter={ondragenter_under}
+           ondragleave={ondragleave_under}
+           class="drag_under" />
 
            <Menu
            items={vec![
