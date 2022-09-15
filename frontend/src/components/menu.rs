@@ -8,9 +8,8 @@ use crate::router::Route;
 
 #[derive(PartialEq, Properties)]
 pub struct MenuProps {
-    pub display: UseStateHandle<bool>,
     pub items: Vec<Html>,
-    pub position: Option<UseStateHandle<String>>,
+    pub position: UseStateHandle<String>,
 
 }
 
@@ -20,24 +19,22 @@ pub fn menu(props: &MenuProps) -> Html {
     let doc = window().unwrap_throw().document().unwrap();
 
 
-
-    let _display = props.display.clone();
+    let _position = props.position.clone();
     let click_away_handler = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
-        if (*_display).clone() == true {
-            &_display.set(false);
+        if (*_position).clone().len() > 0 {
+            &_position.set("".to_string());
         }
     }) as Box<dyn FnMut(_)>);
 
 
     let _ = &doc.query_selector("#app").unwrap().unwrap().add_event_listener_with_callback("mousedown", &click_away_handler.as_ref().unchecked_ref());
     click_away_handler.forget();
-    let _display = if *props.display { "display: block" } else { "display: none" };
+    let mut _display = "display: none";
     let mut p = "".to_string();
 
-    // TODO 🔴
-    //     get mouse position from yewdux
-    if props.position.clone() != None {
-        p = props.position.clone().unwrap().to_string();
+    if (*props.position).clone().len() > 0 {
+        p = (*props.position).clone().to_string();
+        _display = "display: block"
     };
 
     html! {

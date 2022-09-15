@@ -26,16 +26,17 @@ pub struct FileComponentProps {
 pub fn file_component(props: &FileComponentProps) -> Html {
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
-    let display: UseStateHandle<bool> = use_state(|| false);
+    let position: UseStateHandle<String> = use_state(|| "".to_string());
 
     let caret = use_state(|| "".to_string());
     let id = props.id.clone().to_string();
 
-    let _display = display.clone();
+    let _position = position.clone();
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if _e.which() == 3 {
-
-            _display.set(true);
+            _position.set(
+                format!("top:{}px; right:{}px;", _e.offset_y(), _e.offset_x()).into()
+            );
         }
     });
 
@@ -83,12 +84,24 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
 
+    let handle_drop_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        // TODO
+        //     handle drop above
+    });
+
+    let handle_drop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        // TODO
+        //     handle drop above
+    });
+
+
     html! {
         <div>
         // TODO
         //  {if is_first_file {
         //         html!{
         //         <DropUnder
+        //             ondrop={handle_drop_above.clone()}
         //             // {getdrop}
         //             />
         //         }
@@ -117,13 +130,18 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            </li>
            <button class="create_file" >{"+"}</button>
         </div>
-            <DropUnder />
+
+            <DropUnder
+            ondrop={handle_drop_under.clone()}
+             />
+
            <Menu
            items={vec![
            html! {<><i class="gg-software-upload"/>{"Share."}</>},
            html! {<><i class="gg-software-upload"/>{"Share."}</>}
            ]}
-           {display}/>
+           position={position.clone()}
+           />
 
         </div>
 
