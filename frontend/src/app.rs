@@ -59,6 +59,12 @@ pub fn app() -> Html {
         r.files.push_edge(0, 226);
     });
 
+
+    let onclick_market_place: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+        //TODO
+        // history.push(Route::File { id: market_page });
+    });
+
     html! {
         <BrowserRouter>
 
@@ -69,8 +75,8 @@ pub fn app() -> Html {
         <ul  id="myUL">
             <TreeList/>
             <bottom_buttons>
-                <button >{"Add file +"}</button>
-                <button >{"Market place"}</button>
+                <button ><i class="fa-solid fa-plus"></i>{"Add file"}</button>
+                <button onclick={onclick_market_place} ><i class="fa-solid fa-globe"></i>{"Market place"}</button>
             </bottom_buttons>
 
         </ul>

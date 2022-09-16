@@ -53,11 +53,11 @@ impl FileTree {
         }
         let display = use_state(|| "".to_string());
         let _display = display.clone();
-        
+
         let onclickfile: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
             history.push(Route::File { id: start });
         });
-        
+
         let handle_click_toggle: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
             // history.push(Route::File { id: start });
             if has_children {
