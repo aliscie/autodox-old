@@ -2,7 +2,6 @@
 <h3 align="center">SAVES YOUR TIME</h3>
 
 
-* this project is owned as an NFT by Ali Husam Shakir AlKaraawi. You can have shares of it by participating to the project. As you own a share the smartcontract will automaticly distribute the earning of autodox by the value of the share.
 
 <img align="left" src="readmeFiles/logo2.png" height="100%">
 AUTODOX
