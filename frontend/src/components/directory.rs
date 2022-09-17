@@ -49,7 +49,8 @@ pub fn curr_directory() -> Html {
 
 
     html! {
-    <>
+    <span>
+
         <span
            class="hovering file_component">
         {"parent file"}
@@ -62,6 +63,6 @@ pub fn curr_directory() -> Html {
         </span>
         <span class="btn" style="width: 35px"><i class="fa-solid fa-share"></i></span>
 
-    </>
+    </span>
     }
 }

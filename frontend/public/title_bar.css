@@ -34,18 +34,6 @@
     box-sizing: border-box;
 }
 
-.right-container {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-}
-
-.right-container svg {
-    height: 1.5rem;
-    width: 1.5rem;
-    text-shadow: var(--text-shadow);
-}
 .wrapper span{
     height: 1.5rem;
 }

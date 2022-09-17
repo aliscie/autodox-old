@@ -5,8 +5,10 @@
 }
 
 :root {
-    --background: rgb(255, 255, 255);
-    --color: rgb(0, 0, 0);
+    --primary-background: 203, 203, 203;
+    --hover-color: 141, 141, 141;
+    --background: 255, 255, 255;
+    --color: 0, 0, 0;
     --main-color: #a4a4a4;
     --primary-color: rgb(109, 109, 109);
     --text-color: black;
@@ -16,8 +18,10 @@
 }
 
 .night-mod {
-    --background: rgb(0, 0, 0);
-    --color: rgb(219, 219, 219);
+    --primary-background: 62, 62, 62;
+    --hover-color: 117, 117, 117;
+    --background: 19, 19, 19;
+    --color: 212, 212, 212;
     --main-color: #5d5d5d;
     --primary-color: rgb(196, 196, 196);
     --text-color: white;
@@ -38,8 +42,8 @@ a {
    Made with <3 in Germany */
 
 #app {
-    background: var(--background);
-    color: var(--color);
+    background: rgb(var(--background));
+    color: rgb(var(--color));
     font-family: HelveticaNeue, 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
     transition: 0.5s;
 }
@@ -61,7 +65,6 @@ a {
     border-radius: 6px;
     box-shadow: 0px 0px 20px #acacac;
 }
-
 
 
 .share {
@@ -170,14 +173,15 @@ h3 {
 aside {
     overflow: hidden;
     width: 0px;
-    top: 35px;
+    top: 1.5rem;
     margin: 0px;
     position: fixed;
     bottom: 0;
 
-    background: #e2e2e2 !important;
+    background: rgba(var(--primary-background), 0.2) !important;
+    backdrop-filter: blur(15px);
+
     z-index: 299;
-    box-shadow: 13px 0px 20px #acacac;
     transition: 0.5s;
 }
 
@@ -326,8 +330,13 @@ h2 {
 }
 
 .file_component {
+    cursor: default;
     transition: 0.3s;
     border-radius: 5px;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
 }
 
 .right_clickable {
@@ -335,7 +344,7 @@ h2 {
 }
 
 .hovering:hover {
-    background: lightgray;
+    background: rgba(var(--hover-color),0.6);
 }
 
 .drag_over {
@@ -348,14 +357,17 @@ h2 {
 }
 
 .dropdown {
+
     position: relative;
     display: inline-block;
 }
 
 .dropdown-content {
+    border-radius: 5px;
     display: none;
     position: absolute;
-    background: #f1f1f1;
+    background: rgba(var(--primary-background), 0.8) !important;
+    backdrop-filter: blur(30px);
     min-width: 100px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -365,12 +377,15 @@ h2 {
 
 
 .dropdown-content a:hover {
-    background: lightblue;
+    background: rgba(var(--hover-color), 0.5) !important;
+    backdrop-filter: blur(15px);
     transition: 0.3s;
 }
 
 .dropdown-content a {
-    color: black;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(var(--color), 0.3);
+    color: rgb(var(--color));
     padding: 5px 7px;
     text-decoration: none;
     display: block;
@@ -414,6 +429,8 @@ button:hover {
 }
 
 .btn {
+    text-align: center;
+    position: relative;
     border: none;
     color: white;
     padding: 0;

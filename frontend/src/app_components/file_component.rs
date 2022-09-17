@@ -162,7 +162,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            >
            {props.name.clone()}
            </li>
-           <button class="create_file" >{"+"}</button>
+           <i class="btn create_file fa-solid fa-plus"></i>
         </div>
 
             <div
@@ -174,8 +174,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
            <Menu
            items={vec![
-           html! {<><i class="gg-software-upload"/>{"Share."}</>},
-           html! {<><i class="gg-software-upload"/>{"Share."}</>}
+           html! {<><i class="fa-solid fa-signature"></i>{"Rename"}</>},
+           html! {<><i class="fa-solid fa-upload"/>{"Share"}</>},
+           html! {<><i class="fa-solid fa-eye"/>{"Permissions"}</>},
+           html! {<><i class="fa-solid fa-trash"/>{"Delete"}</>},
+
            ]}
            position={position.clone()}
            />

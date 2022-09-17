@@ -72,6 +72,11 @@ pub fn app() -> Html {
         { super::utils::get_titlebar( x) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
 
+        <span style="margin:10px; display:flex;">
+            <input type="text" placeholder="Search.." name="search"/>
+            <i  class="btn fa fa-search"/>
+        </span>
+
         <ul  id="myUL">
             <TreeList/>
             <bottom_buttons>
