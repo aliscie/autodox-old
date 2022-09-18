@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-#[cfg(not(feature = "web"))]
 use shared::invoke;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
@@ -13,6 +12,7 @@ use yewdux::prelude::*;
 
 use crate::components::Menu;
 use crate::router::Route;
+use crate::*;
 
 #[derive(PartialEq, Properties)]
 pub struct DownloadProps {
@@ -36,17 +36,10 @@ pub fn download(props: &DownloadProps) -> Html {
         html! {<><i class="fa-brands fa-ubuntu"></i>{"Linux"}</>},
     ];
 
-    let mut is_web = true;
-    #[cfg(not(feature = "web"))] {
-        is_web = false;
-    };
-    {
-        if is_web {
-        html!{<>
+    if *IS_WEB {
+        html! {<>
             <Menu position={position.clone()}{items}/>
             <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
         </>}
-        } else {html!{""}}
-    }
-
+    } else { html! {""} }
 }

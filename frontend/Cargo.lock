@@ -344,6 +344,7 @@ dependencies = [
  "gloo 0.8.0",
  "graphql_client",
  "js-sys",
+ "lazy_static",
  "reqwest",
  "serde",
  "serde_derive",
@@ -1850,6 +1851,7 @@ version = "0.1.0"
 dependencies = [
  "cfg-if",
  "js-sys",
+ "lazy_static",
  "serde",
  "serde_derive",
  "serde_json",

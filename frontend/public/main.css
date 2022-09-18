@@ -432,11 +432,10 @@ button:hover {
     text-align: center;
     position: relative;
     border: none;
-    color: white;
+    color: rgb(var(--color));
     padding: 0;
     padding-left: 15px;
     padding-right: 15px;
-    text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
@@ -444,5 +443,5 @@ button:hover {
 }
 
 .btn:hover {
-    background: var(--primary-color);
+    background: rgba(var(--hover-color),0.6);
 }

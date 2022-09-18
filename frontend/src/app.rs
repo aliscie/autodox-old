@@ -1,20 +1,23 @@
 use editor::Editor;
 use gloo::console::console;
+use shared::invoke;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{Document, Element, MouseEvent, window};
+use web_sys::console::log_1;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yew_router::prelude::*;
 use yewdux::prelude::*;
-use yewdux::prelude::*;
-use web_sys::console::log_1;
-use crate::components::{TitleBar};
+
 use crate::components::TreeList;
 use crate::router::*;
 use crate::utils::{FileNode, FileTree};
 
+
+
 #[function_component(App)]
 pub fn app() -> Html {
+
+
     let aside_bar_taggol = use_state_eq(|| "".to_string());
     let x = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
@@ -82,6 +85,7 @@ pub fn app() -> Html {
             <bottom_buttons>
                 <button ><i class="fa-solid fa-plus"></i>{"Add file"}</button>
                 <button onclick={onclick_market_place} ><i class="fa-solid fa-globe"></i>{"Market place"}</button>
+                <button ><i class="fa-solid fa-trash"></i>{"Trash"}</button>
             </bottom_buttons>
 
         </ul>
