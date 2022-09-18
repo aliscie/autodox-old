@@ -11,7 +11,7 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 # learn about autodox here.
 1. [documentations](https://docs.google.com/document/d/1lOJONK7QhtGGkzSGia37pD7fytTbpIoh5R8lXGuJ7Hw/edit)
 1. [overview](https://lnkd.in/eUh_4JfV)
-1. [Custom smart contracts](https://www.youtube.com/watch?v=HqogGj0xKuE&t=19s)
+1. [Custom smart contracts](https://youtu.be/HqogGj0xKuE)
 2. [the code](https://lnkd.in/eQyebWnH)
 3. [project plan](https://lnkd.in/eUvpVi5P)
 4. [privacy plan](https://lnkd.in/e6wC_-fW)
