@@ -12,9 +12,9 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 1. [documentations](https://docs.google.com/document/d/1lOJONK7QhtGGkzSGia37pD7fytTbpIoh5R8lXGuJ7Hw/edit)
 1. [overview](https://lnkd.in/eUh_4JfV)
 1. [Custom smart contracts](https://youtu.be/HqogGj0xKuE)
-2. [the code](https://lnkd.in/eQyebWnH)
-3. [project plan](https://lnkd.in/eUvpVi5P)
-4. [privacy plan](https://lnkd.in/e6wC_-fW)
+2. [privacy plan](https://lnkd.in/e6wC_-fW)
+3. [the code](https://lnkd.in/eQyebWnH)
+4. [project plan](https://lnkd.in/eUvpVi5P)
 5. [drag and drop](https://lnkd.in/e9XDMjie)
 6. [live collaboration](https://lnkd.in/ekTH46iu)
 
