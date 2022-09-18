@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
 use std::hash::Hash;
 
@@ -38,5 +38,69 @@ where
         for (_id, children) in self.adjacency.iter_mut() {
             children.remove(id);
         }
+    }
+
+    pub fn into_iter<'a>(&'a self, start : ID)-> TreeIter<'a, ID, T>{
+        let first_children = self.adjacency.get(&start).unwrap();
+        TreeIter{
+            tree : self,
+            visited_nodes : HashSet::from([start]),
+            stack : first_children.clone().into_iter().collect(),
+        }
+    }
+}
+
+//impl<'a, ID, T> IntoIterator for &'a Tree<ID, T> 
+//where
+    //ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+    //T: PartialEq + Eq + Clone + Default + Debug,
+//{
+    //type Item = &'a T;
+    //type IntoIter = TreeIter<'a, ID, T>;
+    //fn into_iter(self) -> Self::IntoIter {
+        //TreeIter {
+            //tree: self,
+            //visited_nodes: HashSet::new(),
+            //stack: HashSet::new(),
+        //}
+    //}
+//}
+
+pub struct TreeIter<'a, ID, T>
+where
+    ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Default + Debug,
+{
+    tree: &'a Tree<ID, T>,
+    visited_nodes: HashSet<ID>,
+    //stack: HashSet<ID>,
+    stack : VecDeque<ID>,
+}
+
+impl<'a, ID, T> Iterator for TreeIter<'a, ID, T>
+where
+    ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Default + Debug,
+{
+    type Item = &'a T;
+    fn next(&mut self) -> Option<Self::Item> {
+        while self.stack.len() > 0{
+            let data = self.stack.pop_front().unwrap();
+            if self.visited_nodes.contains(&data){
+                // that node has already been visited go ahead
+                continue;
+            }
+            let node = self.tree.vertices.get(&data);
+            if let Some(children) = self.tree.adjacency.get(&data){
+                for i in children{
+                    if !self.visited_nodes.contains(i){
+                        self.stack.push_front(i.clone());
+                    }
+                }
+            }
+            self.visited_nodes.insert(data);
+            return node;
+        }
+        None
     }
 }
