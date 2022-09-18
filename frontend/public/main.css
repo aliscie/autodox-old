@@ -5,7 +5,7 @@
 }
 
 :root {
-    --primary-background: 203, 203, 203;
+    --primary-background: 152, 152, 152;
     --hover-color: 141, 141, 141;
     --background: 255, 255, 255;
     --color: 0, 0, 0;
@@ -41,11 +41,10 @@ a {
 /* ©2015 Johannes Jakob
    Made with <3 in Germany */
 
-#app {
+#app, body, html {
     background: rgb(var(--background));
     color: rgb(var(--color));
-    font-family: HelveticaNeue, 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
-    transition: 0.5s;
+    transition: 0.2s;
 }
 
 /* window BEGIN */
@@ -170,20 +169,7 @@ h3 {
 }
 
 
-aside {
-    overflow: hidden;
-    width: 0px;
-    top: 1.5rem;
-    margin: 0px;
-    position: fixed;
-    bottom: 0;
 
-    background: rgba(var(--primary-background), 0.2) !important;
-    backdrop-filter: blur(15px);
-
-    z-index: 299;
-    transition: 0.5s;
-}
 
 .file_component:hover {
     font-size: 20px;
@@ -264,26 +250,6 @@ h2 {
         font-size: 2em;
     }
 
-    aside {
-        width: 0px;
-        margin: 0px;
-        position: fixed;
-        float: left;
-        bottom: 0;
-
-        background: #e2e2e2 !important;
-        z-index: 299;
-        box-shadow: 13px 0px 20px #acacac;
-        transition: 0.5s;
-
-        /*float: left;*/
-        /*width: 95%;*/
-        /*padding-left: 5%;*/
-        /*position: relative;*/
-        /*float: left;*/
-        /*padding-top: 10px;*/
-        /*padding-bottom: 10px;*/
-    }
 
     header {
         float: left;
@@ -344,7 +310,7 @@ h2 {
 }
 
 .hovering:hover {
-    background: rgba(var(--hover-color),0.6);
+    background: rgba(var(--hover-color), 0.6);
 }
 
 .drag_over {
@@ -411,7 +377,6 @@ button {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
 
@@ -434,14 +399,11 @@ button:hover {
     border: none;
     color: rgb(var(--color));
     padding: 0;
-    padding-left: 15px;
-    padding-right: 15px;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
     cursor: grab;
 }
 
 .btn:hover {
-    background: rgba(var(--hover-color),0.6);
+    background: rgba(var(--hover-color), 0.6);
 }

@@ -34,17 +34,6 @@
     box-sizing: border-box;
 }
 
-.wrapper span{
-    height: 1.5rem;
-}
-
-
-.wrapper {
-    align-items: center;
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 0.85rem;
-    position: relative;
-}
 
 .header__container {
     height: 1.5rem;
@@ -53,8 +42,10 @@
     position: fixed;
     top: 0;
     left: 0;
-    background: rgba(40, 40, 40, 0.25);
+
+    background: rgba(var(--primary-background), 0.4) !important;
     backdrop-filter: blur(15px);
+
     width: 100%;
     padding: 0 0.5rem;
     justify-content: space-between;
@@ -64,3 +55,10 @@
     height: 1rem;
 }
 
+.custom_title_bar .btn {
+    padding-left: 15px;
+    padding-right: 15px;
+
+    margin-left: 5px;
+    margin-right: 5px;
+}

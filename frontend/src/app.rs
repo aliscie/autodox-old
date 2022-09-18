@@ -12,14 +12,12 @@ use crate::components::TreeList;
 use crate::router::*;
 use crate::utils::{FileNode, FileTree};
 
-
+use crate::app_components::{SearchFiltes};
 
 #[function_component(App)]
 pub fn app() -> Html {
-
-
     let aside_bar_taggol = use_state_eq(|| "".to_string());
-    let x = aside_bar_taggol.clone();
+    let toggle_aside = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
     dispatch.reduce_mut(|r| {
         r.files.push_vertex(
@@ -72,13 +70,18 @@ pub fn app() -> Html {
         <BrowserRouter>
 
         <div id = "app">
-        { super::utils::get_titlebar( x) }
+        { super::utils::get_titlebar(toggle_aside ) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
 
-        <span style="margin:10px; display:flex;">
-            <input type="text" placeholder="Search.." name="search"/>
-            <i  class="btn fa fa-search"/>
-        </span>
+        <SearchFiltes/>
+
+        <div class="files_categories">
+            <span class="btn">{"work"}</span>
+            <span class="btn">{"school"}</span>
+            <span class="btn">{"projects"}</span>
+            <span class="btn"><i class="fa fa-plus"></i></span>
+        </div>
+
 
         <ul  id="myUL">
             <TreeList/>
