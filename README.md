@@ -30,8 +30,13 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
     - regular expression search.
     - save your search results and reuse them again.
 
-5. **spreadsheet** : similar to microsoft excel you will have a spreadsheet where you can store your data and implement formulas. Also, with plugins you can implement custom formulas like a stock market plugin. Last but not least, you can use these spreadsheets as a backend for your services. In other word the components will act as a frontend that interact with this spreadsheet.
-5. **Ownership** : when you create a component, or a plugin or a service you will own it as an NFT. Hence, you can make money from it. There are three ways to make money with NFTs. One by selling it. Second, by getting percentage on every sell. Third, by requiring subscriptions fees like 7$ a month without selling the plugin or the service.
+5. **spreadsheet** : similar to microsoft excel you will have a spreadsheet where you can store your data and implement formulas. Also, with plugins you can implement custom formulas like a google translator. Last but not least, you can use these spreadsheets as a backend for your services. In other word the components will act as a frontend that interact with this spreadsheet.
+- Features:
+    -  **Columns permisions**: You can decicde who can see, update each column or comment on a column
+    -  **Views perimsion**: You can decicde who can see each view. Also, the views perimsion caled rows perimsion because you can add a fitler for a view to repvent spesfic users from sewing sepsfic rows. And this filter can't be removed by anyone so others can only add more filters but can't touch your filter.
+    - **Custom smart contract**: you can write somthing like `if (approved = true) {transfer(100$).to(columns.assigned)}` this will automatically release the payment of a ser when you approve the delivery of an item.
+    
+7. **Ownership** : when you create a component, or a plugin or a service you will own it as an NFT. Hence, you can make money from it. There are three ways to make money with NFTs. One by selling it. Second, by getting percentage on every sell. Third, by requiring subscriptions fees like 7$ a month without selling the plugin or the service.
 
 6. **Privacy** : You will have the option to upload your data on the block-chain internet computer in order to share it with other people.
  
