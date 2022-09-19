@@ -1,22 +1,23 @@
 use editor::Editor;
 use gloo::console::console;
+use shared::invoke;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{Document, Element, MouseEvent, window};
+use web_sys::console::log_1;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yew_router::prelude::*;
 use yewdux::prelude::*;
-use yewdux::prelude::*;
-use web_sys::console::log_1;
-use crate::components::{TitleBar};
+
 use crate::components::TreeList;
 use crate::router::*;
 use crate::utils::{FileNode, FileTree};
 
+use crate::app_components::{SearchFiltes};
+
 #[function_component(App)]
 pub fn app() -> Html {
     let aside_bar_taggol = use_state_eq(|| "".to_string());
-    let x = aside_bar_taggol.clone();
+    let toggle_aside = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
     dispatch.reduce_mut(|r| {
         r.files.push_vertex(
@@ -59,18 +60,35 @@ pub fn app() -> Html {
         r.files.push_edge(0, 226);
     });
 
+
+    let onclick_market_place: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+        //TODO
+        // history.push(Route::File { id: market_page });
+    });
+
     html! {
         <BrowserRouter>
 
         <div id = "app">
-        { super::utils::get_titlebar( x) }
+        { super::utils::get_titlebar(toggle_aside ) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
+
+        <SearchFiltes/>
+
+        <div class="files_categories">
+            <span class="btn">{"work"}</span>
+            <span class="btn">{"school"}</span>
+            <span class="btn">{"projects"}</span>
+            <span class="btn"><i class="fa fa-plus"></i></span>
+        </div>
+
 
         <ul  id="myUL">
             <TreeList/>
             <bottom_buttons>
-                <button >{"Add file +"}</button>
-                <button >{"Market place"}</button>
+                <button ><i class="fa-solid fa-plus"></i>{"Add file"}</button>
+                <button onclick={onclick_market_place} ><i class="fa-solid fa-globe"></i>{"Market place"}</button>
+                <button ><i class="fa-solid fa-trash"></i>{"Trash"}</button>
             </bottom_buttons>
 
         </ul>

@@ -31,6 +31,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     // target_id: uuid
     // }
     let drop_data = use_state(|| "".to_string());
+    let is_drag_over = use_state(|| "".to_string());
+    let is_drag_under = use_state(|| "".to_string());
 
 
     let is_dragged = use_state(|| "".to_string());
@@ -61,6 +63,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     };
 
     let _is_dragged = is_dragged.clone();
+
     let ondragstart: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _is_dragged.set("dragged".to_string())
     });
@@ -93,49 +96,38 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
 
-
+    let _is_drag_under = is_drag_under.clone();
     let ondragenter_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr = _e.target_unchecked_into::<Element>();
-        let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style", "height: 20px; opacity:1;");
+        _is_drag_under.set("height: 20px; opacity:1;".to_string());
     });
 
+    let _is_drag_under = is_drag_under.clone();
     let ondrop_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _e.prevent_default();
-        use web_sys::Element;
-        let curr = _e.target_unchecked_into::<Element>();
-        curr.set_attribute("style", " height: 5px; opacity:0;");
-        // TODO call this here
-
-        // TODO
-        //  get dragged item by dataframes
-        //  do reorder the item or move it from parent to parent
-        //     cases
-        //     drag from place to place
-        //     drag from paren to another paren
-        //     drag from root to a parent..
+        //TODO
+        // let id = e.data_transfer_get("id");
+        // let doc = window().unwrap_throw().document().unwrap();
+        // let curr = query_selector(format!("#{}",id)).unwrap().unwrap();
+        // curr.set_attribute("style", " height: 3px; opacity:0;");
     });
 
-
-
-    let ondragleave_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr = _e.target_unchecked_into::<Element>();
-        let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style", "height: 20px; opacity:1;");
-    });
-
-    let ondrop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _e.prevent_default();
-        use web_sys::Element;
-        let curr = _e.target_unchecked_into::<Element>();
-        curr.set_attribute("style", " height: 5px; opacity:0;");
-    });
-
-
+    let _is_drag_under = is_drag_under.clone();
     let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style", " height: 5px; opacity:0;");
+        _is_drag_under.set("".to_string());
     });
+
+    // let ondragenter_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+    //     _is_drag_above.set("height: 20px; opacity:1;".to_string());
+    // });
+
+    // let ondragleave_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+    //     _is_drag_above.set("".to_string());
+    // });
+
+    // let ondrop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+    //     _e.prevent_default();
+    //     _is_drag_above.set("".to_string());
+    // });
 
 
     html! {
@@ -153,7 +145,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
         <div style="position: relative; width:100%; display: block;">
            {if props.class.contains("caret"){
-           html!{<button class={format!("{} crate_button",(*caret))} onmouseup={toggle_caret} onclick = { props.onclick.clone() } ><span class={format!("caret {}",(*caret).clone())}>{"➤"}</span></button>}
+           html!{<button class={format!("{} crate_button",(*caret))} onmouseup={toggle_caret} onclick = { props.onclick.clone() } ><i class="fa-solid fa-caret-right"></i></button>}
            } else{ html!{} }
            }
            <li
@@ -171,19 +163,23 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            >
            {props.name.clone()}
            </li>
-           <button class="create_file" >{"+"}</button>
+           <i class="btn create_file fa-solid fa-plus"></i>
         </div>
 
             <div
-           ondrop={ondrop_under}
-           ondragenter={ondragenter_under}
-           ondragleave={ondragleave_under}
-           class="drag_under" />
+            style={format!("{}",(*is_drag_under).clone())}
+            ondrop={ondrop_under}
+            ondragenter={ondragenter_under}
+            ondragleave={ondragleave_under}
+            class="drag_under" />
 
            <Menu
            items={vec![
-           html! {<><i class="gg-software-upload"/>{"Share."}</>},
-           html! {<><i class="gg-software-upload"/>{"Share."}</>}
+           html! {<><i class="fa-solid fa-signature"></i>{"Rename"}</>},
+           html! {<><i class="fa-solid fa-upload"/>{"Share"}</>},
+           html! {<><i class="fa-solid fa-eye"/>{"Permissions"}</>},
+           html! {<><i class="fa-solid fa-trash"/>{"Delete"}</>},
+
            ]}
            position={position.clone()}
            />

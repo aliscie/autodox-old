@@ -20,10 +20,11 @@ pub fn menu(props: &MenuProps) -> Html {
 
 
     let _position = props.position.clone();
-    let click_away_handler = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+    let click_away_handler = Closure::wrap(Box::new(move |_e: web_sys::MouseEvent| {
         if (*_position).clone().len() > 0 {
             &_position.set("".to_string());
         }
+
     }) as Box<dyn FnMut(_)>);
 
 
@@ -45,7 +46,7 @@ pub fn menu(props: &MenuProps) -> Html {
         {
             props.items.clone().into_iter().map(|item| {
                 html!{
-                <a href="#">{item}</a>
+                <a>{item}</a>
                 }
             }).collect::<Html>()
         }

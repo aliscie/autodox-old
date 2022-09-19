@@ -2,7 +2,6 @@
 <h3 align="center">SAVES YOUR TIME</h3>
 
 
-* this project is owned as an NFT by Ali Husam Shakir AlKaraawi. You can have shares of it by participating to the project. As you own a share the smartcontract will automaticly distribute the earning of autodox by the value of the share.
 
 <img align="left" src="readmeFiles/logo2.png" height="100%">
 AUTODOX
@@ -12,9 +11,10 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 # learn about autodox here.
 1. [documentations](https://docs.google.com/document/d/1lOJONK7QhtGGkzSGia37pD7fytTbpIoh5R8lXGuJ7Hw/edit)
 1. [overview](https://lnkd.in/eUh_4JfV)
-2. [the code](https://lnkd.in/eQyebWnH)
-3. [project plan](https://lnkd.in/eUvpVi5P)
-4. [privacy plan](https://lnkd.in/e6wC_-fW)
+1. [Custom smart contracts](https://youtu.be/HqogGj0xKuE)
+2. [privacy plan](https://lnkd.in/e6wC_-fW)
+3. [the code](https://lnkd.in/eQyebWnH)
+4. [project plan](https://lnkd.in/eUvpVi5P)
 5. [drag and drop](https://lnkd.in/e9XDMjie)
 6. [live collaboration](https://lnkd.in/ekTH46iu)
 
@@ -30,8 +30,13 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
     - regular expression search.
     - save your search results and reuse them again.
 
-5. **spreadsheet** : similar to microsoft excel you will have a spreadsheet where you can store your data and implement formulas. Also, with plugins you can implement custom formulas like a stock market plugin. Last but not least, you can use these spreadsheets as a backend for your services. In other word the components will act as a frontend that interact with this spreadsheet.
-5. **Ownership** : when you create a component, or a plugin or a service you will own it as an NFT. Hence, you can make money from it. There are three ways to make money with NFTs. One by selling it. Second, by getting percentage on every sell. Third, by requiring subscriptions fees like 7$ a month without selling the plugin or the service.
+5. **spreadsheet** : similar to microsoft excel you will have a spreadsheet where you can store your data and implement formulas. Also, with plugins you can implement custom formulas like a google translator. Last but not least, you can use these spreadsheets as a backend for your services. In other word the components will act as a frontend that interact with this spreadsheet.
+- Features:
+    -  **Columns permisions**: You can decicde who can see, update each column or comment on a column
+    -  **Views perimsion**: You can decicde who can see each view. Also, the views perimsion caled rows perimsion because you can add a fitler for a view to repvent spesfic users from sewing sepsfic rows. And this filter can't be removed by anyone so others can only add more filters but can't touch your filter.
+    - **Custom smart contract**: you can write somthing like `if (approved = true) {transfer(100$).to(columns.assigned)}` this will automatically release the payment of a ser when you approve the delivery of an item.
+    
+7. **Ownership** : when you create a component, or a plugin or a service you will own it as an NFT. Hence, you can make money from it. There are three ways to make money with NFTs. One by selling it. Second, by getting percentage on every sell. Third, by requiring subscriptions fees like 7$ a month without selling the plugin or the service.
 
 6. **Privacy** : You will have the option to upload your data on the block-chain internet computer in order to share it with other people.
  

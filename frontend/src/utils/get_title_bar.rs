@@ -4,15 +4,15 @@ use yew::prelude::*;
 use crate::router::*;
 use yew_router::prelude::*;
 
+use web_sys::console::log_1;
 
-#[cfg(not(feature = "web"))]
 use shared::invoke;
 
 use crate::components::{TitleBar, CurrDirectory, Avatar};
-use crate::app_components::{TitleAvatarComponent};
+use crate::app_components::{TitleAvatarComponent, PageOptions, Download};
 
 use web_sys::{window, Document, Element, MouseEvent};
-
+use crate::*;
 
 pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let light_mod = use_state(|| true);
@@ -42,36 +42,23 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
         }
     });
 
-    let current_directory = html! {<CurrDirectory/>};
-    let mut is_web = true;
-    #[cfg(not(feature = "web"))] {
-        is_web = false;
-    }
 
     let right_content: Html = html! {
-         <>
-            {if is_web { html!{<span class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>} } else {html!{""}}}
-                <span
-                class="btn"
-                 onclick={handle_light_mod}
-                 style="height: 30px; width: 30px;"
-                 >
-                    <i class={
-                        format!("{}",
-                            if (*light_mod).clone() {"fa-solid fa-moon"} else {"fa-solid fa-sun"}
-                        )
-                    }></i>
-                </span>
+            <>
+                    <Download/>
+                    <i
+                    onclick={handle_light_mod}
+                    class={format!("btn {}",if (*light_mod).clone() {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
+                    ></i>
+
                 <TitleAvatarComponent/>
 
-                <span class="btn">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                </span>
-         </>
+                <PageOptions/>
+            </>
          };
     return html! {
         <TitleBar
-            style={format!("{}",if is_web==false {"padding-left: 75px; cursor: grab;"} else {""})}
+            style={format!("{}",if *IS_WEB==false {"padding-left: 75px; cursor: grab;"} else {""})}
             title={current_directory}
             {right_content}
          >

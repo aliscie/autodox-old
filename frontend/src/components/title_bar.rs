@@ -14,16 +14,16 @@ pub fn title_bar(props: &TitleBarProps) -> Html {
 
     <div  data-tauri-drag-region="true" class=" custom_title_bar wrapper">
         <div style={props.style.clone()} class="header__container">
-           <nav>
-              <ul style="margin-top:10px;">
+
+            <div class="left-container">
                 {props.children.clone()}
                 {props.title.clone()}
-              </ul>
-           </nav>
+           </div>
 
            <div class="right-container">
               {props.right_content.clone()}
            </div>
+
         </div>
     </div>
     };
