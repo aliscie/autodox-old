@@ -1,15 +1,19 @@
-use shared::Tree;
+use std::cell::RefCell;
+use std::collections::{HashMap, HashSet, VecDeque};
+use std::rc::Rc;
+
 use serde::{Deserialize, Serialize};
-use yew::{html, Html};
-use web_sys::{window, Element, MouseEvent, DragEvent};
+use shared::Tree;
+use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
-use yew_router::prelude::*;
+use yew::virtual_dom::VNode;
+use yew::{html, Html};
+use yew_router::{history, prelude::*};
 
 use crate::router::Route;
 use yewdux::prelude::*;
 
 use crate::app_components::FileComponent;
-
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Store)]
 pub struct FileTree {
@@ -33,65 +37,74 @@ impl Default for FileTree {
 
 impl FileTree {
     pub fn new() -> Self {
-        Self {
-            files: Tree::new(),
-        }
+        Self { files: Tree::new() }
     }
     pub fn to_html(&self, start: u64) -> Html {
-        // TODO : make this iterative
-        let nodes = self.files.adjacency.get(&start);
+        // map to store html of the nodes
+        // TODO : use memoization to only rerender on file name change!
+        let map: Rc<RefCell<HashMap<u64, VNode>>> = use_mut_ref(|| HashMap::new());
         let history = use_history().unwrap();
-
-
-        let mut has_children = false;
-        let mut class_name = "";
-        if let Some(nodes) = nodes {
-            if nodes.len() > 0 {
-                has_children = true;
-                class_name = "caret"
-            }
-        }
-        let display = use_state(|| "".to_string());
-        let _display = display.clone();
-        
         let onclickfile: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-            history.push(Route::File { id: start });
+            let element: Element = e.target_unchecked_into();
+            history.push(Route::File {
+                id: element.id().parse().unwrap(),
+            });
         });
-        
-        let handle_click_toggle: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-            // history.push(Route::File { id: start });
-            if has_children {
-                if _display.len() == 0 {
-                    _display.set("active".to_string());
-                } else {
-                    _display.set("".to_string());
+        for (id, file_node) in &self.files.vertices {
+            let mut class_name = "";
+            let mut has_children = false;
+            if let Some(node_ids) = self.files.adjacency.get(id) {
+                if node_ids.len() > 0 {
+                    has_children = true;
+                    class_name = "caret";
                 }
             }
-        });
-
-
-        // avoid repetition
-        // i found `<li class={class_name}  onclick = { handle_click }>{&self.vertices.get(&start).unwrap().name}</li>` was repeated three times
-        // now i have `let Some(nodes) = nodes` repeated two times but I don't know how to avoid that.
-
-
-        return html! {
-        <>
-            <FileComponent
-            id={start}
-            class={format!(" {}",class_name)}
-            {onclickfile} onclick={handle_click_toggle} name={self.files.vertices.get(&start).unwrap().name.clone()}/>
-
-            if let Some(nodes) = nodes {
-                { if has_children{
-
-                html!{<ul  class ={format!("nested {}", (*display).clone())}>
-                    { nodes.into_iter().map(|id| self.to_html(*id)).collect::<Html>()}
-                </ul>}
-            } else{ html!{"+ Create new file."}}}
-            }
-        </>
-        };
+            let display = use_state(|| "".to_string());
+            let handle_click_toggle = {
+                let display = display.clone();
+                Callback::from(move |_e: MouseEvent| {
+                    // history.push(Route::File { id: start });
+                    if has_children {
+                        if display.len() == 0 {
+                            display.set("active".to_string());
+                        } else {
+                            display.set("".to_string());
+                        }
+                    }
+                })
+            };
+            let html_node = html! {
+                <>
+                    <FileComponent
+                        key = {*id}
+                        id = {*id}
+                        class={format!(" {}",class_name)}
+                        onclickfile = {onclickfile.clone()} onclick={handle_click_toggle} name={file_node.name.clone()}/>
+                    if has_children && *display == "active"{
+                        <ul  class ={format!("nested {}", (*display).clone())}>
+                        {
+                            self.files.adjacency.get(id)
+                                .unwrap()
+                                .into_iter()
+                                .map(|f| {
+                                    gloo::console::log!(format!("{:?}", f));
+                                    map.borrow().get(f).unwrap().clone()
+                                })
+                                .collect::<Html>()
+                        }
+                        </ul>
+                    }
+                </>
+            };
+            map.borrow_mut().insert(*id, html_node);
+        }
+        self.files
+            .adjacency
+            .get(&start)
+            .unwrap_or(&HashSet::new())
+            .into_iter()
+            .map(|f| map.borrow().get(f).unwrap().clone())
+            .collect::<Html>()
     }
 }
 

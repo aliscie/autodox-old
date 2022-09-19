@@ -163,6 +163,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            {ondragstart}
            {ondragend}
            {onmouseup}
+           id = { id }
            onclick={props.onclickfile.clone()}
            draggable="true"
            class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(),(*is_enter).clone(), "")}
