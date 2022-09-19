@@ -86,10 +86,7 @@ impl FileTree {
                             self.files.adjacency.get(id)
                                 .unwrap()
                                 .into_iter()
-                                .map(|f| {
-                                    gloo::console::log!(format!("{:?}", f));
-                                    map.borrow().get(f).unwrap().clone()
-                                })
+                                .map(|f| map.borrow().get(f).unwrap().clone())
                                 .collect::<Html>()
                         }
                         </ul>
@@ -98,13 +95,8 @@ impl FileTree {
             };
             map.borrow_mut().insert(*id, html_node);
         }
-        self.files
-            .adjacency
-            .get(&start)
-            .unwrap_or(&HashSet::new())
-            .into_iter()
-            .map(|f| map.borrow().get(f).unwrap().clone())
-            .collect::<Html>()
+        let x = map.borrow().get(&start).unwrap().clone();
+        x
     }
 }
 
