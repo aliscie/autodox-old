@@ -1,14 +1,14 @@
 use std::cell::RefCell;
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use serde::{Deserialize, Serialize};
 use shared::Tree;
-use web_sys::{window, DragEvent, Element, MouseEvent};
+use web_sys::{Element, MouseEvent};
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
 use yew::{html, Html};
-use yew_router::{history, prelude::*};
+use yew_router::prelude::*;
 
 use crate::router::Route;
 use yewdux::prelude::*;
@@ -44,7 +44,7 @@ impl FileTree {
         // TODO : use memoization to only rerender on file name change!
         let map: Rc<RefCell<HashMap<u64, VNode>>> = use_mut_ref(|| HashMap::new());
         let history = use_history().unwrap();
-        let onclickfile: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+        let onclickfile = Callback::from(move |e: MouseEvent| {
             let element: Element = e.target_unchecked_into();
             history.push(Route::File {
                 id: element.id().parse().unwrap(),
@@ -79,14 +79,16 @@ impl FileTree {
                         key = {*id}
                         id = {*id}
                         class={format!(" {}",class_name)}
-                        onclickfile = {onclickfile.clone()} onclick={handle_click_toggle} name={file_node.name.clone()}/>
+                        onclickfile = {onclickfile.clone()}
+                        onclick={handle_click_toggle}
+                        name={file_node.name.clone()}/>
                     if has_children && *display == "active"{
-                        <ul  class ={format!("nested {}", (*display).clone())}>
+                        <ul  class ={"nested active"}>
                         {
                             self.files.adjacency.get(id)
                                 .unwrap()
                                 .into_iter()
-                                .map(|f| map.borrow().get(f).unwrap().clone())
+                                .map(|f| map.borrow().get(f).unwrap().to_owned())
                                 .collect::<Html>()
                         }
                         </ul>
@@ -95,8 +97,15 @@ impl FileTree {
             };
             map.borrow_mut().insert(*id, html_node);
         }
-        let x = map.borrow().get(&start).unwrap().clone();
-        x
+        self.files
+            .adjacency
+            .get(&start)
+            .unwrap()
+            .into_iter()
+            .map(|f| map.borrow().get(f).unwrap().to_owned())
+            .collect::<Html>()
+        //let x = map.borrow().get(&start).unwrap().clone();
+        //x
     }
 }
 

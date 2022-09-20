@@ -32,9 +32,22 @@ where
         adjacency_to_from.insert(to);
     }
 
+    pub fn push_children(&mut self, parent_id : ID, child_id : ID, child : T){
+        self.push_vertex(child_id.clone(), child);
+        self.push_edge(parent_id, child_id);
+    }
+
     pub fn remove(&mut self, id: &ID) {
-        self.vertices.remove(id);
-        self.adjacency.remove(id);
+        let mut remove_stack = VecDeque::from([id.clone()]);
+        while remove_stack.len() > 0 {
+            let r = remove_stack.pop_front().unwrap();
+            self.vertices.remove(&r);
+            if let Some(children_id) = self.adjacency.remove(&r){
+                for i in children_id{
+                    remove_stack.push_front(i);
+                }
+            }
+        }
         for (_id, children) in self.adjacency.iter_mut() {
             children.remove(id);
         }

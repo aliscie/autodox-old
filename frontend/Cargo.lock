@@ -241,6 +241,8 @@ dependencies = [
  "html-minifier",
  "js-sys",
  "markup5ever_rcdom",
+ "serde",
+ "shared",
  "table-extract",
  "wasm-bindgen",
  "web-sys",

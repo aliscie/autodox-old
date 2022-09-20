@@ -32,16 +32,5 @@ pub fn tree_list(props: &TreeListProps) -> Html {
     //d.reduce_mut(|r| r.data.insert(225, "file four!".into()));
 
     //(props.files.clone()).into_iter().map(|file| file.to_html()).collect::<Html>()
-    html!{
-    <>
-    {tree.files
-        .adjacency
-        .get(&0)
-        .unwrap()
-        .into_iter()
-        .map(|f| tree.to_html(*f))
-        .collect::<Html>()}
-    </>
-    }
-
+    tree.to_html(0)
 }

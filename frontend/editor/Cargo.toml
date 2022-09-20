@@ -12,6 +12,8 @@ wasm-bindgen = "0.2"
 html-minifier = "3.0.15"
 js-sys = "0.3.56"
 markup5ever_rcdom = "0.1.0"
+shared = { path = "../shared"}
+serde = "*"
 #extend_traits = { path = "../extend_traits" }
 
 
