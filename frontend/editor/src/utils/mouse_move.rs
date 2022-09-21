@@ -1,8 +1,7 @@
 use serde_json::json;
 use web_sys::MouseEvent;
 use yew::Callback;
-
-use crate::utils::invoke;
+use shared::invoke;
 
 pub fn on_mouse_move() -> Callback<MouseEvent> {
     Callback::from(|e: MouseEvent| {

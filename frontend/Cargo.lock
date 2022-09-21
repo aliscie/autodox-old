@@ -242,11 +242,13 @@ dependencies = [
  "js-sys",
  "markup5ever_rcdom",
  "serde",
+ "serde_json",
  "shared",
  "table-extract",
  "wasm-bindgen",
  "web-sys",
  "yew",
+ "yewdux",
 ]
 
 [[package]]

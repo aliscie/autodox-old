@@ -1,7 +1,11 @@
 extern crate web_sys;
 
-use web_sys::console::log_1;
+use std::{collections::HashMap, borrow::Borrow};
+
 use yew::prelude::*;
+use yewdux::prelude::{use_store, Dispatch};
+
+use crate::element_tree::{Attrs, EditorElement, ElementTree};
 
 // this is used for the work space
 
@@ -30,7 +34,6 @@ pub fn editor() -> Html {
         }
     };
 
-
     let ondragstart = {
         move |e: DragEvent| {
             // opacity:0.5
@@ -49,27 +52,30 @@ pub fn editor() -> Html {
         }
     };
 
-
     let ondragleave = {
         move |e: DragEvent| {
             // background:none
         }
     };
-
-    html! {
-    <span
-    {onmousemove}
-    contenteditable="true"
-    class="text_editor_container"
-    >
-        <div class="text_editor">
-            // TODO instead of  { 'value': 'bold text', 'attrs': {'bold': true} },
-            //  you MUST use { 'text': 'bold', 'attrs': {'style': font-weight: bold;} }
-            //  Because this will help reduce the amount of code required for rendering and conversion.
-            //  rendering mean: convert from the database to html
-            //  conversion: is to convert to html into the database
-            <span style="font-weight: bold;">{"bold text"}</span>
-            <p>{r#"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
+    let element_tree_dispatch = Dispatch::<ElementTree>::new();
+    element_tree_dispatch.reduce_mut(|r| {
+        r.elements
+            .push_vertex(0, EditorElement::new(0, "".to_string(), HashMap::new()));
+        r.elements.push_children(
+            0,
+            1,
+            EditorElement::new(
+                1,
+                "bold text".to_string(),
+                HashMap::from([(Attrs::Style, "font-weight: bold;".to_string())]),
+            ),
+        );
+        r.elements.push_children(
+            0,
+            2,
+            EditorElement::new(
+                2,
+                r#"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
                 molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
                 numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
                 optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis
@@ -89,8 +95,28 @@ pub fn editor() -> Html {
                 suscipit quas? Nulla, placeat. Voluptatem quaerat non architecto ab laudantium
                 modi minima sunt esse temporibus sint culpa, recusandae aliquam numquam
                 totam ratione voluptas quod exercitationem fuga. Possimus quis earum veniam
-                quasi aliquam eligendi, placeat qui corporis!
-                "#}</p>
+                uasi aliquam eligendi, placeat qui corporis!
+                "#
+                .to_string(),
+                HashMap::new(),
+            ),
+        );
+    });
+    web_sys::console::log_1(&serde_json::to_string(element_tree_dispatch.get().as_ref()).unwrap().into());
+
+    html! {
+    <span
+    {onmousemove}
+    contenteditable="true"
+    class="text_editor_container"
+    >
+        <div class="text_editor">
+            // TODO instead of  { 'value': 'bold text', 'attrs': {'bold': true} },
+            //  you MUST use { 'text': 'bold', 'attrs': {'style': font-weight: bold;} }
+            //  Because this will help reduce the amount of code required for rendering and conversion.
+            //  rendering mean: convert from the database to html
+            //  conversion: is to convert to html into the database
+            { element_tree_dispatch.get().to_html(0) }
         </div>
     </span>
     }

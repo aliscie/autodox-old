@@ -1,19 +1,78 @@
-use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
 use shared::Tree;
-use serde::{Serialize, Deserialize};
+use std::{cell::RefCell, collections::HashMap, hash::Hash, rc::Rc};
+use yew::prelude::*;
+use yewdux::prelude::*;
 
+pub type ElementId = u64;
 
-pub struct ElementTree{
-    elements : Tree<u64, EditorElement>
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default, Store)]
+pub struct ElementTree {
+    pub elements: Tree<ElementId, EditorElement>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Eq , PartialEq, Default)]
-pub struct EditorElement{
-    text : String,
-    attrs : HashMap<Attrs, String>,
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default)]
+pub struct EditorElement {
+    pub id: ElementId,
+    pub text: String,
+    pub attrs: HashMap<Attrs, String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Eq , PartialEq, Default, Hash)]
-pub enum Attrs{
-    #[default] Style,
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default, Hash)]
+pub enum Attrs {
+    #[default]
+    Style,
+}
+
+impl ElementTree {
+    #[inline]
+    pub(crate) fn new() -> Self {
+        Self {
+            elements: Tree::new(),
+        }
+    }
+
+    pub(crate) fn to_html(&self, start: u64) -> Html {
+        let map: Rc<RefCell<HashMap<u64, Html>>> = Rc::new(RefCell::new(HashMap::new()));
+        for (id, node) in &self.elements.vertices {
+            let mut has_children = false;
+            if let Some(children) = self.elements.adjacency.get(id){
+                has_children = children.len() > 0; 
+            }
+            let html_node = html! {
+                <>
+                <div style = { node.attrs
+                    .get(&Attrs::Style)
+                        .unwrap_or(&"".to_string())
+                        .clone()}>
+                        { node.text.clone()}
+                </div>
+                <>
+                    if has_children {{
+                        self.elements.adjacency.get(id)
+                        .unwrap()
+                        .into_iter()
+                        .map(|f| map.borrow().get(f).unwrap().to_owned())
+                        .collect::<Html>()
+                    }}
+                </>
+                </>
+            };
+            map.borrow_mut().insert(*id, html_node);
+        }
+        self.elements
+            .adjacency
+            .get(&start)
+            .unwrap()
+            .into_iter()
+            .map(|f| map.borrow().get(f).unwrap().to_owned())
+            .collect::<Html>()
+    }
+}
+
+impl EditorElement {
+    #[inline]
+    pub fn new(id: u64, text: String, attrs: HashMap<Attrs, String>) -> Self {
+        Self { id, text, attrs }
+    }
 }

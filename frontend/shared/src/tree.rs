@@ -32,7 +32,7 @@ where
         adjacency_to_from.insert(to);
     }
 
-    pub fn push_children(&mut self, parent_id : ID, child_id : ID, child : T){
+    pub fn push_children(&mut self, parent_id: ID, child_id: ID, child: T) {
         self.push_vertex(child_id.clone(), child);
         self.push_edge(parent_id, child_id);
     }
@@ -42,8 +42,8 @@ where
         while remove_stack.len() > 0 {
             let r = remove_stack.pop_front().unwrap();
             self.vertices.remove(&r);
-            if let Some(children_id) = self.adjacency.remove(&r){
-                for i in children_id{
+            if let Some(children_id) = self.adjacency.remove(&r) {
+                for i in children_id {
                     remove_stack.push_front(i);
                 }
             }
@@ -53,31 +53,32 @@ where
         }
     }
 
-    pub fn into_iter<'a>(&'a self, start : ID)-> TreeIter<'a, ID, T>{
+    pub fn into_iter<'a>(&'a self, start: ID) -> TreeIter<'a, ID, T> {
         let first_children = self.adjacency.get(&start).unwrap();
-        TreeIter{
-            tree : self,
-            visited_nodes : HashSet::from([start]),
-            stack : first_children.clone().into_iter().map(|s| (s, 0)).collect(),
-            depth : 0,
+        TreeIter {
+            tree: self,
+            visited_nodes: HashSet::from([start]),
+            stack: first_children.clone().into_iter().map(|s| (s, 0)).collect(),
+            depth: 0,
         }
     }
+
 }
 
-//impl<'a, ID, T> IntoIterator for &'a Tree<ID, T> 
+//impl<'a, ID, T> IntoIterator for &'a Tree<ID, T>
 //where
-    //ID: Hash + PartialEq + Eq + Clone + Default + Debug,
-    //T: PartialEq + Eq + Clone + Default + Debug,
+//ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+//T: PartialEq + Eq + Clone + Default + Debug,
 //{
-    //type Item = &'a T;
-    //type IntoIter = TreeIter<'a, ID, T>;
-    //fn into_iter(self) -> Self::IntoIter {
-        //TreeIter {
-            //tree: self,
-            //visited_nodes: HashSet::new(),
-            //stack: HashSet::new(),
-        //}
-    //}
+//type Item = &'a T;
+//type IntoIter = TreeIter<'a, ID, T>;
+//fn into_iter(self) -> Self::IntoIter {
+//TreeIter {
+//tree: self,
+//visited_nodes: HashSet::new(),
+//stack: HashSet::new(),
+//}
+//}
 //}
 
 pub struct TreeIter<'a, ID, T>
@@ -88,8 +89,8 @@ where
     tree: &'a Tree<ID, T>,
     visited_nodes: HashSet<ID>,
     //stack: HashSet<ID>,
-    stack : VecDeque<(ID, u64)>,
-    depth : u64,
+    stack: VecDeque<(ID, u64)>,
+    depth: u64,
 }
 
 impl<'a, ID, T> Iterator for TreeIter<'a, ID, T>
@@ -99,16 +100,16 @@ where
 {
     type Item = (&'a T, u64);
     fn next(&mut self) -> Option<Self::Item> {
-        while self.stack.len() > 0{
+        while self.stack.len() > 0 {
             let data = self.stack.pop_front().unwrap();
-            if self.visited_nodes.contains(&data.0){
+            if self.visited_nodes.contains(&data.0) {
                 // that node has already been visited go ahead
                 continue;
             }
             let node = self.tree.vertices.get(&data.0).unwrap();
-            if let Some(children) = self.tree.adjacency.get(&data.0){
-                for i in children{
-                    if !self.visited_nodes.contains(i){
+            if let Some(children) = self.tree.adjacency.get(&data.0) {
+                for i in children {
+                    if !self.visited_nodes.contains(i) {
                         self.stack.push_front((i.clone(), self.depth));
                     }
                 }

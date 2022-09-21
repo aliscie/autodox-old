@@ -36,6 +36,7 @@ impl Default for FileTree {
 }
 
 impl FileTree {
+    #[inline]
     pub fn new() -> Self {
         Self { files: Tree::new() }
     }
