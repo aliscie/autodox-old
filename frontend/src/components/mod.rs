@@ -27,3 +27,4 @@ pub use menu::Menu;
 
 mod avatar;
 pub use avatar::Avatar;
+

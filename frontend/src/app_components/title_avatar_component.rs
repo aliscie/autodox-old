@@ -5,13 +5,11 @@ use web_sys::console::log_1;
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
 
-    let position: UseStateHandle<String> = use_state(|| "".to_string());
+    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
 
     let _position = position.clone();
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        _position.set(
-            format!("top:{}px; right:{}px;", _e.offset_y(), _e.offset_x()).into()
-        );
+        _position.set(Some(_e));
     });
     let items: Vec<Html> = vec![
         html! {<><i class="fa-solid fa-user"></i>{"Profile info"}</>},
@@ -22,7 +20,7 @@ pub fn title_avatar_component() -> Html {
 
     html! { <>
     <Menu
-    position={position.clone()}
+    event={position.clone()}
      {items}
       />
     <span class="right_clickable main_avatar" {onmouseup}>

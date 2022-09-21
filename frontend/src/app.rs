@@ -8,11 +8,11 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::TreeList;
+use crate::components::{TreeList};
 use crate::router::*;
 use crate::utils::{FileNode, FileTree};
 
-use crate::app_components::{SearchFiltes};
+use crate::app_components::{SearchFiltes, ButtonsGroup};
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -69,19 +69,13 @@ pub fn app() -> Html {
     html! {
         <BrowserRouter>
 
-        <div id = "app">
+        <div id = "app" class="night-mod">
         { super::utils::get_titlebar(toggle_aside ) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
 
         <SearchFiltes/>
 
-        <div class="files_categories">
-            <span class="btn">{"work"}</span>
-            <span class="btn">{"school"}</span>
-            <span class="btn">{"projects"}</span>
-            <span class="btn"><i class="fa fa-plus"></i></span>
-        </div>
-
+        <ButtonsGroup/>
 
         <ul  id="myUL">
             <TreeList/>

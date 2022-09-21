@@ -15,7 +15,7 @@ use web_sys::{window, Document, Element, MouseEvent};
 use crate::*;
 
 pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
-    let light_mod = use_state(|| true);
+    let light_mod = use_state(|| false);
 
 
     let is_expanded = x.clone().chars().count();

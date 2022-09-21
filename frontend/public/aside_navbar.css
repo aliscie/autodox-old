@@ -78,7 +78,7 @@ aside {
     padding: 0;
 }
 
-.files_categories {
+.buttons_group_class {
     position: relative;
     margin: 10px;
     alignment: center;
@@ -89,7 +89,7 @@ aside {
     flex-direction: row;
 }
 
-.files_categories .btn {
+.buttons_group_class .btn {
     border-radius: 0;
     padding-left: 5px;
     padding-right: 5px;
@@ -97,10 +97,10 @@ aside {
 }
 
 
-.files_categories .btn:last-child {
+.buttons_group_class .btn:last-child {
     border-radius: 0 5px 5px 0 !important;
 }
 
-.files_categories .btn:first-child {
+.buttons_group_class .btn:first-child {
     border-radius: 5px 0 0 5px !important;
 }

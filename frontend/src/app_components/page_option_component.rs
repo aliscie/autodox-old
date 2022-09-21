@@ -20,11 +20,11 @@ pub struct PageOptionsProps {
 
 #[function_component(PageOptions)]
 pub fn page_options(props: &PageOptionsProps) -> Html {
-    let position: UseStateHandle<String> = use_state(|| "".to_string());
+    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let _position = position.clone();
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _position.set(
-            format!("top:{}px; right:{}px;", _e.offset_y(), _e.offset_x()).into()
+            Some(_e)
         );
     });
     
@@ -46,7 +46,7 @@ pub fn page_options(props: &PageOptionsProps) -> Html {
 
 
         <Menu
-        position={position.clone()}
+        event={position.clone()}
         {items}
       />
     </>

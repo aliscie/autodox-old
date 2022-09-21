@@ -37,7 +37,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
-    let position: UseStateHandle<String> = use_state(|| "".to_string());
+    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
 
     let caret = use_state(|| "".to_string());
     let id = props.id.clone().to_string();
@@ -46,7 +46,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if _e.which() == 3 {
             _position.set(
-                format!("top:{}px; right:{}px;", _e.offset_y(), _e.offset_x()).into()
+                Some(_e)
             );
         }
     });
@@ -181,7 +181,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            html! {<><i class="fa-solid fa-trash"/>{"Delete"}</>},
 
            ]}
-           position={position.clone()}
+           event={position.clone()}
            />
 
         </div>

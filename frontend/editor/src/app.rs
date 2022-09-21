@@ -116,6 +116,16 @@ pub fn editor() -> Html {
             //  Because this will help reduce the amount of code required for rendering and conversion.
             //  rendering mean: convert from the database to html
             //  conversion: is to convert to html into the database
+
+
+            // TODO in addition to rendering we will have conversion
+            //   for example when a use copy and paste something from the internet we will have conversion algorithm like this
+            //   https://share.descript.com/view/xR05MPWVQG5
+            //   changes.items().map(|item|,{
+            //   the `to_nodes()` method should handle item.tag, item.attribute, item.value, item.children
+            //   also if item.children != None { item.children.unwrap().map(|child|,{  self.to_nodes(child) }) }
+            //   let node = element_tree_dispatch.get().to_nodes(item)
+            //   })
             { element_tree_dispatch.get().to_html(0) }
         </div>
     </span>

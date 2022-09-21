@@ -22,11 +22,11 @@ pub struct DownloadProps {
 
 #[function_component(Download)]
 pub fn download(props: &DownloadProps) -> Html {
-    let position: UseStateHandle<String> = use_state(|| "".to_string());
+    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let _position = position.clone();
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _position.set(
-            format!("top:{}px; right:{}px;", _e.offset_y(), _e.offset_x()).into()
+            Some(_e)
         );
     });
 
@@ -38,7 +38,7 @@ pub fn download(props: &DownloadProps) -> Html {
 
     if *IS_WEB {
         html! {<>
-            <Menu position={position.clone()}{items}/>
+            <Menu event={position.clone()}{items}/>
             <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
         </>}
     } else { html! {""} }
