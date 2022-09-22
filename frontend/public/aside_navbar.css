@@ -23,9 +23,7 @@ aside {
         position: fixed;
         float: left;
         bottom: 0;
-
         z-index: 299;
-        box-shadow: 13px 0px 20px #000000;
         transition: 0.2s;
 
     }

@@ -1,12 +1,16 @@
 extern crate web_sys;
 
-use std::{collections::HashMap, borrow::Borrow};
-
+use serde::{Deserialize, Serialize};
+use std::{borrow::Borrow, collections::HashMap};
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use wasm_bindgen::prelude::Closure;
+use web_sys::{DragEvent, Element, MouseEvent, window};
+use web_sys::console::log_1;
 use yew::prelude::*;
-use yewdux::prelude::{use_store, Dispatch};
-
+use yewdux::prelude::{Dispatch, use_store};
+use crate::plugins::{PasteConverter};
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
-
+use std::rc::Rc;
 // this is used for the work space
 
 #[function_component(Editor)]
@@ -20,6 +24,14 @@ pub fn editor() -> Html {
 
     // get the current focused and sorted it
     // get the previous  focused and sorted it in yewdux
+    let empty = "empty".to_string();
+    use_effect_with_deps(move |_my_text| {
+        let doc = window().unwrap_throw().document().unwrap_throw();
+        let editor: Rc<Element> = Rc::new(doc.query_selector(".text_editor").unwrap_throw().unwrap_throw());
+        PasteConverter::new(editor.clone());
+        || {}
+    }, empty);
+
 
     let onmousemove = {
         move |e: MouseEvent| {
@@ -97,7 +109,7 @@ pub fn editor() -> Html {
                 totam ratione voluptas quod exercitationem fuga. Possimus quis earum veniam
                 uasi aliquam eligendi, placeat qui corporis!
                 "#
-                .to_string(),
+                    .to_string(),
                 HashMap::new(),
             ),
         );
@@ -110,7 +122,7 @@ pub fn editor() -> Html {
     contenteditable="true"
     class="text_editor_container"
     >
-        <div class="text_editor">
+        <div class="text_editor" >
             // TODO instead of  { 'value': 'bold text', 'attrs': {'bold': true} },
             //  you MUST use { 'text': 'bold', 'attrs': {'style': font-weight: bold;} }
             //  Because this will help reduce the amount of code required for rendering and conversion.

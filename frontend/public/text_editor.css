@@ -2,7 +2,7 @@
 
     flex-shrink: 0;
     flex-grow: 1;
-    max-width: 100%;
+    /*max-width: 80%;*/
     display: flex;
     align-items: flex-start;
     flex-direction: column;
@@ -19,7 +19,7 @@
 
 
 .text_editor_container {
-    width: 100%;
+    /*max-width: 80%;*/
     padding-bottom: 30vh;
     transition: 0.3s;
 }
