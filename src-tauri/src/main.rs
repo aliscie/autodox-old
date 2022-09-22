@@ -5,11 +5,15 @@ windows_subsystem = "windows"
 
 use std::collections::HashMap;
 
+
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
 use tauri::async_runtime::Mutex;
 use tauri::{Runtime, Window, State};
 use tauri::Manager;
+
+
+mod entity;
 
 #[derive(Debug, Clone, Copy, Default)]
 struct MouseLoc{

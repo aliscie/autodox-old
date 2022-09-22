@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
 use std::hash::Hash;
+use uuid::Uuid;
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct Tree<ID, T>
@@ -9,6 +10,7 @@ where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Default + Debug,
 {
+    pub id : Uuid,
     pub vertices: HashMap<ID, T>,
     pub adjacency: HashMap<ID, HashSet<ID>>,
 }
@@ -20,6 +22,7 @@ where
 {
     pub fn new() -> Self {
         Self {
+            id : Uuid::new_v4(),
             vertices: HashMap::new(),
             adjacency: HashMap::new(),
         }

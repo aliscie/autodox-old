@@ -11,8 +11,6 @@ use app::App;
 
 use lazy_static::lazy_static;
 
-
-
 lazy_static! {
     pub static ref IS_WEB: bool = {
         let mut m : bool = false;
