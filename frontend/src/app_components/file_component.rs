@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
-// use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
 use web_sys::{DragEvent, Element, MouseEvent, window};
 use web_sys::console::log_1;
@@ -63,8 +62,10 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     };
 
     let _is_dragged = is_dragged.clone();
-
+    let _id = id.clone();
     let ondragstart: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        log_1(&format!("ondragstart {:?}", &_id).into());
+        _e.data_transfer().unwrap().set_data("dragged_item", &_id).unwrap();
         _is_dragged.set("dragged".to_string())
     });
 
@@ -76,8 +77,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _is_enter = is_enter.clone();
+    let _is_dragged = is_dragged.clone();
     let ondragenter: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _is_enter.set("dragging_over".to_string());
+        if (*_is_dragged).len() == 0 {
+            _is_enter.set("dragging_over".to_string());
+        }
     });
 
     let _is_enter = is_enter.clone();
@@ -87,28 +91,40 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
     let _is_enter = is_enter.clone();
     let _is_dragged = is_dragged.clone();
+    let _is_drag_under = is_drag_under.clone();
+    let _id = id.clone();
     let ondrop: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _e.prevent_default();
+        let curr: Element = _e.target_unchecked_into();
+        curr.class_list().toggle("dragging_over");
+        let dragged = _e.data_transfer().unwrap().get_data("dragged_item");
+        // log_1(&format!("dragged:{:?} dropped:{:?}", dragged, _id).into());
         // TODO
-        //  get dragged item by datatransfer
-        //  get dragged over item id props.id
-        //  do the child transaction from parent to another parent
+        //  remove background color
     });
 
 
     let _is_drag_under = is_drag_under.clone();
+    let _is_dragged = is_dragged.clone();
     let ondragenter_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _is_drag_under.set("height: 20px; opacity:1;".to_string());
+        if (*_is_dragged).len() == 0 {
+            _is_drag_under.set("height: 20px; opacity:1;".to_string());
+        }
     });
 
+    let ondragover: Callback<DragEvent> = Callback::from(move |_e: DragEvent| { _e.prevent_default(); });
+
     let _is_drag_under = is_drag_under.clone();
+    let _id = id.clone();
     let ondrop_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _e.prevent_default();
-        //TODO
-        // let id = e.data_transfer_get("id");
-        // let doc = window().unwrap_throw().document().unwrap();
-        // let curr = query_selector(format!("#{}",id)).unwrap().unwrap();
-        // curr.set_attribute("style", " height: 3px; opacity:0;");
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_attribute("style","height: 3px; opacity:0;");
+
+        let dragged = _e.data_transfer().unwrap().get_data("dragged_item");
+        log_1(&format!("dragged:{:?} dropped:{:?}", dragged, _id).into());
+        // TODO
+        //  remove background color
     });
 
     let _is_drag_under = is_drag_under.clone();
@@ -149,6 +165,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            } else{ html!{} }
            }
            <li
+           ondragover={ondragover.clone()}
            {ondrop}
            {ondragenter}
            {ondragleave}
@@ -167,6 +184,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         </div>
 
             <div
+            ondragover={ondragover.clone()}
             style={format!("{}",(*is_drag_under).clone())}
             ondrop={ondrop_under}
             ondragenter={ondragenter_under}
@@ -179,6 +197,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            html! {<><i class="fa-solid fa-upload"/>{"Share"}</>},
            html! {<><i class="fa-solid fa-eye"/>{"Permissions"}</>},
            html! {<><i class="fa-solid fa-trash"/>{"Delete"}</>},
+           html! {<><i class="fa-brands fa-medium"></i>{"Category"}</>},
 
            ]}
            event={position.clone()}

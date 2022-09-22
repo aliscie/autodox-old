@@ -123,9 +123,10 @@ pub fn editor() -> Html {
             //   https://share.descript.com/view/xR05MPWVQG5
             //   changes.items().map(|item|,{
             //   the `to_nodes()` method should handle item.tag, item.attribute, item.value, item.children
-            //   also if item.children != None { item.children.unwrap().map(|child|,{  self.to_nodes(child) }) }
+            //   if item.children != None { item.children.unwrap().map(|child|,{  self.to_nodes(child) }) }
             //   let node = element_tree_dispatch.get().to_nodes(item)
             //   })
+
             { element_tree_dispatch.get().to_html(0) }
         </div>
     </span>

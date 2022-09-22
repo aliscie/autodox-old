@@ -11,7 +11,7 @@ aside {
     backdrop-filter: blur(15px);
 
     z-index: 299;
-    transition: 0.5s;
+    transition: 0.2s;
 }
 
 
@@ -24,10 +24,9 @@ aside {
         float: left;
         bottom: 0;
 
-        background: #e2e2e2 !important;
         z-index: 299;
-        box-shadow: 13px 0px 20px #acacac;
-        transition: 0.5s;
+        box-shadow: 13px 0px 20px #000000;
+        transition: 0.2s;
 
     }
 

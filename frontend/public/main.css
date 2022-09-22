@@ -5,19 +5,6 @@
 }
 
 :root {
-    --primary-background: 152, 152, 152;
-    --hover-color: 141, 141, 141;
-    --background: 255, 255, 255;
-    --color: 0, 0, 0;
-    --main-color: #a4a4a4;
-    --primary-color: rgb(109, 109, 109);
-    --text-color: black;
-    --card-height: 65vh;
-    --card-width: calc(var(--card-height) / 1.5);
-    --bg-image: url('https://images.unsplash.com/photo-1538370965046-79c0d6907d47?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80');
-}
-
-.night-mod {
     --primary-background: 62, 62, 62;
     --hover-color: 117, 117, 117;
     --background: 19, 19, 19;
@@ -25,6 +12,21 @@
     --main-color: #5d5d5d;
     --primary-color: rgb(196, 196, 196);
     --text-color: white;
+
+
+    --card-height: 65vh;
+    --card-width: calc(var(--card-height) / 1.5);
+    --bg-image: url('https://images.unsplash.com/photo-1538370965046-79c0d6907d47?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80');
+}
+
+.light-mod {
+    --primary-background: 152, 152, 152;
+    --hover-color: 141, 141, 141;
+    --background: 255, 255, 255;
+    --color: 0, 0, 0;
+    --main-color: #a4a4a4;
+    --primary-color: rgb(109, 109, 109);
+    --text-color: black;
 }
 
 /* ©2015 Johannes Jakob
@@ -42,7 +44,7 @@ a {
    Made with <3 in Germany */
 
 #app, body, html {
-    background: rgb(var(--background));
+    background-color: rgb(var(--background)) !important;
     color: rgb(var(--color));
     transition: 0.2s;
 }
@@ -55,7 +57,6 @@ a {
 
 
 .window {
-    background: #fff;
     width: 50vw;
     height: 75vh;
     margin: auto;
@@ -169,8 +170,6 @@ h3 {
 }
 
 
-
-
 .file_component:hover {
     font-size: 20px;
 }
@@ -199,7 +198,7 @@ bottom_buttons button {
 /*    !*width: -webkit-calc(82% - 230px);*!*/
 
 /*    padding-bottom: 150px;*/
-/*    transition: 0.5s;*/
+/*    transition: 0.2s;*/
 /*}*/
 
 nav {

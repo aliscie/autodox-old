@@ -25,7 +25,8 @@ pub fn search_filters() -> Html {
     let items: Vec<Html> = vec![
         html! {<>{"Filter by name"}</>},
         html! {<>{"Filter by content"}</>},
-        html! {<>{"Filter by type"}</>},
+        html! {<>{"Filter by category"}</>},
+        html! {<>{"Filter by tag"}</>},
         html! {<>{"Filter by permission"}</>},
         html! {<span {onmousedown} >{"Replace"}</span>},
     ];
@@ -53,7 +54,7 @@ pub fn search_filters() -> Html {
             {"A"}
          </span>
 
-          <span {onmouseup} type="submit" class="right_clickable btn searchButton">
+          <span {onmouseup} class="right_clickable btn searchButton">
             <i class="fa fa-search"></i>
          </span>
 

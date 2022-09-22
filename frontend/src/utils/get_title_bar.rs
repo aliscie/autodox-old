@@ -26,7 +26,7 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let _light_mod = light_mod.clone();
     let _doc = doc.clone();
     let handle_light_mod: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-        _doc.query_selector("#app").unwrap().unwrap().class_list().toggle("night-mod");
+        _doc.query_selector("html").unwrap().unwrap().class_list().toggle("light-mod");
         _light_mod.set(!(*_light_mod));
     });
 

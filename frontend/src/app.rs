@@ -69,7 +69,7 @@ pub fn app() -> Html {
     html! {
         <BrowserRouter>
 
-        <div id = "app" class="night-mod">
+        <div id = "app">
         { super::utils::get_titlebar(toggle_aside ) }
         <aside style={format!("{}",(*aside_bar_taggol).clone())}>
 

@@ -35,6 +35,6 @@ pub async fn get_data() -> Result<Response<ResponseData>, Error> {
     // let res = client.post("https://api.github.com/graphql").json(&request_body).send().await?;
     let res = client.post("http://0.0.0.0:8000/").json(&request_body).send().await?;
     let response_body: Response<repo_view::ResponseData> = res.json().await?;
-    log_1(&format!("{:?}", response_body).into());
+    // log_1(&format!("{:?}", response_body).into());
     Ok(response_body)
 }
