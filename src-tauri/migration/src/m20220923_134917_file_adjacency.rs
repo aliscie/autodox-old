@@ -18,24 +18,24 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(FileAdjacency::ChildId).uuid().not_null())
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
-                            .from_tbl(FileTree::Table)
-                            .from_col(FileTree::Id)
-                            .to_tbl(FileAdjacency::Table)
-                            .to_col(FileAdjacency::TreeId),
+                            .from_tbl(FileAdjacency::Table)
+                            .from_col(FileAdjacency::TreeId)
+                            .to_tbl(FileTree::Table)
+                            .to_col(FileTree::Id)
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
-                            .from_tbl(FileNode::Table)
-                            .from_col(FileNode::Id)
-                            .to_tbl(FileAdjacency::Table)
-                            .to_col(FileAdjacency::ParentId),
+                            .from_tbl(FileAdjacency::Table)
+                            .from_col(FileAdjacency::ParentId)
+                            .to_tbl(FileNode::Table)
+                            .to_col(FileNode::Id)
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
-                            .from_tbl(FileNode::Table)
-                            .from_col(FileNode::Id)
-                            .to_tbl(FileAdjacency::Table)
-                            .to_col(FileAdjacency::ChildId),
+                            .from_tbl(FileAdjacency::Table)
+                            .from_col(FileAdjacency::ChildId)
+                            .to_tbl(FileNode::Table)
+                            .to_col(FileNode::Id)
                     )
                     .to_owned(),
             )
