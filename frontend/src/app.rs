@@ -1,14 +1,9 @@
 use editor::Editor;
-use gloo::console::console;
-use shared::invoke;
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use web_sys::{Document, Element, MouseEvent, window};
-use web_sys::console::log_1;
+use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-
-use crate::components::{TreeList};
+use crate::components::TreeList;
 use crate::router::*;
 use crate::utils::{FileNode, FileTree};
 
