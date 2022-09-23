@@ -11,11 +11,12 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(FileTree::Table)
                     .if_not_exists()
+                    .col(ColumnDef::new(FileTree::Id).uuid().not_null().primary_key())
                     .col(
-                        ColumnDef::new(FileTree::Id)
-                            .uuid()
+                        ColumnDef::new(FileTree::Name)
+                            .text()
                             .not_null()
-                            .primary_key(),
+                            .default("".to_string()),
                     )
                     .to_owned(),
             )
@@ -34,4 +35,5 @@ impl MigrationTrait for Migration {
 pub enum FileTree {
     Table,
     Id,
+    Name,
 }
