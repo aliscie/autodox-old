@@ -9,16 +9,16 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Tree::Table)
+                    .table(FileNode::Table)
                     .if_not_exists()
+                    .col(ColumnDef::new(FileNode::Id).uuid().not_null().primary_key())
                     .col(
-                        ColumnDef::new(Tree::Id)
-                            .uuid()
+                        ColumnDef::new(FileNode::Name)
+                            .text()
                             .not_null()
-                            .primary_key(),
+                            .default("".to_string()),
                     )
-                    .col(ColumnDef::new(Tree::Vertices).json_binary().not_null())
-                    .col(ColumnDef::new(Tree::Adjacency).json_binary().not_null())
+                    .col(ColumnDef::new(FileNode::ElementTreeId).uuid().not_null())
                     .to_owned(),
             )
             .await
@@ -26,16 +26,17 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Tree::Table).to_owned())
+            .drop_table(Table::drop().table(FileNode::Table).to_owned())
             .await
     }
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
-enum Tree {
+pub enum FileNode {
     Table,
     Id,
-    Vertices,
-    Adjacency,
+    Name,
+    #[iden= "element_tree_id"]
+    ElementTreeId,
 }
