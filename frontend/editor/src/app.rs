@@ -11,6 +11,10 @@ use yewdux::prelude::{Dispatch, use_store};
 use crate::plugins::{PasteConverter};
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
 use std::rc::Rc;
+use yew::prelude::*;
+use std::fs;
+use std::net::SocketAddr;
+
 // this is used for the work space
 
 #[function_component(Editor)]
@@ -114,7 +118,12 @@ pub fn editor() -> Html {
             ),
         );
     });
-    web_sys::console::log_1(&serde_json::to_string(element_tree_dispatch.get().as_ref()).unwrap().into());
+
+    // web_sys::console::log_1(&serde_json::to_string(element_tree_dispatch.get().as_ref()).unwrap().into());
+
+    //TODO
+    // wasm_bindgen().run("/utils/selection_popover.js")
+
 
     html! {
     <span
@@ -123,6 +132,13 @@ pub fn editor() -> Html {
     class="text_editor_container"
     >
         <div class="text_editor" >
+
+            <div class="container">
+                  <div class="selectable-text-area">{"Lorem ipsum dolor, sit amet consectetur adipisicing elit"}</div>
+            </div>
+            <button id="twitter-share-btn"><i class="fab fa-twitter" aria-label="Share on Twitter"></i></button>
+
+
             // TODO instead of  { 'value': 'bold text', 'attrs': {'bold': true} },
             //  you MUST use { 'text': 'bold', 'attrs': {'style': font-weight: bold;} }
             //  Because this will help reduce the amount of code required for rendering and conversion.

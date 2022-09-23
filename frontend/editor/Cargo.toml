@@ -16,8 +16,15 @@ shared = { path = "../../shared", feautres = ["frontend"]}
 serde = "1.0.144"
 serde_json = "1.0.85"
 yewdux = "0.8.2"
+yew-style-in-rs = "0.4.1"
 #extend_traits = { path = "../extend_traits" }
 
+[features]
+default = []
+dry-run = ["yew-style-in-rs/dry-run"]
+
+[package.metadata.docs.rs]
+cargo-args = ["--features=dry-run"]
 
 [dependencies.web-sys]
 version = "0.3.56"

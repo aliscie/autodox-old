@@ -396,7 +396,6 @@ button:hover {
     padding: 0;
     text-decoration: none;
     display: inline-block;
-    cursor: grab;
 }
 
 .btn:hover {
