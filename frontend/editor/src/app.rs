@@ -1,19 +1,15 @@
 extern crate web_sys;
 
-use serde::{Deserialize, Serialize};
-use std::{borrow::Borrow, collections::HashMap};
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use wasm_bindgen::prelude::Closure;
+use std::collections::HashMap;
+use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{DragEvent, Element, MouseEvent, window};
-use web_sys::console::log_1;
 use yew::prelude::*;
 use yewdux::prelude::{Dispatch, use_store};
-use crate::plugins::{PasteConverter};
+use crate::plugins::PasteConverter;
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
 use std::rc::Rc;
-use yew::prelude::*;
-use std::fs;
-use std::net::SocketAddr;
+use crate::utils::my_function;
+
 
 // this is used for the work space
 
@@ -35,6 +31,7 @@ pub fn editor() -> Html {
         PasteConverter::new(editor.clone());
         || {}
     }, empty);
+    web_sys::console::log_1(&my_function().into());
 
 
     let onmousemove = {
