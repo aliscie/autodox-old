@@ -5,8 +5,11 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "file_adjacency")]
 pub struct Model {
+    #[sea_orm(primary_key, auto_increment = false)]
     pub tree_id: Uuid,
+    #[sea_orm(primary_key, auto_increment = false)]
     pub parent_id: Uuid,
+    #[sea_orm(primary_key, auto_increment = false)]
     pub child_id: Uuid,
 }
 
