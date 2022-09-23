@@ -21,21 +21,27 @@ impl MigrationTrait for Migration {
                             .from_tbl(FileAdjacency::Table)
                             .from_col(FileAdjacency::TreeId)
                             .to_tbl(FileTree::Table)
-                            .to_col(FileTree::Id)
+                            .to_col(FileTree::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .from_tbl(FileAdjacency::Table)
                             .from_col(FileAdjacency::ParentId)
                             .to_tbl(FileNode::Table)
-                            .to_col(FileNode::Id)
+                            .to_col(FileNode::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .from_tbl(FileAdjacency::Table)
                             .from_col(FileAdjacency::ChildId)
                             .to_tbl(FileNode::Table)
-                            .to_col(FileNode::Id)
+                            .to_col(FileNode::Id),
+                    )
+                    .primary_key(
+                        Index::create()
+                            .col(FileAdjacency::TreeId)
+                            .col(FileAdjacency::ParentId)
+                            .col(FileAdjacency::ChildId),
                     )
                     .to_owned(),
             )

@@ -1,29 +1,28 @@
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
 
 use std::collections::HashMap;
 
-
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
+use sea_orm::Database;
 use tauri::async_runtime::Mutex;
-use tauri::{Runtime, Window, State};
 use tauri::Manager;
+use tauri::{Runtime, State, Window};
 
-
+mod command;
 mod entity;
-//mod command;
 
 #[derive(Debug, Clone, Copy, Default)]
-struct MouseLoc{
-    x : i32,
-    y : i32,
+struct MouseLoc {
+    x: i32,
+    y: i32,
 }
 
-struct Storage{
-    store : Mutex<HashMap<u32, MouseLoc>>
+struct Storage {
+    store: Mutex<HashMap<u32, MouseLoc>>,
 }
 
 pub trait WindowExt {
@@ -68,15 +67,38 @@ impl<R: Runtime> WindowExt for Window<R> {
 // }
 
 fn main() {
+    //let postgres_url = std::env::var("DATABASE_URL").expect("Cannot find database url!");
+    let postgres_url = String::from("postgres://lunchspider:archi@localhost/autodox");
     tauri::Builder::default()
-        .manage(Storage { store : Mutex::new(HashMap::new())})
-        .invoke_handler(tauri::generate_handler![hello,minimize_window, maximize_window, close_window, mouse_move])
+        .manage(Storage {
+            store: Mutex::new(HashMap::new()),
+        })
+        .invoke_handler(tauri::generate_handler![
+            hello,
+            minimize_window,
+            maximize_window,
+            close_window,
+            mouse_move,
+            //command::get_directory
+        ])
         .setup(|app| {
             let win = app.get_window("main").unwrap();
-            // TODO: implement this for linux and windows
             #[cfg(target_os = "macos")]
-                win.set_transparent_titlebar(true);
+            win.set_transparent_titlebar(true);
+            let handle = app.handle();
+            tauri::async_runtime::block_on(async move {
+                let db = Database::connect(postgres_url).await;
 
+                match db {
+                    Ok(x) => {
+                        handle.manage(x);
+                    }
+                    Err(_) => {
+                        eprintln!("Cannot connect to database with url");
+                        handle.exit(3);
+                    }
+                }
+            });
             Ok(())
         })
         .run(tauri::generate_context!())
@@ -113,9 +135,9 @@ fn maximize_window(window: Window) -> Result<(), tauri::Error> {
 }
 
 #[tauri::command]
-async fn mouse_move(x : i32, y : i32, state : State<'_, Storage>) -> Result<(), ()>{
+async fn mouse_move(x: i32, y: i32, state: State<'_, Storage>) -> Result<(), ()> {
     let mut w = state.store.lock().await;
-    w.insert(0, MouseLoc{ x , y});
+    w.insert(0, MouseLoc { x, y });
     println!("{:?}", w.entry(0));
     Ok(())
 }
