@@ -14,6 +14,7 @@ use tauri::Manager;
 
 
 mod entity;
+//mod command;
 
 #[derive(Debug, Clone, Copy, Default)]
 struct MouseLoc{
