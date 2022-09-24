@@ -15,33 +15,34 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(ColumnDef::new(FileAdjacency::TreeId).uuid().not_null())
                     .col(ColumnDef::new(FileAdjacency::ParentId).uuid().not_null())
-                    .col(ColumnDef::new(FileAdjacency::ChildId).uuid().not_null())
+                    .col(
+                        ColumnDef::new(FileAdjacency::ChildId)
+                            .json_binary()
+                            .not_null()
+                            .default("{}".to_string()),
+                    )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .from_tbl(FileAdjacency::Table)
                             .from_col(FileAdjacency::TreeId)
                             .to_tbl(FileTree::Table)
-                            .to_col(FileTree::Id),
+                            .to_col(FileTree::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .from_tbl(FileAdjacency::Table)
                             .from_col(FileAdjacency::ParentId)
                             .to_tbl(FileNode::Table)
-                            .to_col(FileNode::Id),
-                    )
-                    .foreign_key(
-                        ForeignKeyCreateStatement::new()
-                            .from_tbl(FileAdjacency::Table)
-                            .from_col(FileAdjacency::ChildId)
-                            .to_tbl(FileNode::Table)
-                            .to_col(FileNode::Id),
+                            .to_col(FileNode::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
                     )
                     .primary_key(
                         Index::create()
                             .col(FileAdjacency::TreeId)
-                            .col(FileAdjacency::ParentId)
-                            .col(FileAdjacency::ChildId),
+                            .col(FileAdjacency::ParentId),
                     )
                     .to_owned(),
             )

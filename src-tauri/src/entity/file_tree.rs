@@ -10,12 +10,27 @@ pub struct Model {
     pub id: Uuid,
     #[sea_orm(column_type = "Text")]
     pub name: String,
+    pub root: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(
+        belongs_to = "super::file_node::Entity",
+        from = "Column::Root",
+        to = "super::file_node::Column::Id",
+        on_update = "Cascade",
+        on_delete = "Cascade"
+    )]
+    FileNode,
     #[sea_orm(has_many = "super::file_adjacency::Entity")]
     FileAdjacency,
+}
+
+impl Related<super::file_node::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::FileNode.def()
+    }
 }
 
 impl Related<super::file_adjacency::Entity> for Entity {

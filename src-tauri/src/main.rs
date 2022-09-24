@@ -79,7 +79,10 @@ fn main() {
             maximize_window,
             close_window,
             mouse_move,
-            //command::get_directory
+            crate::command::file_command::get_directory,
+            crate::command::file_command::get_directories,
+            crate::command::file_command::create_directory,
+            crate::command::file_command::create_file,
         ])
         .setup(|app| {
             let win = app.get_window("main").unwrap();
@@ -93,8 +96,8 @@ fn main() {
                     Ok(x) => {
                         handle.manage(x);
                     }
-                    Err(_) => {
-                        eprintln!("Cannot connect to database with url");
+                    Err(e) => {
+                        eprintln!("Cannot connect to database with url : {}", e);
                         handle.exit(3);
                     }
                 }

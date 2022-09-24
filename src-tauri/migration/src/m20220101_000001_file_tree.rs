@@ -1,3 +1,4 @@
+use crate::m20220923_134920_file_node::FileNode;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -18,6 +19,16 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default("".to_string()),
                     )
+                    .col(ColumnDef::new(FileTree::Root).uuid().not_null())
+                    .foreign_key(
+                        ForeignKeyCreateStatement::new()
+                            .from_tbl(FileTree::Table)
+                            .from_col(FileTree::Root)
+                            .to_tbl(FileNode::Table)
+                            .to_col(FileNode::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await
@@ -36,4 +47,5 @@ pub enum FileTree {
     Table,
     Id,
     Name,
+    Root,
 }
