@@ -293,7 +293,7 @@ h2 {
 
 .file_component {
     cursor: default;
-    transition: 0.3s;
+    transition: 0.2s;
     border-radius: 5px;
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
@@ -333,14 +333,14 @@ h2 {
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 400;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 
 .dropdown-content a:hover {
     background: rgba(var(--hover-color), 0.5) !important;
     backdrop-filter: blur(15px);
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .dropdown-content a {
@@ -380,7 +380,7 @@ button {
     background: rgba(195, 195, 195, 0.3);
     color: black;
     height: 30px;
-    transition: all 0.4s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 button:hover {

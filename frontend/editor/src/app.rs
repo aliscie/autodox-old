@@ -26,12 +26,13 @@ pub fn editor() -> Html {
     // get the previous  focused and sorted it in yewdux
     let empty = "empty".to_string();
     use_effect_with_deps(move |_my_text| {
+        web_sys::console::log_1(&my_function().into());
+
         let doc = window().unwrap_throw().document().unwrap_throw();
         let editor: Rc<Element> = Rc::new(doc.query_selector(".text_editor").unwrap_throw().unwrap_throw());
         PasteConverter::new(editor.clone());
         || {}
     }, empty);
-    web_sys::console::log_1(&my_function().into());
 
 
     let onmousemove = {
@@ -118,9 +119,6 @@ pub fn editor() -> Html {
 
     // web_sys::console::log_1(&serde_json::to_string(element_tree_dispatch.get().as_ref()).unwrap().into());
 
-    //TODO
-    // wasm_bindgen().run("/utils/selection_popover.js")
-
 
     html! {
     <span
@@ -128,13 +126,15 @@ pub fn editor() -> Html {
     contenteditable="true"
     class="text_editor_container"
     >
-        <div class="text_editor" >
+    <div contenteditable="false" id="twitter-share-btn" class="buttons_group_class">
+            <span class="btn"><i class="fa-solid fa-bold"></i></span>
+            <span class="btn"><i class="fa-solid fa-italic"></i></span>
+            <span class="btn"><i class="fa-solid fa-paint-roller"></i></span>
+            <span class="btn"><i class="fa-solid fa-comment"></i></span>
+            <span class="btn"><i class="fa-solid fa-droplet"></i></span>
+    </div>
 
-            <div class="container">
-                  <div class="selectable-text-area">{"Lorem ipsum dolor, sit amet consectetur adipisicing elit"}</div>
-            </div>
-            <button id="twitter-share-btn"><i class="fab fa-twitter" aria-label="Share on Twitter"></i></button>
-
+        <div  class="text_editor" >
 
             // TODO instead of  { 'value': 'bold text', 'attrs': {'bold': true} },
             //  you MUST use { 'text': 'bold', 'attrs': {'style': font-weight: bold;} }

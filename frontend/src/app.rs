@@ -85,8 +85,8 @@ pub fn app() -> Html {
             <h2 contenteditable="true" class={"editor_title heading"}>
             <Switch<Route> render={Switch::render(switch)} />
             </h2>
-      <Editor/>
 
+        <Editor/>
 
         </div>
         </BrowserRouter>
