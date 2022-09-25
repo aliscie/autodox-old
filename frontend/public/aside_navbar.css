@@ -7,7 +7,7 @@ aside {
     position: fixed;
     bottom: 0;
 
-    background: rgba(var(--primary-background), 0.4) !important;
+    background: rgba(var(--primary-background), 0.5) !important;
     backdrop-filter: blur(15px);
 
     z-index: 299;
@@ -51,11 +51,11 @@ aside {
 }
 
 
-.search .btn{
+.search .btn {
     border-radius: 0;
 }
 
-.search .searchButton:last-child{
+.search .searchButton:last-child {
     border-radius: 0 5px 5px 0 !important;
 }
 

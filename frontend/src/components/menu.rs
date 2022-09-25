@@ -49,7 +49,7 @@ pub fn menu(props: &MenuProps) -> Html {
 
 
         display = format!(
-            "position: absolute; display: block; top:{}px; left:{}px; animation-duration: 0.2s; animation-fill-mode: both; animation-name: btnEntrance;",
+            "display: block; top:{}px; left:{}px",
             &y, &x
         ).to_string();
     }
@@ -57,7 +57,7 @@ pub fn menu(props: &MenuProps) -> Html {
 
     html! {
     <div
-        style={format!("event: absolute; {};", display)}
+        style={format!("{};", display)}
         class={"dropdown-content"}
     >
         {

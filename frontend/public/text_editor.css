@@ -50,8 +50,14 @@
     display: none;
 
 }
+
 #twitter-share-btn .btn {
-    background-color: rgba(var(--background), 0.7);
+    background-color: rgba(var(--primary-background), 0.9);
+    width: 40px;
+}
+
+#twitter-share-btn .btn:hover {
+    background: rgba(var(--object-color), 1);
     width: 40px;
 }
 
