@@ -3882,6 +3882,7 @@ version = "0.1.0"
 dependencies = [
  "cocoa",
  "sea-orm",
+ "sea-query",
  "serde",
  "serde_json",
  "shared",
