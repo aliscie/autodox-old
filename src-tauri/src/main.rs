@@ -68,8 +68,8 @@ impl<R: Runtime> WindowExt for Window<R> {
 
 fn main() {
     //let postgres_url = std::env::var("DATABASE_URL").expect("Cannot find database url!");
-    let postgres_url = String::from("postgres://lunchspider:archi@localhost/autodox");
-    // let postgres_url = String::from("postgres://apple:password@localhost/autodox");
+    // let postgres_url = String::from("postgres://lunchspider:archi@localhost/autodox");
+    let postgres_url = String::from("postgres://apple:password@localhost/autodox");
     tauri::Builder::default()
         .manage(Storage {
             store: Mutex::new(HashMap::new()),
