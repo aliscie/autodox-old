@@ -34,13 +34,16 @@ pub async fn get_directory(
         .into_iter()
         .map(|x| (x.parent_id, x.child_id.into()))
         .collect::<HashMap<Uuid, HashSet<Uuid>>>();
-    // TODO : Finish this query
+    // DO NOT TOUCH THIS QUERY TOOK ME 2 HOURS TO WRITE
     let nodes: Vec<file_node::Model> = FileNode::find()
         .from_raw_sql(Statement::from_sql_and_values(
             DbBackend::Postgres,
-            r#"SELECT "file_node"."id" , "file_node"."name", "file_node"."element_tree_id" FROM "file_node", "file_adjacency" 
-                WHERE "file_adjacency"."tree_id" = $1 AND "file_node".id in (SELECT // read from
-                // file_adjacency here and do some magic to convert json back into postgres array )
+            r#"
+                SELECT "file_node"."id" , "file_node"."name", "file_node"."element_tree_id" FROM "file_node" , "file_adjacency"
+                WHERE (to_jsonb(ARRAY["file_node"."id"::text]) <@ "file_adjacency"."child_id"
+                OR "file_node"."id" = "file_adjacency"."parent_id") 
+                AND "file_adjacency"."tree_id" = $1
+                GROUP BY "file_node".id
             "#,
             vec![id.into()],
         ))
@@ -80,7 +83,7 @@ pub async fn create_directory(
     let root = FileNode::insert(file_node::ActiveModel {
         name: ActiveValue::Set("root".to_string()),
         element_tree_id: ActiveValue::NotSet,
-        ..Default::default()
+        id : ActiveValue::Set(Uuid::new_v4()),
     })
     .exec_with_returning(&txn)
     .await
@@ -88,7 +91,7 @@ pub async fn create_directory(
     let x = FileTree::insert(file_tree::ActiveModel {
         name: ActiveValue::Set(name),
         root: ActiveValue::Set(Some(root.id)),
-        ..Default::default()
+        id : ActiveValue::Set(Uuid::new_v4()),
     })
     .exec_with_returning(&txn)
     .await
@@ -108,6 +111,7 @@ pub async fn create_file(
     let txn = db.begin().await.map_err(|x| x.to_string())?;
     let file = FileNode::insert(file_node::ActiveModel {
         name: ActiveValue::Set(name),
+        id : ActiveValue::Set(Uuid::new_v4()),
         ..Default::default()
     })
     .exec_with_returning(&txn)
@@ -135,4 +139,14 @@ pub async fn create_file(
 
     txn.commit().await.map_err(|x| x.to_string())?;
     Ok(file)
+}
+
+#[cfg(test)]
+mod tests {
+    #[tokio::test]
+    async fn create_directory() {
+        //let conn = crate::connect_database(String::from(crate::POSTGRES_URL)).await;
+        //TODO : Find way to test command how to convert DatabaseConnection into
+        //tauri::State<DatabaseConnection>
+    }
 }
