@@ -18,7 +18,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default("".to_string()),
                     )
-                    .col(ColumnDef::new(FileNode::ElementTreeId).uuid().not_null())
+                    .col(ColumnDef::new(FileNode::ElementTreeId).uuid())
                     .to_owned(),
             )
             .await

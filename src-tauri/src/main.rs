@@ -14,6 +14,7 @@ use tauri::{Runtime, State, Window};
 
 mod command;
 mod entity;
+mod utils;
 
 #[derive(Debug, Clone, Copy, Default)]
 struct MouseLoc {

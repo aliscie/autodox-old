@@ -3,14 +3,14 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize, Eq, Default)]
 #[sea_orm(table_name = "file_node")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     #[sea_orm(column_type = "Text")]
     pub name: String,
-    pub element_tree_id: Uuid,
+    pub element_tree_id: Option<Uuid>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

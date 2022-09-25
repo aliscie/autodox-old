@@ -8,23 +8,25 @@ use uuid::Uuid;
 pub struct Tree<ID, T>
 where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
-    T: PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Debug,
 {
     pub id : Uuid,
     pub vertices: HashMap<ID, T>,
     pub adjacency: HashMap<ID, HashSet<ID>>,
+    pub root : Option<ID>,
 }
 
 impl<ID, T> Tree<ID, T>
 where
     ID: Hash + PartialEq + Eq + Serialize + Clone + Default + Debug,
-    T: PartialEq + Eq + Serialize + Clone + Default + Debug,
+    T: PartialEq + Eq + Serialize + Clone + Debug,
 {
     pub fn new() -> Self {
         Self {
             id : Uuid::new_v4(),
             vertices: HashMap::new(),
             adjacency: HashMap::new(),
+            root : None,
         }
     }
     pub fn push_vertex(&mut self, id: ID, vertex: T) {
@@ -87,7 +89,7 @@ where
 pub struct TreeIter<'a, ID, T>
 where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
-    T: PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Debug,
 {
     tree: &'a Tree<ID, T>,
     visited_nodes: HashSet<ID>,
@@ -99,7 +101,7 @@ where
 impl<'a, ID, T> Iterator for TreeIter<'a, ID, T>
 where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
-    T: PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Debug,
 {
     type Item = (&'a T, u64);
     fn next(&mut self) -> Option<Self::Item> {
