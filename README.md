@@ -80,8 +80,6 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
     1. install xcode
        - to check that run $`xcode-select --install`
     1. make sure to have c++ 
-
-
 ### running the project
 1. $`cd Desktop`
 1. $`git clone https://github.com/aliscie/autodox-tauri`
