@@ -5,15 +5,14 @@
 }
 
 :root {
-    --primary-background: 62, 62, 62;
-    --hover-color: 117, 117, 117;
-    --background: 19, 19, 19;
-    --color: 212, 212, 212;
-    --main-color: #5d5d5d;
+    --primary-background: 71, 71, 71;
+    --hover-color: 152, 152, 152;
+    --background: 15, 15, 15;
+    --color: 255, 255, 255;
+    --main-color: rgb(147 147 147);
     --primary-color: rgb(196, 196, 196);
     --text-color: white;
-
-
+    --object-color: 172, 105, 251;
     --card-height: 65vh;
     --card-width: calc(var(--card-height) / 1.5);
     --bg-image: url('https://images.unsplash.com/photo-1538370965046-79c0d6907d47?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80');
@@ -293,7 +292,7 @@ h2 {
 
 .file_component {
     cursor: default;
-    transition: 0.3s;
+    transition: 0.2s;
     border-radius: 5px;
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
@@ -330,17 +329,21 @@ h2 {
     background: rgba(var(--primary-background), 0.8) !important;
     backdrop-filter: blur(30px);
     min-width: 100px;
-    overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 400;
-    transition: 0.3s;
+    position: absolute;
+    transition: 0.2s;
+    animation-duration: 0.2s;
+    animation-fill-mode: both;
+    animation-name: btnEntrance;
+
 }
 
 
 .dropdown-content a:hover {
     background: rgba(var(--hover-color), 0.5) !important;
     backdrop-filter: blur(15px);
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .dropdown-content a {
@@ -380,7 +383,7 @@ button {
     background: rgba(195, 195, 195, 0.3);
     color: black;
     height: 30px;
-    transition: all 0.4s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 button:hover {

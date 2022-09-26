@@ -40,28 +40,39 @@
 
 
 #twitter-share-btn {
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 1.25rem;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  display: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: none;
 
+}
+
+#twitter-share-btn .btn {
+    background-color: rgba(var(--primary-background), 0.9);
+    width: 40px;
+}
+
+#twitter-share-btn .btn:hover {
+    background: rgba(var(--object-color), 1);
+    width: 40px;
 }
 
 .btnEntrance {
-  animation-duration: 0.2s;
-  animation-fill-mode: both;
-  animation-name: btnEntrance;
+    animation-duration: 0.2s;
+    animation-fill-mode: both;
+    animation-name: btnEntrance;
 }
+
 @keyframes btnEntrance { /* zoomIn */
-  0% {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3);
-  }
-  100% {
-    opacity: 1;
-  }
+    0% {
+        opacity: 0;
+        transform: scale3d(0.3, 0.3, 0.3);
+    }
+    100% {
+        opacity: 1;
+    }
 }

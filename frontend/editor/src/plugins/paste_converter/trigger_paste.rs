@@ -30,13 +30,26 @@ impl PasteConverter {
         //   let node = element_tree_dispatch.get().to_nodes(item)
         //   })
 
-        let handle_paste = Closure::wrap(Box::new(move |_e: KeyboardEvent| {
-            // let paste = (_e.clipboard_data() || window().clipboard_data()).get_data('text');
-            log_1(&format!("onpaste {:?}", _e).into());
-        }) as Box<dyn FnMut(_)>);
+        let empty = "empty".to_string();
+        use_effect_with_deps(move |_my_text| {
+            //TODO
+            // let pasted_html = &fetch_pasted(&editor);
+            // let json_pasted_html = JsFuture::from(pasted_html.json()?);
+            // let parsed_pasted_html: FileTree = json.into_serde().unwrap();
+            || {}
+        }, empty);
 
-        &editor.add_event_listener_with_callback("paste", &handle_paste.as_ref().unchecked_ref());
-        &handle_paste.forget();
+
+        // let handle_paste = Closure::wrap(Box::new(move |_e: KeyboardEvent| {
+        //     _e.prevent_default();
+        //     let p = _e.clipboard_data().unwrap();
+        //     // let paste = (_e.clipboard_data().unwrap() || window().clipboard_data().unwrap()).get_data('text/html').unwrap();
+        //     log_1(&format!("onpaste {:?}", _e).into());
+        // }) as Box<dyn FnMut(_)>);
+        //
+        // &editor.add_event_listener_with_callback("paste", &handle_paste.as_ref().unchecked_ref());
+        // &handle_paste.forget();
     }
 }
+
 impl PluginTraits for PasteConverter {}

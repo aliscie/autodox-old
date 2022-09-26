@@ -119,7 +119,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let ondrop_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _e.prevent_default();
         let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style","height: 3px; opacity:0;");
+        curr.set_attribute("style", "height: 3px; opacity:0;");
 
         let dragged = _e.data_transfer().unwrap().get_data("dragged_item");
         log_1(&format!("dragged:{:?} dropped:{:?}", dragged, _id).into());
@@ -161,7 +161,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
         <div style="position: relative; width:100%; display: block;">
            {if props.class.contains("caret"){
-           html!{<button class={format!("{} crate_button",(*caret))} onmouseup={toggle_caret} onclick = { props.onclick.clone() } ><i class="fa-solid fa-caret-right"></i></button>}
+           html!{<button class={format!("{} crate_button",(*caret))}
+           onmouseup={toggle_caret}
+           onclick = { props.onclick.clone() } ><i class="fa-solid fa-caret-right"></i></button>}
            } else{ html!{} }
            }
            <li
