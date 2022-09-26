@@ -87,7 +87,7 @@ pub async fn connect_database(postgres_url: String) -> DatabaseConnection {
 
 fn main() {
     dotenv().ok();
-    let POSTGRES_URL: &str = &std::env::var("DATABASE_URL").unwrap();
+    let POSTGRES_URL: &str = &std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
     let postgres_url = String::from(POSTGRES_URL);
     tauri::Builder::default()
         .manage(Storage {
