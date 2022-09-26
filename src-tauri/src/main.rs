@@ -7,13 +7,14 @@ use std::collections::HashMap;
 
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
-use sea_orm::Database;
+use sea_orm::{Database, DatabaseConnection};
 use tauri::async_runtime::Mutex;
 use tauri::Manager;
 use tauri::{Runtime, State, Window};
 
 mod command;
 mod entity;
+mod utils;
 
 #[derive(Debug, Clone, Copy, Default)]
 struct MouseLoc {
@@ -66,10 +67,24 @@ impl<R: Runtime> WindowExt for Window<R> {
 //         .expect("error while running tauri application");
 // }
 
+pub const POSTGRES_URL : &str = "postgres://lunchspider:archi@localhost/autodox";
+
+pub async fn connect_database(postgres_url: String) -> DatabaseConnection {
+    let db = Database::connect(postgres_url).await;
+
+    match db {
+        Ok(x) => {
+            return x;
+        }
+        Err(e) => {
+            panic!("Cannot connect to database with url : {}", e);
+        }
+    }
+}
+
 fn main() {
     //let postgres_url = std::env::var("DATABASE_URL").expect("Cannot find database url!");
-    // let postgres_url = String::from("postgres://lunchspider:archi@localhost/autodox");
-    let postgres_url = String::from("postgres://apple:password@localhost/autodox");
+    let postgres_url = String::from(POSTGRES_URL);
     tauri::Builder::default()
         .manage(Storage {
             store: Mutex::new(HashMap::new()),
@@ -91,17 +106,8 @@ fn main() {
             win.set_transparent_titlebar(true);
             let handle = app.handle();
             tauri::async_runtime::block_on(async move {
-                let db = Database::connect(postgres_url).await;
-
-                match db {
-                    Ok(x) => {
-                        handle.manage(x);
-                    }
-                    Err(e) => {
-                        eprintln!("Cannot connect to database with url : {}", e);
-                        handle.exit(3);
-                    }
-                }
+                let conn = connect_database(postgres_url).await;
+                handle.manage(conn);
             });
             Ok(())
         })
