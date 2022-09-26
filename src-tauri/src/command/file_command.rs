@@ -4,10 +4,11 @@ use crate::entity::file_adjacency::{self, Entity as FileAdjacency};
 use crate::entity::file_node::{self, Entity as FileNode};
 use crate::entity::file_tree::{self, Entity as FileTree};
 use crate::utils::UuidSet;
-use sea_orm::{prelude::*, ActiveValue, DbBackend, QuerySelect, Statement, TransactionTrait};
+use sea_orm::{prelude::*, ActiveValue, DbBackend, QuerySelect, Statement, TransactionTrait, DatabaseTransaction};
 use shared::Tree;
 use tauri::State;
 use uuid::Uuid;
+
 
 #[tauri::command]
 pub async fn get_directory(
@@ -79,23 +80,24 @@ pub async fn create_directory(
     db: State<'_, DatabaseConnection>,
 ) -> Result<file_tree::Model, String> {
     let db = db.inner();
-    let txn = db.begin().await.map_err(|x| x.to_string())?;
+    let txn: DatabaseTransaction = db.begin().await.map_err(|x| x.to_string())?;
     let root = FileNode::insert(file_node::ActiveModel {
         name: ActiveValue::Set("root".to_string()),
         element_tree_id: ActiveValue::NotSet,
-        id : ActiveValue::Set(Uuid::new_v4()),
+        id: ActiveValue::Set(Uuid::new_v4()),
     })
-    .exec_with_returning(&txn)
-    .await
-    .map_err(|_| "Db Error".to_string())?;
-    let x = FileTree::insert(file_tree::ActiveModel {
+        .exec_with_returning(&txn)
+        .await
+        .map_err(|_| "Db Error".to_string())?;
+    let new_obj: file_tree::ActiveModel = file_tree::ActiveModel {
         name: ActiveValue::Set(name),
         root: ActiveValue::Set(Some(root.id)),
-        id : ActiveValue::Set(Uuid::new_v4()),
-    })
-    .exec_with_returning(&txn)
-    .await
-    .map_err(|_| "Db Error".to_string())?;
+        id: ActiveValue::Set(Uuid::new_v4()),
+    };
+    let x = FileTree::insert(new_obj)
+        .exec_with_returning(&txn)
+        .await
+        .map_err(|_| "Db Error".to_string())?;
     txn.commit().await.map_err(|x| x.to_string())?;
     return Ok(x);
 }
@@ -111,12 +113,12 @@ pub async fn create_file(
     let txn = db.begin().await.map_err(|x| x.to_string())?;
     let file = FileNode::insert(file_node::ActiveModel {
         name: ActiveValue::Set(name),
-        id : ActiveValue::Set(Uuid::new_v4()),
+        id: ActiveValue::Set(Uuid::new_v4()),
         ..Default::default()
     })
-    .exec_with_returning(&txn)
-    .await
-    .map_err(|x| x.to_string())?;
+        .exec_with_returning(&txn)
+        .await
+        .map_err(|x| x.to_string())?;
     let mut adj = FileAdjacency::find_by_id((tree_id, parent_id))
         .one(&txn)
         .await

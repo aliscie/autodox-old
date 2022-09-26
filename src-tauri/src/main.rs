@@ -94,7 +94,6 @@ fn main() {
             store: Mutex::new(HashMap::new()),
         })
         .invoke_handler(tauri::generate_handler![
-            hello,
             minimize_window,
             maximize_window,
             close_window,
@@ -119,16 +118,7 @@ fn main() {
         .expect("error while running tauri application");
 }
 
-#[tauri::command]
-fn hello(name: &str) -> Result<String, String> {
-    // This is a very simplistic example but it shows how to return a Result
-    // and use it in the front-end.
-    if name.contains(' ') {
-        Err("Name should not contain spaces".to_string())
-    } else {
-        Ok(format!("Hello, {}", name))
-    }
-}
+
 
 #[tauri::command]
 fn close_window(window: Window) -> Result<(), tauri::Error> {
