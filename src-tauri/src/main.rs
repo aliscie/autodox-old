@@ -1,7 +1,10 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+all(not(debug_assertions), target_os = "windows"),
+windows_subsystem = "windows"
 )]
+
+use dotenv::dotenv;
+use std::env;
 
 use std::collections::HashMap;
 
@@ -67,7 +70,7 @@ impl<R: Runtime> WindowExt for Window<R> {
 //         .expect("error while running tauri application");
 // }
 
-pub const POSTGRES_URL : &str = "postgres://lunchspider:archi@localhost/autodox";
+
 
 pub async fn connect_database(postgres_url: String) -> DatabaseConnection {
     let db = Database::connect(postgres_url).await;
@@ -83,7 +86,8 @@ pub async fn connect_database(postgres_url: String) -> DatabaseConnection {
 }
 
 fn main() {
-    //let postgres_url = std::env::var("DATABASE_URL").expect("Cannot find database url!");
+    dotenv().ok();
+    let POSTGRES_URL: &str = &std::env::var("DATABASE_URL").unwrap();
     let postgres_url = String::from(POSTGRES_URL);
     tauri::Builder::default()
         .manage(Storage {
@@ -103,7 +107,7 @@ fn main() {
         .setup(|app| {
             let win = app.get_window("main").unwrap();
             #[cfg(target_os = "macos")]
-            win.set_transparent_titlebar(true);
+                win.set_transparent_titlebar(true);
             let handle = app.handle();
             tauri::async_runtime::block_on(async move {
                 let conn = connect_database(postgres_url).await;

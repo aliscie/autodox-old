@@ -3881,6 +3881,7 @@ name = "tauri-yew-demo"
 version = "0.1.0"
 dependencies = [
  "cocoa",
+ "dotenv",
  "sea-orm",
  "sea-query",
  "serde",
