@@ -9,7 +9,7 @@ use web_sys::console::log_1;
 use shared::invoke;
 
 use crate::components::{TitleBar, CurrDirectory, Avatar};
-use crate::app_components::{TitleAvatarComponent, PageOptions, Download};
+use crate::app_components::{TitleAvatarComponent, PageOptions, Download,Markdown};
 
 use web_sys::{window, Document, Element, MouseEvent};
 use crate::*;
@@ -69,6 +69,7 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
                 html!{<i class="fa-solid fa-bars"></i>}
             }}
             </li>
+            <Markdown/>
         </TitleBar >
     };
 }

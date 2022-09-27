@@ -30,14 +30,14 @@ impl PasteConverter {
         //   let node = element_tree_dispatch.get().to_nodes(item)
         //   })
 
-        let empty = "empty".to_string();
-        use_effect_with_deps(move |_my_text| {
+        // let empty = "empty".to_string();
+        // use_effect_with_deps(move |_my_text| {
             //TODO
             // let pasted_html = &fetch_pasted(&editor);
             // let json_pasted_html = JsFuture::from(pasted_html.json()?);
             // let parsed_pasted_html: FileTree = json.into_serde().unwrap();
-            || {}
-        }, empty);
+        //     || {}
+        // }, empty);
 
 
         // let handle_paste = Closure::wrap(Box::new(move |_e: KeyboardEvent| {

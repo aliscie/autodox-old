@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{DragEvent, Element, MouseEvent, window};
+use web_sys::{DragEvent, Element, Node, MouseEvent, window};
 use yew::prelude::*;
 use web_sys::console::log_1;
 use crate::router::Route;
@@ -11,21 +11,40 @@ use wasm_bindgen::JsValue;
 pub struct MenuProps {
     pub items: Vec<Html>,
     pub event: UseStateHandle<Option<MouseEvent>>,
+    pub click_on: Option<bool>,
 
 }
 
 
 #[function_component(Menu)]
 pub fn menu(props: &MenuProps) -> Html {
+    let node_ref = NodeRef::default();
     let doc = window().unwrap_throw().document().unwrap();
 
 
     let event = (*props.event).clone();
 
+
     let _event = props.event.clone();
+    let _doc = doc.clone();
+    let _click_on = props.click_on.clone();
+    let _node_ref = node_ref.clone();
+
     let click_away_handler = Closure::wrap(Box::new(move |_e: web_sys::MouseEvent| {
-        if *_event != None {
-            &_event.set(None);
+        let curr: Node = _e.target_unchecked_into();
+        let mut hide = true;
+        let mut drop_down = _node_ref.clone().cast::<Element>();
+
+        if &drop_down != &None {
+            let drop_down = drop_down.unwrap();
+
+            if &_click_on != &None && &_click_on.unwrap() == &true {
+                hide = drop_down.contains(Some(&curr)) == false;
+            }
+
+            if *_event != None && hide {
+                &_event.set(None);
+            }
         }
     }) as Box<dyn FnMut(_)>);
 
@@ -47,7 +66,6 @@ pub fn menu(props: &MenuProps) -> Html {
             x = x - &menu_width;
         };
 
-
         display = format!(
             "display: block; top:{}px; left:{}px",
             &y, &x
@@ -57,6 +75,7 @@ pub fn menu(props: &MenuProps) -> Html {
 
     html! {
     <div
+        ref={node_ref}
         style={format!("{};", display)}
         class={"dropdown-content"}
     >
