@@ -51,7 +51,7 @@ impl FileTree {
                 id: element.id().parse().unwrap(),
             });
         });
-        for (id, file_node) in &self.files.vertices {
+        for (id, file_node) in self.files.into_iter(start.clone()) {
             let mut class_name = "";
             let mut has_children = false;
             if let Some(node_ids) = self.files.adjacency.get(id) {

@@ -34,7 +34,7 @@ impl ElementTree {
 
     pub(crate) fn to_html(&self, start: u64) -> Html {
         let map: Rc<RefCell<HashMap<u64, Html>>> = Rc::new(RefCell::new(HashMap::new()));
-        for (id, node) in &self.elements.vertices {
+        for (id, node) in self.elements.into_iter(start) {
             let mut has_children = false;
             if let Some(children) = self.elements.adjacency.get(id){
                 has_children = children.len() > 0; 
