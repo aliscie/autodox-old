@@ -10,10 +10,10 @@ where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
 {
-    pub id : Uuid,
+    pub id: Uuid,
     pub vertices: HashMap<ID, T>,
     pub adjacency: HashMap<ID, HashSet<ID>>,
-    pub root : Option<ID>,
+    pub root: Option<ID>,
 }
 
 impl<ID, T> Tree<ID, T>
@@ -23,10 +23,10 @@ where
 {
     pub fn new() -> Self {
         Self {
-            id : Uuid::new_v4(),
+            id: Uuid::new_v4(),
             vertices: HashMap::new(),
             adjacency: HashMap::new(),
-            root : None,
+            root: None,
         }
     }
     pub fn push_vertex(&mut self, id: ID, vertex: T) {
@@ -40,6 +40,26 @@ where
     pub fn push_children(&mut self, parent_id: ID, child_id: ID, child: T) {
         self.push_vertex(child_id.clone(), child);
         self.push_edge(parent_id, child_id);
+    }
+
+    pub fn len(&self) -> usize {
+        self.vertices.len()
+    }
+    pub fn len_from_start(&self, id: &ID) -> usize {
+        let mut stack = VecDeque::from([id]);
+        let mut visited_nodes = HashSet::from([id]);
+        while stack.len() > 0 {
+            let id = stack.pop_front().unwrap();
+            if let Some(children) = self.adjacency.get(id) {
+                for i in children {
+                    if !visited_nodes.contains(i) {
+                        stack.push_back(i);
+                        visited_nodes.insert(i);
+                    }
+                }
+            }
+        }
+        visited_nodes.len()
     }
 
     pub fn remove(&mut self, id: &ID) {
@@ -59,15 +79,26 @@ where
     }
 
     pub fn into_iter<'a>(&'a self, start: ID) -> TreeIter<'a, ID, T> {
-        let first_children = self.adjacency.get(&start).unwrap();
-        TreeIter {
-            tree: self,
-            visited_nodes: HashSet::from([start]),
-            stack: first_children.clone().into_iter().map(|s| (s, 0)).collect(),
-            depth: 0,
+        //let first_children = self.adjacency.get(&start).unwrap();
+        let len = self.len_from_start(&start);
+        let mut stack: VecDeque<ID> = VecDeque::new();
+        stack.push_front(start.clone());
+        let mut other_stack = VecDeque::new();
+        let mut visited_nodes = HashSet::new();
+        while visited_nodes.len() < len{
+            let data = stack.pop_front().unwrap();
+            if let Some(children) = self.adjacency.get(&data){
+                for i in children{
+                    if !visited_nodes.contains(i){
+                        stack.push_back(i.clone());
+                    }
+                }
+            }
+            visited_nodes.insert(data.clone());
+            other_stack.push_front(data.clone());
         }
+        TreeIter { tree: self, stack : other_stack }
     }
-
 }
 
 //impl<'a, ID, T> IntoIterator for &'a Tree<ID, T>
@@ -92,10 +123,8 @@ where
     T: PartialEq + Eq + Clone + Debug,
 {
     tree: &'a Tree<ID, T>,
-    visited_nodes: HashSet<ID>,
     //stack: HashSet<ID>,
-    stack: VecDeque<(ID, u64)>,
-    depth: u64,
+    stack: VecDeque<ID>,
 }
 
 impl<'a, ID, T> Iterator for TreeIter<'a, ID, T>
@@ -103,25 +132,52 @@ where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
 {
-    type Item = (&'a T, u64);
+    type Item = (&'a ID, &'a T);
     fn next(&mut self) -> Option<Self::Item> {
-        while self.stack.len() > 0 {
-            let data = self.stack.pop_front().unwrap();
-            if self.visited_nodes.contains(&data.0) {
-                // that node has already been visited go ahead
-                continue;
-            }
-            let node = self.tree.vertices.get(&data.0).unwrap();
-            if let Some(children) = self.tree.adjacency.get(&data.0) {
-                for i in children {
-                    if !self.visited_nodes.contains(i) {
-                        self.stack.push_front((i.clone(), self.depth));
-                    }
-                }
-            }
-            self.visited_nodes.insert(data.0);
-            return Some((node, data.1));
+        if let Some(x) = self.stack.pop_front(){
+            return self.tree.vertices.get_key_value(&x);
         }
         None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn create_tree() -> Tree<i32, String>{
+        let mut tree = Tree::new();
+        tree.push_vertex(0, "root".to_string());
+        tree.push_vertex(1, "first_child".to_string());
+        tree.push_edge(0, 1);
+        for i in 2..10{
+            tree.push_vertex(i, format!("child {}", i));
+            tree.push_edge(i - 1, i);
+        }
+        return tree;
+    }
+    #[test]
+    fn create_tree_test() {
+        assert_eq!(create_tree().vertices, create_tree().vertices);
+        assert_eq!(create_tree().adjacency, create_tree().adjacency);
+        // uuid are different always
+        assert_ne!(create_tree().id, create_tree().id);
+    }
+    #[test]
+    fn len_test() {
+        let tree = create_tree();
+        assert_eq!(tree.len_from_start(&0),  tree.len());
+        assert_eq!(tree.len_from_start(&1),  tree.len() - 1);
+        assert_eq!(tree.len_from_start(&99),  1);
+    }
+    #[test]
+    fn into_iter_test() {
+        let mut tree = create_tree();
+        tree.push_children(1, 11, "extra child".to_string());
+        //for i in 11..100{
+            //tree.push_children(1, i , format!("child : {}", i));
+        //}
+        for i in tree.into_iter(0){
+            println!("{:?}", i);
+        }
     }
 }
