@@ -1,10 +1,11 @@
 use crate::utils::FileTree;
 use yew::prelude::*;
 use yewdux::prelude::*;
+use uuid::Uuid;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub id: u64,
+    pub id: Uuid,
 }
 
 #[function_component(FileData)]

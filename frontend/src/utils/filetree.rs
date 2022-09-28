@@ -9,6 +9,7 @@ use yew::prelude::*;
 use yew::virtual_dom::VNode;
 use yew::{html, Html};
 use yew_router::prelude::*;
+use uuid::Uuid;
 
 use crate::router::Route;
 use yewdux::prelude::*;
@@ -17,20 +18,22 @@ use crate::app_components::FileComponent;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Store)]
 pub struct FileTree {
-    pub files: Tree<u64, FileNode>,
+    pub files: Tree<Uuid, FileNode>,
 }
 
 impl Default for FileTree {
     fn default() -> Self {
         let mut d = Self::new();
+        let id = Uuid::new_v4();
         d.files.push_vertex(
-            0,
+            id,
             FileNode {
-                id: 0,
+                id,
                 name: "root".into(),
                 data: "".into(),
             },
         );
+        d.files.root = Some(id);
         return d;
     }
 }
@@ -40,10 +43,10 @@ impl FileTree {
     pub fn new() -> Self {
         Self { files: Tree::new() }
     }
-    pub fn to_html(&self, start: u64) -> Html {
+    pub fn to_html(&self, start: Uuid) -> Html {
         // map to store html of the nodes
         // TODO : use memoization to only rerender on file name change!
-        let map: Rc<RefCell<HashMap<u64, VNode>>> = use_mut_ref(|| HashMap::new());
+        let map: Rc<RefCell<HashMap<Uuid, VNode>>> = use_mut_ref(|| HashMap::new());
         let history = use_history().unwrap();
         let onclickfile = Callback::from(move |e: MouseEvent| {
             let element: Element = e.target_unchecked_into();
@@ -77,7 +80,7 @@ impl FileTree {
             let html_node = html! {
                 <>
                     <FileComponent
-                        key = {*id}
+                        key = {id.to_string()}
                         id = {*id}
                         class={format!(" {}",class_name)}
                         onclickfile = {onclickfile.clone()}
@@ -112,7 +115,7 @@ impl FileTree {
 
 #[derive(Debug, Serialize, Deserialize, Default, PartialEq, Clone, Eq)]
 pub struct FileNode {
-    pub id: u64,
+    pub id: Uuid,
     pub name: String,
     pub data: String,
 }

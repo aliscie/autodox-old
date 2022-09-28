@@ -32,6 +32,7 @@ shared = { path = "../shared", features = ["frontend"]}
 lazy_static = "1.4.0"
 getrandom = { version = "0.2", features = ["js"] }
 rand = "0.8.1"
+uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js","serde"]}
 
 [dependencies.web-sys]
 version = "0.3.56"
