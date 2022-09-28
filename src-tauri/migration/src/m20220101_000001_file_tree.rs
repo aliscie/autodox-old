@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default("".to_string()),
                     )
-                    .col(ColumnDef::new(FileTree::Root).uuid().not_null())
+                    .col(ColumnDef::new(FileTree::Root).uuid())
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .from_tbl(FileTree::Table)
