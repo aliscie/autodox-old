@@ -9,8 +9,8 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const frontendDirectory = "autodox_assets";
-const asset_entry = path.join("src", frontendDirectory, "index.html");
+const frontendDirectory = "frontend";
+const asset_entry = path.join(frontendDirectory, "index.html");
 
 const distPath = path.resolve(__dirname, "dist");
 
@@ -80,7 +80,7 @@ module.exports = (env, argv) => {
                 },
             },
             hot: true,
-            watchFiles: [path.resolve(__dirname, "src", frontendDirectory)],
+            watchFiles: [path.resolve(__dirname,frontendDirectory)],
             liveReload: true,
 
             contentBase: distPath,
@@ -129,8 +129,8 @@ module.exports = (env, argv) => {
                 patterns: [
 
                     {
-                        from: path.join(__dirname, "src", frontendDirectory, "assets"),
-                        to: path.join(__dirname, "dist", frontendDirectory),
+                        from: path.join(__dirname, frontendDirectory, "public"),
+                        to: path.join(__dirname, frontendDirectory, "dist"),
                     },
                 ],
             }),
