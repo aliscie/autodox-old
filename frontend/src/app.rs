@@ -1,4 +1,5 @@
 use editor::Editor;
+use wasm_bindgen_futures::spawn_local;
 use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -27,6 +28,7 @@ pub fn app() -> Html {
                 id: id_1,
                 name: "FileOne".into(),
                 data: "File one".into(),
+                element_tree_id : None,
             },
         );
         r.files.push_vertex(
@@ -34,6 +36,7 @@ pub fn app() -> Html {
             FileNode {
                 id: id_2,
                 name: "FileTwo".into(),
+                element_tree_id : None,
                 data: "File tow".into(),
             },
         );
@@ -43,6 +46,7 @@ pub fn app() -> Html {
                 id: id_3,
                 name: "FileThree".into(),
                 data: "File three".into(),
+                element_tree_id : None,
             },
         );
         r.files.push_vertex(
@@ -51,6 +55,7 @@ pub fn app() -> Html {
                 id: id_4,
                 name: "File4".into(),
                 data: "File 4".into(),
+                element_tree_id : None,
             },
         );
         let root = r.files.root.unwrap();
@@ -58,6 +63,9 @@ pub fn app() -> Html {
         r.files.push_edge(id_1, id_2);
         r.files.push_edge(root, id_3);
         r.files.push_edge(root, id_4);
+    });
+    spawn_local(async {
+        let _ = crate::backend::files::get_directories().await;
     });
 
 

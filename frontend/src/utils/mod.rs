@@ -1,5 +1,5 @@
 mod filetree;
-pub use filetree::{FileNode, FileTree};
+pub use filetree::{FileNode, FileTree, FileDirectory};
 
 use web_sys::window;
 pub fn alert<T : std::fmt::Debug>(message : &T){
@@ -9,3 +9,7 @@ pub fn alert<T : std::fmt::Debug>(message : &T){
 
 mod get_title_bar;
 pub use get_title_bar::get_titlebar;
+
+
+mod device_info;
+pub use device_info::DeviceInfo;
