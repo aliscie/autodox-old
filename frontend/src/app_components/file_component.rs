@@ -1,15 +1,10 @@
-use serde::{Deserialize, Serialize};
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use wasm_bindgen::prelude::Closure;
 use web_sys::{DragEvent, Element, MouseEvent, window};
 use web_sys::console::log_1;
 use yew::{html, Html};
 use yew::prelude::*;
-use yew_router::prelude::*;
-use yewdux::prelude::*;
+use uuid::Uuid;
 
 use crate::components::{Menu};
-use crate::router::Route;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -17,7 +12,7 @@ pub struct FileComponentProps {
     pub onclickfile: Callback<MouseEvent>,
     pub name: String,
     pub class: String,
-    pub id: u64,
+    pub id: Uuid,
 }
 
 

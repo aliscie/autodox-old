@@ -1,14 +1,16 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use crate::entity::file_adjacency::{self, Entity as FileAdjacency};
 use crate::entity::file_node::{self, Entity as FileNode};
 use crate::entity::file_tree::{self, Entity as FileTree};
 use crate::utils::UuidSet;
-use sea_orm::{prelude::*, ActiveValue, DbBackend, QuerySelect, Statement, TransactionTrait, DatabaseTransaction};
+use sea_orm::{
+    prelude::*, ActiveValue, ConnectionTrait, DatabaseTransaction, DbBackend, QuerySelect,
+    Statement, TransactionTrait,
+};
 use shared::Tree;
 use tauri::State;
 use uuid::Uuid;
-
 
 #[tauri::command]
 pub async fn get_directory(
@@ -86,9 +88,9 @@ pub async fn create_directory(
         element_tree_id: ActiveValue::NotSet,
         id: ActiveValue::Set(Uuid::new_v4()),
     })
-        .exec_with_returning(&txn)
-        .await
-        .map_err(|_| "Db Error".to_string())?;
+    .exec_with_returning(&txn)
+    .await
+    .map_err(|_| "Db Error".to_string())?;
     let new_obj: file_tree::ActiveModel = file_tree::ActiveModel {
         name: ActiveValue::Set(name),
         root: ActiveValue::Set(Some(root.id)),
@@ -116,10 +118,10 @@ pub async fn create_file(
         id: ActiveValue::Set(Uuid::new_v4()),
         ..Default::default()
     })
-        .exec_with_returning(&txn)
-        .await
-        .map_err(|x| x.to_string())?;
-    let mut adj = FileAdjacency::find_by_id((tree_id, parent_id))
+    .exec_with_returning(&txn)
+    .await
+    .map_err(|x| x.to_string())?;
+    let adj = FileAdjacency::find_by_id((tree_id, parent_id))
         .one(&txn)
         .await
         .map_err(|x| x.to_string())?;
@@ -138,9 +140,43 @@ pub async fn create_file(
             .await
             .map_err(|x| x.to_string())?;
     }
-
+    // so on delete we can only delete and it will cascade to the real row!
+    FileAdjacency::insert(file_adjacency::ActiveModel {
+        tree_id: ActiveValue::Set(tree_id),
+        parent_id: ActiveValue::Set(file.id),
+        child_id: ActiveValue::Set(HashSet::new().into()),
+    })
+    .exec(&txn)
+    .await
+    .map_err(|x| x.to_string())?;
     txn.commit().await.map_err(|x| x.to_string())?;
     Ok(file)
+}
+
+#[tauri::command]
+pub async fn delete_file(
+    tree_id: Uuid,
+    file_id: Uuid,
+    db: State<'_, DatabaseConnection>,
+) -> Result<(), String> {
+    let txn = db.inner().begin().await.map_err(|x| x.to_string())?;
+    let mut stack: VecDeque<Uuid> = VecDeque::from([file_id]);
+    while stack.len() > 0 {
+        let id = stack.pop_front().unwrap();
+        let x = FileAdjacency::find_by_id((tree_id, id))
+            .select_only()
+            .column(file_adjacency::Column::ChildId)
+            .one(&txn)
+            .await
+            .map_err(|x| x.to_string())?
+            .unwrap();
+        for i in x.child_id.iter(){
+            stack.push_front(*i);
+        }
+        x.delete(&txn).await.map_err(|x| x.to_string())?;
+    }
+    txn.commit().await.map_err(|x| x.to_string())?;
+    Ok(())
 }
 
 #[cfg(test)]
