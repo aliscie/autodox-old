@@ -17,55 +17,55 @@ pub fn app() -> Html {
     let aside_bar_taggol = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
-    dispatch.reduce_mut(|r| {
-        let id_1 = Uuid::new_v4();
-        let id_2 = Uuid::new_v4();
-        let id_3 = Uuid::new_v4();
-        let id_4= Uuid::new_v4();
-        r.files.push_vertex(
-            id_1,
-            FileNode {
-                id: id_1,
-                name: "FileOne".into(),
-                data: "File one".into(),
-                element_tree_id : None,
-            },
-        );
-        r.files.push_vertex(
-            id_2,
-            FileNode {
-                id: id_2,
-                name: "FileTwo".into(),
-                element_tree_id : None,
-                data: "File tow".into(),
-            },
-        );
-        r.files.push_vertex(
-            id_3,
-            FileNode {
-                id: id_3,
-                name: "FileThree".into(),
-                data: "File three".into(),
-                element_tree_id : None,
-            },
-        );
-        r.files.push_vertex(
-            id_4,
-            FileNode {
-                id: id_4,
-                name: "File4".into(),
-                data: "File 4".into(),
-                element_tree_id : None,
-            },
-        );
-        let root = r.files.root.unwrap();
-        r.files.push_edge(root, id_1);
-        r.files.push_edge(id_1, id_2);
-        r.files.push_edge(root, id_3);
-        r.files.push_edge(root, id_4);
-    });
+    //dispatch.reduce_mut(|r| {
+        //let id_1 = Uuid::new_v4();
+        //let id_2 = Uuid::new_v4();
+        //let id_3 = Uuid::new_v4();
+        //let id_4= Uuid::new_v4();
+        //r.files.push_vertex(
+            //id_1,
+            //FileNode {
+                //id: id_1,
+                //name: "FileOne".into(),
+                //data: "File one".into(),
+                //element_tree_id : None,
+            //},
+        //);
+        //r.files.push_vertex(
+            //id_2,
+            //FileNode {
+                //id: id_2,
+                //name: "FileTwo".into(),
+                //element_tree_id : None,
+                //data: "File tow".into(),
+            //},
+        //);
+        //r.files.push_vertex(
+            //id_3,
+            //FileNode {
+                //id: id_3,
+                //name: "FileThree".into(),
+                //data: "File three".into(),
+                //element_tree_id : None,
+            //},
+        //);
+        //r.files.push_vertex(
+            //id_4,
+            //FileNode {
+                //id: id_4,
+                //name: "File4".into(),
+                //data: "File 4".into(),
+                //element_tree_id : None,
+            //},
+        //);
+        //let root = r.files.root.unwrap();
+        //r.files.push_edge(root, id_1);
+        //r.files.push_edge(id_1, id_2);
+        //r.files.push_edge(root, id_3);
+        //r.files.push_edge(root, id_4);
+    //});
     spawn_local(async {
-        let _ = crate::backend::files::get_directories().await;
+        let _ = crate::backend::files::on_startup().await;
     });
 
 
