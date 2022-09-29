@@ -9,7 +9,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const frontendDirectory = "frontend";
+const frontendDirectory = "autodox_assets";
 const asset_entry = path.join(frontendDirectory, "index.html");
 
 const distPath = path.resolve(__dirname, "dist");
@@ -88,7 +88,7 @@ module.exports = (env, argv) => {
             port: 8080
         },
         entry: {
-            // The frontend.entrypoint points to the HTML file for this build, so we need
+            // The autodox_assets.entrypoint points to the HTML file for this build, so we need
             // to replace the extension to `.js`.
             index: path.join(__dirname, asset_entry).replace(/\.html$/, ".js"),
         },

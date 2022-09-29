@@ -1,5 +1,5 @@
 [workspace]
 members = [
-#    "frontend",
+#    "autodox_assets",
     "src-dfinity",
 ]

@@ -4,10 +4,10 @@
     "version": "0.1.0"
   },
   "build": {
-    "distDir": "../frontend/dist",
+    "distDir": "../autodox_assets/dist",
     "devPath": "http://localhost:8080",
-    "beforeDevCommand": "cd frontend && trunk serve",
-    "beforeBuildCommand": "cd frontend && trunk build",
+    "beforeDevCommand": "cd autodox_assets && trunk serve",
+    "beforeBuildCommand": "cd autodox_assets && trunk build",
     "withGlobalTauri": true
   },
   "tauri": {
