@@ -1,4 +1,5 @@
 use editor::Editor;
+use wasm_bindgen_futures::spawn_local;
 use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -6,6 +7,7 @@ use yewdux::prelude::*;
 use crate::components::TreeList;
 use crate::router::*;
 use crate::utils::{FileNode, FileTree};
+use uuid::Uuid;
 
 use crate::app_components::{SearchFiltes, ButtonsGroup};
 use crate::*;
@@ -16,44 +18,54 @@ pub fn app() -> Html {
     let toggle_aside = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
     dispatch.reduce_mut(|r| {
+        let id_1 = Uuid::new_v4();
+        let id_2 = Uuid::new_v4();
+        let id_3 = Uuid::new_v4();
+        let id_4= Uuid::new_v4();
         r.files.push_vertex(
-            234,
+            id_1,
             FileNode {
-                id: 234,
+                id: id_1,
                 name: "FileOne".into(),
                 data: "File one".into(),
+                element_tree_id : None,
             },
         );
         r.files.push_vertex(
-            235,
+            id_2,
             FileNode {
-                id: 235,
+                id: id_2,
                 name: "FileTwo".into(),
+                element_tree_id : None,
                 data: "File tow".into(),
             },
         );
         r.files.push_vertex(
-            225,
+            id_3,
             FileNode {
-                id: 225,
+                id: id_3,
                 name: "FileThree".into(),
                 data: "File three".into(),
+                element_tree_id : None,
             },
         );
         r.files.push_vertex(
-            226,
+            id_4,
             FileNode {
-                id: 226,
+                id: id_4,
                 name: "File4".into(),
                 data: "File 4".into(),
+                element_tree_id : None,
             },
         );
+        let root = r.files.root.unwrap();
+        r.files.push_edge(root, id_1);
+        r.files.push_edge(id_1, id_2);
+        r.files.push_edge(root, id_3);
+        r.files.push_edge(root, id_4);
     });
-    dispatch.reduce_mut(|r| {
-        r.files.push_edge(0, 234);
-        r.files.push_edge(234, 235);
-        r.files.push_edge(0, 225);
-        r.files.push_edge(0, 226);
+    spawn_local(async {
+        let _ = crate::backend::files::get_directories().await;
     });
 
 

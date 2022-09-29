@@ -15,6 +15,7 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(FileNode::Name)
                             .text()
+                            .unique_key()
                             .not_null()
                             .default("".to_string()),
                     )

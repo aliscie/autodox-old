@@ -1,3 +1,4 @@
+use uuid::Uuid;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -8,7 +9,7 @@ pub enum Route {
     #[at("/")]
     Home,
     #[at("/files/:id")]
-    File{ id : u64 },
+    File{ id : Uuid },
     #[not_found]
     #[at("/404")]
     NotFound,

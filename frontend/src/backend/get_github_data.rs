@@ -1,8 +1,6 @@
 use anyhow::Error;
 use graphql_client::{GraphQLQuery, Response};
 use reqwest::Client;
-use serde_derive::{Deserialize, Serialize};
-use web_sys::console::log_1;
 
 use self::repo_view::ResponseData;
 
