@@ -1,0 +1,33 @@
+[package]
+name = "src-ic"
+version = "0.2.0"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+log = "0.4"
+strum = "0.19"
+strum_macros = "0.19"
+serde = "1"
+serde_derive = "1"
+wasm-bindgen = "0.2.58"
+wasm-logger = "0.2"
+wee_alloc = { version = "0.4.4", optional = true }
+yew = "0.17"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+    'KeyboardEvent',
+]
+
+
+#[features]
+#frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys"]
+#backend = []
+#full = [ "backend"]

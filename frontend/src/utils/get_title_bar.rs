@@ -1,18 +1,15 @@
-use crate::utils::alert;
+use shared::invoke;
 use wasm_bindgen::prelude::*;
+use web_sys::{Document, Element, MouseEvent, window};
+use web_sys::console::log_1;
 use yew::prelude::*;
-use crate::router::*;
 use yew_router::prelude::*;
 
-use web_sys::console::log_1;
-
-use shared::invoke;
-
-use crate::components::{TitleBar, CurrDirectory, Avatar};
-use crate::app_components::{TitleAvatarComponent, PageOptions, Download,Markdown};
-
-use web_sys::{window, Document, Element, MouseEvent};
 use crate::*;
+use crate::app_components::{Download, PageOptions, TitleAvatarComponent, Markdown};
+use crate::components::{Avatar, CurrDirectory, TitleBar};
+use crate::router::*;
+use crate::utils::alert;
 
 pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let light_mod = use_state(|| false);

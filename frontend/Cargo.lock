@@ -357,6 +357,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "shared",
+ "src_ic",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -1963,6 +1964,22 @@ checksum = "02e2d2db9033d13a1567121ddd7a095ee144db4e1ca1b1bda3419bc0da294ebd"
 dependencies = [
  "libc",
  "winapi",
+]
+
+[[package]]
+name = "src_ic"
+version = "0.1.0"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+ "lazy_static",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "uuid",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "yewdux",
 ]
 
 [[package]]

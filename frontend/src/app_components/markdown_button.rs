@@ -39,17 +39,14 @@ pub fn markdown(props: &MarkdownProps) -> Html {
         <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike"/>
           <label for="vehicle1">{"Show html"}</label>
           </>},
-
         html! {<>
         <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike"/>
           <label for="vehicle1">{"Show render"}</label>
           </>},
     ];
 
-    if *IS_WEB {
-        html! {<>
+    html! {<>
             <Menu click_on={Some(true)} event={position.clone()}{items}/>
             <li {onmouseup} class="btn right_clickable"> <i class="fa-brands fa-markdown"></i></li>
         </>}
-    } else { html! {""} }
 }

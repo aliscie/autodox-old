@@ -1,17 +1,21 @@
 use editor::Editor;
+use src_ic::say_hello;
+use web_sys::console::log_1;
 use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
+
+use crate::*;
+use crate::app_components::{ButtonsGroup, SearchFiltes};
 use crate::components::TreeList;
 use crate::router::*;
 use crate::utils::{FileNode, FileTree};
 
-use crate::app_components::{SearchFiltes, ButtonsGroup};
-use crate::*;
-
 #[function_component(App)]
 pub fn app() -> Html {
+    log_1(&format!("say_hello {:?}", say_hello()).into());
+
     let aside_bar_taggol = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
@@ -70,7 +74,6 @@ pub fn app() -> Html {
             // TODO Aman
             //  database.create_file({ name: "new name", content:"emty content" });
         }
-
     });
 
     html! {
