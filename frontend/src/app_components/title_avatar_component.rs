@@ -1,10 +1,10 @@
 use yew::prelude::*;
 use crate::components::{Menu, Avatar};
 use web_sys::console::log_1;
+use crate::*;
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
-
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
 
     let _position = position.clone();
@@ -17,14 +17,18 @@ pub fn title_avatar_component() -> Html {
         html! {<><i class="fa-solid fa-gear"></i>{"Settings"}</>},
         html! {<><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</>},
     ];
-
-    html! { <>
-    <Menu
-    event={position.clone()}
-     {items}
-      />
-    <span class="right_clickable main_avatar" {onmouseup}>
-    <Avatar />
-    </span>
-    </>}
+    if *IS_LOGEDIN {
+        html! { <>
+                <Menu
+                event={position.clone()}
+                 {items}
+                  />
+                <span class="right_clickable main_avatar" {onmouseup}>
+                <Avatar />
+                </span>
+                </>
+                }
+    } else {
+        html! {<span class="btn" ><i class="fa-solid fa-right-to-bracket"></i>{"login"}</span>}
+    }
 }

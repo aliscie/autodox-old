@@ -11,9 +11,13 @@ use uuid::Uuid;
 
 use crate::app_components::{SearchFiltes, ButtonsGroup};
 use crate::*;
+use src_ic::say_hello;
+use web_sys::console::log_1;
 
 #[function_component(App)]
 pub fn app() -> Html {
+    let x = say_hello();
+    log_1(&format!("say_hello {:?}", x).into());
     let aside_bar_taggol = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_taggol.clone();
     let dispatch = Dispatch::<FileTree>::new();
@@ -117,4 +121,3 @@ pub fn app() -> Html {
         </BrowserRouter>
     }
 }
-

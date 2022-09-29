@@ -1,0 +1,36 @@
+{
+  "canisters": {
+    "autodox": {
+      "candid": "src/autodox/autodox.did",
+      "package": "autodox",
+      "type": "rust"
+    },
+    "autodox_assets": {
+      "dependencies": [
+        "autodox"
+      ],
+      "frontend": {
+        "entrypoint": "./index.html"
+      },
+      "source": [
+        "public",
+        "frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "dfx": "0.9.3",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}

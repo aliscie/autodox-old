@@ -19,6 +19,7 @@ lazy_static! {
         }
         m
     };
+    pub static ref IS_LOGEDIN: bool = false;
 }
 
 fn main() {

@@ -1,3 +1,4 @@
+//shared
 export const invoke = window.__TAURI__.invoke
 export const emit = window.__TAURI__.emit;
 
