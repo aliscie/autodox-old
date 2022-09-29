@@ -1,15 +1,15 @@
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
 use serde::{Deserialize, Serialize};
 use shared::Tree;
+use uuid::Uuid;
 use web_sys::{Element, MouseEvent};
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
 use yew::{html, Html};
 use yew_router::prelude::*;
-use uuid::Uuid;
 
 use crate::router::Route;
 use yewdux::prelude::*;
@@ -30,7 +30,7 @@ impl Default for FileTree {
             FileNode {
                 id,
                 name: "root".into(),
-                element_tree_id : None,
+                element_tree_id: None,
                 data: "".into(),
             },
         );
@@ -105,7 +105,7 @@ impl FileTree {
         self.files
             .adjacency
             .get(&start)
-            .unwrap()
+            .unwrap_or( &HashSet::new())
             .into_iter()
             .map(|f| map.borrow().get(f).unwrap().to_owned())
             .collect::<Html>()
@@ -125,8 +125,8 @@ pub struct FileNode {
 }
 
 #[derive(Debug, Serialize, Deserialize, Default, PartialEq, Clone, Eq)]
-pub struct FileDirectory{
-    pub id : Uuid,
-    pub name : String,
-    pub root : Option<Uuid>,
+pub struct FileDirectory {
+    pub id: Uuid,
+    pub name: String,
+    pub root: Option<Uuid>,
 }
