@@ -25,18 +25,17 @@ pub async fn get_directory(
         return Err("Not found!".to_string());
     }
     let x = x.unwrap();
+    println!("{:?}", x);
     // rust iterator magic haha
     let adjacency = FileAdjacency::find()
         .filter(file_adjacency::Column::TreeId.eq(id))
-        .select_only()
-        .column(file_adjacency::Column::ParentId)
-        .column(file_adjacency::Column::ChildId)
         .all(db.inner())
         .await
         .map_err(|x| x.to_string())?
         .into_iter()
         .map(|x| (x.parent_id, x.child_id.into()))
         .collect::<HashMap<Uuid, HashSet<Uuid>>>();
+    println!("{:?}", adjacency);
     // DO NOT TOUCH THIS QUERY TOOK ME 2 HOURS TO WRITE
     let nodes: Vec<file_node::Model> = FileNode::find()
         .from_raw_sql(Statement::from_sql_and_values(
@@ -99,7 +98,15 @@ pub async fn create_directory(
     let x = FileTree::insert(new_obj)
         .exec_with_returning(&txn)
         .await
-        .map_err(|_| "Db Error".to_string())?;
+        .map_err(|e| e.to_string())?;
+    FileAdjacency::insert(file_adjacency::ActiveModel {
+        tree_id: ActiveValue::Set(x.id),
+        parent_id: ActiveValue::Set(x.root.unwrap()),
+        ..Default::default()
+    })
+    .exec(&txn)
+    .await
+    .map_err(|e| e.to_string())?;
     txn.commit().await.map_err(|x| x.to_string())?;
     return Ok(x);
 }
@@ -120,15 +127,21 @@ pub async fn create_file(
     })
     .exec_with_returning(&txn)
     .await
-    .map_err(|x| x.to_string())?;
+    .map_err(|e| e.to_string())?;
     let adj = FileAdjacency::find_by_id((tree_id, parent_id))
         .one(&txn)
         .await
         .map_err(|x| x.to_string())?;
-    if let Some(mut adj) = adj {
-        adj.child_id.0.insert(file.id);
-        let m: file_adjacency::ActiveModel = adj.into();
-        m.update(&txn).await.map_err(|x| x.to_string())?;
+    if let Some(adj) = adj {
+        // use this query
+        // update file_adjacency set child_id = child_id || to_jsonb(ARRAY['b9a51dc9-7ed4-469e-a6da-af8608a6cfc3'::text])
+        txn.query_one(Statement::from_sql_and_values(
+            sea_orm::DatabaseBackend::Postgres,
+            r#"UPDATE file_adjacency SET child_id = child_id || to_jsonb(ARRAY[$1::text]) WHERE parent_id = $2"#,
+            [file.id.into(), adj.parent_id.into()],
+        ))
+        .await
+        .map_err(|x| x.to_string())?;
     } else {
         let m = file_adjacency::ActiveModel {
             tree_id: ActiveValue::Set(tree_id),
@@ -170,7 +183,7 @@ pub async fn delete_file(
             .await
             .map_err(|x| x.to_string())?
             .unwrap();
-        for i in x.child_id.iter(){
+        for i in x.child_id.iter() {
             stack.push_front(*i);
         }
         x.delete(&txn).await.map_err(|x| x.to_string())?;

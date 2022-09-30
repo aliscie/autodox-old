@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(FileAdjacency::ChildId)
                             .json_binary()
                             .not_null()
-                            .default("{}".to_string()),
+                            .default("[]".to_string()),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()

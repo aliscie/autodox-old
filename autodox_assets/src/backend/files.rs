@@ -79,13 +79,15 @@ pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result
         unimplemented!();
     }
     if !info.get().web {
+        let x = serde_json::json!({
+                "treeId" : tree_id,
+                "parentId" : parent_id,
+                "name" : name
+            });
+        gloo::console::log!(format!("{:?}", x));
         return call_postgres(
             "create_file".to_string(),
-            Some(&serde_json::json!({
-                "tree_id" : tree_id,
-                "parent_id" : parent_id,
-                "name" : name
-            })),
+            Some(&x)
         )
         .await;
     } else {
