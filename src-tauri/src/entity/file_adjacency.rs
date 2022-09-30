@@ -12,6 +12,7 @@ pub struct Model {
     pub tree_id: Uuid,
     #[sea_orm(primary_key, auto_increment = false)]
     pub parent_id: Uuid,
+    #[sea_orm(JsonBinary)]
     pub child_id: UuidSet,
 }
 

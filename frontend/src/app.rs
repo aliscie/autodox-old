@@ -1,89 +1,53 @@
+use crate::app_components::{ButtonsGroup, SearchFiltes};
+use crate::components::TreeList;
+use crate::router::*;
+use crate::utils::FileTree;
+use crate::*;
 use editor::Editor;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yewdux::prelude::*;
-use crate::components::TreeList;
-use crate::router::*;
-use crate::utils::{FileNode, FileTree};
-use uuid::Uuid;
-
-use crate::app_components::{SearchFiltes, ButtonsGroup};
-use crate::*;
+use yewdux::prelude::Dispatch;
 
 #[function_component(App)]
 pub fn app() -> Html {
     let aside_bar_taggol = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_taggol.clone();
-    let dispatch = Dispatch::<FileTree>::new();
-    //dispatch.reduce_mut(|r| {
-        //let id_1 = Uuid::new_v4();
-        //let id_2 = Uuid::new_v4();
-        //let id_3 = Uuid::new_v4();
-        //let id_4= Uuid::new_v4();
-        //r.files.push_vertex(
-            //id_1,
-            //FileNode {
-                //id: id_1,
-                //name: "FileOne".into(),
-                //data: "File one".into(),
-                //element_tree_id : None,
-            //},
-        //);
-        //r.files.push_vertex(
-            //id_2,
-            //FileNode {
-                //id: id_2,
-                //name: "FileTwo".into(),
-                //element_tree_id : None,
-                //data: "File tow".into(),
-            //},
-        //);
-        //r.files.push_vertex(
-            //id_3,
-            //FileNode {
-                //id: id_3,
-                //name: "FileThree".into(),
-                //data: "File three".into(),
-                //element_tree_id : None,
-            //},
-        //);
-        //r.files.push_vertex(
-            //id_4,
-            //FileNode {
-                //id: id_4,
-                //name: "File4".into(),
-                //data: "File 4".into(),
-                //element_tree_id : None,
-            //},
-        //);
-        //let root = r.files.root.unwrap();
-        //r.files.push_edge(root, id_1);
-        //r.files.push_edge(id_1, id_2);
-        //r.files.push_edge(root, id_3);
-        //r.files.push_edge(root, id_4);
-    //});
-    spawn_local(async {
-        let _ = crate::backend::files::on_startup().await;
-    });
+    let file_dispatch = Dispatch::<FileTree>::new();
+    use_effect_with_deps(
+        move |_| {
+            spawn_local(async {
+                let x = crate::backend::files::on_startup().await;
+                gloo::console::log!(format!("{:?}", x));
+            });
+            || {}
+        },
+        (),
+    );
 
-
-    let onclick_market_place: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+    let onclick_market_place: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         //TODO
         // history.push(Route::File { id: market_page });
     });
 
-    let handle_create_file: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-        if *IS_WEB {
-            // TODO Kazoya
-            //  canister_agent.create_file({ name: "new name", content:"emty content" })
-        } else {
-            // TODO Aman
-            //  database.create_file({ name: "new name", content:"emty content" });
-        }
-
-    });
+    let handle_create_file: Callback<MouseEvent> =
+        file_dispatch.reduce_mut_future_callback(|state| {
+            Box::pin(async move {
+                let file = crate::backend::files::create_file(
+                    state.files.id,
+                    state.files.root.unwrap(),
+                    "untitled".to_string(),
+                )
+                .await;
+                gloo::console::log!(format!("{:?}", file));
+                if let Ok(f) = file {
+                    state
+                        .files
+                        .push_children(state.files.root.unwrap(), f.id, f);
+                }
+            })
+        });
 
     html! {
         <BrowserRouter>
@@ -117,4 +81,3 @@ pub fn app() -> Html {
         </BrowserRouter>
     }
 }
-
