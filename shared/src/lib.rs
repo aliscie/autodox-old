@@ -1,5 +1,17 @@
 mod tree;
 
+#[macro_export]
+macro_rules! css_file_macro {
+
+    ($path: expr) => {
+        {
+        use stylist::{style, yew::styled_component, Style};
+        let styles = std::include_str!($path);
+        Style::new(styles).unwrap()
+        }
+    }
+}
+
 use lazy_static::lazy_static;
 pub use tree::Tree;
 cfg_if::cfg_if! {

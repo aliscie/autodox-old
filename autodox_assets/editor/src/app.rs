@@ -1,13 +1,15 @@
 extern crate web_sys;
 
+use shared::*;
 use std::collections::HashMap;
+use std::rc::Rc;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{DragEvent, Element, MouseEvent, window};
 use yew::prelude::*;
 use yewdux::prelude::{Dispatch, use_store};
-use crate::plugins::PasteConverter;
+
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
-use std::rc::Rc;
+use crate::plugins::PasteConverter;
 use crate::utils::my_function;
 
 
@@ -119,8 +121,10 @@ pub fn editor() -> Html {
 
     // web_sys::console::log_1(&serde_json::to_string(element_tree_dispatch.get().as_ref()).unwrap().into());
 
-
     html! {
+    <span
+        class={css_file_macro!("main.css")}
+     >
     <span
     {onmousemove}
     contenteditable="true"
@@ -145,6 +149,7 @@ pub fn editor() -> Html {
 
             { element_tree_dispatch.get().to_html(0) }
         </div>
+    </span>
     </span>
     }
 }

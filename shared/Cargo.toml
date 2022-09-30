@@ -11,18 +11,19 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = { version  = "1.0.144", features = ["derive"]}
-uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js","serde"]}
+stylist = { version = "0.10.0", features = ["yew"] }
+serde = { version = "1.0.144", features = ["derive"] }
+uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js", "serde"] }
 serde_json = "1.0.85"
 serde_derive = "1.0.144"
 cfg-if = "1.0.0"
 lazy_static = "1.4.0"
 
 
-yewdux = {version = "0.8.2", optional = true}
-wasm-bindgen = { version = "0.2.78", optional = true}
-wasm-bindgen-futures = {version = "0.4.28", optional = true}
-js-sys = {version = "0.3.59", optional = true}
+yewdux = { version = "0.8.2", optional = true }
+wasm-bindgen = { version = "0.2.78", optional = true }
+wasm-bindgen-futures = { version = "0.4.28", optional = true }
+js-sys = { version = "0.3.59", optional = true }
 
 [features]
 autodox_assets = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys"]
