@@ -34,7 +34,7 @@ yewdux = "0.8.2"
 futures = "0.3.24"
 editor = { path = "editor" }
 shared = { path = "../shared", features = ["autodox_assets"] }
-src_ic = { path = "../src-dfinity", features = ["autodox_assets"] }
+src_dfinity = { path = "../src-dfinity", features = ["autodox_assets"] }
 lazy_static = "1.4.0"
 getrandom = { version = "0.2", features = ["js"] }
 rand = "0.8.1"

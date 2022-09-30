@@ -61,7 +61,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "shared",
- "src_ic",
+ "src_dfinity",
  "uuid",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -1995,7 +1995,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "src_ic"
+name = "src_dfinity"
 version = "0.1.0"
 dependencies = [
  "cfg-if",
