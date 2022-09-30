@@ -7,7 +7,7 @@
     },
     "autodox_assets": {
       "dependencies": [
-        "src_ic"
+        "autodox"
       ],
       "frontend": {
         "entrypoint": "autodox_assets/index.html"
