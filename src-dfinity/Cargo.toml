@@ -4,7 +4,7 @@
 # usage: create reusable and DRY code that can be used by more that one crate
 
 [package]
-name = "src_ic"
+name = "src_dfinity"
 version = "0.1.0"
 edition = "2021"
 

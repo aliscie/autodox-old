@@ -2,7 +2,7 @@
   "canisters": {
     "autodox": {
       "candid": "src-dfinity/src/autodox/autodox.did",
-      "package": "src_ic",
+      "package": "src_dfinity",
       "type": "rust"
     },
     "autodox_assets": {
