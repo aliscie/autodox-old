@@ -1,20 +1,20 @@
 {
   "canisters": {
     "autodox": {
-      "candid": "src-ic/src/autodox/autodox.did",
-      "package": "autodox",
+      "candid": "src-dfinity/src/autodox/autodox.did",
+      "package": "src_ic",
       "type": "rust"
     },
     "autodox_assets": {
       "dependencies": [
-        "autodox"
+        "src_ic"
       ],
       "frontend": {
-        "entrypoint": "frontend/index.html"
+        "entrypoint": "autodox_assets/index.html"
       },
       "source": [
-        "frontend/public",
-        "frontend/"
+        "autodox_assets/public",
+        "autodox_assets/"
       ],
       "type": "assets"
     }
