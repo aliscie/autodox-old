@@ -1,6 +1,6 @@
 export function my_function() {
     const selectableTextArea = document.querySelectorAll(".text_editor");
-    const twitterShareBtn = document.querySelector("#twitter-share-btn");
+    const twitterShareBtn = document.querySelector("#selection-popper");
 
     selectableTextArea.forEach(elem => {
         elem.addEventListener("mouseup", selectableTextAreaMouseUp);
@@ -45,7 +45,7 @@ export function my_function() {
 
 
     function documentMouseDown(event) {
-        if (event.target.id !== "twitter-share-btn" && getComputedStyle(twitterShareBtn).display === "block") {
+        if (event.target.id !== "selection-popper" && getComputedStyle(twitterShareBtn).display === "block") {
             twitterShareBtn.style.display = "none";
             twitterShareBtn.classList.remove("btnEntrance");
             window.getSelection().empty();

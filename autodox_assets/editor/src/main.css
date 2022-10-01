@@ -1,3 +1,78 @@
-.text_editor {
-    color: red !important;
+.editor_title, .text_editor_container {
+
+    flex-shrink: 0;
+    flex-grow: 1;
+    /*max-width: 80%;*/
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    z-index: 4;
+
+    padding-left: calc(96px + env(safe-area-inset-left));
+    padding-right: calc(96px + env(safe-area-inset-right));
+    transition: 0.3s;
+}
+
+.editor_title {
+    padding-top: 10vh;
+}
+
+
+.text_editor_container {
+    /*max-width: 80%;*/
+    padding-bottom: 30vh;
+    transition: 0.3s;
+}
+
+@media (max-width: 730px) {
+    .text_editor_container, .editor_title {
+        padding-left: calc(10px + env(safe-area-inset-left));
+        padding-right: calc(10px + env(safe-area-inset-left));
+        transition: 0.3s;
+    }
+}
+
+
+[contenteditable] {
+    outline: 0;
+    border: 0;
+}
+
+
+#selection-popper {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: none;
+
+}
+
+#selection-popper .btn {
+    background-color: rgba(var(--primary-background), 0.9);
+    width: 40px;
+}
+
+#selection-popper .btn:hover {
+    background: rgba(var(--object-color), 1);
+    width: 40px;
+}
+
+.btnEntrance {
+    animation-duration: 0.2s;
+    animation-fill-mode: both;
+    animation-name: btnEntrance;
+}
+
+@keyframes btnEntrance { /* zoomIn */
+    0% {
+        opacity: 0;
+        transform: scale3d(0.3, 0.3, 0.3);
+    }
+    100% {
+        opacity: 1;
+    }
 }

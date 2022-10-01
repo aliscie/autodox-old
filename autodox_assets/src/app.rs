@@ -43,7 +43,7 @@ pub fn app() -> Html {
                     state.files.root.unwrap(),
                     "untitled".to_string(),
                 )
-                .await;
+                    .await;
                 gloo::console::log!(format!("{:?}", file));
                 if let Ok(f) = file {
                     state
@@ -75,11 +75,9 @@ pub fn app() -> Html {
 
         </ul>
         </aside>
-            <h2 contenteditable="true" class={"editor_title heading"}>
-            <Switch<Route> render={Switch::render(switch)} />
-            </h2>
-
-        <Editor/>
+        //TODO
+        // title="string" instead of <Switch<Route> render={Switch::render(switch)} />
+        <Editor title="text"/>
 
         </div>
         </BrowserRouter>

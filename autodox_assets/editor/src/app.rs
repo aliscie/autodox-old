@@ -5,6 +5,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{DragEvent, Element, MouseEvent, window};
+use yew::{function_component, html, Html};
+use yew::prelude::*;
 use yew::prelude::*;
 use yewdux::prelude::{Dispatch, use_store};
 
@@ -12,11 +14,15 @@ use crate::element_tree::{Attrs, EditorElement, ElementTree};
 use crate::plugins::PasteConverter;
 use crate::utils::my_function;
 
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub title: String,
+}
 
 // this is used for the work space
 
 #[function_component(Editor)]
-pub fn editor() -> Html {
+pub fn editor(props: &Props) -> Html {
     // TODO
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
@@ -125,12 +131,19 @@ pub fn editor() -> Html {
     <span
         class={css_file_macro!("main.css")}
      >
+
+     <h2 contenteditable="true" class={"editor_title heading"}>
+        {props.title.clone()}
+    </h2>
+
     <span
     {onmousemove}
     contenteditable="true"
     class="text_editor_container"
     >
-    <div contenteditable="false" id="twitter-share-btn" class="buttons_group_class">
+
+
+    <div contenteditable="false" id="selection-popper" class="buttons_group_class">
             <span class="btn"><i class="fa-solid fa-bold"></i></span>
             <span class="btn"><i class="fa-solid fa-italic"></i></span>
             <span class="btn"><i class="fa-solid fa-paint-roller"></i></span>
