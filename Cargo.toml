@@ -5,5 +5,5 @@ members = [
     "tauri",
     "editor",
     "tauri/migration",
-    "dfinity_backend"
+    "backend"
 ]
