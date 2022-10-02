@@ -1,15 +1,9 @@
-[package]
-name = "autodox"
-version = "0.1.0"
-edition = "2021"
-
-
-[lib]
-crate-type = ["cdylib", "rlib"]
-
-
 [workspace]
 members = [
-    #    "autodox_assets",
-    "src-dfinity",
+    "shared",
+    "frontend",
+    "tauri",
+    "editor",
+    "tauri/migration",
+    "dfinity_backend"
 ]

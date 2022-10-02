@@ -15,7 +15,7 @@ macro_rules! css_file_macro {
 use lazy_static::lazy_static;
 pub use tree::Tree;
 cfg_if::cfg_if! {
-    if #[cfg(feature = "autodox_assets")]{
+    if #[cfg(feature = "frontend")]{
         mod invoke;
         pub use invoke::{invoke, invoke_async};
     }

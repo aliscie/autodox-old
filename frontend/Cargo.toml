@@ -1,0 +1,70 @@
+[package]
+name = "autodox_assets"
+version = "0.1.0"
+edition = "2021"
+
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies]
+yew = "0.19.3"
+yew-router = "0.16.0"
+wasm-bindgen = "0.2.83"
+wasm-bindgen-futures = "0.4.28"
+serde-wasm-bindgen = "0.4"
+gloo = "0.8.0"
+js-sys = "0.3.59"
+serde = "1.0.144"
+serde_json = "1.0.85"
+serde_derive = "1.0.144"
+reqwest = { version = "0.11.11", features = ["json"] }
+graphql_client = "0.11.0"
+anyhow = "1.0.62"
+cfg-if = "1.0.0"
+yewdux = "0.8.2"
+futures = "0.3.24"
+editor = { path = "../editor" }
+shared = { path = "../shared", features = ["frontend"] }
+lazy_static = "1.4.0"
+getrandom = { version = "0.2", features = ["js"] }
+rand = "0.8.1"
+uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js", "serde"] }
+
+[dependencies.web-sys]
+version = "0.3.56"
+
+features = [
+    'Document',
+    'Element',
+    'HtmlElement',
+    'HtmlInputElement',
+    'Node',
+    'Window',
+    "DomParser",
+    "SupportedType",
+    "NodeList",
+    "Event",
+    "EventTarget",
+    "HtmlFormElement",
+    "DomRect",
+    "DataTransfer",
+    "DragEvent",
+    "Storage",
+    "Selection",
+    "Range",
+    "console",
+    "DomTokenList", #for class_list
+    "UiEvent",
+    "HtmlTextAreaElement",
+    "NamedNodeMap",
+    "Attr",
+    "MouseEvent",
+]
+
+[features]
+
+web = []

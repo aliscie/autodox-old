@@ -26,6 +26,6 @@ wasm-bindgen-futures = { version = "0.4.28", optional = true }
 js-sys = { version = "0.3.59", optional = true }
 
 [features]
-autodox_assets = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys"]
+frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys"]
 backend = []
-full = ["autodox_assets", "backend"]
+full = ["frontend", "backend"]
