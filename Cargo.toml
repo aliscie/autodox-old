@@ -2,8 +2,8 @@
 members = [
     "shared",
     "frontend",
-    "tauri",
+    "tauri", # tauri is out of the workspace because it works indipdently
     "editor",
     "tauri/migration",
-    "backend"
+    "autodox/src/autodox_backend"
 ]
