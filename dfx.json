@@ -1,8 +1,9 @@
 {
   "canisters": {
     "autodox_backend": {
-      "main": "autodox/src/autodox_backend/main.mo",
-      "type": "motoko"
+      "candid": "autodox/autodox.did",
+      "package": "autodox",
+      "type": "rust"
     }
   },
   "defaults": {

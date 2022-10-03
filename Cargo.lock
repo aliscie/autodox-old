@@ -351,6 +351,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
+name = "autodox"
+version = "0.1.0"
+dependencies = [
+ "ic-cdk",
+ "ic-cdk-macros",
+]
+
+[[package]]
 name = "autodox_assets"
 version = "0.1.0"
 dependencies = [
@@ -378,14 +386,6 @@ dependencies = [
  "yew",
  "yew-router",
  "yewdux",
-]
-
-[[package]]
-name = "autodox_backend"
-version = "0.1.0"
-dependencies = [
- "ic-cdk",
- "ic-cdk-macros",
 ]
 
 [[package]]
