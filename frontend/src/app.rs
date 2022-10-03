@@ -1,8 +1,6 @@
 use crate::components::TreeList;
-use crate::router::*;
-use crate::utils::{FileNode, FileTree};
+use crate::utils::FileTree;
 use editor::Editor;
-use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::MouseEvent;
 use yew::prelude::*;
@@ -10,8 +8,6 @@ use yew_router::prelude::*;
 use yewdux::prelude::*;
 
 use crate::app_components::{ButtonsGroup, SearchFiltes};
-use crate::*;
-use web_sys::console::log_1;
 
 #[function_component(App)]
 pub fn app() -> Html {
