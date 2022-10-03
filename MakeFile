@@ -15,3 +15,16 @@ install_cli:
 
 clean:
 	cargo clean
+
+get_dfx_id:
+	dfx identity get-principal
+
+create_token:
+	dfx canister create token
+
+ddd:
+	OWNER_PUBLIC_KEY="principal \"$( \dfx identity get-principal )\""
+
+get_dfx_balance:
+	dfx canister call token balance "( $OWNER_PUBLIC_KEY )"
+
