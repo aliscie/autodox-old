@@ -7,7 +7,7 @@ use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{DragEvent, Element, MouseEvent, window};
 use yew::{function_component, html};
 use yew::prelude::*;
-use yewdux::prelude::{Dispatch};
+use yewdux::prelude::Dispatch;
 
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
 use crate::plugins::PasteConverter;

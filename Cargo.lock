@@ -359,37 +359,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "autodox_assets"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "cfg-if",
- "dotenv",
- "editor",
- "futures",
- "getrandom 0.2.7",
- "gloo 0.8.0",
- "graphql_client",
- "ic-cdk",
- "js-sys",
- "lazy_static",
- "rand 0.8.5",
- "reqwest",
- "serde",
- "serde-wasm-bindgen 0.4.5",
- "serde_derive",
- "serde_json",
- "shared",
- "uuid 1.1.2",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "yew",
- "yew-router",
- "yewdux",
-]
-
-[[package]]
 name = "bae"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1375,6 +1344,37 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a9c384f161156f5260c24a097c56119f9be8c798586aecc13afbcbe7b7e26bf8"
 dependencies = [
  "percent-encoding",
+]
+
+[[package]]
+name = "frontend"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "cfg-if",
+ "dotenv",
+ "editor",
+ "futures",
+ "getrandom 0.2.7",
+ "gloo 0.8.0",
+ "graphql_client",
+ "ic-cdk",
+ "js-sys",
+ "lazy_static",
+ "rand 0.8.5",
+ "reqwest",
+ "serde",
+ "serde-wasm-bindgen 0.4.5",
+ "serde_derive",
+ "serde_json",
+ "shared",
+ "uuid 1.1.2",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "yew",
+ "yew-router",
+ "yewdux",
 ]
 
 [[package]]
