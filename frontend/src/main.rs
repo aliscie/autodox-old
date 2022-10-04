@@ -1,3 +1,5 @@
+extern crate futures;
+
 use std::env;
 
 use app::App;

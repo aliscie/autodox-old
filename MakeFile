@@ -16,7 +16,7 @@ install_cli:
 clean:
 	cargo clean
 
-get_dfx_id:
+get_principal:
 	dfx identity get-principal
 
 create_token:
