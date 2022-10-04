@@ -1,7 +1,7 @@
 {
   "canisters": {
-    "autodox": {
-      "candid": "autodox/autodox.did",
+    "backend": {
+      "candid": "backend/backend.did",
       "package": "autodox",
       "type": "rust"
     }
