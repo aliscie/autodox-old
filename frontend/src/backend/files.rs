@@ -73,6 +73,34 @@ pub async fn create_directory(name: String) -> Result<FileDirectory, String> {
     }
 }
 
+pub async fn change_directory(parent_id: String, child_id: String) -> Result<(), String> {
+    let info = Dispatch::<DeviceInfo>::new();
+    let file_dispatch = Dispatch::<FileTree>::new();
+    if info.get().web || info.get().online {
+        unimplemented!();
+    }
+    if !info.get().web {
+        return call_postgres(
+            "change_directory".to_string(),
+            Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id})),
+        )
+        .await
+        .map(|e| {
+            file_dispatch.reduce_mut(|f| {
+                for i in f.files.adjacency.values_mut() {
+                    i.remove(&Uuid::parse_str(&child_id).unwrap());
+                }
+                f.files.push_edge(
+                    Uuid::parse_str(&parent_id).unwrap(),
+                    Uuid::parse_str(&child_id).unwrap(),
+                );
+            });
+            e
+        });
+    }
+    return Err("user is offline".to_string());
+}
+
 pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result<FileNode, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
@@ -80,16 +108,12 @@ pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result
     }
     if !info.get().web {
         let x = serde_json::json!({
-                "treeId" : tree_id,
-                "parentId" : parent_id,
-                "name" : name
-            });
+            "treeId" : tree_id,
+            "parentId" : parent_id,
+            "name" : name
+        });
         gloo::console::log!(format!("{:?}", x));
-        return call_postgres(
-            "create_file".to_string(),
-            Some(&x)
-        )
-        .await;
+        return call_postgres("create_file".to_string(), Some(&x)).await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -113,20 +137,20 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
     }
 }
 
-pub async fn on_startup() -> Result<(), String>{
+pub async fn on_startup() -> Result<(), String> {
     let directoies = get_directories().await?;
     let file_tree = Dispatch::<FileTree>::new();
-    if directoies.len() == 0{
+    if directoies.len() == 0 {
         // create new directory tree
         let x = create_directory("default".to_string()).await?;
         let directory = get_directory(x.id).await?;
         // setting the file
         file_tree.set(FileTree { files: directory });
-    }else{
+    } else {
         let x = directoies.get(0).unwrap();
         let directory = get_directory(x.id).await?;
         // setting the file
         file_tree.set(FileTree { files: directory });
     }
-    Ok(()) 
+    Ok(())
 }

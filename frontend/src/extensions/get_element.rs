@@ -1,11 +1,6 @@
 use serde::{Deserialize, Serialize};
-use yew::{Html, html};
-
-use wasm_bindgen::prelude::*;
-use wasm_bindgen_futures::spawn_local;
-use yew::prelude::*;
-use web_sys::{Element, MouseEvent, window, Document};
-use wasm_bindgen::{UnwrapThrowExt, JsCast};
+use web_sys::{Element, MouseEvent, window};
+use wasm_bindgen::UnwrapThrowExt;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FileNode {

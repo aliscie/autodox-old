@@ -12,6 +12,7 @@ use shared::Tree;
 use tauri::State;
 use uuid::Uuid;
 
+#[allow(dead_code)]
 #[tauri::command]
 pub async fn get_directory(
     id: Uuid,
@@ -65,6 +66,7 @@ pub async fn get_directory(
     Ok(tree)
 }
 
+#[allow(dead_code)]
 #[tauri::command]
 pub async fn get_directories(
     db: State<'_, DatabaseConnection>,
@@ -75,6 +77,7 @@ pub async fn get_directories(
         .map_err(|_| "Db Error".to_string())
 }
 
+#[allow(dead_code)]
 #[tauri::command]
 pub async fn create_directory(
     name: String,
@@ -111,6 +114,7 @@ pub async fn create_directory(
     return Ok(x);
 }
 
+#[allow(dead_code)]
 #[tauri::command]
 pub async fn create_file(
     tree_id: Uuid,
@@ -166,6 +170,7 @@ pub async fn create_file(
     Ok(file)
 }
 
+#[allow(dead_code)]
 #[tauri::command]
 pub async fn delete_file(
     tree_id: Uuid,
@@ -174,6 +179,7 @@ pub async fn delete_file(
 ) -> Result<(), String> {
     let txn = db.inner().begin().await.map_err(|x| x.to_string())?;
     let mut stack: VecDeque<Uuid> = VecDeque::from([file_id]);
+    // SUGGESTION : replace this with a recursive postogres call!
     while stack.len() > 0 {
         let id = stack.pop_front().unwrap();
         let x = FileAdjacency::find_by_id((tree_id, id))
@@ -191,6 +197,34 @@ pub async fn delete_file(
     txn.commit().await.map_err(|x| x.to_string())?;
     Ok(())
 }
+
+#[allow(dead_code)]
+#[tauri::command]
+pub async fn change_directory(
+    parent_id: Uuid,
+    child_id: Uuid,
+    db: State<'_, DatabaseConnection>,
+) -> Result<(), String> {
+    let txn = db.inner().begin().await.map_err(|x| x.to_string())?;
+    txn.query_one(Statement::from_sql_and_values(
+        sea_orm::DatabaseBackend::Postgres,
+        r#"UPDATE file_adjacency SET child_id = child_id - ARRAY[$1::text]"#,
+        [child_id.into()],
+    ))
+    .await
+    .map_err(|x| x.to_string())?;
+    txn.query_one(Statement::from_sql_and_values(
+        sea_orm::DatabaseBackend::Postgres,
+        r#"UPDATE file_adjacency SET child_id = child_id || to_jsonb(ARRAY[$1::text]) WHERE
+        parent_id = $2"#,
+        [child_id.into(), parent_id.into()],
+    ))
+    .await
+    .map_err(|x| x.to_string())?;
+    txn.commit().await.map_err(|x| x.to_string())?;
+    Ok(())
+}
+
 
 #[cfg(test)]
 mod tests {

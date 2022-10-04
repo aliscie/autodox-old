@@ -36,6 +36,10 @@ where
         let adjacency_to_from = self.adjacency.entry(from).or_default();
         adjacency_to_from.insert(to);
     }
+    pub fn delete_edge(&mut self, parent_id : ID, child_id : ID){
+        let adjacency = self.adjacency.entry(parent_id).or_default();
+        adjacency.remove(&child_id);
+    }
 
     pub fn push_children(&mut self, parent_id: ID, child_id: ID, child: T) {
         self.push_vertex(child_id.clone(), child);

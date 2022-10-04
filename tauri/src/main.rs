@@ -103,6 +103,7 @@ fn main() {
             crate::command::file_command::create_directory,
             crate::command::file_command::create_file,
             crate::command::file_command::delete_file,
+            crate::command::file_command::change_directory,
         ])
         .setup(|app| {
             let win = app.get_window("main").unwrap();
