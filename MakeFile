@@ -28,3 +28,8 @@ ddd:
 get_dfx_balance:
 	dfx canister call token balance "( $OWNER_PUBLIC_KEY )"
 
+
+deploy:
+	# make sure to run dfx start in order to start the smulated blockchain locally
+	# make sure to have Cargo.lock files so the dfx can install from it because dfx does not install from Cargo.toml
+	dfx deploy
