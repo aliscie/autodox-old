@@ -25,7 +25,7 @@ async fn example() {
     // let BACKEND_CANISTER: &str = &std::env::var("BACKEND_CANISTER").expect("BACKEND_CANISTER is not set");
     let BACKEND_CANISTER = "ug5r5-74qxz-4dkqw-bjx6f-2wlit-3pqay-unom3-memsb-xgv4t-ljf2z-sae";  // The management canister ID.
     let principal = Principal::from_text(BACKEND_CANISTER).expect("Could not decode the principal.");
-    // let greeting: ic_cdk::api::call::CallResult<String, (ic_cdk::api::call::RejectionCode, String)> = ic_cdk::api::call::call(principal, "greet", ("Ali", "" )).await;
+    // let greeting: = ic_cdk::call(principal, "greet", ("Ali", "" )).await;
     // web_sys::console::log_1(&format!("onpaste {:?}", greeting.unwrap()).into());
 }
 
