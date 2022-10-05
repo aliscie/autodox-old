@@ -3,7 +3,7 @@
 
 
 
-<img align="left" src="readmeFiles/logo2.png" height="100%">
+<img align="left" src="https://i.ibb.co/xzJXxWK/logo2.png" style="width:100%">
 AUTODOX
 
 This app is Notion.so clone, roamresearch clone and obsidian clone. The main purpose of this app is not to just clone these note taking apps but to make an all in one **Open source note taking app** with automation features.
