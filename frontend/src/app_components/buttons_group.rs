@@ -1,7 +1,6 @@
 use yew::prelude::*;
 use yew::{function_component, html, Html};
 use rand::seq::SliceRandom;
-use web_sys::console::log_1;
 
 
 #[derive(Properties, PartialEq)]

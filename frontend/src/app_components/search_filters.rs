@@ -1,6 +1,5 @@
 use yew::prelude::*;
 use crate::components::{Menu, Avatar};
-use web_sys::console::log_1;
 
 #[function_component(SearchFiltes)]
 pub fn search_filters() -> Html {

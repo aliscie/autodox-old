@@ -3,7 +3,6 @@ use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
 use web_sys::{DragEvent, Element, MouseEvent, window};
-use web_sys::console::log_1;
 use yew::{html, Html};
 use yew::prelude::*;
 use yew_router::prelude::*;

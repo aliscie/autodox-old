@@ -26,7 +26,6 @@ pub struct TreeListProps {
 #[function_component(TreeList)]
 pub fn tree_list(props: &TreeListProps) -> Html {
     let (tree, dispatch) = use_store::<FileTree>();
-    // console::log_1(&format!("{:?}", dispatch.get()).into());
     //d.reduce_mut(|r| r.data.insert(235, "file two!".into()));
     //d.reduce_mut(|r| r.data.insert(224, "file three!".into()));
     //d.reduce_mut(|r| r.data.insert(225, "file four!".into()));

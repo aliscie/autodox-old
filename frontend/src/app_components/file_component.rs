@@ -1,6 +1,6 @@
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::console::log_1;
+use web_sys::console::{log_1};
 use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
 use yew::{html, Html};
@@ -57,7 +57,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let _is_dragged = is_dragged.clone();
     let _id = id.clone();
     let ondragstart: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        log_1(&format!("ondragstart {:?}", &_id).into());
         _e.data_transfer()
             .unwrap()
             .set_data("dragged_item", &_id)
@@ -95,10 +94,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             let curr: Element = e.target_unchecked_into();
             curr.class_list().toggle("dragging_over");
             let dragged = e.data_transfer().unwrap().get_data("dragged_item").unwrap();
-            log_1(&format!("dragged:{:?} dropped:{:?}", dragged, id).into());
+            // log_1(&format!("dragged:{:?} dropped:{:?}", dragged, id).into());
             let id= id.clone();
             spawn_local(async move {
-                log_1(&format!("{:?}", change_directory(id, dragged).await).into());
+                change_directory(id, dragged).await;
+                // log_1(&format!("{:?}", change_directory(id, dragged).await).into());
             });
             // TODO
             //  remove background color
@@ -125,37 +125,36 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         curr.set_attribute("style", "height: 3px; opacity:0;");
 
         let dragged = _e.data_transfer().unwrap().get_data("dragged_item");
-        log_1(&format!("dragged:{:?} dropped:{:?}", dragged, _id).into());
         // TODO
         //  remove background color
     });
-    let ondelete = {
-        let id = id.clone();
-        Callback::from(move |_e: MouseEvent| {
-            // TODO: complete this
-            log_1(&format!("{:?}", id).into());
-        })
-    };
+        let ondelete = {
+            let id = id.clone();
+            Callback::from(move |_e: MouseEvent| {
+                // TODO: complete this
+                // id
+            })
+        };
 
-    let _is_drag_under = is_drag_under.clone();
-    let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _is_drag_under.set("".to_string());
-    });
+        let _is_drag_under = is_drag_under.clone();
+        let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+            _is_drag_under.set("".to_string());
+        });
 
-    // let ondragenter_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-    //     _is_drag_above.set("height: 20px; opacity:1;".to_string());
-    // });
+        // let ondragenter_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        //     _is_drag_above.set("height: 20px; opacity:1;".to_string());
+        // });
 
-    // let ondragleave_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-    //     _is_drag_above.set("".to_string());
-    // });
+        // let ondragleave_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        //     _is_drag_above.set("".to_string());
+        // });
 
-    // let ondrop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-    //     _e.prevent_default();
-    //     _is_drag_above.set("".to_string());
-    // });
+        // let ondrop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        //     _e.prevent_default();
+        //     _is_drag_above.set("".to_string());
+        // });
 
-    html! {
+        html! {
         <div>
         // TODO
         //  {if is_first_file {
@@ -217,4 +216,4 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         </div>
 
     }
-}
+    }

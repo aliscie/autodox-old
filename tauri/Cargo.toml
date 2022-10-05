@@ -1,11 +1,11 @@
 [package]
-name = "tauri-yew-demo"
+name = "tauri"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
 repository = ""
-default-run = "tauri-yew-demo"
+default-run = "tauri"
 edition = "2021"
 build = "src/build.rs"
 

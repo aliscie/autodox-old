@@ -21,7 +21,7 @@ js-sys = "0.3.59"
 serde = "1.0.144"
 serde_json = "1.0.85"
 serde_derive = "1.0.144"
-reqwest = { version = "0.11.11", features = ["json"] }
+reqwest = { version = "0.11", features = ["json"] }
 graphql_client = "0.11.0"
 anyhow = "1.0.62"
 cfg-if = "1.0.0"
@@ -35,6 +35,9 @@ rand = "0.8.1"
 uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js", "serde"] }
 ic-cdk = "0.5.7"
 dotenv = "0.15.0"
+log = "0.4.6"
+wasm-logger = "0.2.0"
+
 
 [dependencies.web-sys]
 version = "0.3.56"

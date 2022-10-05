@@ -8,7 +8,6 @@ use std::rc::Rc;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen::prelude::Closure;
 use web_sys::{DragEvent, Element, KeyboardEvent, MouseEvent, window};
-use web_sys::console::log_1;
 use yew::prelude::*;
 use yewdux::prelude::{Dispatch, use_store};
 

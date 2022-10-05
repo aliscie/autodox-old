@@ -1,7 +1,6 @@
 use shared::invoke;
 use wasm_bindgen::prelude::*;
 use web_sys::{Document, Element, MouseEvent, window};
-use web_sys::console::log_1;
 use yew::prelude::*;
 use yew_router::prelude::*;
 

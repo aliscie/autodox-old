@@ -1,6 +1,5 @@
 use yew::prelude::*;
 use crate::components::{Menu, Avatar};
-use web_sys::console::log_1;
 use crate::*;
 
 #[function_component(TitleAvatarComponent)]

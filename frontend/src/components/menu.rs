@@ -3,7 +3,6 @@ use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen::prelude::Closure;
 use web_sys::{DragEvent, Element, Node, MouseEvent, window};
 use yew::prelude::*;
-use web_sys::console::log_1;
 use crate::router::Route;
 use wasm_bindgen::JsValue;
 

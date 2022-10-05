@@ -4056,7 +4056,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-yew-demo"
+name = "tauri"
 version = "0.1.0"
 dependencies = [
  "cocoa",

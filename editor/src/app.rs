@@ -33,7 +33,7 @@ pub fn editor(props: &Props) -> Html {
     // get the previous  focused and sorted it in yewdux
     let empty = "empty".to_string();
     use_effect_with_deps(move |_my_text| {
-        web_sys::console::log_1(&my_function().into());
+        let data = &my_function();
 
         let doc = window().unwrap_throw().document().unwrap_throw();
         let editor: Rc<Element> = Rc::new(doc.query_selector(".text_editor").unwrap_throw().unwrap_throw());
@@ -124,7 +124,6 @@ pub fn editor(props: &Props) -> Html {
         );
     });
 
-    // web_sys::console::log_1(&serde_json::to_string(element_tree_dispatch.get().as_ref()).unwrap().into());
 
     html! {
     <span
