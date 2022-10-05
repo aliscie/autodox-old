@@ -12,6 +12,22 @@ macro_rules! css_file_macro {
     }
 }
 
+
+
+#[macro_export]
+macro_rules! log {
+
+    ($input: expr) => {
+        {
+        use web_sys::console::{log_1};
+        let dir =  std::file!();
+        let line = std::line!();
+        log_1(&format!("{:#?},line:{:#?}-----> {:#?}",dir,line, $input).into());
+        }
+    }
+}
+
+
 use lazy_static::lazy_static;
 pub use tree::Tree;
 cfg_if::cfg_if! {
