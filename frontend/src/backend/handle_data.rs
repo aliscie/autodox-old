@@ -73,7 +73,7 @@ pub mod backends {
 
     //  async fn synced_change_directory(parent_id: String, child_id: String) -> Result<(), String> {
     //     backends::local_change_directory(parent_id,child_id);
-    //     backends::local_change_directory(parent_id,child_id);
+    //     backends::cloud_change_directory(parent_id,child_id);
     // }
 
     //
