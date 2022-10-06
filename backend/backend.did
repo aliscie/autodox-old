@@ -1,3 +1,13 @@
-service : {
-    "greet": (text) -> (text) query;
+type BackendError = variant { FailedToSerializeData };
+type Data = record {
+  id : text;
+  content : text;
+  name : text;
+  children : vec text;
+  parent : opt text;
+};
+type Result = variant { Ok; Err : BackendError };
+service : () -> {
+  create_file : (vec nat8) -> (Result);
+  read_file : () -> (vec Data) query;
 }

@@ -354,8 +354,10 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 name = "autodox"
 version = "0.1.0"
 dependencies = [
- "ic-cdk",
- "ic-cdk-macros",
+ "candid",
+ "ic-kit",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -2336,13 +2338,28 @@ dependencies = [
 ]
 
 [[package]]
-name = "ic-cdk-macros"
-version = "0.5.7"
+name = "ic-kit"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "954a421ace8b8c8e52d2847c4aa68c80101396134c800ecb12f63457937c4ab4"
+checksum = "a5f1be26d1d7c53c51e7291475d41773f4d86b7f67599d3beae8fd375e095fa0"
 dependencies = [
+ "async-std",
+ "bincode",
  "candid",
+ "futures",
  "ic-cdk",
+ "ic-kit-macros",
+ "serde",
+ "serde_bytes",
+]
+
+[[package]]
+name = "ic-kit-macros"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6e99841e2325318b376bdfa3185818dd0864aa5f0723c4b9c45c71d334b34c1d"
+dependencies = [
+ "lazy_static",
  "proc-macro2",
  "quote",
  "serde",
