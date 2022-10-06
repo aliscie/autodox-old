@@ -6,7 +6,7 @@ use yew::{html, Html};
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use shared::*;
+
 use crate::router::*;
 use crate::router::Route;
 
@@ -46,13 +46,12 @@ pub fn curr_directory() -> Html {
         }
     };
 
-    log!("new xxx");
 
     html! {
     <span>
         <span
            class="hovering file_component">
-        {"parent file test test 12"}
+        {"parent file test test 2"}
         </span>
         {"/"}
         <span class="hovering file_component">

@@ -1,3 +1,8 @@
+extern crate uuid;
+
+use lazy_static::lazy_static;
+pub use tree::Tree;
+
 mod tree;
 
 #[macro_export]
@@ -28,8 +33,6 @@ macro_rules! log {
 }
 
 
-use lazy_static::lazy_static;
-pub use tree::Tree;
 cfg_if::cfg_if! {
     if #[cfg(feature = "frontend")]{
         mod invoke;

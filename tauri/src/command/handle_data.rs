@@ -9,7 +9,7 @@ use crate::entity::file_node::{self, Entity as FileNode};
 use crate::entity::file_tree::{self, Entity as FileTree};
 use crate::utils::UuidSet;
 
-struct HandleData {}
+pub struct HandleData {}
 
 impl HandleData {
     async fn create_txn(self, db: State<'_, DatabaseConnection>) -> Result<DatabaseTransaction, std::string::String> {
@@ -17,7 +17,7 @@ impl HandleData {
         db.begin().await.map_err(|x| x.to_string())
     }
 
-    pub async fn create_file(self, db: State<'_, DatabaseConnection>, new_obj: file_node::ActiveModel) -> Result<file_node::Model, String> {
+    async fn create_file(self, db: State<'_, DatabaseConnection>, new_obj: file_node::ActiveModel) -> Result<file_node::Model, String> {
         let txn = self.create_txn(db).await.unwrap();
         let node = FileNode::insert(new_obj)
             .exec_with_returning(&txn)
@@ -27,7 +27,7 @@ impl HandleData {
         return node;
     }
 
-    pub async fn create_tree(self, db: State<'_, DatabaseConnection>, new_obj: file_tree::ActiveModel) -> Result<file_tree::Model, String> {
+    async fn create_tree(self, db: State<'_, DatabaseConnection>, new_obj: file_tree::ActiveModel) -> Result<file_tree::Model, String> {
         let txn = self.create_txn(db).await.unwrap();
         let tree = FileTree::insert(new_obj)
             .exec_with_returning(&txn)
@@ -37,7 +37,7 @@ impl HandleData {
         return tree;
     }
 
-    pub async fn create_directory(
+    async fn create_directory(
         self,
         name: String,
         db: State<'_, DatabaseConnection>,
@@ -57,7 +57,7 @@ impl HandleData {
     }
 
 
-    pub async fn create_file_object(
+    async fn create_file_object(
         tree_id: Uuid,
         parent_id: Uuid,
         name: String,
