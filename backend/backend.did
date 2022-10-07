@@ -1,4 +1,4 @@
-type BackendError = variant { FailedToSerializeData };
+type BackendError = variant { UnknownError };
 type Data = record {
   id : text;
   content : text;
@@ -8,6 +8,6 @@ type Data = record {
 };
 type Result = variant { Ok; Err : BackendError };
 service : () -> {
-  create_file : (vec nat8) -> (Result);
+  create_file : (text, text, text, vec text, opt text) -> (Result);
   read_file : () -> (vec Data) query;
 }

@@ -1,7 +1,5 @@
 use std::cell::RefCell;
 
-use serde::{Deserialize, Serialize};
-
 use ic_kit::{
     macros::*,
     candid::{export_service, candid_method, CandidType},
@@ -9,16 +7,28 @@ use ic_kit::{
 
 #[derive(CandidType)]
 enum BackendError{
-    FailedToSerializeData,
+    UnknownError,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone)]
+#[derive(CandidType, Clone)]
 struct Data{
     name: String,
     id: String,
     content: String,
     children: Vec<String>,
     parent: Option<String>,
+}
+
+impl Data{
+    fn new(name: String, id: String, content: String, children: Vec<String>, parent: Option<String>) -> Self{
+        Self{
+            name,
+            id,
+            content,
+            children,
+            parent
+        }
+    }
 }
 
 struct State{
@@ -41,10 +51,10 @@ fn init(){}
 
 #[update(name = "create_file")]
 #[candid_method(update, rename = "create_file")]
-fn create_file(data: Vec<u8>) -> Result<(), BackendError>{
-    let data: Data = serde_json::from_slice(&data).map_err(|_| BackendError::FailedToSerializeData)?;
+fn create_file(name: String, id: String, content: String, children: Vec<String>, parent: Option<String>) -> Result<(), BackendError>{
     STATE.with(|state|{
         let state = &mut state.borrow_mut();
+        let data = Data::new(name, id, content, children, parent);
         state.list.push(data);
         Ok(())
     })
