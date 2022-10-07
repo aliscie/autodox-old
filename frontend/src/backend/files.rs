@@ -73,33 +73,6 @@ pub async fn create_directory(name: String) -> Result<FileDirectory, String> {
     }
 }
 
-pub async fn change_directory(parent_id: String, child_id: String) -> Result<(), String> {
-    let info = Dispatch::<DeviceInfo>::new();
-    let file_dispatch = Dispatch::<FileTree>::new();
-    if info.get().web || info.get().online {
-        unimplemented!();
-    }
-    if !info.get().web {
-        return call_postgres(
-            "change_directory".to_string(),
-            Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id})),
-        )
-        .await
-        .map(|e| {
-            file_dispatch.reduce_mut(|f| {
-                for i in f.files.adjacency.values_mut() {
-                    i.remove(&Uuid::parse_str(&child_id).unwrap());
-                }
-                f.files.push_edge(
-                    Uuid::parse_str(&parent_id).unwrap(),
-                    Uuid::parse_str(&child_id).unwrap(),
-                );
-            });
-            e
-        });
-    }
-    return Err("user is offline".to_string());
-}
 
 pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result<FileNode, String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -112,7 +85,6 @@ pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result
             "parentId" : parent_id,
             "name" : name
         });
-        gloo::console::log!(format!("{:?}", x));
         return call_postgres("create_file".to_string(), Some(&x)).await;
     } else {
         // user is offline throw a error

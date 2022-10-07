@@ -19,7 +19,6 @@ pub fn app() -> Html {
         move |_| {
             spawn_local(async {
                 let x = crate::backend::files::on_startup().await;
-                gloo::console::log!(format!("{:?}", x));
             });
             || {}
         },
@@ -40,7 +39,6 @@ pub fn app() -> Html {
                     "untitled".to_string(),
                 )
                     .await;
-                gloo::console::log!(format!("{:?}", file));
                 if let Ok(f) = file {
                     state
                         .files
@@ -49,7 +47,7 @@ pub fn app() -> Html {
             })
         });
 
-    html! {
+    return html! {
         <BrowserRouter>
 
         <div id = "app">
@@ -77,5 +75,5 @@ pub fn app() -> Html {
 
         </div>
         </BrowserRouter>
-    }
+    };
 }

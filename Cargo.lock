@@ -1184,7 +1184,6 @@ version = "0.1.0"
 dependencies = [
  "html-minifier",
  "js-sys",
- "log",
  "markup5ever_rcdom",
  "serde",
  "serde_json",
@@ -1192,7 +1191,6 @@ dependencies = [
  "stylist",
  "table-extract",
  "wasm-bindgen",
- "wasm-logger",
  "web-sys",
  "yew",
  "yew-style-in-rs",
@@ -1360,12 +1358,10 @@ dependencies = [
  "editor",
  "futures",
  "getrandom 0.2.7",
- "gloo 0.8.0",
  "graphql_client",
  "ic-cdk",
  "js-sys",
  "lazy_static",
- "log",
  "rand 0.8.5",
  "reqwest",
  "serde",
@@ -1376,7 +1372,6 @@ dependencies = [
  "uuid 1.1.2",
  "wasm-bindgen",
  "wasm-bindgen-futures",
- "wasm-logger",
  "web-sys",
  "yew",
  "yew-router",
@@ -1787,26 +1782,7 @@ dependencies = [
  "gloo-storage",
  "gloo-timers",
  "gloo-utils",
- "gloo-worker 0.1.2",
-]
-
-[[package]]
-name = "gloo"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a4bef6b277b3ab073253d4bca60761240cf8d6998f4bd142211957b69a61b20"
-dependencies = [
- "gloo-console",
- "gloo-dialogs",
- "gloo-events",
- "gloo-file",
- "gloo-history",
- "gloo-net",
- "gloo-render",
- "gloo-storage",
- "gloo-timers",
- "gloo-utils",
- "gloo-worker 0.2.1",
+ "gloo-worker",
 ]
 
 [[package]]
@@ -1955,23 +1931,6 @@ dependencies = [
  "serde",
  "slab",
  "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "gloo-worker"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13471584da78061a28306d1359dd0178d8d6fc1c7c80e5e35d27260346e0516a"
-dependencies = [
- "anymap2",
- "bincode",
- "gloo-console",
- "gloo-utils",
- "js-sys",
- "serde",
- "wasm-bindgen",
- "wasm-bindgen-futures",
  "web-sys",
 ]
 
@@ -4607,7 +4566,6 @@ dependencies = [
  "cfg-if",
  "js-sys",
  "lazy_static",
- "log",
  "serde",
  "serde_derive",
  "serde_json",
@@ -4615,7 +4573,6 @@ dependencies = [
  "uuid 1.1.2",
  "wasm-bindgen",
  "wasm-bindgen-futures",
- "wasm-logger",
  "yewdux",
 ]
 
@@ -5897,17 +5854,6 @@ name = "wasm-bindgen-shared"
 version = "0.2.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1c38c045535d93ec4f0b4defec448e4291638ee608530863b1e2ba115d4fff7f"
-
-[[package]]
-name = "wasm-logger"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "074649a66bb306c8f2068c9016395fa65d8e08d2affcbf95acf3c24c3ab19718"
-dependencies = [
- "log",
- "wasm-bindgen",
- "web-sys",
-]
 
 [[package]]
 name = "web-sys"
