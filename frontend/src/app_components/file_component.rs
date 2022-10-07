@@ -5,7 +5,7 @@ use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
 use yew::{html, Html};
 
-use crate::backend::backends;
+use crate::backend;
 use crate::components::Menu;
 
 #[derive(PartialEq, Properties)]
@@ -95,7 +95,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             curr.class_list().toggle("dragging_over");
             let dragged = e.data_transfer().unwrap().get_data("dragged_item").unwrap();
             let id = id.clone();
-            backends::change_directory(id, dragged);
+            backend::change_directory(id, dragged);
         })
     };
 
@@ -184,7 +184,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            >
            {props.name.clone()}
            </li>
-           <i class="btn create_file fa-solid fa-plus"></i>
+           <i style="height:100%" class="btn create_file fa-solid fa-plus"></i>
         </div>
 
             <div

@@ -12,6 +12,7 @@ aside {
 
     z-index: 299;
     transition: 0.2s;
+    overflow-y: scroll;
 }
 
 

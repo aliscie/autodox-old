@@ -3,5 +3,4 @@
 
 pub mod get_github_data;
 mod handle_data;
-
-pub use handle_data::backends;
+pub use handle_data::*;
