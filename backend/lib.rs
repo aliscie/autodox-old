@@ -1,6 +1,8 @@
-mod files;
-mod users;
-mod tests;
+pub mod files;
+pub mod users;
+pub mod tests;
+
+use files::*;
 
 use std::cell::RefCell;
 
@@ -73,7 +75,7 @@ fn read_file() -> Vec<Data> {
 }
 
 #[query(name = "__get_candid_interface_tmp_hack")]
-fn export_candid() -> String {
+pub fn export_candid() -> String {
     export_service!();
     __export_service()
 }

@@ -8,33 +8,11 @@ use sea_orm::{prelude::*, ActiveValue, ConnectionTrait, DatabaseTransaction, DbB
 use shared::Tree;
 use tauri::State;
 use uuid::Uuid;
+use crate::entity::file_handlers::{create_file_object, create_tree_object};
 
 
-async fn create_txn(db: State<'_, DatabaseConnection>) -> Result<DatabaseTransaction, std::string::String> {
-    let db = db.inner();
-    db.begin().await.map_err(|x| x.to_string())
-}
-
-async fn create_file_object(db: State<'_, DatabaseConnection>, new_obj: file_node::ActiveModel) -> Result<file_node::Model, String> {
-    let txn = create_txn(db).await.unwrap();
-    let node = FileNode::insert(new_obj)
-        .exec_with_returning(&txn)
-        .await
-        .map_err(|x| x.to_string());
-    txn.commit().await.map_err(|x| x.to_string());
-    return node;
-}
 
 
-async fn create_tree_object(db: State<'_, DatabaseConnection>, new_obj: file_tree::ActiveModel) -> Result<file_tree::Model, String> {
-    let txn = create_txn(db).await.unwrap();
-    let tree = FileTree::insert(new_obj)
-        .exec_with_returning(&txn)
-        .await
-        .map_err(|x| x.to_string());
-    txn.commit().await.map_err(|x| x.to_string());
-    return tree;
-}
 
 #[allow(dead_code)]
 #[tauri::command]
@@ -241,12 +219,3 @@ pub async fn change_directory(
 }
 
 
-#[cfg(test)]
-mod tests {
-    #[tokio::test]
-    async fn create_directory() {
-        //let conn = crate::connect_database(String::from(crate::POSTGRES_URL)).await;
-        //TODO : Find way to test command how to convert DatabaseConnection into
-        //tauri::State<DatabaseConnection>
-    }
-}

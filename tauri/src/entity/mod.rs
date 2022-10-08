@@ -5,3 +5,4 @@ pub mod prelude;
 pub mod file_adjacency;
 pub mod file_tree;
 pub mod file_node;
+pub mod file_handlers;

@@ -1,6 +1,17 @@
 use yew::prelude::*;
 use crate::components::{Menu, Avatar};
 use crate::*;
+use wasm_bindgen_futures::spawn_local;
+use wasm_bindgen::prelude::*;
+use shared::{invoke_async};
+
+
+// #[wasm_bindgen(module = "/src/app_components/identify.js")]
+// extern "C" {
+//     #[wasm_bindgen(js_name = identify)]
+//     pub async fn identify() -> String;
+// }
+
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
@@ -16,8 +27,17 @@ pub fn title_avatar_component() -> Html {
         html! {<><i class="fa-solid fa-gear"></i>{"Settings"}</>},
         html! {<><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</>},
     ];
+
+    let onclick = Callback::from(move |e: MouseEvent| {
+        spawn_local(async move {
+            // let x = invoke_async("open_new_window".to_string()).await;
+            // let user_token = identify().await;
+        });
+    });
+
+
     if *IS_LOGEDIN {
-        html! { <>
+        return html! { <>
                 <Menu
                 event={position.clone()}
                  {items}
@@ -26,8 +46,8 @@ pub fn title_avatar_component() -> Html {
                 <Avatar />
                 </span>
                 </>
-                }
+                };
     } else {
-        html! {<span class="btn" ><i class="fa-solid fa-right-to-bracket"></i>{"login"}</span>}
+        return html! {<span {onclick} class="btn" ><i class="fa-solid fa-right-to-bracket"></i>{"login"}</span>};
     }
 }
