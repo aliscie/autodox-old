@@ -2,15 +2,16 @@ use sea_orm::entity::prelude::*;
 //use sea_orm::{TryGetError, TryGetable, Value};
 use serde::{Deserialize, Serialize};
 use std::{
-    collections::HashSet,
     ops::{Deref, DerefMut},
 };
+use indexmap::IndexSet;
+
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Default, FromJsonQueryResult)]
-pub struct UuidSet(pub HashSet<Uuid>);
+pub struct UuidSet(pub IndexSet<Uuid>);
 
 impl Deref for UuidSet {
-    type Target = HashSet<Uuid>;
+    type Target = IndexSet<Uuid>;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
@@ -22,14 +23,14 @@ impl DerefMut for UuidSet {
     }
 }
 
-impl From<HashSet<Uuid>> for UuidSet {
-    fn from(source: HashSet<Uuid>) -> Self {
+impl From<IndexSet<Uuid>> for UuidSet {
+    fn from(source: IndexSet<Uuid>) -> Self {
         Self(source)
     }
 }
 
-impl Into<HashSet<Uuid>> for UuidSet {
-    fn into(self) -> HashSet<Uuid> {
+impl Into<IndexSet<Uuid>> for UuidSet {
+    fn into(self) -> IndexSet<Uuid> {
         self.0
     }
 }

@@ -3,6 +3,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
 use std::hash::Hash;
 use uuid::Uuid;
+use indexmap::IndexSet;
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct Tree<ID, T>
@@ -12,7 +13,7 @@ where
 {
     pub id: Uuid,
     pub vertices: HashMap<ID, T>,
-    pub adjacency: HashMap<ID, HashSet<ID>>,
+    pub adjacency: HashMap<ID, IndexSet<ID>>,
     pub root: Option<ID>,
 }
 
@@ -38,7 +39,7 @@ where
     }
     pub fn delete_edge(&mut self, parent_id : ID, child_id : ID){
         let adjacency = self.adjacency.entry(parent_id).or_default();
-        adjacency.remove(&child_id);
+        adjacency.swap_remove(&child_id);
     }
 
     pub fn push_children(&mut self, parent_id: ID, child_id: ID, child: T) {

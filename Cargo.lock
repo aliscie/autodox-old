@@ -1360,6 +1360,7 @@ dependencies = [
  "getrandom 0.2.7",
  "graphql_client",
  "ic-cdk",
+ "indexmap",
  "js-sys",
  "lazy_static",
  "rand 0.8.5",
@@ -2406,6 +2407,7 @@ checksum = "10a35a97730320ffe8e2d410b5d3b69279b98d2c14bdb8b70ea89ecf7888d41e"
 dependencies = [
  "autocfg 1.1.0",
  "hashbrown",
+ "serde",
 ]
 
 [[package]]
@@ -4564,6 +4566,7 @@ name = "shared"
 version = "0.1.0"
 dependencies = [
  "cfg-if",
+ "indexmap",
  "js-sys",
  "lazy_static",
  "serde",
@@ -5057,6 +5060,7 @@ version = "0.1.0"
 dependencies = [
  "cocoa",
  "dotenv",
+ "indexmap",
  "sea-orm",
  "sea-query",
  "serde",
