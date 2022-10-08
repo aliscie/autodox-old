@@ -1,5 +1,6 @@
 mod files;
 mod users;
+mod tests;
 
 use std::cell::RefCell;
 
