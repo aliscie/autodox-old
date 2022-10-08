@@ -3,14 +3,15 @@ use crate::components::{Menu, Avatar};
 use crate::*;
 use wasm_bindgen_futures::spawn_local;
 use wasm_bindgen::prelude::*;
-use shared::{invoke_async};
+use shared::{invoke_async, log};
+use wasm_bindgen::JsValue;
 
 
-// #[wasm_bindgen(module = "/src/app_components/identify.js")]
-// extern "C" {
-//     #[wasm_bindgen(js_name = identify)]
-//     pub async fn identify() -> String;
-// }
+#[wasm_bindgen(module = "/src/app_components/identify.js")]
+extern "C" {
+    #[wasm_bindgen(js_name = identify)]
+    pub async fn identify() -> JsValue;
+}
 
 
 #[function_component(TitleAvatarComponent)]
@@ -31,7 +32,8 @@ pub fn title_avatar_component() -> Html {
     let onclick = Callback::from(move |e: MouseEvent| {
         spawn_local(async move {
             // let x = invoke_async("open_new_window".to_string()).await;
-            // let user_token = identify().await;
+            let user_token = identify().await;
+            log!(user_token);
         });
     });
 

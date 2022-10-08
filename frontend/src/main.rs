@@ -2,6 +2,7 @@ extern crate futures;
 extern crate wasm_bindgen_futures;
 extern crate yew;
 extern crate shared;
+extern crate wasm_bindgen;
 
 use std::env;
 use wasm_bindgen_futures::spawn_local;
