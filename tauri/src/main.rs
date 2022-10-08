@@ -3,6 +3,8 @@ all(not(debug_assertions), target_os = "windows"),
 windows_subsystem = "windows"
 )]
 
+extern crate sea_orm;
+
 use dotenv::dotenv;
 use std::env;
 
@@ -18,6 +20,7 @@ use tauri::{Runtime, State, Window};
 mod command;
 mod entity;
 mod utils;
+mod tests;
 
 #[derive(Debug, Clone, Copy, Default)]
 struct MouseLoc {

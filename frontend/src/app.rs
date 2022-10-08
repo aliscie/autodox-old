@@ -6,7 +6,7 @@ use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-
+use crate::backend;
 use crate::app_components::{ButtonsGroup, SearchFiltes};
 
 #[function_component(App)]
@@ -17,9 +17,7 @@ pub fn app() -> Html {
     // only do it once
     use_effect_with_deps(
         move |_| {
-            spawn_local(async {
-                let x = crate::backend::files::on_startup().await;
-            });
+            let x = backend::initialize();
             || {}
         },
         (),
@@ -33,7 +31,7 @@ pub fn app() -> Html {
     let handle_create_file: Callback<MouseEvent> =
         file_dispatch.reduce_mut_future_callback(|state| {
             Box::pin(async move {
-                let file = crate::backend::files::create_file(
+                let file = crate::backend::create_file(
                     state.files.id,
                     state.files.root.unwrap(),
                     "untitled".to_string(),
