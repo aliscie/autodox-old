@@ -10,31 +10,6 @@ use shared::{invoke_async, Tree};
 use uuid::Uuid;
 use yewdux::prelude::Dispatch;
 
-pub fn initialize() -> Result<(), String> {
-    spawn_local(async move {
-        let x = self::on_startup().await;
-    });
-    Ok(())
-}
-
-async fn on_startup() -> Result<(), String> {
-    let directoies = self::get_directories().await?;
-    let file_tree = Dispatch::<FileTree>::new();
-    if directoies.len() == 0 {
-        // create new directory tree
-        let x = self::create_directory("default".to_string()).await?;
-        let directory = self::get_directory(x.id).await?;
-        // setting the file
-        file_tree.set(FileTree { files: directory });
-    } else {
-        let x = directoies.get(0).unwrap();
-        let directory = self::get_directory(x.id).await?;
-        // setting the file
-        file_tree.set(FileTree { files: directory });
-    }
-    Ok(())
-}
-
 
 pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result<FileNode, String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -47,7 +22,7 @@ pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result
             "parentId" : parent_id,
             "name" : name
         });
-        return call_postgres("create_file".to_string(), Some(&x)).await;
+        return crate::backend::call_postgres("create_file".to_string(), Some(&x)).await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -60,7 +35,7 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
         unimplemented!();
     }
     if !info.get().web {
-        return call_postgres(
+        return crate::backend::call_postgres(
             "delete_file".to_string(),
             Some(&serde_json::json!({"tree_id" : tree_id, "file_id" : file_id})),
         )
@@ -78,7 +53,7 @@ pub async fn create_directory(name: String) -> Result<FileDirectory, String> {
         unimplemented!();
     }
     if !info.get().web {
-        return call_postgres(
+        return crate::backend::call_postgres(
             "create_directory".to_string(),
             Some(&serde_json::json!({ "name": name })),
         )
@@ -89,14 +64,13 @@ pub async fn create_directory(name: String) -> Result<FileDirectory, String> {
     }
 }
 
-//TODO make this
 pub async fn get_directory(id: Uuid) -> Result<Tree<Uuid, FileNode>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
     }
     if !info.get().web {
-        return self::call_postgres(
+        return crate::backend::call_postgres(
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
@@ -114,7 +88,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
     }
     if !info.get().web {
         let x =
-            call_postgres::<Vec<FileDirectory>, String>("get_directories".to_string(), None).await;
+            crate::backend::call_postgres::<Vec<FileDirectory>, String>("get_directories".to_string(), None).await;
         return x;
     } else {
         // user is offline throw a error
@@ -122,17 +96,6 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
     }
 }
 
-
-async fn call_postgres<T, U>(command: String, args: Option<&U>) -> Result<T, String>
-    where
-        T: DeserializeOwned,
-        U: Serialize,
-{
-    let x = invoke_async::<U>(command, args)
-        .await
-        .map_err(|e| format!("{:?}", e))?;
-    from_value(x).map_err(|e| e.to_string())
-}
 
 enum FileLocation {
     LOCAL,
@@ -157,7 +120,7 @@ async fn local_change_directory(parent_id: String, child_id: String) -> Result<(
         unimplemented!();
     }
     if !info.get().web {
-        return self::call_postgres(
+        return crate::backend::call_postgres(
             "change_directory".to_string(),
             Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id})),
         )
