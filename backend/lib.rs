@@ -1,3 +1,6 @@
+mod files;
+mod users;
+
 use std::cell::RefCell;
 
 use ic_kit::{
@@ -6,12 +9,12 @@ use ic_kit::{
 };
 
 #[derive(CandidType)]
-enum BackendError{
+enum BackendError {
     UnknownError,
 }
 
 #[derive(CandidType, Clone)]
-struct Data{
+struct Data {
     name: String,
     id: String,
     content: String,
@@ -19,23 +22,23 @@ struct Data{
     parent: Option<String>,
 }
 
-impl Data{
-    fn new(name: String, id: String, content: String, children: Vec<String>, parent: Option<String>) -> Self{
-        Self{
+impl Data {
+    fn new(name: String, id: String, content: String, children: Vec<String>, parent: Option<String>) -> Self {
+        Self {
             name,
             id,
             content,
             children,
-            parent
+            parent,
         }
     }
 }
 
-struct State{
+struct State {
     list: Vec<Data>
 }
 
-impl Default for State{
+impl Default for State {
     fn default() -> Self {
         Self { list: Vec::new() }
     }
@@ -47,12 +50,12 @@ thread_local! {
 
 #[init]
 #[candid_method(init)]
-fn init(){}
+fn init() {}
 
 #[update(name = "create_file")]
 #[candid_method(update, rename = "create_file")]
-fn create_file(name: String, id: String, content: String, children: Vec<String>, parent: Option<String>) -> Result<(), BackendError>{
-    STATE.with(|state|{
+fn create_file(name: String, id: String, content: String, children: Vec<String>, parent: Option<String>) -> Result<(), BackendError> {
+    STATE.with(|state| {
         let state = &mut state.borrow_mut();
         let data = Data::new(name, id, content, children, parent);
         state.list.push(data);
@@ -62,8 +65,8 @@ fn create_file(name: String, id: String, content: String, children: Vec<String>,
 
 #[query(name = "read_file")]
 #[candid_method(query, rename = "read_file")]
-fn read_file() -> Vec<Data>{
-    STATE.with(|state|{
+fn read_file() -> Vec<Data> {
+    STATE.with(|state| {
         state.borrow().list.clone()
     })
 }
@@ -72,19 +75,4 @@ fn read_file() -> Vec<Data>{
 fn export_candid() -> String {
     export_service!();
     __export_service()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn save_candid() {
-        use std::env;
-        use std::fs::write;
-        use std::path::PathBuf;
-
-        let dir = PathBuf::from(env::current_dir().unwrap());
-        write(dir.join("backend.did"), export_candid()).expect("Write failed.");
-    }
 }
