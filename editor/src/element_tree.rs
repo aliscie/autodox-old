@@ -18,10 +18,12 @@ pub struct EditorElement {
     pub attrs: HashMap<Attrs, String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, Default)]
 pub enum Attrs {
     #[default]
     Style,
+    Href,
+    Src,
 }
 
 impl ElementTree {
@@ -42,9 +44,10 @@ impl ElementTree {
             let html_node = html! {
                 <>
                 <div style = { node.attrs
-                    .get(&Attrs::Style)
-                        .unwrap_or(&"".to_string())
-                        .clone()}>
+                    .get(&Attrs::Style).map(|e| e.clone())}
+                    href = { node.attrs.get(&Attrs::Href).map(|e| e.clone())}
+                    src = { node.attrs.get(&Attrs::Src).map(|e| e.clone())}
+                >
                         { node.text.clone()}
                 </div>
                 <>

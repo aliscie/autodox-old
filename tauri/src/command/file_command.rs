@@ -1,21 +1,22 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
+use crate::command::create_txn;
 use crate::entity::file_adjacency::{self, Entity as FileAdjacency};
 use crate::entity::file_node::{self, Entity as FileNode};
 use crate::entity::file_tree::{self, Entity as FileTree};
 use crate::utils::UuidSet;
-use sea_orm::{prelude::*, ActiveValue, ConnectionTrait, DatabaseTransaction, DbBackend, QuerySelect, Statement, TransactionTrait, DatabaseConnection};
+use sea_orm::{
+    prelude::*, ActiveValue, ConnectionTrait, DatabaseConnection, DatabaseTransaction, DbBackend,
+    QuerySelect, Statement, TransactionTrait,
+};
 use shared::Tree;
 use tauri::State;
 use uuid::Uuid;
 
-
-async fn create_txn(db: State<'_, DatabaseConnection>) -> Result<DatabaseTransaction, std::string::String> {
-    let db = db.inner();
-    db.begin().await.map_err(|x| x.to_string())
-}
-
-async fn create_file_object(db: State<'_, DatabaseConnection>, new_obj: file_node::ActiveModel) -> Result<file_node::Model, String> {
+async fn create_file_object(
+    db: State<'_, DatabaseConnection>,
+    new_obj: file_node::ActiveModel,
+) -> Result<file_node::Model, String> {
     let txn = create_txn(db).await.unwrap();
     let node = FileNode::insert(new_obj)
         .exec_with_returning(&txn)
@@ -25,8 +26,10 @@ async fn create_file_object(db: State<'_, DatabaseConnection>, new_obj: file_nod
     return node;
 }
 
-
-async fn create_tree_object(db: State<'_, DatabaseConnection>, new_obj: file_tree::ActiveModel) -> Result<file_tree::Model, String> {
+async fn create_tree_object(
+    db: State<'_, DatabaseConnection>,
+    new_obj: file_tree::ActiveModel,
+) -> Result<file_tree::Model, String> {
     let txn = create_txn(db).await.unwrap();
     let tree = FileTree::insert(new_obj)
         .exec_with_returning(&txn)
@@ -108,29 +111,38 @@ pub async fn create_directory(
     db: State<'_, DatabaseConnection>,
 ) -> Result<file_tree::Model, String> {
     let txn: DatabaseTransaction = db.clone().begin().await.map_err(|x| x.to_string())?;
-    let root = create_file_object(db.clone(), file_node::ActiveModel {
-        name: ActiveValue::Set("root".to_string()),
-        element_tree_id: ActiveValue::NotSet,
-        id: ActiveValue::Set(Uuid::new_v4()),
-    }).await.unwrap();
-    let x = create_tree_object(db, file_tree::ActiveModel {
-        name: ActiveValue::Set(name),
-        root: ActiveValue::Set(Some(root.id)),
-        id: ActiveValue::Set(Uuid::new_v4()),
-    }).await.unwrap();
+    let root = create_file_object(
+        db.clone(),
+        file_node::ActiveModel {
+            name: ActiveValue::Set("root".to_string()),
+            element_tree_id: ActiveValue::NotSet,
+            id: ActiveValue::Set(Uuid::new_v4()),
+        },
+    )
+    .await
+    .unwrap();
+    let x = create_tree_object(
+        db,
+        file_tree::ActiveModel {
+            name: ActiveValue::Set(name),
+            root: ActiveValue::Set(Some(root.id)),
+            id: ActiveValue::Set(Uuid::new_v4()),
+        },
+    )
+    .await
+    .unwrap();
 
     FileAdjacency::insert(file_adjacency::ActiveModel {
         tree_id: ActiveValue::Set(x.id),
         parent_id: ActiveValue::Set(x.root.unwrap()),
         ..Default::default()
     })
-        .exec(&txn)
-        .await
-        .map_err(|e| e.to_string())?;
+    .exec(&txn)
+    .await
+    .map_err(|e| e.to_string())?;
     txn.commit().await.map_err(|x| x.to_string())?;
     return Ok(x);
 }
-
 
 #[allow(dead_code)]
 #[tauri::command]
@@ -141,11 +153,16 @@ pub async fn create_file(
     db: State<'_, DatabaseConnection>,
 ) -> Result<file_node::Model, String> {
     let txn = db.begin().await.map_err(|x| x.to_string())?;
-    let file = create_file_object(db, file_node::ActiveModel {
-        name: ActiveValue::Set(name),
-        id: ActiveValue::Set(Uuid::new_v4()),
-        ..Default::default()
-    }).await.unwrap();
+    let file = create_file_object(
+        db,
+        file_node::ActiveModel {
+            name: ActiveValue::Set(name),
+            id: ActiveValue::Set(Uuid::new_v4()),
+            ..Default::default()
+        },
+    )
+    .await
+    .unwrap();
 
     let adj = FileAdjacency::find_by_id((tree_id, parent_id))
         .one(&txn)
@@ -178,9 +195,9 @@ pub async fn create_file(
         parent_id: ActiveValue::Set(file.id),
         child_id: ActiveValue::Set(HashSet::new().into()),
     })
-        .exec(&txn)
-        .await
-        .map_err(|x| x.to_string())?;
+    .exec(&txn)
+    .await
+    .map_err(|x| x.to_string())?;
     txn.commit().await.map_err(|x| x.to_string())?;
     Ok(file)
 }
@@ -226,20 +243,19 @@ pub async fn change_directory(
         r#"UPDATE file_adjacency SET child_id = child_id - ARRAY[$1::text]"#,
         [child_id.into()],
     ))
-        .await
-        .map_err(|x| x.to_string())?;
+    .await
+    .map_err(|x| x.to_string())?;
     txn.query_one(Statement::from_sql_and_values(
         sea_orm::DatabaseBackend::Postgres,
         r#"UPDATE file_adjacency SET child_id = child_id || to_jsonb(ARRAY[$1::text]) WHERE
         parent_id = $2"#,
         [child_id.into(), parent_id.into()],
     ))
-        .await
-        .map_err(|x| x.to_string())?;
+    .await
+    .map_err(|x| x.to_string())?;
     txn.commit().await.map_err(|x| x.to_string())?;
     Ok(())
 }
-
 
 #[cfg(test)]
 mod tests {
