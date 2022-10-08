@@ -1,10 +1,11 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, VecDeque};
 
 use crate::command::create_txn;
 use crate::entity::file_adjacency::{self, Entity as FileAdjacency};
 use crate::entity::file_node::{self, Entity as FileNode};
 use crate::entity::file_tree::{self, Entity as FileTree};
 use crate::utils::UuidSet;
+use indexmap::IndexSet;
 use sea_orm::{
     prelude::*, ActiveValue, ConnectionTrait, DatabaseConnection, DatabaseTransaction, DbBackend,
     QuerySelect, Statement, TransactionTrait,
@@ -21,9 +22,9 @@ async fn create_file_object(
     let node = FileNode::insert(new_obj)
         .exec_with_returning(&txn)
         .await
-        .map_err(|x| x.to_string());
-    txn.commit().await.map_err(|x| x.to_string());
-    return node;
+        .map_err(|x| x.to_string())?;
+    txn.commit().await.map_err(|x| x.to_string())?;
+    return Ok(node);
 }
 
 async fn create_tree_object(
@@ -34,9 +35,9 @@ async fn create_tree_object(
     let tree = FileTree::insert(new_obj)
         .exec_with_returning(&txn)
         .await
-        .map_err(|x| x.to_string());
-    txn.commit().await.map_err(|x| x.to_string());
-    return tree;
+        .map_err(|x| x.to_string())?;
+    txn.commit().await.map_err(|x| x.to_string())?;
+    return Ok(tree);
 }
 
 #[allow(dead_code)]
@@ -48,11 +49,8 @@ pub async fn get_directory(
     let x = FileTree::find_by_id(id)
         .one(db.inner())
         .await
-        .map_err(|_| "Db Error".to_string())?;
-    if x.is_none() {
-        return Err("Not found!".to_string());
-    }
-    let x = x.unwrap();
+        .map_err(|e| e.to_string())?
+        .map_or(Err("Not found!"), |x| Ok(x))?;
     println!("{:?}", x);
     // rust iterator magic haha
     let adjacency = FileAdjacency::find()
@@ -62,7 +60,7 @@ pub async fn get_directory(
         .map_err(|x| x.to_string())?
         .into_iter()
         .map(|x| (x.parent_id, x.child_id.into()))
-        .collect::<HashMap<Uuid, HashSet<Uuid>>>();
+        .collect::<HashMap<Uuid, IndexSet<Uuid>>>();
     println!("{:?}", adjacency);
     // DO NOT TOUCH THIS QUERY TOOK ME 2 HOURS TO WRITE
     let nodes: Vec<file_node::Model> = FileNode::find()
@@ -182,7 +180,7 @@ pub async fn create_file(
         let m = file_adjacency::ActiveModel {
             tree_id: ActiveValue::Set(tree_id),
             parent_id: ActiveValue::Set(parent_id),
-            child_id: ActiveValue::Set(UuidSet(HashSet::from([file.id]))),
+            child_id: ActiveValue::Set(UuidSet(IndexSet::from([file.id]))),
         };
         FileAdjacency::insert(m)
             .exec(&txn)
@@ -193,7 +191,7 @@ pub async fn create_file(
     FileAdjacency::insert(file_adjacency::ActiveModel {
         tree_id: ActiveValue::Set(tree_id),
         parent_id: ActiveValue::Set(file.id),
-        child_id: ActiveValue::Set(HashSet::new().into()),
+        child_id: ActiveValue::Set(IndexSet::new().into()),
     })
     .exec(&txn)
     .await

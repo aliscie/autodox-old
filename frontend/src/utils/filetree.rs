@@ -1,5 +1,6 @@
+use indexmap::IndexSet;
 use std::cell::RefCell;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use serde::{Deserialize, Serialize};
@@ -105,7 +106,7 @@ impl FileTree {
         self.files
             .adjacency
             .get(&start)
-            .unwrap_or( &HashSet::new())
+            .unwrap_or(&IndexSet::new())
             .into_iter()
             .map(|f| map.borrow().get(f).unwrap().to_owned())
             .collect::<Html>()
