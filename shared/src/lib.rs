@@ -5,6 +5,7 @@ pub use tree::Tree;
 
 mod tree;
 pub mod schema;
+// pub mod extensions;
 
 #[macro_export]
 macro_rules! css_file_macro {
@@ -18,6 +19,11 @@ macro_rules! css_file_macro {
     }
 }
 
+
+
+fn type_of<T>(_: &T) -> String {
+    return format!("{}", std::any::type_name::<T>());
+}
 
 
 #[macro_export]

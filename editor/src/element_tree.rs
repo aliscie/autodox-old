@@ -4,12 +4,16 @@ use std::{cell::RefCell, collections::HashMap, hash::Hash, rc::Rc};
 use yew::prelude::*;
 use yewdux::prelude::*;
 use shared::schema::{FileNode};
+
 pub type ElementId = u64;
+
+use crate::components::{Render};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default, Store)]
 pub struct ElementTree {
     pub elements: Tree<ElementId, EditorElement>,
 }
+
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default)]
 pub struct EditorElement {
@@ -33,19 +37,6 @@ impl ElementTree {
             elements: Tree::new(),
         }
     }
-    // fn render_element(node: Attrs) -> Html {
-    //     return html! {
-    //     <div style = { node.attrs
-    //                 .get(&Attrs::Style).map(|e| e.clone())}
-    //                 href = { node.attrs.get(&Attrs::Href).map(|e| e.clone())}
-    //                 src = { node.attrs.get(&Attrs::Src).map(|e| e.clone())}
-    //             >
-    //
-    //                     { node.text.clone()}
-    //     </div>
-    //     };
-    // }
-
     pub(crate) fn to_html(&self, start: u64) -> Html {
         let map: Rc<RefCell<HashMap<u64, Html>>> = Rc::new(RefCell::new(HashMap::new()));
         for (id, node) in self.elements.into_iter(start) {
@@ -55,15 +46,7 @@ impl ElementTree {
             }
             let html_node = html! {
                 <>
-                <div style = { node.attrs
-                    .get(&Attrs::Style).map(|e| e.clone())}
-                    href = { node.attrs.get(&Attrs::Href).map(|e| e.clone())}
-                    src = { node.attrs.get(&Attrs::Src).map(|e| e.clone())}
-                >
-
-                        { node.text.clone()}
-                </div>
-                <>
+                <Render node={node.clone()}/>
                     if has_children {{
                         self.elements.adjacency.get(id)
                         .unwrap()
@@ -71,7 +54,6 @@ impl ElementTree {
                         .map(|f| map.borrow().get(f).unwrap().to_owned())
                         .collect::<Html>()
                     }}
-                </>
                 </>
             };
             map.borrow_mut().insert(*id, html_node);

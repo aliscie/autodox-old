@@ -18,7 +18,6 @@ use ic_cdk::api::call::RejectionCode;
 mod backend;
 mod components;
 mod app_components;
-mod extensions;
 mod test;
 mod utils;
 mod router;
