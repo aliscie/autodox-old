@@ -12,7 +12,7 @@ use yewdux::prelude::Dispatch;
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
 use crate::plugins::{PasteConverter};
 use crate::utils::my_function;
-
+use shared::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
@@ -22,6 +22,7 @@ pub struct Props {
 
 #[function_component(Editor)]
 pub fn editor(props: &Props) -> Html {
+    log!("test");
     // TODO
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again

@@ -5,7 +5,6 @@ use wasm_bindgen::closure::Closure;
 use web_sys::{Element, MouseEvent, window};
 use wasm_bindgen::{UnwrapThrowExt, JsCast};
 use shared::log;
-
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub node: EditorElement,
@@ -16,7 +15,6 @@ pub fn render(props: &Props) -> Html {
     let node_ref = NodeRef::default();
     let position: UseStateHandle<&str> = use_state(|| "none");
     let node = props.node.clone();
-
     let doc = window().unwrap_throw().document().unwrap_throw();
     let _position = position.clone();
     let _node_ref = node_ref.clone();
@@ -29,7 +27,7 @@ pub fn render(props: &Props) -> Html {
             let y = _e.client_y() as i32;
 
             // TODO why this is not working?
-            if top >= y && y >= bottom && *_position == "none" {
+            if top >= y && y >= bottom  {
                 _position.set("inline-block")
             } else {
                 _position.set("none")
