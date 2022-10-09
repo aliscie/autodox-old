@@ -51,7 +51,7 @@ pub fn curr_directory() -> Html {
     <span>
         <span
            class="hovering file_component">
-        {"parent file test test 2"}
+        {"parent file"}
         </span>
         {"/"}
         <span class="hovering file_component">

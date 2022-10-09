@@ -4,6 +4,7 @@ use lazy_static::lazy_static;
 pub use tree::Tree;
 
 mod tree;
+pub mod schema;
 
 #[macro_export]
 macro_rules! css_file_macro {

@@ -16,6 +16,7 @@ use crate::router::Route;
 use yewdux::prelude::*;
 
 use crate::app_components::FileComponent;
+use shared::schema::{FileNode, FileDirectory};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Store)]
 pub struct FileTree {
@@ -111,21 +112,4 @@ impl FileTree {
         //let x = map.borrow().get(&start).unwrap().clone();
         //x
     }
-}
-
-#[derive(Debug, Serialize, Deserialize, Default, PartialEq, Clone, Eq)]
-pub struct FileNode {
-    pub id: Uuid,
-    pub name: String,
-    pub element_tree_id: Option<Uuid>,
-    // skipping it now later this will be removed
-    #[serde(skip)]
-    pub data: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Default, PartialEq, Clone, Eq)]
-pub struct FileDirectory {
-    pub id: Uuid,
-    pub name: String,
-    pub root: Option<Uuid>,
 }

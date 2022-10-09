@@ -1,8 +1,7 @@
 use wasm_bindgen_futures::spawn_local;
 use crate::utils::DeviceInfo;
-use crate::utils::FileDirectory;
-use crate::utils::FileNode;
 use crate::utils::FileTree;
+use shared::schema::{FileNode, FileDirectory};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde_wasm_bindgen::from_value;

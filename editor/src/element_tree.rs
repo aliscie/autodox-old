@@ -3,7 +3,7 @@ use shared::Tree;
 use std::{cell::RefCell, collections::HashMap, hash::Hash, rc::Rc};
 use yew::prelude::*;
 use yewdux::prelude::*;
-
+use shared::schema::{FileNode};
 pub type ElementId = u64;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default, Store)]
@@ -33,6 +33,18 @@ impl ElementTree {
             elements: Tree::new(),
         }
     }
+    // fn render_element(node: Attrs) -> Html {
+    //     return html! {
+    //     <div style = { node.attrs
+    //                 .get(&Attrs::Style).map(|e| e.clone())}
+    //                 href = { node.attrs.get(&Attrs::Href).map(|e| e.clone())}
+    //                 src = { node.attrs.get(&Attrs::Src).map(|e| e.clone())}
+    //             >
+    //
+    //                     { node.text.clone()}
+    //     </div>
+    //     };
+    // }
 
     pub(crate) fn to_html(&self, start: u64) -> Html {
         let map: Rc<RefCell<HashMap<u64, Html>>> = Rc::new(RefCell::new(HashMap::new()));
