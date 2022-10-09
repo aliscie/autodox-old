@@ -21,7 +21,6 @@ wasm-bindgen = { version = "0.2.78", optional = true }
 wasm-bindgen-futures = { version = "0.4.28", optional = true }
 js-sys = { version = "0.3.59", optional = true }
 
-
 [features]
 frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys"]
 backend = []
@@ -58,3 +57,6 @@ features = [
     "Attr",
     "MouseEvent",
 ]
+
+#[dev-dependencies]
+#colored = "2.0.0"
