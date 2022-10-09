@@ -1,7 +1,4 @@
-#TODO Aman
-# Explane Why  we need this?
-# Goal: To share functionality and code between crates
-# usage: create reusable and DRY code that can be used by more that one crate
+
 
 [package]
 name = "shared"

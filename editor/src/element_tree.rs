@@ -38,8 +38,8 @@ impl ElementTree {
         let map: Rc<RefCell<HashMap<u64, Html>>> = Rc::new(RefCell::new(HashMap::new()));
         for (id, node) in self.elements.into_iter(start) {
             let mut has_children = false;
-            if let Some(children) = self.elements.adjacency.get(id){
-                has_children = children.len() > 0; 
+            if let Some(children) = self.elements.adjacency.get(id) {
+                has_children = children.len() > 0;
             }
             let html_node = html! {
                 <>
@@ -48,6 +48,7 @@ impl ElementTree {
                     href = { node.attrs.get(&Attrs::Href).map(|e| e.clone())}
                     src = { node.attrs.get(&Attrs::Src).map(|e| e.clone())}
                 >
+
                         { node.text.clone()}
                 </div>
                 <>

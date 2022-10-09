@@ -10,7 +10,7 @@ use yew::prelude::*;
 use yewdux::prelude::Dispatch;
 
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
-use crate::plugins::PasteConverter;
+use crate::plugins::{PasteConverter};
 use crate::utils::my_function;
 
 #[derive(Properties, PartialEq)]
@@ -38,6 +38,11 @@ pub fn editor(props: &Props) -> Html {
         let doc = window().unwrap_throw().document().unwrap_throw();
         let editor: Rc<Element> = Rc::new(doc.query_selector(".text_editor").unwrap_throw().unwrap_throw());
         PasteConverter::new(editor.clone());
+        //TODO
+        // DragAndDrop::new(editor.clone());
+        // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline components
+        // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
+        // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
         || {}
     }, empty);
 
@@ -150,14 +155,6 @@ pub fn editor(props: &Props) -> Html {
     </div>
 
         <div  class="text_editor" >
-
-            // TODO instead of  { 'value': 'bold text', 'attrs': {'bold': true} },
-            //  you MUST use { 'text': 'bold', 'attrs': {'style': font-weight: bold;} }
-            //  Because this will help reduce the amount of code required for rendering and conversion.
-            //  rendering mean: convert from the database to html
-            //  conversion: is to convert to html into the database
-
-
             { element_tree_dispatch.get().to_html(0) }
         </div>
     </span>

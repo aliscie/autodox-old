@@ -30,11 +30,6 @@ pub struct PasteConverter {
 
 impl PasteConverter {
     pub(crate) fn new(editor: Rc<Element>) {
-        // TODO optimize this
-        //     let drag_icon_width = 20 as f32;
-        //     let doc = window().unwrap_throw().document().unwrap_throw();
-        //     let body = doc.query_selector("body").unwrap_throw().unwrap_throw();
-        //     let _self = &mut PasteConverter { editor, drag_icon_width, doc, body, prev: None, curr: None, dragged: None };
         PasteConverter::parse_paste(editor);
     }
 }

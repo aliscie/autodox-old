@@ -46,8 +46,6 @@ impl FileTree {
         Self { files: Tree::new() }
     }
     pub fn to_html(&self, start: Uuid) -> Html {
-        // map to store html of the nodes
-        // TODO : use memoization to only rerender on file name change!
         let map: Rc<RefCell<HashMap<Uuid, VNode>>> = use_mut_ref(|| HashMap::new());
         let history = use_history().unwrap();
         let onclickfile = Callback::from(move |e: MouseEvent| {
