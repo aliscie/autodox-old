@@ -31,7 +31,13 @@ pub fn title_avatar_component() -> Html {
 
     let onclick = Callback::from(move |e: MouseEvent| {
         spawn_local(async move {
-            // let x = invoke_async("open_new_window".to_string()).await;
+            // TODO
+            //     if IS_WEB {
+            //         window.open_new_window(),
+            //     } else {
+            //         let x = invoke_async("open_new_window".to_string()).await;
+            //     }
+
             let user_token = identify().await;
             log!(user_token);
         });

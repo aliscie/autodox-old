@@ -11,7 +11,6 @@ use wasm_bindgen::prelude::*;
 mod backend;
 mod components;
 mod app_components;
-mod extensions;
 mod test;
 mod utils;
 mod router;

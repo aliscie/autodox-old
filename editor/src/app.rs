@@ -22,7 +22,6 @@ pub struct Props {
 
 #[function_component(Editor)]
 pub fn editor(props: &Props) -> Html {
-    log!("test");
     // TODO
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again

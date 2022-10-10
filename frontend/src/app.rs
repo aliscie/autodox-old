@@ -69,7 +69,6 @@ pub fn app() -> Html {
         //TODO
         // title="string" instead of <Switch<Route> render={Switch::render(switch)} />
         <Editor title="text"/>
-
         </div>
         </BrowserRouter>
     };
