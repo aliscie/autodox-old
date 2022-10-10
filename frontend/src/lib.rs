@@ -2,12 +2,9 @@ extern crate futures;
 extern crate wasm_bindgen_futures;
 extern crate yew;
 extern crate shared;
-
 use app::App;
-use ic_cdk;
 use lazy_static::lazy_static;
 use wasm_bindgen::prelude::*;
-
 mod backend;
 mod components;
 mod app_components;
@@ -21,6 +18,7 @@ use web_sys;
 
 lazy_static! {
     pub static ref IS_WEB: bool = {
+        #[allow(unused_mut)]
         let mut m : bool = false;
         #[cfg(feature = "web")] {
             m = true;
@@ -47,4 +45,3 @@ pub fn run() {
     // });
     yew::start_app::<App>();
 }
-
