@@ -12,7 +12,7 @@ use yewdux::prelude::Dispatch;
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
 use crate::plugins::{PasteConverter};
 use crate::utils::my_function;
-
+use shared::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,

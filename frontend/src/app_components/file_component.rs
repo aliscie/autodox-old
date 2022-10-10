@@ -99,6 +99,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         })
     };
 
+
+
     let _is_drag_under = is_drag_under.clone();
     let _is_dragged = is_dragged.clone();
     let ondragenter_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {

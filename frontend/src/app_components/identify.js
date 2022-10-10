@@ -1,6 +1,4 @@
-// TODO
-//  TypeError: Module specifier does not start with "/", "./", or "../".
-//  promiseReactionJob
+
 import { AuthClient } from "@dfinity/auth-client";
 
 export async function identify() {

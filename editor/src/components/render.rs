@@ -16,8 +16,9 @@ pub fn render(props: &Props) -> Html {
     let node_ref = NodeRef::default();
     let position: UseStateHandle<&str> = use_state(|| "none");
     let node = props.node.clone();
-
     let doc = window().unwrap_throw().document().unwrap_throw();
+
+
     let _position = position.clone();
     let _node_ref = node_ref.clone();
     let handle_hovering = Closure::wrap(Box::new(move |_e: MouseEvent| {
@@ -29,7 +30,7 @@ pub fn render(props: &Props) -> Html {
             let y = _e.client_y() as i32;
 
             // TODO why this is not working?
-            if top >= y && y >= bottom && *_position == "none" {
+            if y <= top && y >= bottom && *_position == "none" {
                 _position.set("inline-block")
             } else {
                 _position.set("none")
