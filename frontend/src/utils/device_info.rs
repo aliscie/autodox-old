@@ -3,6 +3,7 @@ use yewdux::prelude::*;
 pub struct DeviceInfo{
     pub online : bool,
     pub web : bool,
+    pub auth : bool,
     // could add some other fields here!
 }
 
@@ -11,6 +12,7 @@ impl Default for DeviceInfo{
         Self{
             online : false,
             web : *crate::IS_WEB,
+            auth : false,
         }
     }
 }

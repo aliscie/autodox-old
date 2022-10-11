@@ -1,18 +1,17 @@
-import {AuthClient} from "@dfinity/auth-client";
+
+import { AuthClient } from "@dfinity/auth-client";
 
 export async function identify() {
-
     const authClient = await AuthClient.create();
-    let id = await authClient.getIdentity();
+    console.log(authClient);
     if (authClient.isAuthenticated()) {
-        return id;
+        return "already logged in";
     } else {
         authClient.login({
-            identityProvider: 'https://identity.ic0.app/#authorize',
-            onSuccess: async () => {
-                let identity = await authClient.getIdentity();
-                return identity;
+            identityProvider: "https://identity.ic0.app/#authorize",
+            onSuccess: () => {
+                return "login success";
             },
-        })
+        });
     }
 }

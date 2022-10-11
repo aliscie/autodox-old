@@ -1,15 +1,14 @@
 use wasm_bindgen_futures::spawn_local;
-
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde_wasm_bindgen::from_value;
 use yewdux::prelude::Dispatch;
-use shared::{invoke_async};
+use shared::invoke_async;
 use crate::utils::FileTree;
 
 pub fn initialize() -> Result<(), String> {
     spawn_local(async move {
-        let x = self::on_startup().await;
+        let _ = self::on_startup().await;
     });
     Ok(())
 }
