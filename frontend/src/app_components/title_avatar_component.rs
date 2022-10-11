@@ -1,10 +1,9 @@
 use yew::prelude::*;
+use crate::IS_LOGEDIN;
 use crate::components::{Menu, Avatar};
-use crate::*;
 use wasm_bindgen_futures::spawn_local;
 use wasm_bindgen::prelude::*;
-use shared::{invoke_async, log};
-use wasm_bindgen::JsValue;
+use shared::log;
 
 
 #[wasm_bindgen(module = "/src/app_components/identify.js")]
@@ -29,15 +28,15 @@ pub fn title_avatar_component() -> Html {
         html! {<><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</>},
     ];
 
-    let onclick = Callback::from(move |e: MouseEvent| {
+    let onclick = Callback::from(move |_e: MouseEvent| {
         spawn_local(async move {
+            // let x = invoke_async("open_new_window".to_string()).await;
             // TODO
             //     if IS_WEB {
             //         window.open_new_window(),
             //     } else {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
-
             let user_token = identify().await;
             log!(user_token);
         });

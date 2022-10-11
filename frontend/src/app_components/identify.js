@@ -1,17 +1,17 @@
-import {AuthClient} from "@dfinity/auth-client";
+
+import { AuthClient } from "@dfinity/auth-client";
 
 export async function identify() {
     const authClient = await AuthClient.create();
+    console.log(authClient);
     if (authClient.isAuthenticated()) {
-        return authClient.getIdentity();
+        return "already logged in";
     } else {
         authClient.login({
-            identityProvider: 'https://identity.ic0.app/#authorize',
+            identityProvider: "https://identity.ic0.app/#authorize",
             onSuccess: () => {
-                //TODO this does not work
-                // it return empty object like this "{}"
-                return authClient.getIdentity();
-            }
-        })
+                return "login success";
+            },
+        });
     }
 }
