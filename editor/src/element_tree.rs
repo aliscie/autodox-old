@@ -7,7 +7,7 @@ use shared::schema::{FileNode};
 
 pub type ElementId = u64;
 
-use crate::components::{Render};
+use crate::app_components::{Render};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default, Store)]
 pub struct ElementTree {

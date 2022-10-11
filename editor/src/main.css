@@ -76,3 +76,22 @@
         opacity: 1;
     }
 }
+
+.bold {
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.header {
+    border-bottom: 2px solid #fcba03;
+    box-sizing: border-box;
+    display: block;
+    font-family: "roboto", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+
+}

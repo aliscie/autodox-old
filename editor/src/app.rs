@@ -1,6 +1,5 @@
 extern crate web_sys;
 
-use shared::*;
 use std::collections::HashMap;
 use std::rc::Rc;
 use wasm_bindgen::UnwrapThrowExt;
@@ -40,7 +39,7 @@ pub fn editor(props: &Props) -> Html {
         PasteConverter::new(editor.clone());
         //TODO
         // DragAndDrop::new(editor.clone());
-        // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline components
+        // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline app_components
         // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
         // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
         || {}

@@ -4,7 +4,7 @@ use crate::element_tree::EditorElement;
 use wasm_bindgen::closure::Closure;
 use web_sys::{Element, MouseEvent, window};
 use wasm_bindgen::{UnwrapThrowExt, JsCast};
-use shared::log;
+use crate::components::{Drag};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -25,13 +25,13 @@ pub fn render(props: &Props) -> Html {
         let element = _node_ref.clone().cast::<Element>();
         if element != None {
             let rec = element.unwrap().get_bounding_client_rect();
-            let top = rec.top() ;
-            let left = rec.left() ;
-            let bottom = rec.bottom() ;
+            let top = rec.top();
+            let left = rec.left();
+            let bottom = rec.bottom();
             let y = _e.client_y() as f64;
             // TODO prevent too many re-rendering
             if y >= top && y <= bottom {
-                _position.set(format!("display:inline-block; left:{}px", left-(25 as f64)))
+                _position.set(format!("display:inline-block; left:{}px", left - (25 as f64)))
             } else {
                 _position.set("display:none".to_string())
             }
@@ -39,14 +39,9 @@ pub fn render(props: &Props) -> Html {
     }) as Box<dyn FnMut(_)>);
     let _ = &doc.add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     handle_hovering.forget();
-
-    // log!(&*(position.clone()));
     return html! {
     <span ref={node_ref}  >
-        <div  style={format!("transition: 0.2s; position: absolute; {};",*(position.clone()))}>
-            <i contenteditable="false" id="drag-icon" style="display: inline-block;">{"+"}</i>
-            <i contenteditable="false" id="drag-icon" style="display: inline-block;">{"::"}</i>
-        </div>
+             <Drag position={format!("{}",*(position.clone()))}/>
         <div
                     // style = { &node.attrs
                     // .get(&Attrs::Style).map(|e| e.clone())}

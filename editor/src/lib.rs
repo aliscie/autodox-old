@@ -8,4 +8,5 @@ mod utils;
 mod plugins;
 pub use app::Editor;
 mod element_tree;
+pub(crate) mod app_components;
 pub(crate) mod components;
