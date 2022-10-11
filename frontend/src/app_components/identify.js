@@ -7,9 +7,9 @@ export async function identify() {
     if (authClient.isAuthenticated()) {
         return "already logged in";
     } else {
-        authClient.login({
+        await authClient.login({
             identityProvider: "https://identity.ic0.app/#authorize",
-            onSuccess: () => {
+            onSuccess: async () => {
                 return "login success";
             },
         });

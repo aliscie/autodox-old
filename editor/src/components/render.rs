@@ -4,7 +4,7 @@ use crate::element_tree::EditorElement;
 use wasm_bindgen::closure::Closure;
 use web_sys::{Element, MouseEvent, window};
 use wasm_bindgen::{UnwrapThrowExt, JsCast};
-use shared::*;
+use shared::log;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -14,43 +14,38 @@ pub struct Props {
 #[function_component(Render)]
 pub fn render(props: &Props) -> Html {
     let node_ref = NodeRef::default();
-    let display: UseStateHandle<&str> = use_state(|| "none");
-    let left: UseStateHandle<String> = use_state(|| "left: 50px;".to_string());
-
+    let position: UseStateHandle<String> = use_state(|| "display:none".to_string());
     let node = props.node.clone();
     let doc = window().unwrap_throw().document().unwrap_throw();
-    let _left = left.clone();
-    let _display = display.clone();
+
+
+    let _position = position.clone();
     let _node_ref = node_ref.clone();
     let handle_hovering = Closure::wrap(Box::new(move |_e: MouseEvent| {
         let element = _node_ref.clone().cast::<Element>();
         if element != None {
             let rec = element.unwrap().get_bounding_client_rect();
-            let top = rec.top();
-            let bottom = rec.bottom();
-            let left = rec.left();
+            let top = rec.top() ;
+            let left = rec.left() ;
+            let bottom = rec.bottom() ;
             let y = _e.client_y() as f64;
-
-            // let d = *(_display.clone());
-            // TODO prevent resending, and fix drag icon display.
+            // TODO prevent too many re-rendering
             if y >= top && y <= bottom {
-                // TODO position left does not seems to work
-                _left.set(format!("left:{}px", left - 100 as f64).to_string());
-                _display.set("inline-block")
+                _position.set(format!("display:inline-block; left:{}px", left-(25 as f64)))
             } else {
-                _display.set("none")
+                _position.set("display:none".to_string())
             }
         }
     }) as Box<dyn FnMut(_)>);
     let _ = &doc.add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     handle_hovering.forget();
 
-
+    // log!(&*(position.clone()));
     return html! {
     <span ref={node_ref}  >
-        <div contenteditable="false"  style={format!("transition: 0.2s; position: absolute; display: {}; {:#?}",*(display.clone()),*(left.clone()))}>
-            <i id="drag-icon" class="btn fa-solid fa-plus"></i>
-            <i id="drag-icon" class="btn fa-solid fa-grip-dots-vertical"></i>
+        <div  style={format!("transition: 0.2s; position: absolute; {};",*(position.clone()))}>
+            <i contenteditable="false" id="drag-icon" style="display: inline-block;">{"+"}</i>
+            <i contenteditable="false" id="drag-icon" style="display: inline-block;">{"::"}</i>
         </div>
         <div
                     // style = { &node.attrs
