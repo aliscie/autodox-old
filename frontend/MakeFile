@@ -1,5 +1,6 @@
 server:
-	npx webpack serve --features web
+	npx webpack serve
+# --features web
 
 run:
 	cargo run

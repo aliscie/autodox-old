@@ -4,6 +4,19 @@
       "candid": "backend/backend.did",
       "package": "autodox",
       "type": "rust"
+    },
+    "frontend": {
+      "dependencies": [
+        "backend"
+      ],
+      "frontend": {
+        "entrypoint": "frontend/index.html"
+      },
+      "source": [
+        "frontend/public",
+        "frontend/dist"
+      ],
+      "type": "assets"
     }
   },
   "defaults": {
