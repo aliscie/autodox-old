@@ -1,7 +1,6 @@
 use crate::components::TreeList;
 use crate::utils::FileTree;
 use editor::Editor;
-use wasm_bindgen_futures::spawn_local;
 use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -17,7 +16,7 @@ pub fn app() -> Html {
     // only do it once
     use_effect_with_deps(
         move |_| {
-            let x = backend::initialize();
+            let _x = backend::initialize();
             || {}
         },
         (),
@@ -70,7 +69,6 @@ pub fn app() -> Html {
         //TODO
         // title="string" instead of <Switch<Route> render={Switch::render(switch)} />
         <Editor title="text"/>
-
         </div>
         </BrowserRouter>
     };

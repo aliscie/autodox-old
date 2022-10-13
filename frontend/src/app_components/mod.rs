@@ -1,6 +1,6 @@
-// Note you can import from components to app_components but not the apposite.
-// Note: you can do data handle in app_components but you cannot do it in components
-// Note: components are reusable but app_components are not.
+// Note you can import from app_components to app_components but not the apposite.
+// Note: you can do data handle in app_components but you cannot do it in app_components
+// Note: app_components are reusable but app_components are not.
 
 mod file_component;
 

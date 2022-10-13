@@ -18,7 +18,6 @@ use ic_cdk::api::call::RejectionCode;
 mod backend;
 mod components;
 mod app_components;
-mod extensions;
 mod test;
 mod utils;
 mod router;
@@ -38,6 +37,7 @@ lazy_static! {
     pub static ref IS_LOGEDIN: bool = false;
 }
 
+// #[allow(unused_variable)]
 fn main() {
 
     // spawn_local(async move {

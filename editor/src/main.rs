@@ -1,23 +1,24 @@
 extern crate web_sys;
+extern crate yew;
 
+pub use app::Editor;
 use yew::prelude::*;
 
 mod app;
 
-
-mod element_tree;
-
-// this is used for the work space
 mod utils;
 mod plugins;
+mod element_tree;
+pub(crate) mod app_components;
+pub(crate) mod components;
 
-pub use app::Editor;
+use yew::prelude::*;
+use yew::{function_component, html, Html};
+#[function_component(App)]
+pub fn app_component() -> Html {
+    html! { <Editor title="text"/> }
+}
 
-
-// this is used for the work isolated development
 fn main() {
-    // yew::start_app::<Editor>();
-//TODO
-// 19  |     yew::start_app::<Editor>();
-// |                      ^^^^^^ the trait `std::default::Default` is not implemented for `Props`
+    yew::start_app::<App>();
 }

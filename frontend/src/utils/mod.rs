@@ -1,5 +1,5 @@
 mod filetree;
-pub use filetree::{FileNode, FileTree, FileDirectory};
+pub use filetree::{ FileTree};
 
 use web_sys::window;
 pub fn alert<T : std::fmt::Debug>(message : &T){

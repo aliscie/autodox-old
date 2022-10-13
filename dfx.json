@@ -9,6 +9,19 @@
       "candid": "backend/storage/storage.did",
       "package": "storage",
       "type": "rust"
+    },
+    "frontend": {
+      "dependencies": [
+        "backend"
+      ],
+      "frontend": {
+        "entrypoint": "frontend/index.html"
+      },
+      "source": [
+        "frontend/public",
+        "frontend/dist"
+      ],
+      "type": "assets"
     }
   },
   "defaults": {

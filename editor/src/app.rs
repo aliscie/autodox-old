@@ -1,6 +1,5 @@
 extern crate web_sys;
 
-use shared::*;
 use std::collections::HashMap;
 use std::rc::Rc;
 use wasm_bindgen::UnwrapThrowExt;
@@ -10,9 +9,9 @@ use yew::prelude::*;
 use yewdux::prelude::Dispatch;
 
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
-use crate::plugins::PasteConverter;
+use crate::plugins::{PasteConverter};
 use crate::utils::my_function;
-
+use shared::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
@@ -38,6 +37,11 @@ pub fn editor(props: &Props) -> Html {
         let doc = window().unwrap_throw().document().unwrap_throw();
         let editor: Rc<Element> = Rc::new(doc.query_selector(".text_editor").unwrap_throw().unwrap_throw());
         PasteConverter::new(editor.clone());
+        //TODO
+        // DragAndDrop::new(editor.clone());
+        // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline app_components
+        // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
+        // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
         || {}
     }, empty);
 
@@ -96,28 +100,7 @@ pub fn editor(props: &Props) -> Html {
             2,
             EditorElement::new(
                 2,
-                r#"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-                molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-                numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-                optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis
-                obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquam
-                nihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit,
-                tenetur error, harum nesciunt ipsum debitis quas aliquid. Reprehenderit,
-                quia. Quo neque error repudiandae fuga? Ipsa laudantium molestias eos
-                sapiente officiis modi at sunt excepturi expedita sint? Sed quibusdam
-                recusandae alias error harum maxime adipisci amet laborum. Perspiciatis
-                minima nesciunt dolorem! Officiis iure rerum voluptates a cumque velit
-                quibusdam sed amet tempora. Sit laborum ab, eius fugit doloribus tenetur
-                fugiat, temporibus enim commodi iusto libero magni deleniti quod quam
-                consequuntur! Commodi minima excepturi repudiandae velit hic maxime
-                doloremque. Quaerat provident commodi consectetur veniam similique ad
-                earum omnis ipsum saepe, voluptas, hic voluptates pariatur est explicabo
-                fugiat, dolorum eligendi quam cupiditate excepturi mollitia maiores labore
-                suscipit quas? Nulla, placeat. Voluptatem quaerat non architecto ab laudantium
-                modi minima sunt esse temporibus sint culpa, recusandae aliquam numquam
-                totam ratione voluptas quod exercitationem fuga. Possimus quis earum veniam
-                uasi aliquam eligendi, placeat qui corporis!
-                "#
+                r#"Element is here."#
                     .to_string(),
                 HashMap::new(),
             ),
@@ -150,14 +133,6 @@ pub fn editor(props: &Props) -> Html {
     </div>
 
         <div  class="text_editor" >
-
-            // TODO instead of  { 'value': 'bold text', 'attrs': {'bold': true} },
-            //  you MUST use { 'text': 'bold', 'attrs': {'style': font-weight: bold;} }
-            //  Because this will help reduce the amount of code required for rendering and conversion.
-            //  rendering mean: convert from the database to html
-            //  conversion: is to convert to html into the database
-
-
             { element_tree_dispatch.get().to_html(0) }
         </div>
     </span>
