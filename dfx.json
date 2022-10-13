@@ -1,8 +1,13 @@
 {
   "canisters": {
-    "backend": {
-      "candid": "backend/backend.did",
-      "package": "autodox",
+    "registrar": {
+      "candid": "backend/registrar/registrar.did",
+      "package": "registrar",
+      "type": "rust"
+    },
+    "storage": {
+      "candid": "backend/storage/storage.did",
+      "package": "storage",
       "type": "rust"
     }
   },
