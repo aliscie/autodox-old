@@ -5,11 +5,6 @@ members = [
     "tauri", # tauri is out of the workspace because it works indipdently
     "editor",
     "tauri/migration",
-<<<<<<< HEAD
     "backend/registrar",
-    "backend/storage"
-=======
-    "backend",
-    "webscoket_server",
->>>>>>> 694ffea236d1b4bb16682f7fdab7a21866f12de4
+    "backend/storage",
 ]
