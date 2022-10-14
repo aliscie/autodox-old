@@ -8,7 +8,7 @@
     "storage": {
       "candid": "backend/storage/storage.did",
       "package": "storage",
-      "wasm": "storage.wasm",
+      "wasm": "backend/wasm_file/storage.wasm",
       "type": "rust"
     },
     "frontend": {
