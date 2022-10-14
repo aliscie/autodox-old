@@ -7,5 +7,6 @@ members = [
     "tauri/migration",
     "backend/registrar",
     "backend/storage",
+
     "webscoket_server",
 ]

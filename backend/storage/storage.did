@@ -3,14 +3,29 @@ type BackendError = variant {
   Unauthorized;
   AuthorityDoesNotExist;
 };
+type ChangeDirectoryData = record {
+  new_child_id : text;
+  previous_parent_id : opt text;
+  previous_child_id : text;
+  new_parent_id : opt text;
+};
+type CreateFileData = record { name : text; parent_id : text; tree_id : text };
+type DeleteFileData = record { child_id : text; parent_id : opt text };
 type InitData = record { owner : principal };
 type Result = variant { Ok; Err : BackendError };
 type Result_1 = variant { Ok : text; Err : BackendError };
+type UpdateFileData = record {
+  content_update_data : record {};
+  child_id : text;
+  parent_id : opt text;
+};
 service : (InitData) -> {
   add_authority_for_making_changes : (principal) -> (Result);
   allowed_to_make_changes : (principal) -> (Result) query;
-  change_directory : () -> (Result);
-  create_file : (record {}) -> (Result);
+  change_directory : (ChangeDirectoryData) -> (Result);
+  create_file : (CreateFileData) -> ();
+  delete_file : (DeleteFileData) -> (Result);
   read_content : () -> (Result_1) query;
   remove_authority_from_making_changes : (principal) -> (Result);
+  update_file : (UpdateFileData) -> (Result);
 }
