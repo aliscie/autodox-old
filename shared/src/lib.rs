@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 extern crate uuid;
 
 use lazy_static::lazy_static;

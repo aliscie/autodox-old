@@ -1,0 +1,16 @@
+type BackendError = variant {
+  AuthorityAlreadyExist;
+  Unauthorized;
+  AuthorityDoesNotExist;
+};
+type InitData = record { owner : principal };
+type Result = variant { Ok; Err : BackendError };
+type Result_1 = variant { Ok : text; Err : BackendError };
+service : (InitData) -> {
+  add_authority_for_making_changes : (principal) -> (Result);
+  allowed_to_make_changes : (principal) -> (Result) query;
+  change_directory : () -> (Result);
+  create_file : (record {}) -> (Result);
+  read_content : () -> (Result_1) query;
+  remove_authority_from_making_changes : (principal) -> (Result);
+}
