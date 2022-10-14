@@ -6125,7 +6125,7 @@ dependencies = [
  "serde_json",
  "tokio",
  "tokio-stream",
- "uuid 1.1.2",
+ "uuid 1.2.1",
  "warp",
 ]
 
