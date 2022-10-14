@@ -65,7 +65,7 @@ fn get_storage_address(of: Principal) -> Vec<Principal>{
     STATE.with(|state|{
         let state = &state.borrow();
         let default_value: Vec<Principal> = Vec::new();
-        let list = state.storage.get(&ic::caller()).unwrap_or(&default_value);
+        let list = state.storage.get(&of).unwrap_or(&default_value);
         list.clone()
     })
 }
@@ -87,6 +87,6 @@ pub mod tests {
         use std::path::PathBuf;
 
         let dir = PathBuf::from(env::current_dir().unwrap());
-        write(dir.join("storage.did"), export_candid()).expect("Write failed.");
+        write(dir.join("registrar.did"), export_candid()).expect("Write failed.");
     }
 }

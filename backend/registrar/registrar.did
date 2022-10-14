@@ -1,0 +1,11 @@
+type BackendError = variant { InstantiateError : InstantiateError };
+type InstantiateError = variant {
+  FailedToInstallCode;
+  FailedToInstantiateCanister;
+  FailedToSerialize;
+};
+type Result = variant { Ok : principal; Err : BackendError };
+service : () -> {
+  get_storage_address : (principal) -> (vec principal) query;
+  register : () -> (Result);
+}
