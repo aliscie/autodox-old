@@ -8,11 +8,13 @@
     "storage": {
       "candid": "backend/storage/storage.did",
       "package": "storage",
+      "wasm": "storage.wasm",
       "type": "rust"
     },
     "frontend": {
       "dependencies": [
-        "registrar","storage"
+        "registrar",
+        "storage"
       ],
       "frontend": {
         "entrypoint": "frontend/index.html"
