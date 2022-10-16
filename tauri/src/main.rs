@@ -3,8 +3,6 @@ all(not(debug_assertions), target_os = "windows"),
 windows_subsystem = "windows"
 )]
 
-extern crate sea_orm;
-
 use dotenv::dotenv;
 use std::env;
 
@@ -12,15 +10,17 @@ use std::collections::HashMap;
 
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
-use sea_orm::{Database, DatabaseConnection};
 use tauri::async_runtime::Mutex;
 use tauri::Manager;
 use tauri::{Runtime, State, Window};
 
 mod command;
-mod entity;
+//mod entity;
 mod utils;
 mod tests;
+mod error;
+mod store;
+mod ctx;
 
 #[derive(Debug, Clone, Copy, Default)]
 struct MouseLoc {
@@ -75,23 +75,22 @@ impl<R: Runtime> WindowExt for Window<R> {
 
 
 
-pub async fn connect_database(postgres_url: String) -> DatabaseConnection {
-    let db = Database::connect(postgres_url).await;
+//pub async fn connect_database(postgres_url: String) -> DatabaseConnection {
+    //let db = Database::connect(postgres_url).await;
 
-    match db {
-        Ok(x) => {
-            return x;
-        }
-        Err(e) => {
-            panic!("Cannot connect to database with url : {}", e);
-        }
-    }
-}
+    //match db {
+        //Ok(x) => {
+            //return x;
+        //}
+        //Err(e) => {
+            //panic!("Cannot connect to database with url : {}", e);
+        //}
+    //}
+//}
 
 fn main() {
     dotenv().ok();
-    let POSTGRES_URL: &str = &std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
-    let postgres_url = String::from(POSTGRES_URL);
+    //let POSTGRES_URL: &str = &std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
     tauri::Builder::default()
         .manage(Storage {
             store: Mutex::new(HashMap::new()),
@@ -101,24 +100,24 @@ fn main() {
             maximize_window,
             close_window,
             mouse_move,
-            crate::command::file_command::get_directory,
-            crate::command::file_command::get_directories,
-            crate::command::file_command::create_directory,
-            crate::command::file_command::create_file,
-            crate::command::file_command::delete_file,
-            crate::command::file_command::change_directory,
+            //crate::command::file_command::get_directory,
+            //crate::command::file_command::get_directories,
+            //crate::command::file_command::create_directory,
+            //crate::command::file_command::create_file,
+            //crate::command::file_command::delete_file,
+            //crate::command::file_command::change_directory,
         ])
-        .setup(|app| {
-            let win = app.get_window("main").unwrap();
-            #[cfg(target_os = "macos")]
-                win.set_transparent_titlebar(true);
-            let handle = app.handle();
-            tauri::async_runtime::block_on(async move {
-                let conn = connect_database(postgres_url).await;
-                handle.manage(conn);
-            });
-            Ok(())
-        })
+        //.setup(|app| {
+            //let win = app.get_window("main").unwrap();
+            //#[cfg(target_os = "macos")]
+                //win.set_transparent_titlebar(true);
+            //let handle = app.handle();
+            //tauri::async_runtime::block_on(async move {
+                //let conn = connect_database(postgres_url).await;
+                //handle.manage(conn);
+            //});
+            //Ok(())
+        //})
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -19,10 +19,12 @@ lazy_static = "1.4.0"
 yewdux = { version = "0.8.2", optional = true }
 wasm-bindgen = { version = "0.2.78", optional = true }
 wasm-bindgen-futures = { version = "0.4.28", optional = true }
+yew = { version = "*", optional  = true}
 js-sys = { version = "0.3.59", optional = true }
 
 [features]
-frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys"]
+default = ["frontend", "backend"]
+frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys", "dep:yew"]
 backend = []
 full = ["frontend", "backend"]
 

@@ -4,7 +4,6 @@ members = [
     "frontend",
     "tauri", # tauri is out of the workspace because it works indipdently
     "editor",
-    "tauri/migration",
     "backend/registrar",
     "backend/storage",
 

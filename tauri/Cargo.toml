@@ -20,11 +20,14 @@ serde = { version = "1.0.143", features = ["derive"] }
 tauri = { version = "1.1.1", features = ["api-all"] }
 shared = { path = "../shared" }
 tokio = { version = "1.21.1", features = ["full"] }
-sea-orm = { version = "^0", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"] }
+#sea-orm = { version = "^0", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"] }
 uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "serde"] }
-sea-query = { version = "^0.26.3", features = ["thread-safe"] }
+#sea-query = { version = "^0.26.3", features = ["thread-safe"] }
 dotenv = "0.15.0"
+thiserror = "*"
 indexmap = {version = "1.9.1", features = ["serde"] }
+# For dev and to easy first time build experience, just have memory surrealdb for  now.
+surrealdb = "1.0.0-beta.8"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 cocoa = "0.24.0"
