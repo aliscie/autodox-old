@@ -1,10 +1,12 @@
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
 
+use context::Context;
 use dotenv::dotenv;
 use std::env;
+use store::Store;
 
 use std::collections::HashMap;
 
@@ -16,14 +18,14 @@ use tauri::{Runtime, State, Window};
 
 mod command;
 //mod entity;
-mod utils;
-mod tests;
+mod context;
 mod error;
 mod store;
-mod ctx;
+mod tests;
+mod utils;
 
 #[derive(Debug, Clone, Copy, Default)]
-struct MouseLoc {
+pub struct MouseLoc {
     x: i32,
     y: i32,
 }
@@ -73,28 +75,23 @@ impl<R: Runtime> WindowExt for Window<R> {
 //         .expect("error while running tauri application");
 // }
 
-
-
 //pub async fn connect_database(postgres_url: String) -> DatabaseConnection {
-    //let db = Database::connect(postgres_url).await;
+//let db = Database::connect(postgres_url).await;
 
-    //match db {
-        //Ok(x) => {
-            //return x;
-        //}
-        //Err(e) => {
-            //panic!("Cannot connect to database with url : {}", e);
-        //}
-    //}
+//match db {
+//Ok(x) => {
+//return x;
+//}
+//Err(e) => {
+//panic!("Cannot connect to database with url : {}", e);
+//}
+//}
 //}
 
 fn main() {
     dotenv().ok();
     //let POSTGRES_URL: &str = &std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
     tauri::Builder::default()
-        .manage(Storage {
-            store: Mutex::new(HashMap::new()),
-        })
         .invoke_handler(tauri::generate_handler![
             minimize_window,
             maximize_window,
@@ -107,22 +104,22 @@ fn main() {
             //crate::command::file_command::delete_file,
             //crate::command::file_command::change_directory,
         ])
-        //.setup(|app| {
-            //let win = app.get_window("main").unwrap();
-            //#[cfg(target_os = "macos")]
-                //win.set_transparent_titlebar(true);
-            //let handle = app.handle();
-            //tauri::async_runtime::block_on(async move {
-                //let conn = connect_database(postgres_url).await;
-                //handle.manage(conn);
-            //});
-            //Ok(())
-        //})
+        .setup(|app| {
+            let win = app.get_window("main").unwrap();
+            #[cfg(target_os = "macos")]
+            win.set_transparent_titlebar(true);
+            let handle = app.handle();
+            tauri::async_runtime::block_on(async move {
+                let store = Store::new()
+                    .await
+                    .expect("Cannot create connection to database!");
+                handle.manage(Context::new(store));
+            });
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
-
 
 #[tauri::command]
 fn close_window(window: Window) -> Result<(), tauri::Error> {
@@ -143,8 +140,8 @@ fn maximize_window(window: Window) -> Result<(), tauri::Error> {
 }
 
 #[tauri::command]
-async fn mouse_move(x: i32, y: i32, state: State<'_, Storage>) -> Result<(), ()> {
-    let mut w = state.store.lock().await;
+async fn mouse_move(x: i32, y: i32, state: State<'_, Context>) -> Result<(), ()> {
+    let mut w = state.mouse_loc.lock().await;
     w.insert(0, MouseLoc { x, y });
     println!("{:?}", w.entry(0));
     Ok(())

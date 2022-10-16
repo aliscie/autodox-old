@@ -14,21 +14,17 @@ pub struct FileNode {
     pub data: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Default, PartialEq, Clone, Eq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileDirectory {
     pub id: Uuid,
     pub name: String,
-    pub root: Option<Uuid>,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
-pub struct FileTree {
     pub files: Tree<Uuid, FileNode>,
 }
 
-impl Default for FileTree {
+
+impl Default for FileDirectory {
     fn default() -> Self {
-        let mut d = Self::new();
+        let mut d = Self::new(Uuid::new_v4(), "default".to_string());
         let id = Uuid::new_v4();
         d.files.push_vertex(
             id,
@@ -44,15 +40,15 @@ impl Default for FileTree {
     }
 }
 
-impl FileTree {
+impl FileDirectory {
     #[inline]
-    pub fn new() -> Self {
-        Self { files: Tree::new() }
+    pub fn new(id : Uuid, name : String) -> Self {
+        Self { files: Tree::new(), id, name }
     }
 }
 
 #[cfg(feature = "frontend")]
-impl Store for FileTree {
+impl Store for FileDirectory {
     fn new() -> Self {
         Self::default() 
     }

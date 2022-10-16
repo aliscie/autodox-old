@@ -2,14 +2,14 @@ use crate::error::Error;
 use surrealdb::{Datastore, Session};
 
 pub struct Store {
-    pub ds: Datastore,
-    pub ses: Session,
+    pub datastore: Datastore,
+    pub session: Session,
 }
 
 impl Store {
     pub async fn new() -> Result<Self, Error> {
-        let ds = Datastore::new("memory").await?;
-        let ses = Session::for_db("appns", "appdb");
-        Ok(Store { ds, ses })
+        let datastore = Datastore::new("file://test.db").await?;
+        let session = Session::for_db("appns", "appdb");
+        Ok(Store { datastore, session })
     }
 }
