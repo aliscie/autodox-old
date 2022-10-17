@@ -61,7 +61,6 @@ pub fn app() -> Html {
                 <button onclick={handle_create_file}><i class="fa-solid fa-plus"></i>{"Add file"}</button>
                 <span ><input placeholder="Add from cloud"/></span>
                 <button onclick={onclick_market_place} ><i class="fa-solid fa-globe"></i>{"Market place"}</button>
-                <button ><i class="fa-solid fa-trash"></i>{"Trash"}</button>
             </bottom_buttons>
 
         </ul>

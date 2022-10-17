@@ -197,11 +197,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
            <Menu
            items={vec![
-           html! {<><i class="fa-solid fa-signature"></i>{"Rename"}</>},
-           html! {<><i class="fa-solid fa-upload"/>{"Share"}</>},
-           html! {<><i class="fa-solid fa-eye"/>{"Permissions"}</>},
-           html! {<><i class="fa-solid fa-trash" onclick = {ondelete}/>{"Delete"}</>},
-           html! {<><i class="fa-brands fa-medium"></i>{"Category"}</>},
+           html! {<a><i class="fa-solid fa-signature"></i>{"Rename"}</a>},
+           html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
+           html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
+           html! {<a><i class="fa-solid fa-trash" onclick = {ondelete}/>{"Delete"}</a>},
+           html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
 
            ]}
            event={position.clone()}

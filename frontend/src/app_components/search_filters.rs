@@ -22,12 +22,12 @@ pub fn search_filters() -> Html {
     });
 
     let items: Vec<Html> = vec![
-        html! {<>{"Filter by name"}</>},
-        html! {<>{"Filter by content"}</>},
-        html! {<>{"Filter by category"}</>},
-        html! {<>{"Filter by tag"}</>},
-        html! {<>{"Filter by permission"}</>},
-        html! {<span {onmousedown} >{"Replace"}</span>},
+        html! {<a>{"Filter by name"}</a>},
+        html! {<a>{"Filter by content"}</a>},
+        html! {<a>{"Filter by category"}</a>},
+        html! {<a>{"Filter by tag"}</a>},
+        html! {<a>{"Filter by permission"}</a>},
+        html! {<a {onmousedown} >{"Replace"}</a>},
     ];
 
     html! { <>

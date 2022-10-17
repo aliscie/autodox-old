@@ -80,9 +80,7 @@ pub fn menu(props: &MenuProps) -> Html {
     >
         {
             props.items.clone().into_iter().map(|item| {
-                html!{
-                <a>{item}</a>
-                }
+                item
             }).collect::<Html>()
         }
 
