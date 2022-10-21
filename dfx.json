@@ -7,7 +7,7 @@
     },
     "frontend": {
       "dependencies": [
-        "backend"
+        "registrar","storage"
       ],
       "frontend": {
         "entrypoint": "frontend/index.html"

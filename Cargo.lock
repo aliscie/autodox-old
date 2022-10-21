@@ -5935,6 +5935,20 @@ dependencies = [
 ]
 
 [[package]]
+
+name = "webscoket_server"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-stream",
+ "uuid 1.2.1",
+ "warp",
+]
+
+[[package]]
 name = "webview2-com"
 version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
