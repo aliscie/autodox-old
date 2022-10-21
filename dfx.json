@@ -1,13 +1,8 @@
 {
   "canisters": {
-    "registrar": {
-      "candid": "backend/registrar/registrar.did",
-      "package": "registrar",
-      "type": "rust"
-    },
-    "storage": {
-      "candid": "backend/storage/storage.did",
-      "package": "storage",
+    "backend": {
+      "candid": "backend/backend.did",
+      "package": "backend",
       "type": "rust"
     },
     "frontend": {

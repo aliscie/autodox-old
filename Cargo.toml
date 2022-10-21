@@ -5,6 +5,5 @@ members = [
     "tauri", # tauri is out of the workspace because it works indipdently
     "editor",
     "tauri/migration",
-    "backend/registrar",
-    "backend/storage",
+    "backend",
 ]
