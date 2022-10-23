@@ -3,6 +3,7 @@ mod structure;
 mod data_structure;
 mod backend_error;
 
+use std::collections::HashMap;
 use structure::*;
 use backend_error::*;
 

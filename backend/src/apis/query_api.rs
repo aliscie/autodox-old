@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use ic_kit::{
     candid::candid_method,
     macros::*, ic,
@@ -37,6 +39,31 @@ pub fn read_file(read_file_data: ReadFileData) -> Result<String, BackendError>{
                     }
                 }
             }
+        }
+    }
+}
+
+#[query]
+#[candid_method(query)]
+fn read_files() -> HashMap<String, HashMap<String, String>>{
+    let s_caller = SPrincipal(ic::caller());
+    let storage = s!(Storage);
+    let mut result_map: HashMap<String, HashMap<String, String>> = HashMap::new();
+    match storage.get_cloned(&s_caller){
+        None => {
+            result_map
+        },
+        Some(map) => {
+            let mut map = map.iter();
+            while let Some((parent_id, child_map)) = map.next(){
+                let mut _child_map: HashMap<String, String> = HashMap::new();
+                let mut child_map = child_map.iter();
+                while let Some((child_id, content)) = child_map.next(){
+                    _child_map.insert(child_id, content);
+                }
+                result_map.insert(parent_id, _child_map);
+            }
+            result_map
         }
     }
 }
