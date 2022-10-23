@@ -9,4 +9,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ic-kit = "0.4.8"
-ic-stable-memory = "0.2.3"
+candid = "0.7"
+serde = "1"
+ic-stable-memory = "0.2.4"
+speedy = "0.8.2"
