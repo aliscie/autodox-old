@@ -1,26 +1,13 @@
 {
   "canisters": {
-
     "backend": {
       "candid": "backend/backend.did",
       "package": "backend",
-
-    "registrar": {
-      "candid": "backend/registrar/registrar.did",
-      "package": "registrar",
-      "type": "rust"
-    },
-    "storage": {
-      "candid": "backend/storage/storage.did",
-      "package": "storage",
-      "wasm": "backend/wasm_file/storage.wasm",
-
       "type": "rust"
     },
     "frontend": {
       "dependencies": [
-        "registrar",
-        "storage"
+        "registrar","storage"
       ],
       "frontend": {
         "entrypoint": "frontend/index.html"

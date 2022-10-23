@@ -4,6 +4,7 @@ use rand::seq::SliceRandom;
 
 use crate::components::{Menu};
 use shared::*;
+
 #[derive(Properties, PartialEq)]
 pub struct Props {
     // pub id: u64,
@@ -27,6 +28,12 @@ pub fn buttons_group(props: &Props) -> Html {
         _style.set("display:inline-block;animation-name: btnEntrance; transition:0.2s".to_string())
     });
 
+    // let _click_on = click_on.clone();
+    // let onmousedown_others: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+    //     _click_on.set(false);
+    // });
+
+
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-solid fa-home"></i>{"Home"}</a>},
         html! {<a><i class="fa-solid fa-trash"></i>{"Trash"}</a>},
@@ -42,6 +49,7 @@ pub fn buttons_group(props: &Props) -> Html {
     html! {
     <>
     <Menu
+    // {my_items}
     click_on={Some(*click_on.clone())}
     event={position.clone()}
      {items}
