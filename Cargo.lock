@@ -351,6 +351,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
+name = "backend"
+version = "0.1.0"
+dependencies = [
+ "candid",
+ "ic-kit",
+ "ic-stable-memory",
+ "serde",
+ "speedy",
+]
+
+[[package]]
 name = "bae"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2353,6 +2364,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-stable-memory"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f975657082f9912a56c52d6c27f2b355d2c3ad376d3fe21332f5898c6f3876a7"
+dependencies = [
+ "candid",
+ "ic-cdk",
+ "serde",
+ "speedy",
+]
+
+[[package]]
 name = "ic-types"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3970,15 +3993,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3f87b73ce11b1619a3c6332f45341e0047173771e8b8b73f87bfeefb7b56244"
 
 [[package]]
-name = "registrar"
-version = "0.1.0"
-dependencies = [
- "candid",
- "ic-kit",
- "serde",
-]
-
-[[package]]
 name = "remove_dir_all"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4762,6 +4776,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "speedy"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f45b0970d87b76e449484d8a530a9c48ad04df2645d9af2148a74b82f368fa1"
+dependencies = [
+ "speedy-derive",
+]
+
+[[package]]
+name = "speedy-derive"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "00d56cb212a4b09de6561bac41bc36dc810fd41faf24b0a8aa1374062546af0a"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "spin"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4890,17 +4924,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dbe866e1e51e8260c9eed836a042a5e7f6726bb2b411dffeaa712e19c388f23b"
 dependencies = [
  "loom",
-]
-
-[[package]]
-name = "storage"
-version = "0.1.0"
-dependencies = [
- "candid",
- "ic-kit",
- "serde",
- "shared",
- "uuid 1.2.1",
 ]
 
 [[package]]
@@ -6117,6 +6140,7 @@ dependencies = [
 ]
 
 [[package]]
+
 name = "webscoket_server"
 version = "0.1.0"
 dependencies = [
@@ -6130,6 +6154,7 @@ dependencies = [
 ]
 
 [[package]]
+
 name = "webview2-com"
 version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
