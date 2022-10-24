@@ -21,12 +21,12 @@ async fn on_startup() -> Result<(), String> {
         let x = crate::backend::create_directory("default".to_string()).await?;
         let directory = crate::backend::get_directory(x.id).await?;
         // setting the file
-        file_tree.set(FileTree { files: directory });
+        //file_tree.set(FileTree { files: directory });
     } else {
         let x = directoies.get(0).unwrap();
         let directory = crate::backend::get_directory(x.id).await?;
         // setting the file
-        file_tree.set(FileTree { files: directory });
+        //file_tree.set(FileTree { files: directory });
     }
     Ok(())
 }

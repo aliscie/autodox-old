@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 ic-kit = "0.4.8"
 candid = "0.7"
 serde = "1"
-shared = { path = "./../../shared" }
+shared = { path = "./../../shared" , features = ["backend"]}
 
 [dependencies.uuid]
 version = "1.2.1"

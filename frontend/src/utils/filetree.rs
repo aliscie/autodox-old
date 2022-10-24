@@ -16,10 +16,11 @@ use crate::router::Route;
 use yewdux::prelude::*;
 
 use crate::app_components::FileComponent;
-use shared::schema::{FileNode, FileDirectory};
+use shared::schema::{FileDirectory, FileNode};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Store)]
 pub struct FileTree {
+    pub id: Uuid,
     pub files: Tree<Uuid, FileNode>,
 }
 
@@ -44,7 +45,10 @@ impl Default for FileTree {
 impl FileTree {
     #[inline]
     pub fn new() -> Self {
-        Self { files: Tree::new() }
+        Self {
+            id: Uuid::new_v4(),
+            files: Tree::new(),
+        }
     }
     pub fn to_html(&self, start: Uuid) -> Html {
         let map: Rc<RefCell<HashMap<Uuid, VNode>>> = use_mut_ref(|| HashMap::new());

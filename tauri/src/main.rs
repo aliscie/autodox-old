@@ -13,16 +13,17 @@ use std::collections::HashMap;
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
 use tauri::async_runtime::Mutex;
-use tauri::Manager;
 use tauri::{Runtime, State, Window};
 
 mod command;
+mod prelude;
 //mod entity;
 mod context;
 mod error;
 mod store;
 mod tests;
 mod utils;
+mod model;
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct MouseLoc {
@@ -88,10 +89,14 @@ impl<R: Runtime> WindowExt for Window<R> {
 //}
 //}
 
-fn main() {
+#[tokio::main]
+async fn main() {
     dotenv().ok();
-    //let POSTGRES_URL: &str = &std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
+    let store = Store::new()
+        .await
+        .expect("Cannot create connection to database!");
     tauri::Builder::default()
+        .manage(Context::new(store))
         .invoke_handler(tauri::generate_handler![
             minimize_window,
             maximize_window,
@@ -105,16 +110,11 @@ fn main() {
             //crate::command::file_command::change_directory,
         ])
         .setup(|app| {
-            let win = app.get_window("main").unwrap();
             #[cfg(target_os = "macos")]
-            win.set_transparent_titlebar(true);
-            let handle = app.handle();
-            tauri::async_runtime::block_on(async move {
-                let store = Store::new()
-                    .await
-                    .expect("Cannot create connection to database!");
-                handle.manage(Context::new(store));
-            });
+            {
+                let win = app.get_window("main").unwrap();
+                win.set_transparent_titlebar(true);
+            }
             Ok(())
         })
         .run(tauri::generate_context!())
@@ -140,8 +140,8 @@ fn maximize_window(window: Window) -> Result<(), tauri::Error> {
 }
 
 #[tauri::command]
-async fn mouse_move(x: i32, y: i32, state: State<'_, Context>) -> Result<(), ()> {
-    let mut w = state.mouse_loc.lock().await;
+async fn mouse_move(x: i32, y: i32, ctx: State<'_, Context>) -> Result<(), ()> {
+    let mut w = ctx.store.mouse_loc.lock().await;
     w.insert(0, MouseLoc { x, y });
     println!("{:?}", w.entry(0));
     Ok(())

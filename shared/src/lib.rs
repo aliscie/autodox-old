@@ -7,13 +7,11 @@ pub use tree::Tree;
 mod tree;
 pub mod schema;
 pub mod macros;
+pub mod traits;
 
 pub use macros::*;
 
 // pub mod extensions;
-
-
-
 cfg_if::cfg_if! {
     if #[cfg(feature = "frontend")]{
         mod invoke;

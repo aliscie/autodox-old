@@ -1,14 +1,8 @@
-use std::collections::HashMap;
-use std::sync::Arc;
-
-use tauri::async_runtime::Mutex;
-
 use crate::store::Store;
-use crate::MouseLoc;
+use std::sync::Arc;
 
 pub struct Context {
     pub store: Arc<Store>,
-    pub mouse_loc: Mutex<HashMap<u32, MouseLoc>>,
 }
 
 impl Context {
@@ -16,7 +10,6 @@ impl Context {
     pub fn new(store: Store) -> Self {
         Self {
             store: Arc::new(store),
-            mouse_loc: Mutex::new(HashMap::new()),
         }
     }
     #[inline]
