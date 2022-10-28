@@ -1,6 +1,6 @@
 use crate::{
     traits::{Creatable, Entity, Queryable},
-    Tree,
+    Error, Tree,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -112,30 +112,48 @@ impl Store for FileDirectory {
 #[cfg(feature = "tauri")]
 impl From<FileDirectory> for Object {
     fn from(val: FileDirectory) -> Self {
-        let mut map = BTreeMap::new();
-        map.insert("id".to_owned(), Value::Uuid(surrealdb::sql::Uuid(val.id)));
-        map.insert(
-            "name".to_owned(),
-            Value::Strand(surrealdb::sql::Strand(val.name)),
-        );
-        map.insert("files".to_owned(), Value::Object(val.files.into()));
-        return map.into();
+        BTreeMap::from([
+            ("id".into(), val.id.into()),
+            ("name".into(), val.name.into()),
+            ("files".into(), Value::Object(val.files.into())),
+        ])
+        .into()
     }
 }
 
 #[cfg(feature = "tauri")]
 impl From<FileNode> for Object {
     fn from(val: FileNode) -> Self {
-        let mut map = BTreeMap::new();
-        map.insert("id".to_owned(), Value::Uuid(surrealdb::sql::Uuid(val.id)));
-        map.insert(
-            "name".to_owned(),
-            Value::Strand(surrealdb::sql::Strand(val.name)),
-        );
-        map.insert(
-            "data".to_owned(),
-            Value::Strand(surrealdb::sql::Strand(val.data)),
-        );
-        return map.into();
+        BTreeMap::from([
+            ("id".into(), val.id.into()),
+            ("name".into(), val.name.into()),
+            ("data".into(), val.data.into()),
+        ])
+        .into()
+    }
+}
+
+#[cfg(feature = "tauri")]
+impl TryFrom<Object> for FileNode {
+    type Error = crate::Error;
+    fn try_from(mut object: Object) -> Result<Self, Self::Error> {
+        Ok(Self {
+            id: object
+                .remove("id")
+                .ok_or(Error::XPropertyNotFound("id".to_string()))?
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("uuid"))?,
+            name: object
+                .remove("name")
+                .ok_or(Error::XPropertyNotFound("name".to_string()))?
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("String"))?,
+            element_tree_id: None,
+            data: object
+                .remove("data")
+                .ok_or(Error::XPropertyNotFound("data".to_string()))?
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("String"))?,
+        })
     }
 }

@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 stylist = { version = "0.10.0", features = ["yew"] , optional = true}
+thiserror = "*"
 serde = { version = "1.0.144", features = ["derive"] }
 uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js", "serde"] }
 indexmap = { version = "1.9.1", features = ["serde"] }
@@ -21,7 +22,7 @@ wasm-bindgen = { version = "0.2.78", optional = true }
 wasm-bindgen-futures = { version = "0.4.28", optional = true }
 yew = { version = "*", optional  = true}
 js-sys = { version = "0.3.59", optional = true }
-surrealdb = { version = "1.0.0-beta.8", optional = true }
+surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true}
 
 [features]
 default = ["frontend"]

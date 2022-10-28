@@ -3,12 +3,15 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
 use std::hash::Hash;
+use std::str::FromStr;
 use uuid::Uuid;
 
 #[cfg(feature = "tauri")]
-use surrealdb::sql::{Object, Value};
+use surrealdb::sql::{Id, Object, Value};
 
+use crate::schema::FileNode;
 use crate::traits::Entity;
+use crate::Error;
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct Tree<ID, T>
@@ -113,21 +116,19 @@ where
 }
 
 #[cfg(feature = "tauri")]
-impl<ID, T> From<Tree<ID,T>> for Object
+impl<ID, T> From<Tree<ID, T>> for Object
 where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug + Into<Object> + Entity,
 {
-    fn from(val : Tree<ID, T>) -> Object {
+    fn from(val: Tree<ID, T>) -> Object {
         let mut map = BTreeMap::new();
         let mut adjacency_list: Vec<Value> = Vec::new();
         for (id, children) in val.adjacency {
             let mut connection = BTreeMap::new();
             let mut child_connections = Vec::new();
             for i in children.into_iter() {
-                child_connections.push(Value::Thing(
-                    (T::table_name(), format!("{:?}", i)).into(),
-                ));
+                child_connections.push(Value::Thing((T::table_name(), format!("{:?}", i)).into()));
             }
             connection.insert(
                 "parent".to_owned(),
@@ -139,11 +140,75 @@ where
             );
             adjacency_list.push(Value::Object(connection.into()));
         }
+        let mut vertices_vec: Vec<Value> = Vec::new();
+        for i in val.vertices.keys() {
+            vertices_vec.push(Value::Thing((T::table_name(), format!("{:?}", i)).into()));
+        }
         map.insert("adjacency".to_owned(), Value::Array(adjacency_list.into()));
+        map.insert("vertices".to_owned(), Value::Array(vertices_vec.into()));
         return map.into();
     }
 }
 
+#[cfg(feature = "tauri")]
+impl TryFrom<Object> for Tree<Uuid, FileNode> {
+    type Error = crate::Error;
+    /// i am asuming we have selected the vertices field with all the data in the nodes
+    fn try_from(mut value: Object) -> Result<Self, Self::Error> {
+        // TODO : clean this later and remove all the panics
+        let mut tree = Tree::new();
+        let adjacency_list: Vec<Value> = value
+            .remove("adjacency")
+            .ok_or(crate::Error::XPropertyNotFound("adjacency".into()))?
+            .try_into()
+            .map_err(|_| Error::XValueNotOfType("value"))?;
+        for i in adjacency_list {
+            let mut adjacency_object: Object =
+                i.try_into().map_err(|_| Error::XValueNotOfType("Object"))?;
+            let parent_id: Uuid;
+            let mut child_ids: IndexSet<Uuid> = IndexSet::new();
+            let parent = adjacency_object.remove("parent").unwrap();
+            match parent {
+                Value::Thing(t) => match t.id {
+                    Id::String(x) => parent_id = uuid::Uuid::from_str(&x).unwrap(),
+                    _ => panic!("parent id not of type string"),
+                },
+                _ => panic!("parent id is not of type Thing"),
+            }
+            let children_value: Vec<Value> = adjacency_object
+                .remove("children")
+                .ok_or(Error::XPropertyNotFound("children".into()))?
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("Vec<Value>"))?;
+            for i in children_value {
+                match i {
+                    Value::Thing(t) => match t.id {
+                        Id::String(x) => {
+                            child_ids.insert(uuid::Uuid::from_str(&x).unwrap());
+                        }
+                        _ => panic!("id not of type string"),
+                    },
+                    _ => panic!("value not of type surrealdb::Value::Thing"),
+                }
+            }
+            tree.adjacency.insert(parent_id, child_ids);
+        }
+        let vertex_vec: Vec<Value> = value
+            .remove("vertex")
+            .ok_or(crate::Error::XPropertyNotFound("vertex".into()))?
+            .try_into()
+            .map_err(|_| Error::XValueNotOfType("value"))?;
+        for i in vertex_vec {
+            let vertex_object: Object =
+                i.try_into().map_err(|_| Error::XValueNotOfType("Object"))?;
+            let file_node: FileNode = vertex_object
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("FileNode"))?;
+            tree.vertices.insert(file_node.id, file_node);
+        }
+        Ok(tree)
+    }
+}
 //impl<'a, ID, T> IntoIterator for &'a Tree<ID, T>
 //where
 //ID: Hash + PartialEq + Eq + Clone + Default + Debug,
