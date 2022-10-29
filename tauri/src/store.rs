@@ -2,6 +2,7 @@ use crate::error::Error;
 use crate::prelude::*;
 use crate::utils::*;
 use crate::MouseLoc;
+use shared::traits::{Creatable, Entity};
 use std::collections::{BTreeMap, HashMap};
 use surrealdb::sql::*;
 use surrealdb::{Datastore, Session};
@@ -12,7 +13,6 @@ pub struct Store {
     pub session: Session,
     pub mouse_loc: Mutex<HashMap<u32, MouseLoc>>,
 }
-
 
 impl Store {
     pub async fn new() -> Result<Self> {
@@ -36,19 +36,32 @@ impl Store {
             .await?;
 
         let first_res = ress.into_iter().next().expect("Did not get a response");
-
-        W(first_res.result?.first()).try_into()
+        Ok(first_res.result?.first().try_into()?)
     }
 
-    pub async fn exec_create<T: Into<Value>>(&self, tb: &str, data: T) -> Result<String> {
-        let sql = "CREATE type::table($tb) CONTENT $data RETURN id";
+    pub async fn get_all<T: Entity<DatabaseType = Object>>(&self) -> Result<Object> {
+        let sql = format!("SELECT * FROM {}", <T as Entity>::table_name());
+        let ress = self
+            .datastore
+            .execute(sql.as_str(), &self.session, None, true)
+            .await?;
+        let first_res = ress.into_iter().next().expect("Did not get a response");
+        println!("{:?}", first_res);
+        Ok(first_res.result?.first().try_into()?)
+    }
 
-        let mut data: Object = W(data.into()).try_into()?;
+    pub async fn exec_create<T>(&self, data: T) -> Result<String>
+    where
+        T: Creatable + Entity<DatabaseType = Object>,
+    {
+        let sql = "CREATE type::table($tb) CONTENT $data RETURN id";
+        let tb = <T as Entity>::table_name();
+        let mut data: Object = data.into().into();
         let now = Datetime::default().timestamp_nanos();
         data.insert("ctime".into(), now.into());
 
         let vars = map![
-            "tb".into() => tb.into(),
+            "tb".into() => <T as Entity>::table_name().into(),
             "data".into() => Value::from(data)];
 
         let ress = self
@@ -62,15 +75,18 @@ impl Store {
             .expect("id not returned")?;
 
         if let Value::Object(mut val) = first_val.first() {
-            val.x_take_val::<String>("id")
-                .map_err(|ex| Error::StoreFailToCreate(format!("exec_create {tb} {ex}")))
+            match val.remove("id").ok_or(Error::XPropertyNotFound(format!(
+                "exec_create {tb} id not found"
+            )))? {
+                Value::Thing(x) => Ok(x.id.to_string()),
+                _ => Err(Error::StoreFailToCreate(format!("exec_create {tb}"))),
+            }
         } else {
             Err(Error::StoreFailToCreate(format!(
                 "exec_create {tb}, nothing returned."
             )))
         }
     }
-
 
     pub async fn exec_delete(&self, tid: &str) -> Result<String> {
         let sql = "DELETE $th";
@@ -98,7 +114,7 @@ impl Store {
 
         // --- Apply the filter
         if let Some(filter) = filter {
-            let obj: Object = W(filter).try_into()?;
+            let obj: Object = filter.try_into()?;
             sql.push_str(" WHERE");
             for (idx, (k, v)) in obj.into_iter().enumerate() {
                 let var = format!("w{idx}");
@@ -118,46 +134,39 @@ impl Store {
         let first_res = ress.into_iter().next().expect("Did not get a response");
 
         // Get the result value as value array (fail if it is not)
-        let array: Array = W(first_res.result?).try_into()?;
-
-        // build the list of objects
-        array.into_iter().map(|value| W(value).try_into()).collect()
-
-        // Note: Above equivalent to
-        // let mut objs: Vec<Object> = Vec::new();
-        // for item in array.into_iter() {
-        // 	objs.push(W(item).try_into()?);
-        // }
-        // Ok(objs)
+        let array: Vec<Value> = first_res.result?.try_into()?;
+        let mut v: Vec<Object> = Vec::new();
+        for i in array.into_iter() {
+            v.push(i.try_into()?);
+        }
+        Ok(v)
     }
 }
 
-
-
 impl XTakeImpl<String> for Object {
-	fn x_take_impl(&mut self, k: &str) -> Result<Option<String>> {
-		let v = self.remove(k).map(|v| W(v).try_into());
-		match v {
-			None => Ok(None),
-			Some(Ok(val)) => Ok(Some(val)),
-			Some(Err(ex)) => Err(ex),
-		}
-	}
+    fn x_take_impl(&mut self, k: &str) -> Result<Option<String>> {
+        let v = self.remove(k).map(|v| v.try_into());
+        match v {
+            None => Ok(None),
+            Some(Ok(val)) => Ok(Some(val)),
+            Some(Err(ex)) => Err(ex.into()),
+        }
+    }
 }
 
 impl XTakeImpl<i64> for Object {
-	fn x_take_impl(&mut self, k: &str) -> Result<Option<i64>> {
-		let v = self.remove(k).map(|v| W(v).try_into());
-		match v {
-			None => Ok(None),
-			Some(Ok(val)) => Ok(Some(val)),
-			Some(Err(ex)) => Err(ex),
-		}
-	}
+    fn x_take_impl(&mut self, k: &str) -> Result<Option<i64>> {
+        let v = self.remove(k).map(|v| v.try_into());
+        match v {
+            None => Ok(None),
+            Some(Ok(val)) => Ok(Some(val)),
+            Some(Err(ex)) => Err(ex.into()),
+        }
+    }
 }
 
 impl XTakeImpl<bool> for Object {
-	fn x_take_impl(&mut self, k: &str) -> Result<Option<bool>> {
-		Ok(self.remove(k).map(|v| v.is_true()))
-	}
+    fn x_take_impl(&mut self, k: &str) -> Result<Option<bool>> {
+        Ok(self.remove(k).map(|v| v.is_true()))
+    }
 }

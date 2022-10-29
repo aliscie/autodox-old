@@ -146,6 +146,10 @@ where
         }
         map.insert("adjacency".to_owned(), Value::Array(adjacency_list.into()));
         map.insert("vertices".to_owned(), Value::Array(vertices_vec.into()));
+        map.insert(
+            "root".to_owned(),
+            val.root.map(|f| format!("{:?}", f)).into(),
+        );
         return map.into();
     }
 }
@@ -154,8 +158,9 @@ where
 impl TryFrom<Object> for Tree<Uuid, FileNode> {
     type Error = crate::Error;
     /// i am asuming we have selected the vertices field with all the data in the nodes
-    fn try_from(mut value: Object) -> Result<Self, Self::Error> {
+    fn try_from(value: Object) -> Result<Self, Self::Error> {
         // TODO : clean this later and remove all the panics
+        let mut value = value;
         let mut tree = Tree::new();
         let adjacency_list: Vec<Value> = value
             .remove("adjacency")
@@ -194,8 +199,8 @@ impl TryFrom<Object> for Tree<Uuid, FileNode> {
             tree.adjacency.insert(parent_id, child_ids);
         }
         let vertex_vec: Vec<Value> = value
-            .remove("vertex")
-            .ok_or(crate::Error::XPropertyNotFound("vertex".into()))?
+            .remove("vertices")
+            .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?
             .try_into()
             .map_err(|_| Error::XValueNotOfType("value"))?;
         for i in vertex_vec {
@@ -206,6 +211,15 @@ impl TryFrom<Object> for Tree<Uuid, FileNode> {
                 .map_err(|_| Error::XValueNotOfType("FileNode"))?;
             tree.vertices.insert(file_node.id, file_node);
         }
+        let root: Value = value
+            .remove("vertices")
+            .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?;
+        tree.root = match root {
+            Value::Strand(x) => {
+                Some(uuid::Uuid::from_str(&x).map_err(|_| Error::XValueNotOfType("uuid"))?)
+            }
+            _ => None,
+        };
         Ok(tree)
     }
 }

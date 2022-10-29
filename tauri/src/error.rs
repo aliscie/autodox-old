@@ -6,9 +6,10 @@
 //!     - Since everything is typed from the start, renaming and refactoring become relatively trivial.
 //!     - By best practices, `anyhow` is not used in application code, but can be used in unit or integration test (will be in dev_dependencies when used)
 //!
+use serde::Serialize;
 use shared::Error as SharedError;
 
-#[derive(thiserror::Error, Debug)]
+#[derive(thiserror::Error, Debug, Serialize)]
 pub enum Error {
     #[error("Fail to get Ctx")]
     CtxFail,
@@ -23,10 +24,10 @@ pub enum Error {
     StoreFailToCreate(String),
 
     #[error(transparent)]
-    Surreal(#[from] surrealdb::Error),
+    Surreal(surrealdb::Error),
 
-    #[error(transparent)]
-    IO(#[from] std::io::Error),
+    //#[error(transparent)]
+    //IO(#[from] std::io::Error),
 }
 
 impl From<SharedError> for Error {
@@ -35,5 +36,11 @@ impl From<SharedError> for Error {
             SharedError::XValueNotOfType(x) => Self::XValueNotOfType(x),
             SharedError::XPropertyNotFound(x) => Self::XPropertyNotFound(x),
         }
+    }
+}
+
+impl From<surrealdb::Error> for Error {
+    fn from(val: surrealdb::Error) -> Self {
+        Self::Surreal(val) 
     }
 }

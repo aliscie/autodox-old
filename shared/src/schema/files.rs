@@ -11,8 +11,12 @@ use uuid::Uuid;
 use yewdux::store::Store;
 
 /// type for creating file
+#[derive(Deserialize, Serialize, Debug)]
 pub struct FileNodeCreate {
-    name: String,
+    pub id : Uuid,
+    pub name: String,
+    pub directory_id: Uuid,
+    pub parent_id: Uuid,
 }
 
 #[cfg(feature = "tauri")]
@@ -31,7 +35,7 @@ impl From<FileNodeCreate> for Object {
     fn from(val: FileNodeCreate) -> Self {
         BTreeMap::from([
             ("name".into(), val.name.into()),
-            ("id".into(), surrealdb::sql::Uuid::new().into()),
+            ("id".into(), val.id.into()),
         ])
         .into()
     }
@@ -55,6 +59,9 @@ impl Entity for FileNode {
     }
 }
 
+#[cfg(feature = "tauri")]
+impl Creatable for FileNode {}
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileDirectory {
     pub id: Uuid,
@@ -66,9 +73,12 @@ pub struct FileDirectory {
 impl Entity for FileDirectory {
     type DatabaseType = Object;
     fn table_name() -> String {
-        "file_directoyr".to_string()
+        "file_directory".to_string()
     }
 }
+
+#[cfg(feature = "tauri")]
+impl Creatable for FileDirectory {}
 
 impl Default for FileDirectory {
     fn default() -> Self {
@@ -154,6 +164,37 @@ impl TryFrom<Object> for FileNode {
                 .ok_or(Error::XPropertyNotFound("data".to_string()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("String"))?,
+        })
+    }
+}
+
+#[cfg(feature = "tauri")]
+impl TryFrom<Object> for FileDirectory {
+    type Error = crate::Error;
+    fn try_from(value: Object) -> Result<Self, Self::Error> {
+        let mut value = value;
+        Ok(Self {
+            id: value
+                .remove("id")
+                .ok_or(Error::XPropertyNotFound(format!(
+                    "id not found in object for FileDirectory"
+                )))?
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("uuid"))?,
+            name: value
+                .remove("name")
+                .ok_or(Error::XPropertyNotFound(format!(
+                    "name not found in object for FileDirectory"
+                )))?
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("String"))?,
+            files: value
+                .remove("files")
+                .and_then(|f| -> Option<Object> { f.try_into().ok() })
+                .ok_or(Error::XPropertyNotFound(format!(
+                    "files not found in object for FileDirectory"
+                )))?
+                .try_into()?
         })
     }
 }

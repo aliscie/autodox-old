@@ -40,3 +40,12 @@ select * from directory;
 select * from directory;
 seelct tree.adjacency from directory;
 select tree.adjacency from directory;
+\\l
+\\d
+create person set name = "aman";
+create person set name = 'aman';
+create person set name = 'aman'
+create person set name = 'aman';
+select * from file_directory;
+select * from file_node;
+select * from file_directory;
