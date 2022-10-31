@@ -31,7 +31,7 @@ pub fn app() -> Html {
         file_dispatch.reduce_mut_future_callback(|state| {
             Box::pin(async move {
                 let file = crate::backend::create_file(
-                    state.files.id,
+                    state.id,
                     state.files.root.unwrap(),
                     "untitled".to_string(),
                 )
@@ -59,7 +59,7 @@ pub fn app() -> Html {
             <TreeList/>
             <bottom_buttons>
                 <button onclick={handle_create_file}><i class="fa-solid fa-plus"></i>{"Add file"}</button>
-                <span ><input placeholder="Add from cloud"/></span>
+                <span ><input placeholder="Add from test"/></span>
                 <button onclick={onclick_market_place} ><i class="fa-solid fa-globe"></i>{"Market place"}</button>
             </bottom_buttons>
 

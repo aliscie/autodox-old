@@ -1,0 +1,51 @@
+#V2
+create file_directory:"20343c03-7217-492a-8f64-1e63ee5bb763" set name = "default" , files = { adjacency : {1 : [2,3]}}
+ create file_directory:"20343c03-7217-492a-8f64-1e63ee5bb763" set name = "default" , files = { adjacency : {1 : [2,3]}}
+ create file_directory:"20343c03-7217-492a-8f64-1e63ee5bb763" set name = "default" , files = { adjacency : {1 : [2,3]}};
+ create file_directory:`20343c03-7217-492a-8f64-1e63ee5bb763` set name = "default" , files = { adjacency : {1 : [2,3]}};
+ create file_directory:"20343c03-7217-492a-8f64-1e63ee5bb763" set name = "default" , files = { adjacency : {1 : [2,3]}}
+ create file_directory:"20343c03-7217-492a-8f64-1e63ee5bb763" set name = "default" , tree = { adjacency : [1 : [2,3]]}
+ create file_directory:`20343c03-7217-492a-8f64-1e63ee5bb763` set name = "default" , tree = { adjacency : [1 : [2,3]]}
+CREATE account SET\n	name = 'ACME Inc',\n	created_at = time::now()\n;
+select * from account;
+CREATE directory SET
+CREATE directory SET id = "fa93c194-a8ca-4201-978f-746ca6d57870" , name = "default", tree = { adjacency : [ 1 : [2,3]]};
+CREATE directory SET id = "fa93c194-a8ca-4201-978f-746ca6d57870" , name = "default", tree = { adjacency : [ {1 : [2,3]}]};
+select * from directory;
+create file:1 set name = "test";
+create file:2 set name = "test";
+create file:0 set name = "root";
+ CREATE directory SET id = "fa93c194-a8ca-4201-978f-746ca6d57870" , name = "default", tree = { adjacency : [ {file:0 : [file:1,file:2]}]};
+select * from directory;
+ CREATE directory SET id = "fa93c194-a8ca-4201-978f-746ca6d57870" , name = "default", tree = { adjacency : [ { "file:0" : [ file:1, file:2 ] } ] };
+select * from directory;
+select adjacency[0] from directory;
+select tree.adjacency[0] from directory;
+select tree.adjacency[0].name from directory;
+select tree.adjacency from directory;
+select tree.adjacency[0]."file:0" from directory;
+select tree.adjacency[0] from directory;
+select tree.adjacency[0].file:0 from directory;
+select tree.adjacency[0].`file:0`\\ from directory;
+select tree.adjacency[0].`file:0` from directory;
+select tree.adjacency[0].`file:0`.name from directory;
+select tree.adjacency[0].name from directory;
+select tree.adjacency[0].`file:0` from directory;
+select * from directory'
+select * from directory;
+drop directory;
+delete directory;
+select * from directory;
+ CREATE directory SET id = "fa93c194-a8ca-4201-978f-746ca6d57870" , name = "default", tree = { adjacency : [ { parent_id : file:0 , child_ids: [ file:1, file:2 ] } ] };
+select * from directory;
+seelct tree.adjacency from directory;
+select tree.adjacency from directory;
+\\l
+\\d
+create person set name = "aman";
+create person set name = 'aman';
+create person set name = 'aman'
+create person set name = 'aman';
+select * from file_directory;
+select * from file_node;
+select * from file_directory;

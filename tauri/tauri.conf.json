@@ -5,10 +5,9 @@
   },
   "build": {
     "distDir": "../frontend/dist",
-    "devPath": "http://localhost:8080",
-    "beforeDevCommand": "cd frontend && npx webpack serve",
-    "beforeBuildCommand": "cd frontend && npx webpack build",
-    "withGlobalTauri": true
+    "devPath": "http://localhost:8080/",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
   },
   "tauri": {
     "bundle": {

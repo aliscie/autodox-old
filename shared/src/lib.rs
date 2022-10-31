@@ -5,15 +5,15 @@ use lazy_static::lazy_static;
 pub use tree::Tree;
 
 mod tree;
+mod error;
+pub use error::Error;
 pub mod schema;
 pub mod macros;
+pub mod traits;
 
 pub use macros::*;
 
 // pub mod extensions;
-
-
-
 cfg_if::cfg_if! {
     if #[cfg(feature = "frontend")]{
         mod invoke;
