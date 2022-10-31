@@ -8,8 +8,12 @@ export async function identify() {
         return "already logged in";
     } else {
         await authClient.login({
-            identityProvider: "https://identity.ic0.app/#authorize",
-            onSuccess: async () => {
+            identityProvider:
+        process.env.DFX_NETWORK === "ic"
+          ? "https://identity.ic0.app/#authorize"
+          : `http://${process.env.INTERNET_IDENTITY_CANISTER_ID}.localhost:8000/#authorize`,
+      onSuccess:
+        async () => {
                 return "login success";
             },
         });

@@ -19,5 +19,6 @@ service : () -> {
   create_file : (CreateFileData) -> ();
   delete_file : (DeleteFileData) -> (Result);
   read_file : (ReadFileData) -> (Result_1) query;
+  read_files : () -> (vec record { text; vec record { text; text } }) query;
   update_file : (UpdateFileData) -> (Result);
 }
