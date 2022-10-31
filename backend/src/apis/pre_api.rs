@@ -1,5 +1,5 @@
 use ic_kit::macros::*;
-use ic_stable_memory::{stable_memory_pre_upgrade, stable_memory_post_upgrade};
+use ic_stable_memory::{stable_memory_post_upgrade, stable_memory_pre_upgrade};
 
 #[pre_upgrade]
 pub fn pre_upgrade() {

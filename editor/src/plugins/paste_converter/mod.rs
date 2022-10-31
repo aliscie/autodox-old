@@ -3,12 +3,11 @@ extern crate web_sys;
 mod trigger_paste;
 
 use std::rc::Rc;
-use web_sys::{DragEvent, Element, MouseEvent, window};
+use web_sys::{window, DragEvent, Element, MouseEvent};
 
 use wasm_bindgen::prelude::*;
-use yew::prelude::*;
 use wasm_bindgen::JsCast;
-
+use yew::prelude::*;
 
 #[wasm_bindgen(module = "/src/plugins/paste_converter/fetch_pasted.js")]
 extern "C" {
@@ -16,7 +15,6 @@ extern "C" {
     pub fn fetch_pasted(editor: Element) -> String;
     // pub fn fetch_pasted() -> Json;
 }
-
 
 pub struct PasteConverter {
     pub(crate) drag_icon_width: f32,
@@ -33,4 +31,3 @@ impl PasteConverter {
         PasteConverter::parse_paste(editor);
     }
 }
-

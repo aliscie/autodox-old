@@ -7,7 +7,7 @@ extern "C" {
     async fn invoke_inner_async(command: String, args: String) -> Result<JsValue, JsValue>;
 }
 
-pub fn invoke<T: serde::Serialize>(command: String, args: Option<&T>) -> Result<JsValue, JsValue>{
+pub fn invoke<T: serde::Serialize>(command: String, args: Option<&T>) -> Result<JsValue, JsValue> {
     let res = match args {
         Some(v) => invoke_inner(command, serde_json::to_string(v).unwrap()),
         None => invoke_inner(command, "".into()),
@@ -15,7 +15,10 @@ pub fn invoke<T: serde::Serialize>(command: String, args: Option<&T>) -> Result<
     return res;
 }
 
-pub async fn invoke_async<T: serde::Serialize>(command: String, args: Option<&T>) -> Result<JsValue, JsValue>{
+pub async fn invoke_async<T: serde::Serialize>(
+    command: String,
+    args: Option<&T>,
+) -> Result<JsValue, JsValue> {
     let arg: String = match args {
         Some(v) => serde_json::to_string(v).unwrap(),
         None => "".into(),

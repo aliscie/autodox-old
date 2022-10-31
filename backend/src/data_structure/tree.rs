@@ -1,5 +1,3 @@
 #![allow(dead_code)]
 
-pub struct AdjacencyTree{
-    
-}
+pub struct AdjacencyTree {}

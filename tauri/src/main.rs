@@ -20,10 +20,10 @@ mod prelude;
 //mod entity;
 mod context;
 mod error;
+mod model;
 mod store;
 mod tests;
 mod utils;
-mod model;
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct MouseLoc {

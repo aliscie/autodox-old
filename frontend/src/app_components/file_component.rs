@@ -1,6 +1,6 @@
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::console::{log_1};
+use web_sys::console::log_1;
 use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
 use yew::{html, Html};
@@ -98,8 +98,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             backend::change_directory(id, dragged);
         })
     };
-
-
 
     let _is_drag_under = is_drag_under.clone();
     let _is_dragged = is_dragged.clone();

@@ -1,21 +1,20 @@
 extern crate web_sys;
 
 use serde::{Deserialize, Serialize};
-use std::{borrow::Borrow, collections::HashMap};
 use std::cell::RefCell;
 use std::convert::TryInto;
 use std::rc::Rc;
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use std::{borrow::Borrow, collections::HashMap};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{DragEvent, Element, KeyboardEvent, MouseEvent, window};
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use web_sys::{window, DragEvent, Element, KeyboardEvent, MouseEvent};
 use yew::prelude::*;
-use yewdux::prelude::{Dispatch, use_store};
+use yewdux::prelude::{use_store, Dispatch};
 
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
 
 use super::PasteConverter;
 use crate::plugins::PluginTraits;
-
 
 impl PasteConverter {
     pub fn parse_paste(editor: Rc<Element>) {
@@ -31,13 +30,12 @@ impl PasteConverter {
 
         // let empty = "empty".to_string();
         // use_effect_with_deps(move |_my_text| {
-            //TODO
-            // let pasted_html = &fetch_pasted(&editor);
-            // let json_pasted_html = JsFuture::from(pasted_html.json()?);
-            // let parsed_pasted_html: FileTree = json.into_serde().unwrap();
+        //TODO
+        // let pasted_html = &fetch_pasted(&editor);
+        // let json_pasted_html = JsFuture::from(pasted_html.json()?);
+        // let parsed_pasted_html: FileTree = json.into_serde().unwrap();
         //     || {}
         // }, empty);
-
 
         // let handle_paste = Closure::wrap(Box::new(move |_e: KeyboardEvent| {
         //     _e.prevent_default();

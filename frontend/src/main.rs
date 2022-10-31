@@ -1,35 +1,35 @@
 extern crate futures;
-extern crate wasm_bindgen_futures;
-extern crate yew;
 extern crate shared;
 extern crate wasm_bindgen;
+extern crate wasm_bindgen_futures;
+extern crate yew;
 
-use std::env;
-use wasm_bindgen_futures::spawn_local;
-use reqwest;
 use app::App;
 use dotenv::dotenv;
 use futures::executor;
 use ic_cdk;
+use ic_cdk::api::call::RejectionCode;
 use ic_cdk::export::Principal;
 use lazy_static::lazy_static;
-use ic_cdk::api::call::RejectionCode;
+use reqwest;
+use std::env;
+use wasm_bindgen_futures::spawn_local;
 
+mod app;
+mod app_components;
 mod backend;
 mod components;
-mod app_components;
+mod router;
 mod test;
 mod utils;
-mod router;
-mod app;
 
 use web_sys;
 
-
 lazy_static! {
     pub static ref IS_WEB: bool = {
-        let mut m : bool = false;
-        #[cfg(feature = "web")] {
+        let mut m: bool = false;
+        #[cfg(feature = "web")]
+        {
             m = true;
         }
         m
@@ -39,7 +39,6 @@ lazy_static! {
 
 // #[allow(unused_variable)]
 fn main() {
-
     // spawn_local(async move {
 
     // let params = [("method", "greet"), ("name", "ali")];
@@ -55,7 +54,5 @@ fn main() {
     // let greeting: = ic_cdk::call(principal, "greet", ("Ali", "" )).await;
     // });
 
-
     yew::start_app::<App>();
 }
-

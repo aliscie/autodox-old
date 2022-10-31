@@ -8,8 +8,7 @@ pub struct Props {
 
 #[function_component(Drag)]
 pub fn drag(props: &Props) -> Html {
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-    });
+    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {});
     let p = props.position.clone();
     // let items: Vec<Html> = vec![
     //     html! {<><i class="fa-solid fa-user"></i>{"Convert component"}</>},

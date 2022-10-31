@@ -1,17 +1,15 @@
-use yew::prelude::*;
+use crate::components::{Avatar, Menu};
 use crate::IS_LOGEDIN;
-use crate::components::{Menu, Avatar};
-use wasm_bindgen_futures::spawn_local;
-use wasm_bindgen::prelude::*;
 use shared::log;
-
+use wasm_bindgen::prelude::*;
+use wasm_bindgen_futures::spawn_local;
+use yew::prelude::*;
 
 #[wasm_bindgen(module = "/src/app_components/identify.js")]
 extern "C" {
     #[wasm_bindgen(js_name = identify)]
     pub async fn identify() -> JsValue;
 }
-
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
@@ -42,18 +40,17 @@ pub fn title_avatar_component() -> Html {
         });
     });
 
-
     if *IS_LOGEDIN {
         return html! { <>
-                <Menu
-                event={position.clone()}
-                 {items}
-                  />
-                <span class="right_clickable main_avatar" {onmouseup}>
-                <Avatar />
-                </span>
-                </>
-                };
+        <Menu
+        event={position.clone()}
+         {items}
+          />
+        <span class="right_clickable main_avatar" {onmouseup}>
+        <Avatar />
+        </span>
+        </>
+        };
     } else {
         return html! {<span {onclick} class="btn" ><i class="fa-solid fa-right-to-bracket"></i>{"login"}</span>};
     }

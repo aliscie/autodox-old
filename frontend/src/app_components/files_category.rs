@@ -1,8 +1,8 @@
+use rand::seq::SliceRandom;
 use yew::prelude::*;
 use yew::{function_component, html, Html};
-use rand::seq::SliceRandom;
 
-use crate::components::{Menu};
+use crate::components::Menu;
 use shared::*;
 
 #[derive(Properties, PartialEq)]
@@ -32,7 +32,6 @@ pub fn buttons_group(props: &Props) -> Html {
     // let onmousedown_others: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
     //     _click_on.set(false);
     // });
-
 
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-solid fa-home"></i>{"Home"}</a>},

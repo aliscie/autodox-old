@@ -1,11 +1,11 @@
 use crate::prelude::*;
-use std::collections::BTreeMap;
+use crate::utils::map;
 use crate::Context;
 use shared::schema::{FileDirectory, FileNodeCreate};
+use std::collections::BTreeMap;
+use surrealdb::sql::{Thing, Value};
 use tauri::State;
 use uuid::Uuid;
-use surrealdb::sql::{Value, Thing};
-use crate::utils::map;
 
 #[tauri::command]
 pub async fn create_directory(data: FileDirectory, ctx: State<'_, Context>) -> Result<String> {

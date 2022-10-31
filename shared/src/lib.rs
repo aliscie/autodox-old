@@ -4,11 +4,11 @@ extern crate uuid;
 use lazy_static::lazy_static;
 pub use tree::Tree;
 
-mod tree;
 mod error;
+mod tree;
 pub use error::Error;
-pub mod schema;
 pub mod macros;
+pub mod schema;
 pub mod traits;
 
 pub use macros::*;

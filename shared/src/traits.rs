@@ -19,21 +19,21 @@ pub trait Updatable: Entity + Into<<Self as Entity>::DatabaseType> {}
 ///// note this is for backend database / stores
 //#[async_trait(?Send)]
 //pub trait Store {
-    //type Error;
-    //type DatabaseType;
-    //async fn exec_get(&self, id: &str) -> Result<Self::DatabaseType, Self::Error>;
-    //async fn exec_create<T: Creatable + Entity<DatabaseType = Self::DatabaseType>>(
-        //&self,
-        //data: T,
-    //) -> Result<Self::DatabaseType, Self::Error>;
-    ////async fn exec_update<T: Updatable + Entity<DatabaseType = Self::DatabaseType>>(
-        ////&self,
-        ////data: T,
-    ////) -> Result<Self::DatabaseType, Self::Error>;
-    //async fn exec_delete(&self, tid : &str) -> Result<String, Self::Error>;
-    ////async fn exec_select<T: Queryable + Entity<DatabaseType = Self::DatabaseType>, U>(
-        ////&self,
-        ////data: T,
-        ////filter: U
-    ////) -> Result<Vec<Self::DatabaseType>, Self::Error>;
+//type Error;
+//type DatabaseType;
+//async fn exec_get(&self, id: &str) -> Result<Self::DatabaseType, Self::Error>;
+//async fn exec_create<T: Creatable + Entity<DatabaseType = Self::DatabaseType>>(
+//&self,
+//data: T,
+//) -> Result<Self::DatabaseType, Self::Error>;
+////async fn exec_update<T: Updatable + Entity<DatabaseType = Self::DatabaseType>>(
+////&self,
+////data: T,
+////) -> Result<Self::DatabaseType, Self::Error>;
+//async fn exec_delete(&self, tid : &str) -> Result<String, Self::Error>;
+////async fn exec_select<T: Queryable + Entity<DatabaseType = Self::DatabaseType>, U>(
+////&self,
+////data: T,
+////filter: U
+////) -> Result<Vec<Self::DatabaseType>, Self::Error>;
 //}

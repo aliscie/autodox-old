@@ -3,9 +3,9 @@ extern crate web_sys;
 use std::collections::HashMap;
 use std::rc::Rc;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{DragEvent, Element, MouseEvent, window};
-use yew::{function_component, html};
+use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
+use yew::{function_component, html};
 use yewdux::prelude::Dispatch;
 
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
@@ -31,20 +31,26 @@ pub fn editor(props: &Props) -> Html {
     // get the current focused and sorted it
     // get the previous  focused and sorted it in yewdux
     let empty = "empty".to_string();
-    use_effect_with_deps(move |_my_text| {
-        let data = &my_function();
+    use_effect_with_deps(
+        move |_my_text| {
+            let data = &my_function();
 
-        let doc = window().unwrap_throw().document().unwrap_throw();
-        let editor: Rc<Element> = Rc::new(doc.query_selector(".text_editor").unwrap_throw().unwrap_throw());
-        PasteConverter::new(editor.clone());
-        //TODO
-        // DragAndDrop::new(editor.clone());
-        // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline app_components
-        // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
-        // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
-        || {}
-    }, empty);
-
+            let doc = window().unwrap_throw().document().unwrap_throw();
+            let editor: Rc<Element> = Rc::new(
+                doc.query_selector(".text_editor")
+                    .unwrap_throw()
+                    .unwrap_throw(),
+            );
+            PasteConverter::new(editor.clone());
+            //TODO
+            // DragAndDrop::new(editor.clone());
+            // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline app_components
+            // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
+            // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
+            || {}
+        },
+        empty,
+    );
 
     let onmousemove = {
         move |e: MouseEvent| {
@@ -98,15 +104,9 @@ pub fn editor(props: &Props) -> Html {
         r.elements.push_children(
             0,
             2,
-            EditorElement::new(
-                2,
-                r#"Element is here."#
-                    .to_string(),
-                HashMap::new(),
-            ),
+            EditorElement::new(2, r#"Element is here."#.to_string(), HashMap::new()),
         );
     });
-
 
     html! {
     <span

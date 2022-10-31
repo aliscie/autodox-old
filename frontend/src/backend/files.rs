@@ -1,11 +1,10 @@
-use wasm_bindgen_futures::spawn_local;
 use crate::utils::DeviceInfo;
 use crate::utils::FileTree;
-use shared::schema::{FileNode, FileDirectory};
+use shared::schema::{FileDirectory, FileNode};
 use shared::Tree;
 use uuid::Uuid;
+use wasm_bindgen_futures::spawn_local;
 use yewdux::prelude::Dispatch;
-
 
 pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result<FileNode, String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -35,13 +34,12 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({"tree_id" : tree_id, "file_id" : file_id})),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
     }
 }
-
 
 pub async fn create_directory(name: String) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -53,7 +51,7 @@ pub async fn create_directory(name: String) -> Result<FileDirectory, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "name": name })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -70,7 +68,7 @@ pub async fn get_directory(id: Uuid) -> Result<Tree<Uuid, FileNode>, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -83,15 +81,17 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
         unimplemented!();
     }
     if !info.get().web {
-        let x =
-            crate::backend::call_postgres::<Vec<FileDirectory>, String>("get_directories".to_string(), None).await;
+        let x = crate::backend::call_postgres::<Vec<FileDirectory>, String>(
+            "get_directories".to_string(),
+            None,
+        )
+        .await;
         return x;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
     }
 }
-
 
 enum FileLocation {
     LOCAL,
@@ -120,19 +120,19 @@ async fn local_change_directory(parent_id: String, child_id: String) -> Result<(
             "change_directory".to_string(),
             Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id})),
         )
-            .await
-            .map(|e| {
-                file_dispatch.reduce_mut(|f| {
-                    for i in f.files.adjacency.values_mut() {
-                        i.remove(&Uuid::parse_str(&child_id).unwrap());
-                    }
-                    f.files.push_edge(
-                        Uuid::parse_str(&parent_id).unwrap(),
-                        Uuid::parse_str(&child_id).unwrap(),
-                    );
-                });
-                e
+        .await
+        .map(|e| {
+            file_dispatch.reduce_mut(|f| {
+                for i in f.files.adjacency.values_mut() {
+                    i.remove(&Uuid::parse_str(&child_id).unwrap());
+                }
+                f.files.push_edge(
+                    Uuid::parse_str(&parent_id).unwrap(),
+                    Uuid::parse_str(&child_id).unwrap(),
+                );
             });
+            e
+        });
     }
     return Err("user is offline".to_string());
 }

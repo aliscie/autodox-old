@@ -13,7 +13,7 @@ use yewdux::store::Store;
 /// type for creating file
 #[derive(Deserialize, Serialize, Debug)]
 pub struct FileNodeCreate {
-    pub id : Uuid,
+    pub id: Uuid,
     pub name: String,
     pub directory_id: Uuid,
     pub parent_id: Uuid,
@@ -194,7 +194,7 @@ impl TryFrom<Object> for FileDirectory {
                 .ok_or(Error::XPropertyNotFound(format!(
                     "files not found in object for FileDirectory"
                 )))?
-                .try_into()?
+                .try_into()?,
         })
     }
 }

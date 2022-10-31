@@ -1,6 +1,4 @@
-use ic_stable_memory::{collections::hash_map::SHashMap, 
-    utils::ic_types::SPrincipal
-};
+use ic_stable_memory::{collections::hash_map::SHashMap, utils::ic_types::SPrincipal};
 
 // use ic_kit::candid::CandidType;
 
@@ -10,7 +8,5 @@ use ic_stable_memory::{collections::hash_map::SHashMap,
 //     pub child_id: String,
 //     pub content: String,
 // }
-
-
 
 pub type Storage = SHashMap<SPrincipal, SHashMap<String, SHashMap<String, String>>>;

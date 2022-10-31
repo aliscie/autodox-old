@@ -1,19 +1,18 @@
 use serde::{Deserialize, Serialize};
+use shared::schema::FileNode;
 use shared::Tree;
 use std::{cell::RefCell, collections::HashMap, hash::Hash, rc::Rc};
 use yew::prelude::*;
 use yewdux::prelude::*;
-use shared::schema::{FileNode};
 
 pub type ElementId = u64;
 
-use crate::app_components::{Render};
+use crate::app_components::Render;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default, Store)]
 pub struct ElementTree {
     pub elements: Tree<ElementId, EditorElement>,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default)]
 pub struct EditorElement {

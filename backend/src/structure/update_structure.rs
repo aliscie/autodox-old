@@ -1,9 +1,7 @@
-use ic_kit::candid::{
-    CandidType, Deserialize
-};
+use ic_kit::candid::{CandidType, Deserialize};
 
 #[derive(CandidType, Deserialize)]
-pub struct CreateFileData{
+pub struct CreateFileData {
     pub parent_id: Option<String>,
     pub child_id: String,
     pub name: String,
@@ -11,7 +9,7 @@ pub struct CreateFileData{
 }
 
 #[derive(CandidType, Deserialize)]
-pub struct UpdateFileData{
+pub struct UpdateFileData {
     pub parent_id: Option<String>,
     pub child_id: String,
     pub old_text: String,
@@ -19,7 +17,7 @@ pub struct UpdateFileData{
 }
 
 #[derive(CandidType, Deserialize)]
-pub struct DeleteFileData{
+pub struct DeleteFileData {
     pub parent_id: Option<String>,
     pub child_id: String,
 }

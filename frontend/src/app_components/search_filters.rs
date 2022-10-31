@@ -1,5 +1,5 @@
+use crate::components::{Avatar, Menu};
 use yew::prelude::*;
-use crate::components::{Menu, Avatar};
 
 #[function_component(SearchFiltes)]
 pub fn search_filters() -> Html {
@@ -10,7 +10,6 @@ pub fn search_filters() -> Html {
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _event.set(Some(_e));
     });
-
 
     let _replace = replace.clone();
     let onmousedown: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
@@ -35,8 +34,8 @@ pub fn search_filters() -> Html {
         event={event.clone()}
         {items}
      />
-      
-      
+
+
     <div class="search_button">
        <div class="search">
           <input type="text" class="searchTerm" placeholder="Search..."/>
@@ -61,6 +60,6 @@ pub fn search_filters() -> Html {
 
        </div>
     </div>
-        
+
     </>}
 }

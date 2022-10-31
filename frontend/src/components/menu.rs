@@ -1,10 +1,10 @@
 use yew::prelude::*;
 
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::Closure;
-use web_sys::{DragEvent, Element, MouseEvent, Node, window};
+use wasm_bindgen::JsValue;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use web_sys::{window, DragEvent, Element, MouseEvent, Node};
 
 use crate::router::Route;
 
@@ -16,15 +16,12 @@ pub struct MenuProps {
     pub clicked_element: Option<UseStateHandle<Option<Element>>>,
 }
 
-
 #[function_component(Menu)]
 pub fn menu(props: &MenuProps) -> Html {
     let node_ref = NodeRef::default();
     let doc = window().unwrap_throw().document().unwrap();
 
-
     let event = (*props.event).clone();
-
 
     let _event = props.event.clone();
     let _doc = doc.clone();
@@ -50,8 +47,14 @@ pub fn menu(props: &MenuProps) -> Html {
         }
     }) as Box<dyn FnMut(_)>);
 
-
-    let _ = &doc.query_selector("#app").unwrap().unwrap().add_event_listener_with_callback("mousedown", &click_away_handler.as_ref().unchecked_ref());
+    let _ = &doc
+        .query_selector("#app")
+        .unwrap()
+        .unwrap()
+        .add_event_listener_with_callback(
+            "mousedown",
+            &click_away_handler.as_ref().unchecked_ref(),
+        );
 
     click_away_handler.forget();
     let mut display: String = "display: none".to_string();
@@ -63,17 +66,14 @@ pub fn menu(props: &MenuProps) -> Html {
         let mut y = _e.offset_y();
         let mut x = _e.page_x();
         let menu_width = 130;
-        let window_width = JsValue::as_f64(&window().unwrap_throw().inner_width().unwrap()).unwrap() as i32;
+        let window_width =
+            JsValue::as_f64(&window().unwrap_throw().inner_width().unwrap()).unwrap() as i32;
         if &x + &menu_width > window_width {
             x = x - &menu_width;
         };
 
-        display = format!(
-            "display: block; top:{}px; left:{}px",
-            &y, &x
-        ).to_string();
+        display = format!("display: block; top:{}px; left:{}px", &y, &x).to_string();
     };
-
 
     return html! {
     <div

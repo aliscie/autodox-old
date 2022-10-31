@@ -1,5 +1,5 @@
-use crate::utils::{FileTree};
-use shared::schema::{FileNode};
+use crate::utils::FileTree;
+use shared::schema::FileNode;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{console, window, Element, MouseEvent};
 use yew::prelude::*;

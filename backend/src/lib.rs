@@ -1,16 +1,13 @@
 mod apis;
-mod structure;
-mod data_structure;
 mod backend_error;
+mod data_structure;
+mod structure;
 
+use backend_error::*;
 use std::collections::HashMap;
 use structure::*;
-use backend_error::*;
 
-use ic_kit::{
-    macros::*,
-    candid::export_service,
-};
+use ic_kit::{candid::export_service, macros::*};
 
 #[query(name = "__get_candid_interface_tmp_hack")]
 fn export_candid() -> String {
