@@ -1,10 +1,10 @@
-use wasm_bindgen_futures::spawn_local;
+use crate::utils::FileTree;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde_wasm_bindgen::from_value;
-use yewdux::prelude::Dispatch;
 use shared::invoke_async;
-use crate::utils::FileTree;
+use wasm_bindgen_futures::spawn_local;
+use yewdux::prelude::Dispatch;
 
 pub fn initialize() -> Result<(), String> {
     spawn_local(async move {
@@ -32,9 +32,9 @@ async fn on_startup() -> Result<(), String> {
 }
 
 pub async fn call_postgres<T, U>(command: String, args: Option<&U>) -> Result<T, String>
-    where
-        T: DeserializeOwned,
-        U: Serialize,
+where
+    T: DeserializeOwned,
+    U: Serialize,
 {
     let x = invoke_async::<U>(command, args)
         .await

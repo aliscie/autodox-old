@@ -1,8 +1,6 @@
 // here we create general app_components that are reusable by anyapp
 // Don't import anything this folder from outside.
 
-
-
 pub mod title_bar;
 
 pub use title_bar::TitleBar;
@@ -15,18 +13,11 @@ mod file_data;
 
 pub use file_data::FileData;
 
-
-
 mod directory;
 pub use directory::CurrDirectory;
-
 
 mod menu;
 pub use menu::Menu;
 
-
 mod avatar;
 pub use avatar::Avatar;
-
-
-

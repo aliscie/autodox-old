@@ -4,6 +4,7 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use indexmap::IndexSet;
 #[cfg(feature = "tauri")]
 use surrealdb::sql::{Object, Value};
 use uuid::Uuid;
@@ -13,7 +14,7 @@ use yewdux::store::Store;
 /// type for creating file
 #[derive(Deserialize, Serialize, Debug)]
 pub struct FileNodeCreate {
-    pub id : Uuid,
+    pub id: Uuid,
     pub name: String,
     pub directory_id: Uuid,
     pub parent_id: Uuid,
@@ -41,7 +42,7 @@ impl From<FileNodeCreate> for Object {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Default, PartialEq, Clone, Eq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileNode {
     pub id: Uuid,
     pub name: String,
@@ -49,6 +50,17 @@ pub struct FileNode {
     // skipping it now later this will be removed
     #[serde(skip)]
     pub data: String,
+}
+
+impl Default for FileNode {
+    fn default() -> Self {
+        Self {
+            id: Uuid::new_v4(),
+            name: "untitled".to_string(),
+            element_tree_id: None,
+            data: "".to_string(),
+        }
+    }
 }
 
 #[cfg(feature = "tauri")]
@@ -93,6 +105,7 @@ impl Default for FileDirectory {
                 data: "".into(),
             },
         );
+        d.files.adjacency.insert(id.clone(), IndexSet::new());
         d.files.root = Some(id);
         return d;
     }
@@ -194,7 +207,7 @@ impl TryFrom<Object> for FileDirectory {
                 .ok_or(Error::XPropertyNotFound(format!(
                     "files not found in object for FileDirectory"
                 )))?
-                .try_into()?
+                .try_into()?,
         })
     }
 }

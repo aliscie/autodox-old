@@ -6,11 +6,11 @@ use yew::prelude::*;
 
 mod app;
 
-mod utils;
-mod plugins;
-mod element_tree;
 pub(crate) mod app_components;
 pub(crate) mod components;
+mod element_tree;
+mod plugins;
+mod utils;
 
 use yew::prelude::*;
 use yew::{function_component, html, Html};

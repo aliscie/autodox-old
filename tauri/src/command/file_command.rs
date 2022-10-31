@@ -1,17 +1,21 @@
 use crate::prelude::*;
-use std::collections::BTreeMap;
+use crate::utils::map;
 use crate::Context;
-use shared::schema::{FileDirectory, FileNodeCreate};
+use shared::{
+    schema::{FileDirectory, FileNodeCreate},
+    traits::Entity,
+};
+use std::collections::BTreeMap;
+use surrealdb::sql::*;
 use tauri::State;
 use uuid::Uuid;
-use surrealdb::sql::{Value, Thing};
-use crate::utils::map;
 
+/// TODO: wrap all the functions around transactions!
 #[tauri::command]
 pub async fn create_directory(data: FileDirectory, ctx: State<'_, Context>) -> Result<String> {
     let store = ctx.get_store();
     for (_, i) in &data.files.vertices {
-        store.exec_create(i.clone()).await;
+        store.exec_create(i.clone()).await?;
     }
     store.exec_create(data).await
 }
@@ -23,7 +27,21 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
     let directory_id = data.directory_id;
     let parent_id = data.parent_id;
     store.exec_create(data).await?;
-    let sql = "update $tb set files.adjacency += $ad , files.vertices += $ve";
+    let sql = format!("update $tb set files.adjacency.`{:?}` += $va", parent_id);
+    let vars: BTreeMap<String, Value> = map![
+        "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
+        "va".into() => format!("{:?}", id).into(),
+    ];
+    store.datastore
+        .execute(&sql, &store.session, Some(vars), false)
+        .await?;
+    let sql = format!("update $tb set files.adjacency.`{:?}` = []", id);
+    let vars: BTreeMap<String, Value> = map![
+        "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
+    ];
+    store.datastore
+        .execute(&sql, &store.session, Some(vars), false)
+        .await?;
     Ok(())
 }
 
@@ -45,7 +63,7 @@ pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDire
 #[cfg(test)]
 mod tests {
     use crate::{Context, Store};
-    use shared::schema::FileDirectory;
+    use shared::schema::{FileDirectory, FileNode};
     use std::str::FromStr;
     use surrealdb::sql::Object;
     use uuid::Uuid;
@@ -61,9 +79,12 @@ mod tests {
         //let data = FileDirectory::default();
         //let object : Object = data.try_into().unwrap();
         //println!("{:?}", object);
-        //let data = FileDirectory::default();
+        let mut data = FileDirectory::default();
+        let file = FileNode::default();
+        data.files
+            .push_children(data.files.root.unwrap(), file.id, file);
         let store = context.get_store();
-        //let id = store.exec_create(data).await.unwrap();
+        store.exec_create(data).await.unwrap();
         //println!("{:?}", id);
         //let id = Uuid::from_str("80cc41c9-6239-469f-a7da-37bc8b6e17e9").unwrap();
         let data = store.get_all::<FileDirectory>().await;

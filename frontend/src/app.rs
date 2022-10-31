@@ -1,3 +1,5 @@
+use crate::app_components::{ButtonsGroup, SearchFiltes};
+use crate::backend;
 use crate::components::TreeList;
 use crate::utils::FileTree;
 use editor::Editor;
@@ -5,8 +7,6 @@ use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use crate::backend;
-use crate::app_components::{ButtonsGroup, SearchFiltes};
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -35,7 +35,7 @@ pub fn app() -> Html {
                     state.files.root.unwrap(),
                     "untitled".to_string(),
                 )
-                    .await;
+                .await;
                 if let Ok(f) = file {
                     state
                         .files

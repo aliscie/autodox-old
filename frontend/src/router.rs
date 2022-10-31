@@ -9,7 +9,7 @@ pub enum Route {
     #[at("/")]
     Home,
     #[at("/files/:id")]
-    File{ id : Uuid },
+    File { id: Uuid },
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -18,7 +18,7 @@ pub enum Route {
 pub fn switch(routes: &Route) -> Html {
     match routes {
         Route::Home => html! {<span>{"home"}</span>},
-        Route::File {id} => html!{ <FileData id = { *id }/>},
+        Route::File { id } => html! { <FileData id = { *id }/>},
         Route::NotFound => html! { <span>{ "404" }</span> },
     }
 }

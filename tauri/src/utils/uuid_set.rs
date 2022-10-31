@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::ops::{Deref, DerefMut};
 use uuid::Uuid;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Default )]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct UuidSet(pub IndexSet<Uuid>);
 
 impl Deref for UuidSet {

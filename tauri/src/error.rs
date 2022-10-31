@@ -25,7 +25,6 @@ pub enum Error {
 
     #[error(transparent)]
     Surreal(surrealdb::Error),
-
     //#[error(transparent)]
     //IO(#[from] std::io::Error),
 }
@@ -41,6 +40,6 @@ impl From<SharedError> for Error {
 
 impl From<surrealdb::Error> for Error {
     fn from(val: surrealdb::Error) -> Self {
-        Self::Surreal(val) 
+        Self::Surreal(val)
     }
 }

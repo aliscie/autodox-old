@@ -17,10 +17,8 @@ pub use page_option_component::PageOptions;
 mod download_component;
 pub use download_component::Download;
 
-
 mod search_filters;
 pub use search_filters::SearchFiltes;
-
 
 mod buttons_group;
 pub use buttons_group::ButtonsGroup;

@@ -1,14 +1,14 @@
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{DragEvent, Element, MouseEvent, window};
-use yew::{html, Html};
+use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
+use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::router::*;
 use crate::router::Route;
+use crate::router::*;
 
 #[function_component(CurrDirectory)]
 pub fn curr_directory() -> Html {
@@ -19,7 +19,6 @@ pub fn curr_directory() -> Html {
             // display.set("display: block".to_string());
         }
     };
-
 
     let ondragstart = {
         move |e: DragEvent| {
@@ -39,13 +38,11 @@ pub fn curr_directory() -> Html {
         }
     };
 
-
     let ondragleave = {
         move |e: DragEvent| {
             // background:none
         }
     };
-
 
     html! {
     <span>

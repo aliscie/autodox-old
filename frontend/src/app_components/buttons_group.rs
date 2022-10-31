@@ -1,7 +1,6 @@
+use rand::seq::SliceRandom;
 use yew::prelude::*;
 use yew::{function_component, html, Html};
-use rand::seq::SliceRandom;
-
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -20,7 +19,7 @@ pub fn buttons_group(props: &Props) -> Html {
         _categories.set(new_categories.to_vec())
     });
     let handle_files = Callback::from(move |e: MouseEvent| {});
-    let vs = vec!["#937DC2","#C689C6","#FFABE1","#fffc9b", "#FFE6F7"];
+    let vs = vec!["#937DC2", "#C689C6", "#FFABE1", "#fffc9b", "#FFE6F7"];
 
     html! {
         <div class="buttons_group_class">
