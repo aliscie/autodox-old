@@ -1,9 +1,17 @@
+use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
 use std::hash::Hash;
+use std::str::FromStr;
 use uuid::Uuid;
-use indexmap::IndexSet;
+
+#[cfg(feature = "tauri")]
+use surrealdb::sql::{Id, Object, Value};
+
+use crate::schema::FileNode;
+use crate::traits::Entity;
+use crate::Error;
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct Tree<ID, T>
@@ -11,7 +19,6 @@ where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
 {
-    pub id: Uuid,
     pub vertices: HashMap<ID, T>,
     pub adjacency: HashMap<ID, IndexSet<ID>>,
     pub root: Option<ID>,
@@ -24,7 +31,6 @@ where
 {
     pub fn new() -> Self {
         Self {
-            id: Uuid::new_v4(),
             vertices: HashMap::new(),
             adjacency: HashMap::new(),
             root: None,
@@ -37,7 +43,7 @@ where
         let adjacency_to_from = self.adjacency.entry(from).or_default();
         adjacency_to_from.insert(to);
     }
-    pub fn delete_edge(&mut self, parent_id : ID, child_id : ID){
+    pub fn delete_edge(&mut self, parent_id: ID, child_id: ID) {
         let adjacency = self.adjacency.entry(parent_id).or_default();
         adjacency.swap_remove(&child_id);
     }
@@ -90,11 +96,11 @@ where
         stack.push_front(start.clone());
         let mut other_stack = VecDeque::new();
         let mut visited_nodes = HashSet::new();
-        while visited_nodes.len() < len{
+        while visited_nodes.len() < len {
             let data = stack.pop_front().unwrap();
-            if let Some(children) = self.adjacency.get(&data){
-                for i in children{
-                    if !visited_nodes.contains(i){
+            if let Some(children) = self.adjacency.get(&data) {
+                for i in children {
+                    if !visited_nodes.contains(i) {
                         stack.push_back(i.clone());
                     }
                 }
@@ -102,10 +108,121 @@ where
             visited_nodes.insert(data.clone());
             other_stack.push_front(data.clone());
         }
-        TreeIter { tree: self, stack : other_stack }
+        TreeIter {
+            tree: self,
+            stack: other_stack,
+        }
     }
 }
 
+#[cfg(feature = "tauri")]
+impl<ID, T> From<Tree<ID, T>> for Object
+where
+    ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Debug + Into<Object> + Entity,
+{
+    fn from(val: Tree<ID, T>) -> Object {
+        let mut map = BTreeMap::new();
+        let mut adjacency_list: Vec<Value> = Vec::new();
+        for (id, children) in val.adjacency {
+            let mut connection = BTreeMap::new();
+            let mut child_connections = Vec::new();
+            for i in children.into_iter() {
+                child_connections.push(Value::Thing((T::table_name(), format!("{:?}", i)).into()));
+            }
+            connection.insert(
+                "parent".to_owned(),
+                Value::Thing((T::table_name(), format!("{:?}", id)).into()),
+            );
+            connection.insert(
+                "children".to_owned(),
+                Value::Array(child_connections.into()),
+            );
+            adjacency_list.push(Value::Object(connection.into()));
+        }
+        let mut vertices_vec: Vec<Value> = Vec::new();
+        for i in val.vertices.keys() {
+            vertices_vec.push(Value::Thing((T::table_name(), format!("{:?}", i)).into()));
+        }
+        map.insert("adjacency".to_owned(), Value::Array(adjacency_list.into()));
+        map.insert("vertices".to_owned(), Value::Array(vertices_vec.into()));
+        map.insert(
+            "root".to_owned(),
+            val.root.map(|f| format!("{:?}", f)).into(),
+        );
+        return map.into();
+    }
+}
+
+#[cfg(feature = "tauri")]
+impl TryFrom<Object> for Tree<Uuid, FileNode> {
+    type Error = crate::Error;
+    /// i am asuming we have selected the vertices field with all the data in the nodes
+    fn try_from(value: Object) -> Result<Self, Self::Error> {
+        // TODO : clean this later and remove all the panics
+        let mut value = value;
+        let mut tree = Tree::new();
+        let adjacency_list: Vec<Value> = value
+            .remove("adjacency")
+            .ok_or(crate::Error::XPropertyNotFound("adjacency".into()))?
+            .try_into()
+            .map_err(|_| Error::XValueNotOfType("value"))?;
+        for i in adjacency_list {
+            let mut adjacency_object: Object =
+                i.try_into().map_err(|_| Error::XValueNotOfType("Object"))?;
+            let parent_id: Uuid;
+            let mut child_ids: IndexSet<Uuid> = IndexSet::new();
+            let parent = adjacency_object.remove("parent").unwrap();
+            match parent {
+                Value::Thing(t) => match t.id {
+                    Id::String(x) => parent_id = uuid::Uuid::from_str(&x).unwrap(),
+                    _ => panic!("parent id not of type string"),
+                },
+                _ => panic!("parent id is not of type Thing"),
+            }
+            let children_value: Vec<Value> = adjacency_object
+                .remove("children")
+                .ok_or(Error::XPropertyNotFound("children".into()))?
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("Vec<Value>"))?;
+            for i in children_value {
+                match i {
+                    Value::Thing(t) => match t.id {
+                        Id::String(x) => {
+                            child_ids.insert(uuid::Uuid::from_str(&x).unwrap());
+                        }
+                        _ => panic!("id not of type string"),
+                    },
+                    _ => panic!("value not of type surrealdb::Value::Thing"),
+                }
+            }
+            tree.adjacency.insert(parent_id, child_ids);
+        }
+        let vertex_vec: Vec<Value> = value
+            .remove("vertices")
+            .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?
+            .try_into()
+            .map_err(|_| Error::XValueNotOfType("value"))?;
+        for i in vertex_vec {
+            let vertex_object: Object =
+                i.try_into().map_err(|_| Error::XValueNotOfType("Object"))?;
+            let file_node: FileNode = vertex_object
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("FileNode"))?;
+            tree.vertices.insert(file_node.id, file_node);
+        }
+        let root: Value = value
+            .remove("vertices")
+            .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?;
+        tree.root = match root {
+            Value::Strand(x) => {
+                Some(uuid::Uuid::from_str(&x).map_err(|_| Error::XValueNotOfType("uuid"))?)
+            }
+            _ => None,
+        };
+        Ok(tree)
+    }
+}
 //impl<'a, ID, T> IntoIterator for &'a Tree<ID, T>
 //where
 //ID: Hash + PartialEq + Eq + Clone + Default + Debug,
@@ -139,7 +256,7 @@ where
 {
     type Item = (&'a ID, &'a T);
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(x) = self.stack.pop_front(){
+        if let Some(x) = self.stack.pop_front() {
             return self.tree.vertices.get_key_value(&x);
         }
         None
@@ -149,12 +266,12 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn create_tree() -> Tree<i32, String>{
+    fn create_tree() -> Tree<i32, String> {
         let mut tree = Tree::new();
         tree.push_vertex(0, "root".to_string());
         tree.push_vertex(1, "first_child".to_string());
         tree.push_edge(0, 1);
-        for i in 2..10{
+        for i in 2..10 {
             tree.push_vertex(i, format!("child {}", i));
             tree.push_edge(i - 1, i);
         }
@@ -164,24 +281,22 @@ mod tests {
     fn create_tree_test() {
         assert_eq!(create_tree().vertices, create_tree().vertices);
         assert_eq!(create_tree().adjacency, create_tree().adjacency);
-        // uuid are different always
-        assert_ne!(create_tree().id, create_tree().id);
     }
     #[test]
     fn len_test() {
         let tree = create_tree();
-        assert_eq!(tree.len_from_start(&0),  tree.len());
-        assert_eq!(tree.len_from_start(&1),  tree.len() - 1);
-        assert_eq!(tree.len_from_start(&99),  1);
+        assert_eq!(tree.len_from_start(&0), tree.len());
+        assert_eq!(tree.len_from_start(&1), tree.len() - 1);
+        assert_eq!(tree.len_from_start(&99), 1);
     }
     #[test]
     fn into_iter_test() {
         let mut tree = create_tree();
         tree.push_children(1, 11, "extra child".to_string());
         //for i in 11..100{
-            //tree.push_children(1, i , format!("child : {}", i));
+        //tree.push_children(1, i , format!("child : {}", i));
         //}
-        for i in tree.into_iter(0){
+        for i in tree.into_iter(0) {
             println!("{:?}", i);
         }
     }
