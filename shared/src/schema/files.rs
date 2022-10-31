@@ -92,6 +92,9 @@ impl Entity for FileDirectory {
 #[cfg(feature = "tauri")]
 impl Creatable for FileDirectory {}
 
+#[cfg(feature = "tauri")]
+impl Queryable for FileDirectory {}
+
 impl Default for FileDirectory {
     fn default() -> Self {
         let mut d = Self::new(Uuid::new_v4(), "default".to_string());

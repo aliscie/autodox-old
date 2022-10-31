@@ -2,6 +2,7 @@ use crate::error::Error;
 use crate::prelude::*;
 use crate::utils::*;
 use crate::MouseLoc;
+use shared::traits::Queryable;
 use shared::traits::{Creatable, Entity};
 use std::collections::{BTreeMap, HashMap};
 use surrealdb::sql::*;
@@ -25,29 +26,34 @@ impl Store {
         })
     }
 
-    pub async fn exec_get(&self, tid: &str) -> Result<Object> {
-        let sql = "SELECT * FROM $th";
-
-        let vars = map!["th".into() => thing(tid)?.into()];
-
+    pub async fn exec_get<T>(
+        &self,
+        tid: Option<String>,
+        nested_fields: Option<&str>,
+    ) -> Result<Vec<Object>>
+    where
+        T: Entity<DatabaseType = Object> + Queryable,
+    {
+        let sql = match nested_fields {
+            Some(x) => format!("SELECT *, {} FROM $th", x),
+            None => format!("SELECT * FROM {}", T::table_name()),
+        };
+        let vars = match tid {
+            Some(ref tid) => Some(map!["th".into() => Thing::from((T::table_name(), tid.clone())).into()]),
+            None => None,
+        };
         let ress = self
             .datastore
-            .execute(sql, &self.session, Some(vars), true)
+            .execute(sql.as_str(), &self.session, vars, true)
             .await?;
 
         let first_res = ress.into_iter().next().expect("Did not get a response");
-        Ok(first_res.result?.first().try_into()?)
-    }
-
-    pub async fn get_all<T: Entity<DatabaseType = Object>>(&self) -> Result<Object> {
-        let sql = format!("SELECT * FROM {}", <T as Entity>::table_name());
-        let ress = self
-            .datastore
-            .execute(sql.as_str(), &self.session, None, true)
-            .await?;
-        let first_res = ress.into_iter().next().expect("Did not get a response");
-        println!("{:?}", first_res);
-        Ok(first_res.result?.first().try_into()?)
+        let first: Vec<Value> = first_res.result?.try_into()?;
+        let res = first.into_iter()
+            .map(|f| Object::try_from(f))
+            .filter_map(|f| f.ok())
+            .collect();
+        Ok(res)
     }
 
     pub async fn exec_create<T>(&self, data: T) -> Result<String>

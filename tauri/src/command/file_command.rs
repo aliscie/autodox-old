@@ -32,14 +32,16 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
         "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
         "va".into() => format!("{:?}", id).into(),
     ];
-    store.datastore
+    store
+        .datastore
         .execute(&sql, &store.session, Some(vars), false)
         .await?;
     let sql = format!("update $tb set files.adjacency.`{:?}` = []", id);
     let vars: BTreeMap<String, Value> = map![
         "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
     ];
-    store.datastore
+    store
+        .datastore
         .execute(&sql, &store.session, Some(vars), false)
         .await?;
     Ok(())
@@ -48,25 +50,30 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
 #[tauri::command]
 pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirectory>> {
     let store = ctx.get_store();
-    let mut result = Vec::new();
-    for i in store.get_all::<FileDirectory>().await {
-        result.push(i.try_into()?);
-    }
-    Ok(result)
+    let res: Vec<FileDirectory> = store
+        .exec_get::<FileDirectory>(None, Some("files.vertex.*"))
+        .await?
+        .into_iter()
+        .map(|f| FileDirectory::try_from(f))
+        .filter_map(|f| f.ok())
+        .collect();
+    Ok(res)
 }
 
+#[tauri::command]
 pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDirectory> {
     let store = ctx.get_store();
-    unimplemented!()
+    let res = store
+        .exec_get::<FileDirectory>(Some(id.to_string()), Some("files.vertex.*"))
+        .await?
+        .remove(0);
+    Ok(res.try_into()?)
 }
 
 #[cfg(test)]
 mod tests {
     use crate::{Context, Store};
     use shared::schema::{FileDirectory, FileNode};
-    use std::str::FromStr;
-    use surrealdb::sql::Object;
-    use uuid::Uuid;
     async fn setup() -> Context {
         let store = Store::new()
             .await
@@ -84,10 +91,15 @@ mod tests {
         data.files
             .push_children(data.files.root.unwrap(), file.id, file);
         let store = context.get_store();
-        store.exec_create(data).await.unwrap();
+        //for i in data.files.vertices.values().into_iter() {
+        //store.exec_create(i.clone()).await.unwrap();
+        //}
+        //store.exec_create(data).await.unwrap();
         //println!("{:?}", id);
         //let id = Uuid::from_str("80cc41c9-6239-469f-a7da-37bc8b6e17e9").unwrap();
-        let data = store.get_all::<FileDirectory>().await;
-        println!("{:?}", data);
+        //let data = store.get_all::<FileDirectory>().await;
+        //println!("{:?}", data);
+        let res = store.exec_get::<FileDirectory>(None, None).await;
+        println!("{:?}", res);
     }
 }

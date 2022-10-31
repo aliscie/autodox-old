@@ -102,7 +102,7 @@ async fn main() {
             maximize_window,
             close_window,
             mouse_move,
-            //crate::command::file_command::get_directory,
+            crate::command::file_command::get_directory,
             crate::command::file_command::get_directories,
             crate::command::file_command::create_directory,
             crate::command::file_command::create_file,
