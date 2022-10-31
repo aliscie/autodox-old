@@ -69,26 +69,6 @@ impl<R: Runtime> WindowExt for Window<R> {
     }
 }
 
-// fn main() {
-//     tauri::Builder::default()
-//         .invoke_handler(tauri::generate_handler![hello,minimize_window])
-//         .run(tauri::generate_context!())
-//         .expect("error while running tauri application");
-// }
-
-//pub async fn connect_database(postgres_url: String) -> DatabaseConnection {
-//let db = Database::connect(postgres_url).await;
-
-//match db {
-//Ok(x) => {
-//return x;
-//}
-//Err(e) => {
-//panic!("Cannot connect to database with url : {}", e);
-//}
-//}
-//}
-
 #[tokio::main]
 async fn main() {
     dotenv().ok();
@@ -101,7 +81,7 @@ async fn main() {
             minimize_window,
             maximize_window,
             close_window,
-            mouse_move,
+            // mouse_move,
             //crate::command::file_command::get_directory,
             crate::command::file_command::get_directories,
             crate::command::file_command::create_directory,
@@ -139,10 +119,10 @@ fn maximize_window(window: Window) -> Result<(), tauri::Error> {
     window.set_fullscreen(true)
 }
 
-#[tauri::command]
-async fn mouse_move(x: i32, y: i32, ctx: State<'_, Context>) -> Result<(), ()> {
-    let mut w = ctx.store.mouse_loc.lock().await;
-    w.insert(0, MouseLoc { x, y });
-    println!("{:?}", w.entry(0));
-    Ok(())
-}
+// #[tauri::command]
+// async fn mouse_move(x: i32, y: i32, ctx: State<'_, Context>) -> Result<(), ()> {
+//     let mut w = ctx.store.mouse_loc.lock().await;
+//     w.insert(0, MouseLoc { x, y });
+//     println!("{:?}", w.entry(0));
+//     Ok(())
+// }
