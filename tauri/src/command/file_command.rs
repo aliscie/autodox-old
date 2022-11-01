@@ -27,7 +27,10 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
     let directory_id = data.directory_id;
     let parent_id = data.parent_id;
     store.exec_create(data).await?;
-    let sql = format!(r#"update $tb set files.adjacency.`{:?}` += $va, files.adjacency.`{:?}` = [], files.vertices += $ia"#, parent_id, id);
+    let sql = format!(
+        r#"update $tb set files.adjacency.`{:?}` += $va, files.adjacency.`{:?}` = [], files.vertices += $ia"#,
+        parent_id, id
+    );
     let vars: BTreeMap<String, Value> = map![
         "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
         "va".into() => format!("{:?}", id).into(),

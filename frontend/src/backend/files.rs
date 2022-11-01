@@ -1,16 +1,21 @@
 use crate::utils::DeviceInfo;
-use shared::schema::{FileDirectory, FileNode, FileNodeCreate};
+use shared::schema::{FileDirectory, FileNodeCreate};
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use yewdux::prelude::Dispatch;
 
-pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result<FileNode, String> {
+pub async fn create_file(
+    tree_id: Uuid,
+    parent_id: Uuid,
+    name: String,
+    id: Uuid,
+) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     let data = FileNodeCreate {
         directory_id: tree_id,
         parent_id,
         name,
-        id: Uuid::new_v4(),
+        id,
     };
     if info.get().web || info.get().online {
         unimplemented!();
@@ -41,7 +46,7 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
     }
 }
 
-pub async fn create_directory(data : &FileDirectory) -> Result<(), String> {
+pub async fn create_directory(data: &FileDirectory) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
