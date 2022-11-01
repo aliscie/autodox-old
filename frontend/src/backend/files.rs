@@ -1,7 +1,5 @@
 use crate::utils::DeviceInfo;
-use crate::utils::FileTree;
 use shared::schema::{FileDirectory, FileNode};
-use shared::Tree;
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use yewdux::prelude::Dispatch;
@@ -59,7 +57,7 @@ pub async fn create_directory(_name: String) -> Result<FileDirectory, String> {
     }
 }
 
-pub async fn get_directory(id: Uuid) -> Result<Tree<Uuid, FileNode>, String> {
+pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
@@ -112,7 +110,7 @@ pub fn change_directory(parent_id: String, child_id: String)
 
 async fn local_change_directory(parent_id: String, child_id: String) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
-    let file_dispatch = Dispatch::<FileTree>::new();
+    let file_dispatch = Dispatch::<FileDirectory>::new();
     if info.get().web || info.get().online {
         unimplemented!();
     }

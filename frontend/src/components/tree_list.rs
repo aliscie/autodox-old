@@ -1,7 +1,6 @@
-use crate::utils::FileTree;
-use shared::schema::FileNode;
+use shared::schema::FileDirectory;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{console, window, Element, MouseEvent};
+use web_sys::{ window, Element, MouseEvent};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -26,11 +25,11 @@ pub struct TreeListProps {
 
 #[function_component(TreeList)]
 pub fn tree_list(props: &TreeListProps) -> Html {
-    let (tree, dispatch) = use_store::<FileTree>();
+    let (tree, dispatch) = use_store::<FileDirectory>();
     //d.reduce_mut(|r| r.data.insert(235, "file two!".into()));
     //d.reduce_mut(|r| r.data.insert(224, "file three!".into()));
     //d.reduce_mut(|r| r.data.insert(225, "file four!".into()));
 
     //(props.files.clone()).into_iter().map(|file| file.to_html()).collect::<Html>()
-    tree.to_html(tree.files.root.unwrap())
+    crate::utils::filetree::to_html(&tree ,tree.files.root.unwrap())
 }

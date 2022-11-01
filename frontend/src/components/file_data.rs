@@ -1,4 +1,4 @@
-use crate::utils::FileTree;
+use shared::schema::FileDirectory;
 use uuid::Uuid;
 use yew::prelude::*;
 use yewdux::prelude::*;
@@ -10,7 +10,7 @@ pub struct Props {
 
 #[function_component(FileData)]
 pub fn file_data(props: &Props) -> Html {
-    let dispatch = Dispatch::<FileTree>::new();
+    let dispatch = Dispatch::<FileDirectory>::new();
     html! {
         <>
         { &dispatch.get().files.vertices.get(&props.id).unwrap().data }

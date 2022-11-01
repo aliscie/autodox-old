@@ -1,7 +1,7 @@
 use crate::app_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
-use crate::utils::FileTree;
+use shared::schema::FileDirectory;
 use editor::Editor;
 use web_sys::MouseEvent;
 use yew::prelude::*;
@@ -12,7 +12,7 @@ use yewdux::prelude::*;
 pub fn app() -> Html {
     let aside_bar_taggol = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_taggol.clone();
-    let file_dispatch = Dispatch::<FileTree>::new();
+    let file_dispatch = Dispatch::<FileDirectory>::new();
     // only do it once
     use_effect_with_deps(
         move |_| {

@@ -1,6 +1,4 @@
-mod filetree;
-pub use filetree::FileTree;
-
+pub mod filetree;
 use web_sys::window;
 pub fn alert<T: std::fmt::Debug>(message: &T) {
     let window = window().unwrap();
