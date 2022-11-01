@@ -1,20 +1,22 @@
 use crate::utils::DeviceInfo;
-use shared::schema::{FileDirectory, FileNode};
+use shared::schema::{FileDirectory, FileNode, FileNodeCreate};
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use yewdux::prelude::Dispatch;
 
 pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result<FileNode, String> {
     let info = Dispatch::<DeviceInfo>::new();
+    let data = FileNodeCreate {
+        directory_id: tree_id,
+        parent_id,
+        name,
+        id: Uuid::new_v4(),
+    };
     if info.get().web || info.get().online {
         unimplemented!();
     }
     if !info.get().web {
-        let x = serde_json::json!({
-            "treeId" : tree_id,
-            "parentId" : parent_id,
-            "name" : name
-        });
+        let x = serde_json::json!({ "data": data });
         return crate::backend::call_surreal("create_file".to_string(), Some(&x)).await;
     } else {
         // user is offline throw a error
@@ -39,16 +41,15 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
     }
 }
 
-pub async fn create_directory(_name: String) -> Result<FileDirectory, String> {
+pub async fn create_directory(data : &FileDirectory) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
-    let data = FileDirectory::default();
     if info.get().web || info.get().online {
         unimplemented!();
     }
     if !info.get().web {
         return crate::backend::call_surreal(
             "create_directory".to_string(),
-            Some(&serde_json::json!({ "data" : data})),
+            Some(&serde_json::json!({ "data": data })),
         )
         .await;
     } else {

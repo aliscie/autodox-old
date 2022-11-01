@@ -7,7 +7,7 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 #[cfg(feature = "tauri")]
-use surrealdb::sql::{Id, Value,Object, Array};
+use surrealdb::sql::{Array, Id, Object, Value};
 
 use crate::schema::FileNode;
 use crate::traits::Entity;
@@ -165,11 +165,19 @@ impl TryFrom<Object> for Tree<Uuid, FileNode> {
         for (parent, child) in adjacency_list {
             let parent_id = Uuid::from_str(parent.as_str())
                 .map_err(|_| Error::XValueNotOfType("parent not of type uuid"))?;
-            let child: Vec<Value> = child.try_into().map_err(|_| Error::XValueNotOfType("child not of type Vec<Value>"))?;
-            let child_id : IndexSet<Uuid> = child.into_iter()
+            let child: Vec<Value> = child
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("child not of type Vec<Value>"))?;
+            let child_id: IndexSet<Uuid> = child
+                .into_iter()
                 .map(|f| -> Result<Uuid, Error> {
-                    return f.try_into()
-                        .map_err(|_| Error::XValueNotOfType("cannot convert child to uuid"));
+                    String::try_from(f)
+                        .map_err(|_| {
+                            Error::XValueNotOfType("Cannot convert child value to String")
+                        })?
+                        .as_str()
+                        .try_into()
+                        .map_err(|_| Error::XValueNotOfType("cannot convert child &str to uuid"))
                 })
                 .take_while(Result::is_ok)
                 .map(Result::unwrap)

@@ -37,6 +37,7 @@ impl From<FileNodeCreate> for Object {
         BTreeMap::from([
             ("name".into(), val.name.into()),
             ("id".into(), val.id.into()),
+            ("data".into(), "".into())
         ])
         .into()
     }

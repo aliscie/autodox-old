@@ -2,7 +2,7 @@ use crate::prelude::*;
 use crate::utils::map;
 use crate::Context;
 use shared::{
-    schema::{FileDirectory, FileNodeCreate},
+    schema::{FileDirectory, FileNode, FileNodeCreate},
     traits::Entity,
 };
 use std::collections::BTreeMap;
@@ -27,18 +27,11 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
     let directory_id = data.directory_id;
     let parent_id = data.parent_id;
     store.exec_create(data).await?;
-    let sql = format!("update $tb set files.adjacency.`{:?}` += $va", parent_id);
+    let sql = format!(r#"update $tb set files.adjacency.`{:?}` += $va, files.adjacency.`{:?}` = [], files.vertices += $ia"#, parent_id, id);
     let vars: BTreeMap<String, Value> = map![
         "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
         "va".into() => format!("{:?}", id).into(),
-    ];
-    store
-        .datastore
-        .execute(&sql, &store.session, Some(vars), false)
-        .await?;
-    let sql = format!("update $tb set files.adjacency.`{:?}` = []", id);
-    let vars: BTreeMap<String, Value> = map![
-        "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
+        "ia".into() => Value::Thing((FileNode::table_name(), id.to_string()).into()),
     ];
     store
         .datastore
