@@ -27,18 +27,18 @@ pub fn markdown(props: &MarkdownProps) -> Html {
     });
 
     let items: Vec<Html> = vec![
-        html! {<>
+        html! {<a>
         <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike1"/>
           <label for="vehicle1">{"Show marks"}</label>
-          </>},
-        html! {<>
+          </a>},
+        html! {<a>
         <input type="checkbox" id="vehicle2" name="vehicle2" value="Bike2"/>
           <label for="vehicle2">{"Show html"}</label>
-          </>},
-        html! {<>
+          </a>},
+        html! {<a>
         <input type="checkbox" id="vehicle3" name="vehicle3" value="Bike3"/>
           <label for="vehicle3">{"Show render"}</label>
-          </>},
+          </a>},
     ];
 
     html! {<>

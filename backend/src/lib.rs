@@ -1,16 +1,13 @@
-mod error;
-use error::*;
-
-mod api;
-
+mod apis;
+mod backend_error;
+mod data_structure;
 mod structure;
+
+use backend_error::*;
+use std::collections::HashMap;
 use structure::*;
 
-use ic_kit::{
-    Principal,
-    macros::*,
-    candid::export_service
-};
+use ic_kit::{candid::export_service, macros::*};
 
 #[query(name = "__get_candid_interface_tmp_hack")]
 fn export_candid() -> String {
@@ -19,16 +16,16 @@ fn export_candid() -> String {
 }
 
 #[cfg(test)]
-pub mod tests {
+mod tests {
     use super::*;
 
     #[test]
-    pub fn save_candid() {
+    fn save_candid() {
         use std::env;
         use std::fs::write;
         use std::path::PathBuf;
 
         let dir = PathBuf::from(env::current_dir().unwrap());
-        write(dir.join("storage.did"), export_candid()).expect("Write failed.");
+        write(dir.join("backend.did"), export_candid()).expect("Write failed.");
     }
 }

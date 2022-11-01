@@ -1,0 +1,24 @@
+type BackendError = variant { FileDoesNotExist };
+type CreateFileData = record {
+  content : text;
+  name : text;
+  child_id : text;
+  parent_id : opt text;
+};
+type DeleteFileData = record { child_id : text; parent_id : opt text };
+type ReadFileData = record { child_id : text; parent_id : opt text };
+type Result = variant { Ok; Err : BackendError };
+type Result_1 = variant { Ok : text; Err : BackendError };
+type UpdateFileData = record {
+  old_text : text;
+  child_id : text;
+  parent_id : opt text;
+  new_text : text;
+};
+service : () -> {
+  create_file : (CreateFileData) -> ();
+  delete_file : (DeleteFileData) -> (Result);
+  read_file : (ReadFileData) -> (Result_1) query;
+  read_files : () -> (vec record { text; vec record { text; text } }) query;
+  update_file : (UpdateFileData) -> (Result);
+}

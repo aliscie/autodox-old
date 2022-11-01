@@ -5,12 +5,12 @@ use wasm_bindgen::JsValue;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{window, DragEvent, Element, MouseEvent, Node};
 use yew::prelude::*;
-
 #[derive(PartialEq, Properties)]
 pub struct MenuProps {
     pub items: Vec<Html>,
     pub event: UseStateHandle<Option<MouseEvent>>,
     pub click_on: Option<bool>,
+    pub clicked_element: Option<UseStateHandle<Option<Element>>>,
 }
 
 #[function_component(Menu)]
@@ -24,7 +24,7 @@ pub fn menu(props: &MenuProps) -> Html {
     let _doc = doc.clone();
     let _click_on = props.click_on.clone();
     let _node_ref = node_ref.clone();
-
+    let _clicked_element = props.clicked_element.clone();
     let click_away_handler = Closure::wrap(Box::new(move |_e: web_sys::MouseEvent| {
         let curr: Node = _e.target_unchecked_into();
         let mut hide = true;
@@ -32,11 +32,12 @@ pub fn menu(props: &MenuProps) -> Html {
 
         if &drop_down != &None {
             let drop_down = drop_down.unwrap();
-
-            if &_click_on != &None && &_click_on.unwrap() == &true {
-                hide = drop_down.contains(Some(&curr)) == false;
+            let is_dropdown_element = drop_down.contains(Some(&curr));
+            if is_dropdown_element {
+                hide = !(&_click_on != &None && &_click_on.unwrap() == &true);
+                let curr: Element = _e.target_unchecked_into();
+                // if _clicked_element.clone() != None { &_clicked_element.unwrap().set(Some(curr)) };
             }
-
             if *_event != None && hide {
                 &_event.set(None);
             }
@@ -69,9 +70,9 @@ pub fn menu(props: &MenuProps) -> Html {
         };
 
         display = format!("display: block; top:{}px; left:{}px", &y, &x).to_string();
-    }
+    };
 
-    html! {
+    return html! {
     <div
         ref={node_ref}
         style={format!("{};", display)}
@@ -79,12 +80,10 @@ pub fn menu(props: &MenuProps) -> Html {
     >
         {
             props.items.clone().into_iter().map(|item| {
-                html!{
-                <a>{item}</a>
-                }
+                item
             }).collect::<Html>()
         }
 
     </div>
-     }
+     };
 }

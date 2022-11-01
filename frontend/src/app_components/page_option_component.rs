@@ -25,13 +25,13 @@ pub fn page_options(props: &PageOptionsProps) -> Html {
     });
 
     let items: Vec<Html> = vec![
-        html! {<><i class="fa-solid fa-comment"></i>{"Comments"}</>},
-        html! {<><i class="fa-solid fa-rectangle-history"></i>{"History"}</>},
-        html! {<><i class="fa-solid fa-right-from-bracket"></i>{"Share"}</>},
-        html! {<><i class="fa-solid fa-right-from-bracket"></i>{"Export google docs"}</>},
-        html! {<><i class="fa-solid fa-right-from-bracket"></i>{"Export dox"}</>},
-        html! {<><i class="fa-solid fa-file-pdf"></i>{"Export pdf"}</>},
-        html! {<><i class="fa-solid fa-right-from-bracket"></i>{"Delete"}</>},
+        html! {<a><i class="fa-solid fa-comment"></i>{"Comments"}</a>},
+        html! {<a><i class="fa-solid fa-rectangle-history"></i>{"History"}</a>},
+        html! {<a><i class="fa-solid fa-right-from-bracket"></i>{"Share"}</a>},
+        html! {<a><i class="fa-solid fa-right-from-bracket"></i>{"Export google docs"}</a>},
+        html! {<a><i class="fa-solid fa-right-from-bracket"></i>{"Export dox"}</a>},
+        html! {<a><i class="fa-solid fa-file-pdf"></i>{"Export pdf"}</a>},
+        html! {<a><i class="fa-solid fa-right-from-bracket"></i>{"Delete"}</a>},
     ];
 
     html! {

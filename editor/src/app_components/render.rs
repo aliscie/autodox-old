@@ -40,6 +40,9 @@ pub fn render(props: &Props) -> Html {
         }
     }) as Box<dyn FnMut(_)>);
     let _ = &doc
+        .query_selector(".text_editor_container")
+        .unwrap()
+        .unwrap()
         .add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     handle_hovering.forget();
     return html! {

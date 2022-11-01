@@ -27,9 +27,9 @@ pub fn download(props: &DownloadProps) -> Html {
     });
 
     let items: Vec<Html> = vec![
-        html! {<><i class="fa-brands fa-apple"></i>{"Mac"}</>},
-        html! {<><i class="fa-brands fa-windows"></i>{"Window"}</>},
-        html! {<><i class="fa-brands fa-ubuntu"></i>{"Linux"}</>},
+        html! {<a><i class="fa-brands fa-apple"></i>{"Mac"}</a>},
+        html! {<a><i class="fa-brands fa-windows"></i>{"Window"}</a>},
+        html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
 
     if *IS_WEB {

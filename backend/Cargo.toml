@@ -1,10 +1,9 @@
 [package]
-name = "registrar"
+name = "backend"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [lib]
 crate-type = ["cdylib"]
 
@@ -12,3 +11,5 @@ crate-type = ["cdylib"]
 ic-kit = "0.4.8"
 candid = "0.7"
 serde = "1"
+ic-stable-memory = "0.2.4"
+speedy = "0.8.2"
