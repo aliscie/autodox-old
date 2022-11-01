@@ -1,8 +1,8 @@
 use crate::app_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
-use shared::schema::FileDirectory;
 use editor::Editor;
+use shared::schema::{FileDirectory, FileNode};
 use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -30,16 +30,18 @@ pub fn app() -> Html {
     let handle_create_file: Callback<MouseEvent> =
         file_dispatch.reduce_mut_future_callback(|state| {
             Box::pin(async move {
-                let file = crate::backend::create_file(
+                let file = FileNode::default();
+                let x = crate::backend::create_file(
                     state.id,
                     state.files.root.unwrap(),
                     "untitled".to_string(),
+                    file.id,
                 )
                 .await;
-                if let Ok(f) = file {
+                if x.is_ok() {
                     state
                         .files
-                        .push_children(state.files.root.unwrap(), f.id, f);
+                        .push_children(state.files.root.unwrap(), file.id, file);
                 }
             })
         });
