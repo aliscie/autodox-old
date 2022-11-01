@@ -4,17 +4,20 @@ use serde::Serialize;
 use serde_wasm_bindgen::from_value;
 use shared::invoke_async;
 use wasm_bindgen_futures::spawn_local;
+use web_sys::console::log_1;
 use yewdux::prelude::Dispatch;
 
 pub fn initialize() -> Result<(), String> {
     spawn_local(async move {
-        let _ = self::on_startup().await;
+        let x = self::on_startup().await;
+        log_1(&format!("{:?}", x).into());
     });
     Ok(())
 }
 
 async fn on_startup() -> Result<(), String> {
-    let directoies = crate::backend::get_directories().await?;
+    let directoies = crate::backend::get_directories().await.unwrap_or_default();
+    log_1(&format!("{:?}", directoies).into());
     let file_tree = Dispatch::<FileTree>::new();
     if directoies.len() == 0 {
         // create new directory tree
@@ -31,7 +34,7 @@ async fn on_startup() -> Result<(), String> {
     Ok(())
 }
 
-pub async fn call_postgres<T, U>(command: String, args: Option<&U>) -> Result<T, String>
+pub async fn call_surreal<T, U>(command: String, args: Option<&U>) -> Result<T, String>
 where
     T: DeserializeOwned,
     U: Serialize,

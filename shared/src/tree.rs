@@ -141,7 +141,7 @@ where
             "adjacency".to_owned(),
             Value::Object(adjacency_object.into()),
         );
-        map.insert("vertex".to_owned(), Value::Array(vertices_vec.into()));
+        map.insert("vertices".to_owned(), Value::Array(vertices_vec.into()));
         map.insert(
             "root".to_owned(),
             val.root.map(|f| format!("{:?}", f)).into(),
@@ -177,7 +177,7 @@ impl TryFrom<Object> for Tree<Uuid, FileNode> {
             tree.adjacency.insert(parent_id, child_id);
         }
         let vertex_vec: Vec<Value> = value
-            .remove("vertex")
+            .remove("vertices")
             .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?
             .try_into()
             .map_err(|_| Error::XValueNotOfType("value"))?;

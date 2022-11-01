@@ -1,12 +1,4 @@
 #V2
-select tree.adjacency[0] from directory;
-select tree.adjacency[0].name from directory;
-select tree.adjacency from directory;
-select tree.adjacency[0]."file:0" from directory;
-select tree.adjacency[0] from directory;
-select tree.adjacency[0].file:0 from directory;
-select tree.adjacency[0].`file:0`\\ from directory;
-select tree.adjacency[0].`file:0` from directory;
 select tree.adjacency[0].`file:0`.name from directory;
 select tree.adjacency[0].name from directory;
 select tree.adjacency[0].`file:0` from directory;
@@ -99,3 +91,11 @@ select *, files.vertex.*.* from file_directory:``;
 select *, files.vertex.*.* from file_directory;
 select * from file_directory;
 select * from file_node;
+list
+show tables;
+show table
+show table;
+show database;
+show databases;
+select * from file_node;
+select * from file_directory;

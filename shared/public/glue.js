@@ -1,6 +1,6 @@
 //shared
-export const invoke = window.__TAURI__.invoke
-export const emit = window.__TAURI__.emit;
+export const invoke = window.__TAURI_INVOKE__;
+export const emit = window.__TAURI_IPC__;
 
 export async function invokeHello(name) {
     return await invoke("hello", {name: name});

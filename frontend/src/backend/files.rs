@@ -17,7 +17,7 @@ pub async fn create_file(tree_id: Uuid, parent_id: Uuid, name: String) -> Result
             "parentId" : parent_id,
             "name" : name
         });
-        return crate::backend::call_postgres("create_file".to_string(), Some(&x)).await;
+        return crate::backend::call_surreal("create_file".to_string(), Some(&x)).await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -30,7 +30,7 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
         unimplemented!();
     }
     if !info.get().web {
-        return crate::backend::call_postgres(
+        return crate::backend::call_surreal(
             "delete_file".to_string(),
             Some(&serde_json::json!({"tree_id" : tree_id, "file_id" : file_id})),
         )
@@ -41,15 +41,16 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
     }
 }
 
-pub async fn create_directory(name: String) -> Result<FileDirectory, String> {
+pub async fn create_directory(_name: String) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
+    let data = FileDirectory::default();
     if info.get().web || info.get().online {
         unimplemented!();
     }
     if !info.get().web {
-        return crate::backend::call_postgres(
+        return crate::backend::call_surreal(
             "create_directory".to_string(),
-            Some(&serde_json::json!({ "name": name })),
+            Some(&serde_json::json!({ "data" : data})),
         )
         .await;
     } else {
@@ -64,7 +65,7 @@ pub async fn get_directory(id: Uuid) -> Result<Tree<Uuid, FileNode>, String> {
         unimplemented!();
     }
     if !info.get().web {
-        return crate::backend::call_postgres(
+        return crate::backend::call_surreal(
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
@@ -81,7 +82,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
         unimplemented!();
     }
     if !info.get().web {
-        let x = crate::backend::call_postgres::<Vec<FileDirectory>, String>(
+        let x = crate::backend::call_surreal::<Vec<FileDirectory>, String>(
             "get_directories".to_string(),
             None,
         )
@@ -116,7 +117,7 @@ async fn local_change_directory(parent_id: String, child_id: String) -> Result<(
         unimplemented!();
     }
     if !info.get().web {
-        return crate::backend::call_postgres(
+        return crate::backend::call_surreal(
             "change_directory".to_string(),
             Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id})),
         )
