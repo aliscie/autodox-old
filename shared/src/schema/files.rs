@@ -2,6 +2,7 @@ use crate::{
     traits::{Creatable, Entity, Queryable},
     Error, Tree,
 };
+use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 #[cfg(feature = "tauri")]
@@ -36,12 +37,13 @@ impl From<FileNodeCreate> for Object {
         BTreeMap::from([
             ("name".into(), val.name.into()),
             ("id".into(), val.id.into()),
+            ("data".into(), "".into())
         ])
         .into()
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Default, PartialEq, Clone, Eq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileNode {
     pub id: Uuid,
     pub name: String,
@@ -49,6 +51,17 @@ pub struct FileNode {
     // skipping it now later this will be removed
     #[serde(skip)]
     pub data: String,
+}
+
+impl Default for FileNode {
+    fn default() -> Self {
+        Self {
+            id: Uuid::new_v4(),
+            name: "untitled".to_string(),
+            element_tree_id: None,
+            data: "".to_string(),
+        }
+    }
 }
 
 #[cfg(feature = "tauri")]
@@ -80,6 +93,9 @@ impl Entity for FileDirectory {
 #[cfg(feature = "tauri")]
 impl Creatable for FileDirectory {}
 
+#[cfg(feature = "tauri")]
+impl Queryable for FileDirectory {}
+
 impl Default for FileDirectory {
     fn default() -> Self {
         let mut d = Self::new(Uuid::new_v4(), "default".to_string());
@@ -93,6 +109,7 @@ impl Default for FileDirectory {
                 data: "".into(),
             },
         );
+        d.files.adjacency.insert(id.clone(), IndexSet::new());
         d.files.root = Some(id);
         return d;
     }
@@ -151,6 +168,15 @@ impl TryFrom<Object> for FileNode {
             id: object
                 .remove("id")
                 .ok_or(Error::XPropertyNotFound("id".to_string()))?
+                // convert value into a id type
+                .record()
+                .ok_or(Error::XValueNotOfType("id not of type surrealdb::Thing"))?
+                // get the actual id
+                .id
+                // converting into string
+                .to_raw()
+                .as_str()
+                // into uuid
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("uuid"))?,
             name: object
@@ -179,6 +205,15 @@ impl TryFrom<Object> for FileDirectory {
                 .ok_or(Error::XPropertyNotFound(format!(
                     "id not found in object for FileDirectory"
                 )))?
+                // convert value into a id type
+                .record()
+                .ok_or(Error::XValueNotOfType("id not of type surrealdb::Thing"))?
+                // get the actual id
+                .id
+                // converting into string
+                .to_raw()
+                .as_str()
+                // into uuid
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("uuid"))?,
             name: value

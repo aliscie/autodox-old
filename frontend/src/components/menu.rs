@@ -1,13 +1,10 @@
-use yew::prelude::*;
-
+use crate::router::Route;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::Closure;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{window, DragEvent, Element, MouseEvent, Node};
-
-use crate::router::Route;
-
+use yew::prelude::*;
 #[derive(PartialEq, Properties)]
 pub struct MenuProps {
     pub items: Vec<Html>,
