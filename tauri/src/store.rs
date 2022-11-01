@@ -35,21 +35,35 @@ impl Store {
         T: Entity<DatabaseType = Object> + Queryable,
     {
         let sql = match nested_fields {
-            Some(x) => format!("SELECT *, {} FROM $th", x),
-            None => format!("SELECT * FROM {}", T::table_name()),
+            Some(x) => {
+                if tid.is_some() {
+                    format!("SELECT *, {} FROM $th", x)
+                } else {
+                    format!("SELECT *, {} FROM {}", x, T::table_name())
+                }
+            }
+            None => {
+                if tid.is_some() {
+                    format!("SELECT * FROM $th")
+                } else {
+                    format!("SELECT * FROM {}", T::table_name())
+                }
+            }
         };
         let vars = match tid {
-            Some(ref tid) => Some(map!["th".into() => Thing::from((T::table_name(), tid.clone())).into()]),
-            None => None,
+            Some(ref tid) => {
+                map!["th".into() => Thing::from((T::table_name(), tid.clone())).into()]
+            }
+            None => BTreeMap::new(),
         };
         let ress = self
             .datastore
-            .execute(sql.as_str(), &self.session, vars, true)
+            .execute(sql.as_str(), &self.session, Some(vars), true)
             .await?;
-
         let first_res = ress.into_iter().next().expect("Did not get a response");
-        let first: Vec<Value> = first_res.result?.try_into()?;
-        let res = first.into_iter()
+        let res: Vec<Value> = first_res.result?.try_into()?;
+        let res = res
+            .into_iter()
             .map(|f| Object::try_from(f))
             .filter_map(|f| f.ok())
             .collect();

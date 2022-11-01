@@ -2,9 +2,9 @@ use crate::{
     traits::{Creatable, Entity, Queryable},
     Error, Tree,
 };
+use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use indexmap::IndexSet;
 #[cfg(feature = "tauri")]
 use surrealdb::sql::{Object, Value};
 use uuid::Uuid;
@@ -167,6 +167,15 @@ impl TryFrom<Object> for FileNode {
             id: object
                 .remove("id")
                 .ok_or(Error::XPropertyNotFound("id".to_string()))?
+                // convert value into a id type
+                .record()
+                .ok_or(Error::XValueNotOfType("id not of type surrealdb::Thing"))?
+                // get the actual id
+                .id
+                // converting into string
+                .to_raw()
+                .as_str()
+                // into uuid
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("uuid"))?,
             name: object
@@ -195,6 +204,15 @@ impl TryFrom<Object> for FileDirectory {
                 .ok_or(Error::XPropertyNotFound(format!(
                     "id not found in object for FileDirectory"
                 )))?
+                // convert value into a id type
+                .record()
+                .ok_or(Error::XValueNotOfType("id not of type surrealdb::Thing"))?
+                // get the actual id
+                .id
+                // converting into string
+                .to_raw()
+                .as_str()
+                // into uuid
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("uuid"))?,
             name: value
