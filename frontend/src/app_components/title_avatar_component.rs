@@ -11,6 +11,7 @@ extern "C" {
     pub async fn identify() -> JsValue;
 }
 
+
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
@@ -39,6 +40,7 @@ pub fn title_avatar_component() -> Html {
             log!(user_token);
         });
     });
+
 
     if *IS_LOGEDIN {
         return html! { <>

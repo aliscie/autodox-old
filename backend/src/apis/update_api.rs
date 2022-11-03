@@ -100,7 +100,8 @@ pub fn update_file(update_file_data: UpdateFileData) -> Result<(), BackendError>
             }
         }
     }
-    s! { Storage = storage};
+    s! { Storage = storage}
+    ;
     Ok(())
 }
 
@@ -140,6 +141,7 @@ pub fn delete_file(delete_file_data: DeleteFileData) -> Result<(), BackendError>
             }
         }
     }
-    s! { Storage = storage};
+    s! { Storage = storage}
+    ;
     Ok(())
 }
