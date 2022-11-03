@@ -118,7 +118,7 @@ where
 #[cfg(feature = "tauri")]
 impl<ID, T> From<Tree<ID, T>> for Object
 where
-    ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+    ID: Hash + PartialEq + Eq + Clone + Default + Debug + Into<Value>,
     T: PartialEq + Eq + Clone + Debug + Into<Object> + Entity,
 {
     fn from(val: Tree<ID, T>) -> Object {
@@ -127,8 +127,7 @@ where
         for (id, children) in val.adjacency {
             let mut child_connections: Vec<Value> = Vec::new();
             for i in children.into_iter() {
-                println!("child_ids here is : {:?}", i);
-                child_connections.push(Value::Strand(format!("{:?}", i).into()).into());
+                child_connections.push(i.into());
             }
             println!("{:?}", child_connections);
             adjacency_object.insert(format!("{:?}", id), Value::Array(child_connections.into()));
@@ -171,13 +170,8 @@ impl TryFrom<Object> for Tree<Uuid, FileNode> {
             let child_id: IndexSet<Uuid> = child
                 .into_iter()
                 .map(|f| -> Result<Uuid, Error> {
-                    String::try_from(f)
-                        .map_err(|_| {
-                            Error::XValueNotOfType("Cannot convert child value to String")
-                        })?
-                        .as_str()
-                        .try_into()
-                        .map_err(|_| Error::XValueNotOfType("cannot convert child &str to uuid"))
+                    Uuid::try_from(f)
+                        .map_err(|_| Error::XValueNotOfType("Cannot convert child value to String"))
                 })
                 .take_while(Result::is_ok)
                 .map(Result::unwrap)

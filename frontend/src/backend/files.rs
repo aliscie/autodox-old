@@ -104,17 +104,27 @@ enum FileLocation {
     SYNCED,
 }
 
-pub fn change_directory(parent_id: String, child_id: String)
+pub fn change_directory(
+    parent_id: String,
+    child_id: String,
+    tree_id: String,
+    old_parent_id: String,
+)
 // -> Result<(), String>
 {
     // let mut response: Option<Result<(), String>> = None;
     spawn_local(async move {
-        self::local_change_directory(parent_id, child_id).await;
+        self::local_change_directory(parent_id, child_id, tree_id, old_parent_id).await;
     });
     // return response.unwrap();
 }
 
-async fn local_change_directory(parent_id: String, child_id: String) -> Result<(), String> {
+async fn local_change_directory(
+    parent_id: String,
+    child_id: String,
+    tree_id: String,
+    old_parent_id: String,
+) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     let file_dispatch = Dispatch::<FileDirectory>::new();
     if info.get().web || info.get().online {
@@ -123,7 +133,7 @@ async fn local_change_directory(parent_id: String, child_id: String) -> Result<(
     if !info.get().web {
         return crate::backend::call_surreal(
             "change_directory".to_string(),
-            Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id})),
+            Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id, "treeId" : tree_id, "oldParentId" : old_parent_id})),
         )
         .await
         .map(|e| {

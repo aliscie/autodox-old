@@ -1,12 +1,9 @@
-use uuid::Uuid;
-use wasm_bindgen_futures::spawn_local;
-use web_sys::console::log_1;
-use web_sys::{window, DragEvent, Element, MouseEvent};
-use yew::prelude::*;
-use yew::{html, Html};
-
-use crate::backend;
 use crate::components::Menu;
+use shared::schema::FileDirectory;
+use uuid::Uuid;
+use web_sys::{console::log_1, Element, MouseEvent};
+use yew::prelude::*;
+use yewdux::prelude::*;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -25,8 +22,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     // dragged_id: uuid,
     // target_id: uuid
     // }
-    let drop_data = use_state(|| "".to_string());
-    let is_drag_over = use_state(|| "".to_string());
+    //let drop_data = use_state(|| "".to_string());
+    //let is_drag_over = use_state(|| "".to_string());
     let is_drag_under = use_state(|| "".to_string());
 
     let is_dragged = use_state(|| "".to_string());
@@ -89,13 +86,26 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let _is_drag_under = is_drag_under.clone();
     let ondrop: Callback<DragEvent> = {
         let id = id.clone();
+        let file_dispatch = Dispatch::<FileDirectory>::new();
         Callback::from(move |e: DragEvent| {
             e.prevent_default();
             let curr: Element = e.target_unchecked_into();
-            curr.class_list().toggle("dragging_over");
+            let _ = curr.class_list().toggle("dragging_over");
             let dragged = e.data_transfer().unwrap().get_data("dragged_item").unwrap();
             let id = id.clone();
-            backend::change_directory(id, dragged);
+            let mut old_parent_id: Uuid = Uuid::new_v4();
+            let dragged_uuid = Uuid::parse_str(dragged.as_str()).unwrap();
+            for (id, value) in &file_dispatch.get().files.adjacency {
+                if value.contains(&dragged_uuid) {
+                    old_parent_id = *id;
+                }
+            }
+            crate::backend::change_directory(
+                id,
+                dragged,
+                file_dispatch.get().id.to_string(),
+                old_parent_id.to_string(),
+            );
         })
     };
 
@@ -113,18 +123,18 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
     let _is_drag_under = is_drag_under.clone();
     let _id = id.clone();
-    let ondrop_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _e.prevent_default();
-        let curr: Element = _e.target_unchecked_into();
-        curr.set_attribute("style", "height: 3px; opacity:0;");
+    let ondrop_under: Callback<DragEvent> = Callback::from(move |e: DragEvent| {
+        e.prevent_default();
+        let curr: Element = e.target_unchecked_into();
+        let _ = curr.set_attribute("style", "height: 3px; opacity:0;");
 
-        let dragged = _e.data_transfer().unwrap().get_data("dragged_item");
+        let _dragged = e.data_transfer().unwrap().get_data("dragged_item");
     });
     let ondelete = {
         let id = id.clone();
         Callback::from(move |_e: MouseEvent| {
             // TODO: complete this
-            // id
+            log_1(&format!("{:?}", id).into());
         })
     };
 
