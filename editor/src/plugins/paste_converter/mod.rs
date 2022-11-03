@@ -1,13 +1,13 @@
 extern crate web_sys;
 
-mod trigger_paste;
-
 use std::rc::Rc;
-use web_sys::{window, DragEvent, Element, MouseEvent};
 
-use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::*;
+use web_sys::{DragEvent, Element, MouseEvent, window};
 use yew::prelude::*;
+
+mod trigger_paste;
 
 #[wasm_bindgen(module = "/src/plugins/paste_converter/fetch_pasted.js")]
 extern "C" {

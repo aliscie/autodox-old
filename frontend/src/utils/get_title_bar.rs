@@ -1,26 +1,23 @@
-use shared::invoke;
 use wasm_bindgen::prelude::*;
-use web_sys::{window, Document, Element, MouseEvent};
+use web_sys::{MouseEvent, window};
 use yew::prelude::*;
-use yew_router::prelude::*;
 
-use crate::app_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
-use crate::components::{Avatar, CurrDirectory, TitleBar};
-use crate::router::*;
-use crate::utils::alert;
+
 use crate::*;
+use crate::app_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
+use crate::components::{CurrDirectory, TitleBar};
 
 pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let light_mod = use_state(|| false);
 
-    let is_expanded = x.clone().chars().count();
+    let is_expanded = x.chars().count();
     let doc = window().unwrap_throw().document().unwrap_throw();
     let current_directory = html! {<CurrDirectory/>};
 
     let _light_mod = light_mod.clone();
     let _doc = doc.clone();
     let handle_light_mod: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-        _doc.query_selector("html")
+        let _ = _doc.query_selector("html")
             .unwrap()
             .unwrap()
             .class_list()
@@ -31,21 +28,21 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if x.chars().count() > 1 {
             x.set("".to_string());
-            doc.query_selector(".editor_title")
+            let _ = &doc.query_selector(".editor_title")
                 .unwrap()
                 .unwrap()
                 .set_attribute("style", "margin-left:0px; width:100%");
-            doc.query_selector(".text_editor_container")
+            let _ = &doc.query_selector(".text_editor_container")
                 .unwrap()
                 .unwrap()
                 .set_attribute("style", "margin-left:0px; width:100%");
         } else {
             x.set("width:250px".to_string());
-            doc.query_selector(".editor_title")
+            let _ = &doc.query_selector(".editor_title")
                 .unwrap()
                 .unwrap()
                 .set_attribute("style", "margin-left:250px; margin-right:2%; width:80%");
-            doc.query_selector(".text_editor_container")
+            let _ = &doc.query_selector(".text_editor_container")
                 .unwrap()
                 .unwrap()
                 .set_attribute("style", "margin-left:250px; margin-right:2%; width:80%");
@@ -57,7 +54,7 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
                <Download/>
                <i
                onclick={handle_light_mod}
-               class={format!("btn {}",if (*light_mod).clone() {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
+               class={format!("btn {}",if (*light_mod) {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
                ></i>
 
            <TitleAvatarComponent/>
@@ -65,9 +62,9 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
            <PageOptions/>
        </>
     };
-    return html! {
+    html! {
         <TitleBar
-            style={format!("{}",if *IS_WEB==false {"padding-left: 75px; cursor: grab;"} else {""})}
+            style={(if !(*IS_WEB) {"padding-left: 75px; cursor: grab;"} else {""}).to_string()}
             title={current_directory}
             {right_content}
          >
@@ -80,5 +77,5 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
             </li>
             <Markdown/>
         </TitleBar >
-    };
+    }
 }

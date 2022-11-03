@@ -1,4 +1,5 @@
 use yewdux::prelude::*;
+
 #[derive(Debug, PartialEq, Eq, Clone, Store)]
 pub struct DeviceInfo {
     pub online: bool,

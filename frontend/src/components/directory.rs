@@ -1,14 +1,14 @@
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{window, DragEvent, Element, MouseEvent};
-use yew::prelude::*;
+use web_sys::{DragEvent, Element, MouseEvent, window};
 use yew::{html, Html};
+use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::router::Route;
 use crate::router::*;
+use crate::router::Route;
 
 #[function_component(CurrDirectory)]
 pub fn curr_directory() -> Html {

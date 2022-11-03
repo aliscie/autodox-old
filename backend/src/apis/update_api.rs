@@ -1,6 +1,6 @@
 use ic_kit::{candid::candid_method, ic, macros::*};
 
-use crate::{backend_error::BackendError, structure::*};
+use crate::{backend_error::BackendError, schema::*};
 use ic_stable_memory::{collections::hash_map::SHashMap, s, utils::ic_types::SPrincipal};
 
 #[update]
@@ -20,6 +20,7 @@ pub fn create_file(create_file_data: CreateFileData) {
         }
         Some(mut list) => {
             if let Some(parent_id) = create_file_data.parent_id {
+                //TODO there is too much Duplications 😰
                 match list.get_cloned(&parent_id) {
                     None => {
                         let mut child_map = SHashMap::new();
@@ -35,6 +36,7 @@ pub fn create_file(create_file_data: CreateFileData) {
                 }
             } else {
                 let default_key = String::new();
+                //TODO there is too much Duplications 😰
                 match list.get_cloned(&default_key) {
                     None => {
                         let mut child_map = SHashMap::new();
@@ -63,6 +65,8 @@ pub fn update_file(update_file_data: UpdateFileData) -> Result<(), BackendError>
         None => return Err(BackendError::FileDoesNotExist),
         Some(mut parent_map) => {
             if let Some(parent_id) = update_file_data.parent_id {
+                // TODO I believe there is another way to update file without the need to this match.
+                //TODO there is too much Duplications 😰
                 match parent_map.get_cloned(&parent_id) {
                     None => return Err(BackendError::FileDoesNotExist),
                     Some(mut child_map) => match child_map.get_cloned(&update_file_data.child_id) {
@@ -81,6 +85,7 @@ pub fn update_file(update_file_data: UpdateFileData) -> Result<(), BackendError>
                 }
             } else {
                 let default_key = String::new();
+                //TODO there is too much Duplications 😰
                 match parent_map.get_cloned(&default_key) {
                     None => return Err(BackendError::FileDoesNotExist),
                     Some(mut child_map) => match child_map.get_cloned(&update_file_data.child_id) {
@@ -114,6 +119,7 @@ pub fn delete_file(delete_file_data: DeleteFileData) -> Result<(), BackendError>
         None => return Err(BackendError::FileDoesNotExist),
         Some(mut parent_map) => {
             if let Some(parent_id) = delete_file_data.parent_id {
+                //TODO there is too much Duplications 😰
                 match parent_map.get_cloned(&parent_id) {
                     None => return Err(BackendError::FileDoesNotExist),
                     Some(mut child_map) => match child_map.get_cloned(&delete_file_data.child_id) {
@@ -127,6 +133,7 @@ pub fn delete_file(delete_file_data: DeleteFileData) -> Result<(), BackendError>
                 }
             } else {
                 let default_key = String::new();
+                //TODO there is too much Duplications 😰
                 match parent_map.get_cloned(&default_key) {
                     None => return Err(BackendError::FileDoesNotExist),
                     Some(mut child_map) => match child_map.get_cloned(&delete_file_data.child_id) {

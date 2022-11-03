@@ -1,5 +1,5 @@
 //! This is the main (and only for now) application Error type.
-//! It's using 'thiserror' as it reduces boilerplate error code while providing rich error typing.
+//! It's using 'this-error' as it reduces boilerplate error code while providing rich error typing.
 //!
 //! Notes:
 //!     - The strategy is to start with one Error type for the whole application and then seggregate as needed.
@@ -7,6 +7,7 @@
 //!     - By best practices, `anyhow` is not used in application code, but can be used in unit or integration test (will be in dev_dependencies when used)
 //!
 use serde::Serialize;
+
 use shared::Error as SharedError;
 
 #[derive(thiserror::Error, Debug, Serialize)]

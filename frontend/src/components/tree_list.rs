@@ -1,21 +1,7 @@
-use shared::schema::FileDirectory;
-use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{ window, Element, MouseEvent};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-pub trait MyNewTrait {
-    fn target_element<'a>(&self) -> Option<Element>;
-}
-
-impl MyNewTrait for MouseEvent {
-    fn target_element(&self) -> Option<Element> {
-        let doc = window().unwrap_throw().document().unwrap_throw();
-        let x = self.page_x();
-        let y = self.page_y();
-        doc.element_from_point(x as f32, y as f32)
-    }
-}
+use shared::schema::FileDirectory;
 
 #[derive(PartialEq, Properties)]
 pub struct TreeListProps {
@@ -31,5 +17,5 @@ pub fn tree_list(props: &TreeListProps) -> Html {
     //d.reduce_mut(|r| r.data.insert(225, "file four!".into()));
 
     //(props.files.clone()).into_iter().map(|file| file.to_html()).collect::<Html>()
-    crate::utils::filetree::to_html(&tree ,tree.files.root.unwrap())
+    crate::utils::filetree::to_html(&tree, tree.files.root.unwrap())
 }

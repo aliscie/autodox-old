@@ -1,11 +1,12 @@
-use shared::schema::FileDirectory;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde_wasm_bindgen::from_value;
-use shared::invoke_async;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console::log_1;
 use yewdux::prelude::Dispatch;
+
+use shared::invoke_async;
+use shared::schema::FileDirectory;
 
 pub fn initialize() -> Result<(), String> {
     spawn_local(async move {
@@ -35,9 +36,9 @@ async fn on_startup() -> Result<(), String> {
 }
 
 pub async fn call_surreal<T, U>(command: String, args: Option<&U>) -> Result<T, String>
-where
-    T: DeserializeOwned,
-    U: Serialize,
+    where
+        T: DeserializeOwned,
+        U: Serialize,
 {
     let x = invoke_async::<U>(command, args)
         .await

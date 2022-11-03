@@ -1,32 +1,34 @@
-use crate::app_components::FileComponent;
-use crate::router::Route;
-use indexmap::IndexSet;
-use shared::schema::FileDirectory;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
+
+use indexmap::IndexSet;
 use uuid::Uuid;
 use web_sys::{Element, MouseEvent};
+use yew::{html, Html};
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
-use yew::{html, Html};
 use yew_router::prelude::*;
 
+use shared::schema::FileDirectory;
+
+use crate::app_components::FileComponent;
+use crate::router::Route;
 
 pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
-    let map: Rc<RefCell<HashMap<Uuid, VNode>>> = use_mut_ref(|| HashMap::new());
+    let map: Rc<RefCell<HashMap<Uuid, VNode>>> = use_mut_ref(HashMap::new);
     let history = use_history().unwrap();
-    let onclickfile = Callback::from(move |e: MouseEvent| {
+    let onclick_file = Callback::from(move |e: MouseEvent| {
         let element: Element = e.target_unchecked_into();
         history.push(Route::File {
             id: element.id().parse().unwrap(),
         });
     });
-    for (id, file_node) in file_directory.files.into_iter(start.clone()) {
+    for (id, file_node) in file_directory.files.into_iter(start) {
         let mut class_name = "";
         let mut has_children = false;
         if let Some(node_ids) = file_directory.files.adjacency.get(id) {
-            if node_ids.len() > 0 {
+            if !node_ids.is_empty() {
                 has_children = true;
                 class_name = "caret";
             }
@@ -51,7 +53,7 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
                     key = {id.to_string()}
                     id = {*id}
                     class={format!(" {}",class_name)}
-                    onclickfile = {onclickfile.clone()}
+                    onclickfile = {onclick_file.clone()}
                     onclick={handle_click_toggle}
                     name={file_node.name.clone()}/>
                 if has_children && *display == "active"{

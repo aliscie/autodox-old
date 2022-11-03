@@ -1,19 +1,19 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+all(not(debug_assertions), target_os = "windows"),
+windows_subsystem = "windows"
 )]
 
-use context::Context;
-use dotenv::dotenv;
-use std::env;
-use store::Store;
-
 use std::collections::HashMap;
+use std::env;
 
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
-use tauri::async_runtime::Mutex;
+use dotenv::dotenv;
+
+use context::Context;
+use store::Store;
 use tauri::{Runtime, State, Window};
+use tauri::async_runtime::Mutex;
 
 mod command;
 mod prelude;

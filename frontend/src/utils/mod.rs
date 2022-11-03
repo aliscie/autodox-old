@@ -1,5 +1,10 @@
-pub mod filetree;
 use web_sys::window;
+
+pub use device_info::DeviceInfo;
+pub use get_title_bar::get_titlebar;
+
+pub mod filetree;
+
 pub fn alert<T: std::fmt::Debug>(message: &T) {
     let window = window().unwrap();
     window
@@ -8,7 +13,4 @@ pub fn alert<T: std::fmt::Debug>(message: &T) {
 }
 
 mod get_title_bar;
-pub use get_title_bar::get_titlebar;
-
 mod device_info;
-pub use device_info::DeviceInfo;

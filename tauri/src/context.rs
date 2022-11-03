@@ -1,5 +1,6 @@
-use crate::store::Store;
 use std::sync::Arc;
+
+use crate::store::Store;
 
 pub struct Context {
     pub store: Arc<Store>,

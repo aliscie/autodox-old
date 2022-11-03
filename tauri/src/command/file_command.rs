@@ -1,14 +1,17 @@
-use crate::prelude::*;
-use crate::utils::map;
-use crate::Context;
+use std::collections::BTreeMap;
+
+use surrealdb::sql::*;
+use uuid::Uuid;
+
 use shared::{
     schema::{FileDirectory, FileNode, FileNodeCreate},
     traits::Entity,
 };
-use std::collections::BTreeMap;
-use surrealdb::sql::*;
 use tauri::State;
-use uuid::Uuid;
+
+use crate::Context;
+use crate::prelude::*;
+use crate::utils::map;
 
 /// TODO: wrap all the functions around transactions!
 #[tauri::command]
@@ -91,33 +94,29 @@ pub async fn change_directory(
     ]);
     store
         .datastore
-        .execute(sql.as_str(), &store.session, Some(vars), false)
+        .execute(sql.as_str(), &store.session, Some(vars.clone()), false)
         .await?;
     let sql = format!("UPDATE $tb SET files.adjacency.`{:?}` += $val", parent_id);
-    let vars: BTreeMap<String, Value> = BTreeMap::from([
-        (
-            "tb".into(),
-            Thing::from((FileDirectory::table_name(), tree_id.to_string())).into(),
-        ),
-        ("val".into(), child_id.into()),
-    ]);
     store
         .datastore
-        .execute(sql.as_str(), &store.session, Some(vars), false)
+        .execute(sql.as_str(), &store.session, Some(vars.clone()), false)
         .await?;
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{Context, Store};
     use shared::schema::{FileDirectory, FileNode};
+
+    use crate::{Context, Store};
+
     async fn setup() -> Context {
         let store = Store::new()
             .await
             .expect("Cannot create connection to database!");
         Context::new(store)
     }
+
     #[tokio::test]
     async fn test_create_file() {
         let context = setup().await;

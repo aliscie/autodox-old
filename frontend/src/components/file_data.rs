@@ -1,7 +1,8 @@
-use shared::schema::FileDirectory;
 use uuid::Uuid;
 use yew::prelude::*;
 use yewdux::prelude::*;
+
+use shared::schema::FileDirectory;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {

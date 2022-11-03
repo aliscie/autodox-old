@@ -1,8 +1,10 @@
-use crate::utils::DeviceInfo;
-use shared::schema::{FileDirectory, FileNodeCreate};
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use yewdux::prelude::Dispatch;
+
+use shared::schema::{FileDirectory, FileNodeCreate};
+
+use crate::utils::DeviceInfo;
 
 pub async fn create_file(
     tree_id: Uuid,
@@ -39,7 +41,7 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({"tree_id" : tree_id, "file_id" : file_id})),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -56,7 +58,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<(), String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -73,7 +75,7 @@ pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -90,7 +92,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-        .await;
+            .await;
         return x;
     } else {
         // user is offline throw a error
@@ -135,19 +137,19 @@ async fn local_change_directory(
             "change_directory".to_string(),
             Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id, "treeId" : tree_id, "oldParentId" : old_parent_id})),
         )
-        .await
-        .map(|e| {
-            file_dispatch.reduce_mut(|f| {
-                for i in f.files.adjacency.values_mut() {
-                    i.remove(&Uuid::parse_str(&child_id).unwrap());
-                }
-                f.files.push_edge(
-                    Uuid::parse_str(&parent_id).unwrap(),
-                    Uuid::parse_str(&child_id).unwrap(),
-                );
+            .await
+            .map(|e| {
+                file_dispatch.reduce_mut(|f| {
+                    for i in f.files.adjacency.values_mut() {
+                        i.remove(&Uuid::parse_str(&child_id).unwrap());
+                    }
+                    f.files.push_edge(
+                        Uuid::parse_str(&parent_id).unwrap(),
+                        Uuid::parse_str(&child_id).unwrap(),
+                    );
+                });
+                e
             });
-            e
-        });
     }
     return Err("user is offline".to_string());
 }
