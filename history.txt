@@ -1,74 +1,4 @@
 #V2
-select tree.adjacency[0].`file:0` from directory;
-select * from directory'
-select * from directory;
-drop directory;
-delete directory;
-select * from directory;
- CREATE directory SET id = "fa93c194-a8ca-4201-978f-746ca6d57870" , name = "default", tree = { adjacency : [ { parent_id : file:0 , child_ids: [ file:1, file:2 ] } ] };
-select * from directory;
-seelct tree.adjacency from directory;
-select tree.adjacency from directory;
-\\l
-\\d
-create person set name = "aman";
-create person set name = 'aman';
-create person set name = 'aman'
-create person set name = 'aman';
-select * from file_directory;
-select * from file_node;
-select * from file_directory;
-create person:100 SET name = 'Tobie', company = 'SurrealDB', skills = ['Rust', 'Go', 'JavaScript'];
-update person:100 set skills += 'breathing';
-select * from person;
-update person:100 set skills -= 'breathing';
-create person set name = "aman";
-delete person;
-selectt * from person'
-selectt * from person;
-select * from person;
-create person:aman set friends = [{name : 'nona'}, {name : 'vaibhav'}]
-select * from person:aman;
-select * from person;
-update person:aman set friends = array::union(friends, [{name : "nona"}]);
-select * from person;
-select * from person:aman;
-delete person;
-select * from person:aman;
-insert person:aman set name = [{ name : 'archi' , characteristics : ['cute' , 'loving']}];
-insert person:aman set name = [{ name : "archi" , characteristics : ["cute" , "loving"]}];
-create person:aman set name = [{ name : "archi" , characteristics : ["cute" , "loving"]}];
-select * from person;
-update person:aman set name.characteristics += "understanding" where person.name.name = "archi"
-select * from person;
-update person:aman set name.characteristics += "understanding" where name.name = "archi"
-select * from person;
-update person:aman set name += { characteristics : ["hard"], name : "aman" }
-select * from person;
-select name.characteristics from person:aman;
-update person:aman set name.charact
-update person:aman set name.characteristics += "human" where name.name = "archi";
-select name.characteristics from person:aman;
-update person:aman set name.characteristics += "human";
-update person:aman set name.characteristics -= "human";
-update person:aman set name.characteristics = ["human"];
-select * from file_directory;
-select * from file_node;
-select * from file_directory;
-select * from file_node;
-select ->files.adjacency.get(0) from file_adjacency;
-select ->files.adjacency from file_adjacency;
-select files.adjacency from file_adjacency;
-select * from file_adjacency;
-select * from file_directory;
-select ->files.adjacency from file_directory;
-select files.adjacency from file_directory;
-select files.adjacency."e702a655-cb93-413d-93bb-046343ef8dc8" from file_directory;
-select * from file_directory;
-select files.adjacency from file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩;
-select files.adjacency.e702a655-cb93-413d-93bb-046343ef8dc8 from file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩;
-select files.adjacency."e702a655-cb93-413d-93bb-046343ef8dc8" from file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩;
-select files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` from file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩;
 update file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩ set files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` += "other_one";
 select files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` from file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩;
 update file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩ set files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` += "other_one";
@@ -98,4 +28,74 @@ show databases;
 select * from file_node;
 select * from file_directory;
 select * from file_node;
+select * from file_directory;
+select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" where file.adjacency.*[contains "efe1035f-354f-484f-9c5b-b4ee15fe9b55"]
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")
+select  "9dc82a9f-9028-4dcf-913d-a7dbc2906beb" from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")
+select  `9dc82a9f-9028-4dcf-913d-a7dbc2906beb` from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")
+select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" where file.adjacency.*[contains `efe1035f-354f-484f-9c5b-b4ee15fe9b55`]
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where * contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")[ where contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`]
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")[ where $this  contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`]
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where $this contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where $this contains "efe1035f-354f-484f-9c5b-b4ee15fe9b55"
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where $this contains `efe1035f-354f-484f-9c5b-b4ee15fe9b55`
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where $this.* contains `efe1035f-354f-484f-9c5b-b4ee15fe9b55`
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where true
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() {
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() { return true; }
+select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() { return false; }
+select * from ["hello"] -= "hello";
+select * from ["hello"] -= "hello"
+select ["hello"] -= "hello"
+select ["hello"] += "hello"
+select * from ["hello"] += "hello"
+select * from ["hello"]
+select * from ["hello"] + "hello"
+select * from file_directory;
+update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
+select * from file_directory;
+update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
+select * from file_directory;
+update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
+select  files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -  `efe1035f-354f-484f-9c5b-b4ee15fe9b55` from file_directory;
+update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
+create test set name = ["aman", "vaibhav" , "some"];
+update test set name -= "some";
+update test set name += `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
+update test set name += "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
+update test set name -= null;
+update test set name -= "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
+update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
+update test set name += uuid::new();
+uuid::new()
+select * from uuid::new_v4();
+update test set name += rand::uuid::v4();
+select * from rand::uuid::v4;
+select * from rand::uuid;
+select * from rand::uuid()
+update test set name += rand::uuid();
+update test name -=  "668dd31c-74e3-495c-a542-e5bd398955d2";
+update test set name -=  "668dd31c-74e3-495c-a542-e5bd398955d2";
+update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
+update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
+select files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` from file_directory;
+update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` += "name";
+update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "name";
+update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
+update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
+update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "3e4681e4-4522-4685-805a-8f75c3a1c201";
+update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` += "name";
+update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "name";
+select * from rand::uuid();
+create test set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` = [];
+select * from test
+delete "test:o3we3sjz6n5gxmqdvwmi"
+select * from test
+update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` += "name"
+update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` -= "name"
+update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` += rand::uuid();
+update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` -=  "f53a118b-e9ad-498b-afca-4ac935717006";
 select * from file_directory;

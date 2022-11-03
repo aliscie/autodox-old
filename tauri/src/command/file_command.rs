@@ -33,7 +33,7 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
     );
     let vars: BTreeMap<String, Value> = map![
         "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
-        "va".into() => format!("{:?}", id).into(),
+        "va".into() => id.into(),
         "ia".into() => Value::Thing((FileNode::table_name(), id.to_string()).into()),
     ];
     store
@@ -52,7 +52,6 @@ pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirector
         .into_iter()
         .map(|f| FileDirectory::try_from(f))
         .filter_map(|f| {
-            println!("{:?}", f);
             f.ok()
         })
         .collect();
@@ -68,6 +67,45 @@ pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDire
         .await?
         .remove(0);
     Ok(res.try_into()?)
+}
+
+#[tauri::command]
+pub async fn change_directory(
+    child_id: Uuid,
+    parent_id: Uuid,
+    tree_id: Uuid,
+    old_parent_id: Uuid,
+    ctx: State<'_, Context>,
+) -> Result<()> {
+    let store = ctx.get_store();
+    let sql = format!(
+        "UPDATE $tb SET files.adjacency.`{:?}` -= $val",
+        old_parent_id
+    );
+    let vars: BTreeMap<String, Value> = BTreeMap::from([
+        (
+            "tb".into(),
+            Thing::from((FileDirectory::table_name(), tree_id.to_string())).into(),
+        ),
+        ("val".into(), child_id.into()),
+    ]);
+    store
+        .datastore
+        .execute(sql.as_str(), &store.session, Some(vars), false)
+        .await?;
+    let sql = format!("UPDATE $tb SET files.adjacency.`{:?}` += $val", parent_id);
+    let vars: BTreeMap<String, Value> = BTreeMap::from([
+        (
+            "tb".into(),
+            Thing::from((FileDirectory::table_name(), tree_id.to_string())).into(),
+        ),
+        ("val".into(), child_id.into()),
+    ]);
+    store
+        .datastore
+        .execute(sql.as_str(), &store.session, Some(vars), false)
+        .await?;
+    Ok(())
 }
 
 #[cfg(test)]
