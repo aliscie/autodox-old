@@ -4,7 +4,6 @@ windows_subsystem = "windows"
 )]
 
 use std::collections::HashMap;
-use std::env;
 
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
@@ -13,7 +12,7 @@ use dotenv::dotenv;
 use context::Context;
 use store::Store;
 use tauri::{Runtime, State, Window};
-use tauri::async_runtime::Mutex;
+use tokio::sync::Mutex;
 
 mod command;
 mod prelude;

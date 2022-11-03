@@ -124,9 +124,9 @@ checksum = "216261ddc8289130e551ddcd5ce8a064710c0d064a4d2895c67151c92b5443f6"
 
 [[package]]
 name = "anymap"
-version = "0.12.1"
+version = "1.0.0-beta.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33954243bd79057c2de7338850b85983a44588021f8a5fee574a8888c6de4344"
+checksum = "8f1f8f5a6f3d50d89e3797d7593a50f96bb2aaa20ca0cc7be1fb673232c91d72"
 
 [[package]]
 name = "anymap2"
@@ -930,9 +930,9 @@ dependencies = [
 
 [[package]]
 name = "cocoa"
-version = "0.24.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f63902e9223530efb4e26ccd0cf55ec30d592d3b42e21a28defc42a9586e832"
+checksum = "f425db7937052c684daec3bd6375c8abe2d146dca4b8b143d6db777c39138f3a"
 dependencies = [
  "bitflags",
  "block",
@@ -1287,9 +1287,9 @@ dependencies = [
 
 [[package]]
 name = "curl-sys"
-version = "0.4.58+curl-7.86.0"
+version = "0.4.59+curl-7.86.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "430e2ecf0c5f4445334472cf8f9611a6eea404b4135ca5500f38a97a128c913e"
+checksum = "6cfce34829f448b08f55b7db6d0009e23e2e86a34e8c2b366269bf5799b4a407"
 dependencies = [
  "cc",
  "libc",
@@ -1584,9 +1584,9 @@ dependencies = [
 
 [[package]]
 name = "educe"
-version = "0.4.19"
+version = "0.4.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c07b7cc9cd8c08d10db74fca3b20949b9b6199725c04a0cce6d543496098fcac"
+checksum = "cb0188e3c3ba8df5753894d54461f0e39bc91741dc5b22e1c46999ec2c71f4e4"
 dependencies = [
  "enum-ordinalize",
  "proc-macro2",
@@ -1642,9 +1642,9 @@ dependencies = [
 
 [[package]]
 name = "enum-ordinalize"
-version = "3.1.11"
+version = "3.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2170fc0efee383079a8bdd05d6ea2a184d2a0f07a1c1dcabdb2fd5e9f24bc36c"
+checksum = "a62bb1df8b45ecb7ffa78dca1c17a438fb193eb083db0b1b494d2a61bcb5096a"
 dependencies = [
  "num-bigint",
  "num-traits",
@@ -2647,18 +2647,18 @@ dependencies = [
 
 [[package]]
 name = "html-escape"
-version = "0.2.11"
+version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8e7479fa1ef38eb49fb6a42c426be515df2d063f06cb8efd3e50af073dbc26c"
+checksum = "15315cfa9503e9aa85a477138eff76a1b203a430703548052c330b69d8d8c205"
 dependencies = [
  "utf8-width",
 ]
 
 [[package]]
 name = "html-minifier"
-version = "3.0.15"
+version = "3.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9909bfe02da0a2a85a5e4684c2e7b637a59d84f516738fe5d75308eab25b88a"
+checksum = "a69de60a6580c19bb5c99abf57a76acf935f926d1f5dfd1bda86572c1fb00e87"
 dependencies = [
  "cow-utils",
  "educe",
@@ -2783,9 +2783,9 @@ checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
 
 [[package]]
 name = "hyper"
-version = "0.14.20"
+version = "0.14.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02c929dc5c39e335a03c405292728118860721b10190d98c2a0f0efd5baafbac"
+checksum = "abfba89e19b959ca163c7752ba59d737c1ceea53a5d31a149c805446fc958064"
 dependencies = [
  "bytes 1.2.1",
  "futures-channel",
@@ -3412,12 +3412,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "macro-utils"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e72f7deb758fea9ea7d290aebfa788763d0bffae12caa6406a25baaf8fa68a8"
-
-[[package]]
 name = "malloc_buf"
 version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3532,12 +3526,9 @@ dependencies = [
 
 [[package]]
 name = "minifier"
-version = "0.0.43"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d81352bda6f4d04af1720afaa762054f66e16caffd93c1f86461a1c0ac4e695e"
-dependencies = [
- "macro-utils",
-]
+checksum = "8eb022374af2f446981254e6bf9efb6e2c9e1a53176d395fca02792fd4435729"
 
 [[package]]
 name = "minimal-lexical"
@@ -3595,9 +3586,9 @@ dependencies = [
 
 [[package]]
 name = "native-tls"
-version = "0.2.10"
+version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd7e2f3618557f980e0b17e8856252eee3c97fa12c54dff0ca290fb6266ca4a9"
+checksum = "07226173c32f2926027b63cce4bcd8076c3552846cbe7925f3aaffeac0a3b92e"
 dependencies = [
  "lazy_static",
  "libc",
@@ -4941,9 +4932,9 @@ dependencies = [
 
 [[package]]
 name = "scoped-tls"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea6a9290e3c9cf0f18145ef7ffa62d68ee0bf5fcd651017e586dc7fd5da448c2"
+checksum = "e1cf6437eb19a8f4a6cc0f7dca544973b0b78843adbfeb3683d1a94a0024a294"
 
 [[package]]
 name = "scoped-tls-hkt"
@@ -5746,7 +5737,7 @@ dependencies = [
 [[package]]
 name = "surrealdb"
 version = "1.0.0-beta.8"
-source = "git+https://github.com/lunchspider/surrealdb#c12a1cc1faa1dad8a6e79c7d237c0b655e77337b"
+source = "git+https://github.com/lunchspider/surrealdb#ed180032232bb1c46e53eec084b519ab03e9d769"
 dependencies = [
  "addr",
  "argon2",
@@ -5903,25 +5894,6 @@ dependencies = [
 
 [[package]]
 name = "tauri"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "cocoa",
- "dotenv",
- "indexmap",
- "serde",
- "serde_json",
- "shared",
- "surrealdb",
- "tauri 1.1.1",
- "tauri-build",
- "thiserror",
- "tokio",
- "uuid 1.2.1",
-]
-
-[[package]]
-name = "tauri"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "efbf22abd61d95ca9b2becd77f9db4c093892f73e8a07d21d8b0b2bf71a7bcea"
@@ -6068,6 +6040,25 @@ dependencies = [
  "webview2-com",
  "windows 0.39.0",
  "wry",
+]
+
+[[package]]
+name = "tauri-src"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "cocoa",
+ "dotenv",
+ "indexmap",
+ "serde",
+ "serde_json",
+ "shared",
+ "surrealdb",
+ "tauri",
+ "tauri-build",
+ "thiserror",
+ "tokio",
+ "uuid 1.2.1",
 ]
 
 [[package]]
@@ -7403,9 +7394,9 @@ dependencies = [
 
 [[package]]
 name = "yewdux"
-version = "0.8.2"
+version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d88105531e54af9119ebde3a3779e73798351331d2e5b0e96e107eb50f340d37"
+checksum = "f7639d574e19277721537d6d56b98f328a3afbcce0a6159d962b83b96aed2320"
 dependencies = [
  "anymap",
  "log",
@@ -7422,9 +7413,9 @@ dependencies = [
 
 [[package]]
 name = "yewdux-macros"
-version = "0.8.2"
+version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f26206be1a9448cafa5fbcab4b2d58a72504ec588f1a89b2aff4483fdbd62703"
+checksum = "6b9edcda9a44e45c503c22f04212a173905fe150d97cbeb678484ed0830bfbf9"
 dependencies = [
  "darling 0.13.4",
  "proc-macro-error",
