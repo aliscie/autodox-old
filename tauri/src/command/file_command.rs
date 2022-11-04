@@ -31,7 +31,7 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
     let parent_id = data.parent_id;
     store.exec_create(data).await?;
     let sql = format!(
-        r#"update $tb set files.adjacency.`{:?}` += $va, files.adjacency.`{:?}` = [], files.vertices += $ia"#,
+        r#"update $tb set api.adjacency.`{:?}` += $va, api.adjacency.`{:?}` = [], api.vertices += $ia"#,
         parent_id, id
     );
     let vars: BTreeMap<String, Value> = map![
@@ -50,7 +50,7 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
 pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirectory>> {
     let store = ctx.get_store();
     let res: Vec<FileDirectory> = store
-        .exec_get::<FileDirectory>(None, Some("files.vertices.*.*"))
+        .exec_get::<FileDirectory>(None, Some("api.vertices.*.*"))
         .await?
         .into_iter()
         .map(|f| FileDirectory::try_from(f))
@@ -66,7 +66,7 @@ pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirector
 pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDirectory> {
     let store = ctx.get_store();
     let res = store
-        .exec_get::<FileDirectory>(Some(id.to_string()), Some("files.vertices.*.*"))
+        .exec_get::<FileDirectory>(Some(id.to_string()), Some("api.vertices.*.*"))
         .await?
         .remove(0);
     Ok(res.try_into()?)
@@ -82,7 +82,7 @@ pub async fn change_directory(
 ) -> Result<()> {
     let store = ctx.get_store();
     let sql = format!(
-        "UPDATE $tb SET files.adjacency.`{:?}` -= $val",
+        "UPDATE $tb SET api.adjacency.`{:?}` -= $val",
         old_parent_id
     );
     let vars: BTreeMap<String, Value> = BTreeMap::from([
@@ -96,7 +96,7 @@ pub async fn change_directory(
         .datastore
         .execute(sql.as_str(), &store.session, Some(vars.clone()), false)
         .await?;
-    let sql = format!("UPDATE $tb SET files.adjacency.`{:?}` += $val", parent_id);
+    let sql = format!("UPDATE $tb SET api.adjacency.`{:?}` += $val", parent_id);
     store
         .datastore
         .execute(sql.as_str(), &store.session, Some(vars.clone()), false)
@@ -128,7 +128,7 @@ mod tests {
         data.files
             .push_children(data.files.root.unwrap(), file.id, file);
         let store = context.get_store();
-        //for i in data.files.vertices.values().into_iter() {
+        //for i in data.api.vertices.values().into_iter() {
         //store.exec_create(i.clone()).await.unwrap();
         //}
         //store.exec_create(data).await.unwrap();

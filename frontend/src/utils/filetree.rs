@@ -47,6 +47,11 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
                 }
             })
         };
+        // TODO
+        //  add actor from ./ic_agent.js file
+        //  let actor  = createActor().await
+        //  let files = actor.read_files().await
+
         let html_node = html! {
             <>
                 <FileComponent
