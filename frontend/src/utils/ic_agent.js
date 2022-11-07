@@ -1,11 +1,23 @@
 import {Actor, HttpAgent} from "@dfinity/agent";
 
-// a function that create ic agent actor
-export const createActor = async (canisterId, agentOptions) => {
+
+export const createActor = async (canisterId) => {
+
+
+    let agentOptions = {
+        // host: "http://localhost:8000",
+        // identity: await HttpAgent.createIdentity(),
+    }
+
     const agent = new HttpAgent(agentOptions);
-    const actor = Actor.createActor(canisterId, {
+
+
+    let config = {
         agent,
         canisterId,
-    });
-    return actor;
+    }
+    return "ok"
+    //TODO
+    // import * as deployerIDL from '../../../backend/backend.did.js'
+    // return Actor.createActor(deployerIDL, config);
 }
