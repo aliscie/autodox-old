@@ -97,7 +97,7 @@ async fn main() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .expect("error while running tauri-src application");
 }
 
 #[tauri::command]
@@ -118,7 +118,7 @@ fn maximize_window(window: Window) -> Result<(), tauri::Error> {
     window.set_fullscreen(true)
 }
 
-// #[tauri::command]
+// #[tauri-src::command]
 // async fn mouse_move(x: i32, y: i32, ctx: State<'_, Context>) -> Result<(), ()> {
 //     let mut w = ctx.store.mouse_loc.lock().await;
 //     w.insert(0, MouseLoc { x, y });
