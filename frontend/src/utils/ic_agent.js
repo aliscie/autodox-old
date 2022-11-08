@@ -1,5 +1,5 @@
 import {Actor, HttpAgent} from "@dfinity/agent";
-
+// import * as ic_id from "./backend.did.js"
 
 export const createActor = async (canisterId) => {
 

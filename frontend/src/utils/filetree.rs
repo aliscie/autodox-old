@@ -66,6 +66,7 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
             let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
 
             let actor = createActor(canister_id).await;
+            // actor.read_files();
             log!(actor)
             // let file_component = FileComponent::new(actor, file_node);
             // let vnode = yew::utils::document().create_element("div").unwrap();
