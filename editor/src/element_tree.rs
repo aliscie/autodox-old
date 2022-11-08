@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use shared::schema::FileNode;
 use shared::Tree;
 use std::{cell::RefCell, collections::HashMap, hash::Hash, rc::Rc};
 use yew::prelude::*;

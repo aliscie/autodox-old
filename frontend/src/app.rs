@@ -3,7 +3,7 @@ use crate::backend;
 use crate::components::TreeList;
 use editor::Editor;
 use shared::schema::{FileDirectory, FileNode};
-use web_sys::MouseEvent;
+use web_sys::{MouseEvent, console};
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
@@ -38,6 +38,7 @@ pub fn app() -> Html {
                     file.id,
                 )
                 .await;
+                console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
                         .files

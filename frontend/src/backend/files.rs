@@ -16,6 +16,7 @@ pub async fn create_file(
         parent_id,
         name,
         id,
+        children : None,
     };
     if info.get().web || info.get().online {
         unimplemented!();
