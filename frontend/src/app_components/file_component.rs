@@ -95,15 +95,15 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             let id = id.clone();
             let mut old_parent_id: Uuid = Uuid::new_v4();
             let dragged_uuid = Uuid::parse_str(dragged.as_str()).unwrap();
-            for (id, value) in &file_dispatch.get().files.adjacency {
+            for (i, value) in &file_dispatch.get().files.adjacency {
                 if value.contains(&dragged_uuid) {
-                    old_parent_id = *id;
+                    old_parent_id = *i;
+                    break;
                 }
             }
             crate::backend::change_directory(
                 id,
                 dragged,
-                file_dispatch.get().id.to_string(),
                 old_parent_id.to_string(),
             );
         })

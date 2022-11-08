@@ -2,6 +2,7 @@ use crate::utils::DeviceInfo;
 use shared::schema::{FileDirectory, FileNodeCreate};
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
+use web_sys::console;
 use yewdux::prelude::Dispatch;
 
 pub async fn create_file(
@@ -16,7 +17,7 @@ pub async fn create_file(
         parent_id,
         name,
         id,
-        children : None,
+        children: None,
     };
     if info.get().web || info.get().online {
         unimplemented!();
@@ -105,17 +106,13 @@ enum FileLocation {
     SYNCED,
 }
 
-pub fn change_directory(
-    parent_id: String,
-    child_id: String,
-    tree_id: String,
-    old_parent_id: String,
-)
+pub fn change_directory(parent_id: String, child_id: String, old_parent_id: String)
 // -> Result<(), String>
 {
     // let mut response: Option<Result<(), String>> = None;
     spawn_local(async move {
-        self::local_change_directory(parent_id, child_id, tree_id, old_parent_id).await;
+        let x = self::local_change_directory(parent_id, child_id, old_parent_id).await;
+        console::log_1(&format!("change_directory returned : {:?}", x).into())
     });
     // return response.unwrap();
 }
@@ -123,7 +120,6 @@ pub fn change_directory(
 async fn local_change_directory(
     parent_id: String,
     child_id: String,
-    tree_id: String,
     old_parent_id: String,
 ) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -134,7 +130,7 @@ async fn local_change_directory(
     if !info.get().web {
         return crate::backend::call_surreal(
             "change_directory".to_string(),
-            Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id, "treeId" : tree_id, "oldParentId" : old_parent_id})),
+            Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id, "oldParentId" : old_parent_id})),
         )
         .await
         .map(|e| {

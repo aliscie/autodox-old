@@ -7,7 +7,7 @@ use shared::{
 };
 use std::collections::BTreeMap;
 use surrealdb::sql::*;
-use tauri::{api::dir, State};
+use tauri::State;
 use uuid::Uuid;
 
 /// TODO: wrap all the functions around transactions!
@@ -35,6 +35,7 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
     let id = data.id;
     let parent_id = data.parent_id;
     let directory_id = data.directory_id;
+    println!("create_file data is : {:?}", data);
     store.exec_create(data).await?;
     // cannot use store.exec_update here due to pushing value to array
     let sql = "update $tb set children += $va";
@@ -108,37 +109,39 @@ pub async fn delete_file(id: Uuid, tree_id: Uuid, ctx: State<'_, Context>) -> Re
 pub async fn change_directory(
     child_id: Uuid,
     parent_id: Uuid,
-    tree_id: Uuid,
     old_parent_id: Uuid,
     ctx: State<'_, Context>,
 ) -> Result<()> {
     let store = ctx.get_store();
-    let sql = format!(
-        "UPDATE $tb SET files.adjacency.`{:?}` -= $val",
-        old_parent_id
-    );
+    let sql = "UPDATE $tb SET children -= $val";
     let vars: BTreeMap<String, Value> = BTreeMap::from([
         (
             "tb".into(),
-            Thing::from((FileDirectory::table_name(), tree_id.to_string())).into(),
+            Thing::from((FileNode::table_name(), old_parent_id.to_string())).into(),
         ),
-        ("val".into(), child_id.into()),
+        (
+            "val".into(),
+            Thing::from((FileNode::table_name(), child_id.to_string())).into(),
+        ),
     ]);
     store
         .datastore
-        .execute(sql.as_str(), &store.session, Some(vars), false)
+        .execute(sql, &store.session, Some(vars), false)
         .await?;
-    let sql = format!("UPDATE $tb SET files.adjacency.`{:?}` += $val", parent_id);
+    let sql = "UPDATE $tb SET children += $val";
     let vars: BTreeMap<String, Value> = BTreeMap::from([
         (
             "tb".into(),
-            Thing::from((FileDirectory::table_name(), tree_id.to_string())).into(),
+            Thing::from((FileNode::table_name(), parent_id.to_string())).into(),
         ),
-        ("val".into(), child_id.into()),
+        (
+            "val".into(),
+            Thing::from((FileNode::table_name(), child_id.to_string())).into(),
+        ),
     ]);
     store
         .datastore
-        .execute(sql.as_str(), &store.session, Some(vars), false)
+        .execute(sql, &store.session, Some(vars), false)
         .await?;
     Ok(())
 }
