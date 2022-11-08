@@ -10,7 +10,7 @@ use uuid::Uuid;
 use surrealdb::sql::{Array, Id, Object, Value};
 
 use crate::schema::FileNode;
-use crate::traits::Entity;
+use crate::traits::{Entity, GetId};
 use crate::Error;
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -136,8 +136,21 @@ where
     }
 }
 
+
+impl GetId for FileNode{
+    type Id = Uuid;
+    fn get_id(&self) -> Self::Id {
+        self.id
+    }
+}
+
+// cannot make it generic over Tree<ID, T> since Id is conversion 
+// is problematic with surrealdb
 #[cfg(feature = "tauri")]
-impl TryFrom<Object> for Tree<Uuid, FileNode> {
+impl<T> TryFrom<Object> for Tree<Uuid, T> 
+where
+    T: PartialEq + Eq + Clone + Debug + TryFrom<Object> + Entity + Serialize + GetId<Id = Uuid>,
+{
     type Error = crate::Error;
     /// i am asuming we have selected the vertices field with all the data in the nodes
     fn try_from(value: Object) -> Result<Self, Self::Error> {
@@ -162,11 +175,11 @@ impl TryFrom<Object> for Tree<Uuid, FileNode> {
                     e.record()?.id.to_raw().as_str().try_into().ok()
                 })
                 .collect();
-            let file_node: FileNode = vertex_object
+            let file_node: T = vertex_object
                 .try_into()
-                .map_err(|_| Error::XValueNotOfType("FileNode"))?;
-            tree.adjacency.insert(file_node.id, adjacency);
-            tree.vertices.insert(file_node.id, file_node);
+                .map_err(|_| Error::XValueNotOfType("T cannot be converted to Object"))?;
+            tree.adjacency.insert(file_node.get_id(), adjacency);
+            tree.vertices.insert(file_node.get_id(), file_node);
         }
         let root: Value = value
             .remove("root")
