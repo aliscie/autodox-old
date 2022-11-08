@@ -10,8 +10,8 @@ use yewdux::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let aside_bar_taggol = use_state_eq(|| "".to_string());
-    let toggle_aside = aside_bar_taggol.clone();
+    let aside_bar_toggle = use_state_eq(|| "".to_string());
+    let toggle_aside = aside_bar_toggle.clone();
     let file_dispatch = Dispatch::<FileDirectory>::new();
     // only do it once
     use_effect_with_deps(
@@ -22,7 +22,7 @@ pub fn app() -> Html {
         (),
     );
 
-    let onclick_market_place: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+    let onclick_market_place: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         //TODO
         // history.push(Route::File { id: market_page });
     });
@@ -47,12 +47,12 @@ pub fn app() -> Html {
             })
         });
 
-    return html! {
+    html! {
         <BrowserRouter>
 
         <div id = "app">
         { super::utils::get_titlebar(toggle_aside ) }
-        <aside style={format!("{}",(*aside_bar_taggol).clone())}>
+        <aside style={(*aside_bar_toggle).clone().to_string()}>
 
         <SearchFiltes/>
 
@@ -73,5 +73,5 @@ pub fn app() -> Html {
         <Editor title="text"/>
         </div>
         </BrowserRouter>
-    };
+    }
 }

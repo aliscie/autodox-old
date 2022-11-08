@@ -1,20 +1,21 @@
 extern crate web_sys;
 
-use serde::{Deserialize, Serialize};
-use std::cell::RefCell;
+use std::{borrow::Borrow, collections::HashMap};
+// use std::cell::RefCell;
 use std::convert::TryInto;
 use std::rc::Rc;
-use std::{borrow::Borrow, collections::HashMap};
-use wasm_bindgen::prelude::Closure;
+
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use web_sys::{window, DragEvent, Element, KeyboardEvent, MouseEvent};
+use wasm_bindgen::prelude::Closure;
+use web_sys::{DragEvent, Element, KeyboardEvent, MouseEvent, window};
 use yew::prelude::*;
-use yewdux::prelude::{use_store, Dispatch};
+use yewdux::prelude::{Dispatch, use_store};
 
 use crate::element_tree::{Attrs, EditorElement, ElementTree};
+use crate::plugins::PluginTraits;
 
 use super::PasteConverter;
-use crate::plugins::PluginTraits;
 
 impl PasteConverter {
     pub fn parse_paste(editor: Rc<Element>) {

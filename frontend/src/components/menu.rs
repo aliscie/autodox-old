@@ -1,10 +1,12 @@
-use crate::router::Route;
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::prelude::Closure;
-use wasm_bindgen::JsValue;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use web_sys::{window, DragEvent, Element, MouseEvent, Node};
+use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::Closure;
+use web_sys::{DragEvent, Element, MouseEvent, Node, window};
 use yew::prelude::*;
+
+use crate::router::Route;
+
 #[derive(PartialEq, Properties)]
 pub struct MenuProps {
     pub items: Vec<Html>,
@@ -32,6 +34,7 @@ pub fn menu(props: &MenuProps) -> Html {
 
         if &drop_down != &None {
             let drop_down = drop_down.unwrap();
+            // TODO use &curr instead of some(&curr)
             let is_dropdown_element = drop_down.contains(Some(&curr));
             if is_dropdown_element {
                 hide = !(&_click_on != &None && &_click_on.unwrap() == &true);

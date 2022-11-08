@@ -1,14 +1,13 @@
+use shared::traits::{Creatable, Entity, Updatable};
+use shared::traits::Queryable;
+use std::collections::{BTreeMap, HashMap};
+use surrealdb::{Datastore, Session};
+use surrealdb::sql::*;
+use tokio::sync::Mutex;
 use crate::error::Error;
+use crate::MouseLoc;
 use crate::prelude::*;
 use crate::utils::*;
-use crate::MouseLoc;
-use shared::traits::Queryable;
-use shared::traits::Updatable;
-use shared::traits::{Creatable, Entity};
-use std::collections::{BTreeMap, HashMap};
-use surrealdb::sql::*;
-use surrealdb::{Datastore, Session};
-use tokio::sync::Mutex;
 
 pub struct Store {
     pub datastore: Datastore,
@@ -32,8 +31,8 @@ impl Store {
         tid: Option<String>,
         nested_fields: Option<&str>,
     ) -> Result<Vec<Object>>
-    where
-        T: Entity<DatabaseType = Object> + Queryable,
+        where
+            T: Entity<DatabaseType=Object> + Queryable,
     {
         let sql = match nested_fields {
             Some(x) => {
@@ -72,8 +71,8 @@ impl Store {
     }
 
     pub async fn exec_create<T>(&self, data: T) -> Result<String>
-    where
-        T: Creatable + Entity<DatabaseType = Object>,
+        where
+            T: Creatable + Entity<DatabaseType=Object>,
     {
         let sql = "CREATE type::table($tb) CONTENT $data RETURN id";
         let tb = <T as Entity>::table_name();

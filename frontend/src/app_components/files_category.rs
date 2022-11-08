@@ -1,9 +1,10 @@
 use rand::seq::SliceRandom;
-use yew::prelude::*;
 use yew::{function_component, html, Html};
+use yew::prelude::*;
+
+use shared::*;
 
 use crate::components::Menu;
-use shared::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {

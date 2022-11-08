@@ -1,15 +1,16 @@
-use crate::components::{Avatar, Menu};
-use crate::IS_LOGEDIN;
-use shared::log;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
+
+use crate::components::{Avatar, Menu};
+use crate::IS_LOGEDIN;
 
 #[wasm_bindgen(module = "/src/app_components/identify.js")]
 extern "C" {
     #[wasm_bindgen(js_name = identify)]
     pub async fn identify() -> JsValue;
 }
+
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
@@ -36,9 +37,10 @@ pub fn title_avatar_component() -> Html {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
             let user_token = identify().await;
-            log!(user_token);
+            // log!(user_token);
         });
     });
+
 
     if *IS_LOGEDIN {
         return html! { <>

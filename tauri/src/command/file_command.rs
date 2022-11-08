@@ -1,14 +1,17 @@
-use crate::prelude::*;
-use crate::utils::map;
-use crate::Context;
+use std::collections::BTreeMap;
+
+use surrealdb::sql::*;
+use uuid::Uuid;
+
 use shared::{
     schema::{FileDirectory, FileNode, FileNodeCreate},
     traits::Entity,
 };
-use std::collections::BTreeMap;
-use surrealdb::sql::*;
 use tauri::State;
-use uuid::Uuid;
+
+use crate::Context;
+use crate::prelude::*;
+use crate::utils::map;
 
 /// TODO: wrap all the functions around transactions!
 #[tauri::command]
@@ -148,14 +151,17 @@ pub async fn change_directory(
 
 #[cfg(test)]
 mod tests {
-    use crate::{Context, Store};
     use shared::schema::{FileDirectory, FileNode};
+
+    use crate::{Context, Store};
+
     async fn setup() -> Context {
         let store = Store::new()
             .await
             .expect("Cannot create connection to database!");
         Context::new(store)
     }
+
     #[tokio::test]
     async fn test_create_file() {
         let context = setup().await;

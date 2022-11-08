@@ -33,11 +33,10 @@ pub fn download(props: &DownloadProps) -> Html {
     ];
 
     if *IS_WEB {
-        html! {<>
+        return html! {<>
             <Menu event={position.clone()}{items}/>
             <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
-        </>}
-    } else {
-        html! {""}
+        </>};
     }
+    return html! {""};
 }

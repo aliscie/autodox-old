@@ -1,9 +1,11 @@
-use crate::components::Menu;
-use shared::schema::FileDirectory;
 use uuid::Uuid;
 use web_sys::{console::log_1, Element, MouseEvent};
 use yew::prelude::*;
 use yewdux::prelude::*;
+
+use shared::schema::FileDirectory;
+
+use crate::components::Menu;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {

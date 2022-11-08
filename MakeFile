@@ -1,6 +1,10 @@
 run:
 	cargo tauri dev && cd frontend; npx webpack serve
 
+run_web:
+	cd frontend; npx webpack serve
+
+
 build:
 	cargo tauri build
 
@@ -30,7 +34,7 @@ get_dfx_balance:
 
 
 deploy:
-	# make sure to run dfx start in order to start the smulated blockchain locally
+	# make sure to run dfx start in order to start the simulated blockchain locally
 	# make sure to have Cargo.lock files so the dfx can install from it because dfx does not install from Cargo.toml
 	#dfx deploy registrar --with-cycles 10000000000000
 	dfx deploy backend

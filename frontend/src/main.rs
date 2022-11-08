@@ -4,7 +4,8 @@ extern crate wasm_bindgen;
 extern crate wasm_bindgen_futures;
 extern crate yew;
 
-use app::App;
+use std::env;
+
 use dotenv::dotenv;
 use futures::executor;
 use ic_cdk;
@@ -12,8 +13,10 @@ use ic_cdk::api::call::RejectionCode;
 use ic_cdk::export::Principal;
 use lazy_static::lazy_static;
 use reqwest;
-use std::env;
 use wasm_bindgen_futures::spawn_local;
+use web_sys;
+
+use app::App;
 
 mod app;
 mod app_components;
@@ -22,8 +25,6 @@ mod components;
 mod router;
 mod test;
 mod utils;
-
-use web_sys;
 
 lazy_static! {
     pub static ref IS_WEB: bool = {

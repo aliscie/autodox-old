@@ -1,6 +1,7 @@
-use crate::structure::Storage;
 use ic_kit::{candid::candid_method, macros::*};
 use ic_stable_memory::{collections::hash_map::SHashMap, s, stable_memory_init};
+
+use crate::schema::Storage;
 
 #[init]
 #[candid_method(init)]

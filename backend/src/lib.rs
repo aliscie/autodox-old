@@ -1,11 +1,10 @@
 mod apis;
 mod backend_error;
-mod data_structure;
-mod structure;
+mod schema;
 
 use backend_error::*;
 use std::collections::HashMap;
-use structure::*;
+use schema::*;
 
 use ic_kit::{candid::export_service, macros::*};
 

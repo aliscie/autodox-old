@@ -1,8 +1,20 @@
 use std::collections::HashMap;
 
-use crate::{backend_error::BackendError, structure::*};
 use ic_kit::{candid::candid_method, ic, macros::*};
 use ic_stable_memory::{s, utils::ic_types::SPrincipal};
+
+use crate::{backend_error::BackendError, schema::*};
+
+// create a validator function that runner errr if lis is non
+// fn validate_list(list: &HashMap<String, String>, key: String, child_id: String) -> Result<(), BackendError> {
+//     match list.get_cloned(&key) {
+//         None => Err(BackendError::FileDoesNotExist),
+//         Some(list) => match list.get_cloned(child_id) {
+//             None => Err(BackendError::FileDoesNotExist),
+//             Some(data) => Ok(data),
+//         },
+//     }
+// }
 
 #[query]
 #[candid_method(query)]
@@ -13,6 +25,8 @@ pub fn read_file(read_file_data: ReadFileData) -> Result<String, BackendError> {
         None => Err(BackendError::FileDoesNotExist),
         Some(list) => {
             if let Some(parent_id) = read_file_data.parent_id {
+                // TODO replace this with
+                // validate_list(list,&parent_id, &read_file_data.child_id)
                 match list.get_cloned(&parent_id) {
                     None => Err(BackendError::FileDoesNotExist),
                     Some(list) => match list.get_cloned(&read_file_data.child_id) {
@@ -22,6 +36,8 @@ pub fn read_file(read_file_data: ReadFileData) -> Result<String, BackendError> {
                 }
             } else {
                 let default_key = String::new();
+                // TODO replace this with
+                // validate_list(list,&default_key, &read_file_data.child_id)
                 match list.get_cloned(&default_key) {
                     None => Err(BackendError::FileDoesNotExist),
                     Some(list) => match list.get_cloned(&read_file_data.child_id) {

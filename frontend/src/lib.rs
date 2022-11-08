@@ -2,9 +2,13 @@ extern crate futures;
 extern crate shared;
 extern crate wasm_bindgen_futures;
 extern crate yew;
-use app::App;
+
 use lazy_static::lazy_static;
 use wasm_bindgen::prelude::*;
+
+
+use app::App;
+
 mod app;
 mod app_components;
 mod backend;
@@ -13,18 +17,8 @@ mod router;
 mod test;
 mod utils;
 
-use web_sys;
-
 lazy_static! {
-    pub static ref IS_WEB: bool = {
-        #[allow(unused_mut)]
-        let mut m: bool = false;
-        #[cfg(feature = "web")]
-        {
-            m = true;
-        }
-        m
-    };
+    pub static ref IS_WEB: bool = cfg!(feature = "web");
     pub static ref IS_LOGEDIN: bool = false;
 }
 

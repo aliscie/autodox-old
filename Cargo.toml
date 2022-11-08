@@ -5,5 +5,5 @@ members = [
     "tauri", # tauri is out of the workspace because it works indipdently
     "editor",
     "backend",
-    "webscoket_server",
+#    "webscoket_server",
 ]

@@ -1,4 +1,4 @@
-//! XTake(s) remove, return, and type transform value from a key/value object like structure.
+//! XTake(s) remove, return, and type transform value from a key/value object like schema.
 //!
 //! The API to be used are turbofishable:
 //!
@@ -22,15 +22,15 @@ pub trait XTakeImpl<T> {
 ///       XTakeInto is the to be implemented trait
 pub trait XTake {
     fn x_take<T>(&mut self, k: &str) -> Result<Option<T>>
-    where
-        Self: XTakeImpl<T>;
+        where
+            Self: XTakeImpl<T>;
 }
 
 /// Blanket implementation
 impl<S> XTake for S {
     fn x_take<T>(&mut self, k: &str) -> Result<Option<T>>
-    where
-        Self: XTakeImpl<T>,
+        where
+            Self: XTakeImpl<T>,
     {
         XTakeImpl::x_take_impl(self, k)
     }
@@ -41,15 +41,15 @@ impl<S> XTake for S {
 ///       XTakeInto is the to be implemented trait
 pub trait XTakeVal {
     fn x_take_val<T>(&mut self, k: &str) -> Result<T>
-    where
-        Self: XTakeImpl<T>;
+        where
+            Self: XTakeImpl<T>;
 }
 
 /// Blanket implementation
 impl<S> XTakeVal for S {
     fn x_take_val<T>(&mut self, k: &str) -> Result<T>
-    where
-        Self: XTakeImpl<T>,
+        where
+            Self: XTakeImpl<T>,
     {
         let val: Option<T> = XTakeImpl::x_take_impl(self, k)?;
         val.ok_or_else(|| Error::XPropertyNotFound(k.to_string()))
