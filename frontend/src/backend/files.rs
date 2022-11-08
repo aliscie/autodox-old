@@ -48,7 +48,7 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
     }
 }
 
-pub async fn create_directory(data: &FileDirectory) -> Result<(), String> {
+pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
