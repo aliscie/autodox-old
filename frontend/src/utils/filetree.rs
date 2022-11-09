@@ -21,8 +21,8 @@ use crate::router::Route;
 
 #[wasm_bindgen(module = "/src/utils/ic_agent.js")]
 extern "C" {
-    #[wasm_bindgen(js_name = createActor)]
-    pub async fn createActor(canister_id: String) -> JsValue;
+    #[wasm_bindgen(js_name = read)]
+    pub async fn read(canister_id: String) -> JsValue;
 }
 
 
@@ -64,10 +64,8 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
         //  let files = actor.read_files().await
         spawn_local(async move {
             let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-
-            let actor = createActor(canister_id).await;
-            let files = actor.read_files().await
-            log!(files)
+            let files = read(canister_id).await;
+            log!(files);
             // let file_component = FileComponent::new(actor, file_node);
             // let vnode = yew::utils::document().create_element("div").unwrap();
             // file_component.mount(vnode);
