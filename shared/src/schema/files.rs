@@ -1,5 +1,5 @@
 use crate::{
-    traits::{Creatable, Entity, Queryable},
+    traits::{Creatable, Entity, Queryable, Updatable},
     Error, Tree,
 };
 use indexmap::IndexSet;
@@ -11,7 +11,7 @@ use uuid::Uuid;
 #[cfg(feature = "frontend")]
 use yewdux::store::Store;
 
-use super::EditorElement;
+use super::{EditorElement, ElementTree};
 
 /// type for creating file
 #[derive(Deserialize, Serialize, Debug)]
@@ -20,7 +20,7 @@ pub struct FileNodeCreate {
     pub name: String,
     pub directory_id: Uuid,
     pub parent_id: Uuid,
-    pub children : Option<IndexSet<Uuid>>,
+    pub children: Option<IndexSet<Uuid>>,
 }
 
 #[cfg(feature = "tauri")]
@@ -37,8 +37,9 @@ impl Creatable for FileNodeCreate {}
 #[cfg(feature = "tauri")]
 impl From<FileNodeCreate> for Object {
     fn from(val: FileNodeCreate) -> Self {
-        let children : Vec<Value> = match val.children{
-            Some(x) => x.into_iter()
+        let children: Vec<Value> = match val.children {
+            Some(x) => x
+                .into_iter()
                 .map(|f| Value::Thing(Thing::from((FileNode::table_name(), f.to_string()))))
                 .collect(),
             None => Vec::new(),
@@ -59,6 +60,7 @@ pub struct FileNodeUpdate {
     // TODO : cannot update this using this method think of something else
     pub parent_id: Option<Uuid>,
     pub name: Option<String>,
+    pub element_tree: Option<Uuid>,
 }
 
 #[cfg(feature = "tauri")]
@@ -68,6 +70,9 @@ impl Entity for FileNodeUpdate {
         "file_node".into()
     }
 }
+
+#[cfg(feature = "tauri")]
+impl Updatable for FileNodeUpdate {}
 
 #[cfg(feature = "tauri")]
 impl From<FileNodeUpdate> for Object {
@@ -90,6 +95,12 @@ impl From<FileNodeUpdate> for Object {
         if let Some(name) = value.name {
             object.insert("name".to_owned(), name.into());
         }
+        if let Some(element_tree) = value.element_tree {
+            object.insert(
+                "element_tree".into(),
+                Thing::from((ElementTree::table_name(), element_tree.to_string())).into(),
+            );
+        }
         Object(object)
     }
 }
@@ -98,6 +109,7 @@ impl From<FileNodeUpdate> for Object {
 pub struct FileNode {
     pub id: Uuid,
     pub name: String,
+    pub element_tree: Option<Uuid>,
 }
 
 impl Default for FileNode {
@@ -105,6 +117,7 @@ impl Default for FileNode {
         Self {
             id: Uuid::new_v4(),
             name: "untitled".to_string(),
+            element_tree: None,
         }
     }
 }
@@ -147,6 +160,7 @@ impl Default for FileDirectory {
             FileNode {
                 id,
                 name: "root".into(),
+                element_tree: None,
             },
         );
         d.files.adjacency.insert(id.clone(), IndexSet::new());
@@ -231,8 +245,7 @@ impl TryFrom<Object> for FileNode {
 #[cfg(feature = "tauri")]
 impl TryFrom<Object> for FileDirectory {
     type Error = crate::Error;
-    fn try_from(value: Object) -> Result<Self, Self::Error> {
-        let mut value = value;
+    fn try_from(mut value: Object) -> Result<Self, Self::Error> {
         Ok(Self {
             id: value
                 .remove("id")

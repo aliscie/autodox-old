@@ -164,9 +164,9 @@ impl Store {
 
     pub async fn exec_update<T: Updatable + Entity<DatabaseType = Object>>(
         &self,
-        tb: &str,
+        tb: String,
         data: T,
-        filter: Option<Value>,
+        filter: Option<Object>,
     ) -> Result<()> {
         let mut sql = String::from("UPDATE $tb MERGE $va");
 
@@ -177,9 +177,8 @@ impl Store {
 
         // --- Apply the filter
         if let Some(filter) = filter {
-            let obj: Object = filter.try_into()?;
             sql.push_str(" WHERE");
-            for (idx, (k, v)) in obj.into_iter().enumerate() {
+            for (idx, (k, v)) in filter.into_iter().enumerate() {
                 let var = format!("w{idx}");
                 sql.push_str(&format!(" {k} = ${var}"));
                 vars.insert(var, v);

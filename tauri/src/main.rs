@@ -1,9 +1,8 @@
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
 
-use std::collections::HashMap;
 
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
@@ -11,8 +10,7 @@ use dotenv::dotenv;
 
 use context::Context;
 use store::Store;
-use tauri::{Runtime, State, Window};
-use tokio::sync::Mutex;
+use tauri::{Runtime, Window};
 
 mod command;
 mod prelude;
@@ -28,10 +26,6 @@ mod utils;
 pub struct MouseLoc {
     x: i32,
     y: i32,
-}
-
-struct Storage {
-    store: Mutex<HashMap<u32, MouseLoc>>,
 }
 
 pub trait WindowExt {
@@ -87,6 +81,9 @@ async fn main() {
             crate::command::file_command::create_file,
             crate::command::file_command::delete_file,
             crate::command::file_command::change_directory,
+            crate::command::element::get_element_tree,
+            crate::command::element::create_element_tree,
+            crate::command::element::create_element,
         ])
         .setup(|app| {
             #[cfg(target_os = "macos")]

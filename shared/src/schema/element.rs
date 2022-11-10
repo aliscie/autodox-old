@@ -10,7 +10,7 @@ use surrealdb::sql::{Array, Object, Thing, Value};
 use uuid::Uuid;
 
 use crate::{
-    traits::{Creatable, Entity, GetId},
+    traits::{Creatable, Entity, GetId, Queryable},
     Error, Tree,
 };
 
@@ -20,6 +20,7 @@ use crate::{
 //impl InternalId for Uuid {}
 //impl InternalId for String {}
 
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct ElementTree {
     pub id: Uuid,
     pub elements: Tree<Uuid, EditorElement>,
@@ -41,6 +42,19 @@ pub enum Attrs {
     Src,
 }
 
+impl Default for ElementTree {
+    fn default() -> Self {
+        let mut tree = Tree::new();
+        let element = EditorElement::default();
+        tree.root = Some(element.id);
+        tree.vertices.insert(element.id, element);
+        Self {
+            id: Uuid::new_v4(),
+            elements: tree,
+        }
+    }
+}
+
 impl Default for EditorElement {
     fn default() -> Self {
         // this creates a root element
@@ -54,20 +68,12 @@ impl Default for EditorElement {
 
 impl EditorElement {
     #[inline]
-    pub fn new(
-        id: Uuid,
-        text: String,
-        attrs: HashMap<Attrs, String>,
-    ) -> Self {
-        Self {
-            id,
-            text,
-            attrs,
-        }
+    pub fn new(id: Uuid, text: String, attrs: HashMap<Attrs, String>) -> Self {
+        Self { id, text, attrs }
     }
 }
 
-impl GetId for EditorElement{
+impl GetId for EditorElement {
     type Id = Uuid;
     fn get_id(&self) -> Self::Id {
         self.id
@@ -87,8 +93,9 @@ pub struct EditorElementCreate {
     pub id: Uuid,
     pub text: String,
     pub attrs: HashMap<Attrs, String>,
-    pub file_id: Uuid,
-    pub parent: Option<Uuid>,
+    pub tree_id: Uuid,
+    pub parent_id : Uuid,
+    pub children: Option<IndexSet<Uuid>>,
 }
 
 /// type for updating editor elements
@@ -109,7 +116,56 @@ impl Entity for EditorElementCreate {
 }
 
 #[cfg(feature = "tauri")]
-fn attrs_to_object(attrs: HashMap<Attrs, String>, x : &mut BTreeMap<String, Value>){
+impl Creatable for EditorElementCreate {}
+
+#[cfg(feature = "tauri")]
+impl Creatable for ElementTree {}
+
+#[cfg(feature = "tauri")]
+impl Queryable for ElementTree {}
+
+#[cfg(feature = "tauri")]
+impl TryFrom<Object> for ElementTree {
+    type Error = Error;
+    fn try_from(mut value: Object) -> Result<Self, Self::Error> {
+        Ok(Self{
+            id: value
+                .remove("id")
+                .ok_or(Error::XPropertyNotFound(format!(
+                    "id not found in object for ElementTree"
+                )))?
+                // convert value into a id type
+                .record()
+                .ok_or(Error::XValueNotOfType("id not of type surrealdb::Thing"))?
+                // get the actual id
+                .id
+                // converting into string
+                .to_raw()
+                .as_str()
+                // into uuid
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("uuid"))?,
+            elements: value
+                .remove("elements")
+                .and_then(|f| -> Option<Object> { f.try_into().ok() })
+                .ok_or(Error::XPropertyNotFound(format!(
+                    "files not found in object for FileDirectory"
+                )))?
+                .try_into()?,
+        })
+    }
+}
+
+#[cfg(feature = "tauri")]
+impl Entity for ElementTree {
+    type DatabaseType = Object;
+    fn table_name() -> String {
+        "element_tree".into()
+    }
+}
+
+#[cfg(feature = "tauri")]
+fn attrs_to_object(attrs: HashMap<Attrs, String>, x: &mut BTreeMap<String, Value>) {
     for (attrs, data) in attrs {
         let attr = match attrs {
             Attrs::Src => "Src",
@@ -123,20 +179,20 @@ fn attrs_to_object(attrs: HashMap<Attrs, String>, x : &mut BTreeMap<String, Valu
 #[cfg(feature = "tauri")]
 impl From<EditorElementCreate> for Object {
     fn from(value: EditorElementCreate) -> Self {
+        let children: Vec<Value> = match value.children {
+            Some(x) => x
+                .into_iter()
+                .map(|f| Value::Thing(Thing::from((EditorElement::table_name(), f.to_string()))))
+                .collect(),
+            None => Vec::new(),
+        };
         let mut x: BTreeMap<String, Value> = BTreeMap::from([
             ("id".into(), value.id.into()),
             ("text".into(), value.text.into()),
-            ("children".into(), Array::new().into()),
+            ("children".into(), Array(children).into()),
         ])
         .into();
         attrs_to_object(value.attrs, &mut x);
-        match value.parent {
-            Some(u) => x.insert(
-                "parent".to_owned(),
-                Thing::from((EditorElement::table_name(), u.to_string())).into(),
-            ),
-            None => x.insert("parent".to_owned(), Value::None),
-        };
         x.into()
     }
 }
