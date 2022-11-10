@@ -1,19 +1,13 @@
 extern crate web_sys;
 extern crate yew;
-
 pub use app::Editor;
-use yew::prelude::*;
-
 mod app;
-
 pub(crate) mod app_components;
 pub(crate) mod components;
-mod element_tree;
+mod render;
 mod plugins;
 mod utils;
-
-use yew::prelude::*;
-use yew::{function_component, html, Html};
+use yew::{function_component, html};
 #[function_component(App)]
 pub fn app_component() -> Html {
     html! { <Editor title="text"/> }

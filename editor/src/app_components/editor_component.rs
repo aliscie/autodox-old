@@ -1,17 +1,17 @@
 use crate::components::Drag;
-use crate::element_tree::EditorElement;
+use shared::schema::EditorElement;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{window, Element, MouseEvent};
 use yew::prelude::*;
-use yew::{function_component, html, Html, UseStateHandle};
+use yew::{function_component, html, UseStateHandle};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub node: EditorElement,
 }
 
-#[function_component(Render)]
+#[function_component(EditorComponent)]
 pub fn render(props: &Props) -> Html {
     let node_ref = NodeRef::default();
     let position: UseStateHandle<String> = use_state(|| "display:none".to_string());
