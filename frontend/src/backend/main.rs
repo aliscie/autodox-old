@@ -13,10 +13,18 @@ use shared::schema::FileDirectory;
 use shared::log;
 use crate::backend::read;
 
-// -> Vec<FileNode>
+
 pub fn get_files() {
-    // let mut files = Vec::new();
-    // files
+    // TODO unify get files from desktop and from IC // -> Vec<FileNode>
+    //  let mut files = Vec::new();
+    //  files
+    //  if IS_IC_AUTHENTICATED {
+    //     files.extend(actor.read_files())
+    //  }
+    //  if !IS_WEB {
+    //     files.extend(tauri::commands.read_files())
+    //  }
+    //  return files
     spawn_local(async move {
         let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
         let files = read(canister_id).await;
