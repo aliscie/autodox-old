@@ -1,8 +1,22 @@
 // here we create general app_components that are reusable by anyapp
 // Don't import anything this folder from outside.
 
+use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::*;
+// use wasm_bindgen::prelude;
 pub use files::*;
 pub use main::*;
 
 mod files;
 mod main;
+
+
+#[wasm_bindgen(module = "/src/backend/ic_agent.js")]
+extern "C" {
+    #[wasm_bindgen(js_name = read)]
+    pub async fn read(canister_id: String) -> JsValue;
+
+    #[wasm_bindgen(js_name = createActor)]
+    pub async fn createActor(canister_id: String) -> JsValue;
+}
+

@@ -4,22 +4,17 @@ use std::rc::Rc;
 
 use indexmap::IndexSet;
 use uuid::Uuid;
-use wasm_bindgen::JsValue;
-use wasm_bindgen::prelude::wasm_bindgen;
-use wasm_bindgen_futures::spawn_local;
 use web_sys::{Element, MouseEvent};
 use yew::{html, Html};
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
 use yew_router::prelude::*;
 
-use shared::log;
 use shared::schema::FileDirectory;
 
 use crate::app_components::FileComponent;
+use crate::backend;
 use crate::router::Route;
-use crate::utils::{createActor, read};
-
 
 pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
     let map: Rc<RefCell<HashMap<Uuid, VNode>>> = use_mut_ref(HashMap::new);
@@ -53,15 +48,7 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
                 }
             })
         };
-        spawn_local(async move {
-            let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-            let files = read(canister_id).await;
-            log!(files);
-            // TODO instead of have a read function please call the actor here then call read
-            //  let actor = createActor(canister_id).await;
-            //  let files = actor.read_files().await;
-            //  log!(files);
-        });
+        backend::get_files();
 
         let html_node = html! {
             <>

@@ -8,6 +8,30 @@ use yewdux::prelude::Dispatch;
 use shared::invoke_async;
 use shared::schema::FileDirectory;
 
+
+
+use shared::log;
+use crate::backend::read;
+
+// -> Vec<FileNode>
+pub fn get_files() {
+    // let mut files = Vec::new();
+    // files
+    spawn_local(async move {
+        let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+        let files = read(canister_id).await;
+        log!(files);
+        // files
+        // TODO instead of have a read function please call the actor here then call read
+        //  let actor = createActor(canister_id).await;
+        //  let files = actor.read_files().await;
+        //  log!(files);
+    });
+
+    // return files here files
+
+}
+
 pub fn initialize() -> Result<(), String> {
     spawn_local(async move {
         let x = self::on_startup().await;
