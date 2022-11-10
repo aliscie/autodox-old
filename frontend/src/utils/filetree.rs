@@ -62,15 +62,15 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
         //  add actor from ./ic_agent.js file
         //  let actor  = createActor().await
         //  let files = actor.read_files().await
-        spawn_local(async move {
-            let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-            let files = read(canister_id).await;
-            log!(files);
+        //spawn_local(async move {
+            //let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+            //let files = read(canister_id).await;
+            //log!(files);
             // let file_component = FileComponent::new(actor, file_node);
             // let vnode = yew::utils::document().create_element("div").unwrap();
             // file_component.mount(vnode);
             // map.borrow_mut().insert(id, vnode);
-        });
+        //});
 
         let html_node = html! {
             <>

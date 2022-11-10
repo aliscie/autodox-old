@@ -67,7 +67,7 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
 pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirectory>> {
     let store = ctx.get_store();
     let res: Vec<FileDirectory> = store
-        .exec_get::<FileDirectory>(None, Some("api.vertices.*.*"))
+        .exec_get::<FileDirectory>(None, Some("files.vertices.*.*"))
         .await?
         .into_iter()
         .map(|f| FileDirectory::try_from(f))
@@ -81,7 +81,7 @@ pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirector
 pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDirectory> {
     let store = ctx.get_store();
     let res = store
-        .exec_get::<FileDirectory>(Some(id.to_string()), Some("api.vertices.*.*"))
+        .exec_get::<FileDirectory>(Some(id.to_string()), Some("files.vertices.*.*"))
         .await?
         .remove(0);
     Ok(res.try_into()?)

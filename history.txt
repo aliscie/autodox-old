@@ -1,6 +1,4 @@
 #V2
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() {
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() { return true; }
 select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() { return false; }
 select * from ["hello"] -= "hello";
 select * from ["hello"] -= "hello"
@@ -91,6 +89,8 @@ select * from file_directory;
 select * from file_node;
 select * from file_directory;
 select * form file_node;
+select * from file_node;
+select * from file_directory;
 select * from file_node;
 select * from file_directory;
 select * from file_node;
