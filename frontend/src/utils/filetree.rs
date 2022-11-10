@@ -4,27 +4,16 @@ use std::rc::Rc;
 
 use indexmap::IndexSet;
 use uuid::Uuid;
-use wasm_bindgen::JsValue;
-use wasm_bindgen::prelude::wasm_bindgen;
-use wasm_bindgen_futures::spawn_local;
 use web_sys::{Element, MouseEvent};
-use yew::{html, Html};
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
+use yew::{html, Html};
 use yew_router::prelude::*;
 
-use shared::log;
 use shared::schema::FileDirectory;
 
 use crate::app_components::FileComponent;
 use crate::router::Route;
-
-#[wasm_bindgen(module = "/src/utils/ic_agent.js")]
-extern "C" {
-    #[wasm_bindgen(js_name = read)]
-    pub async fn read(canister_id: String) -> JsValue;
-}
-
 
 pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
     let map: Rc<RefCell<HashMap<Uuid, VNode>>> = use_mut_ref(HashMap::new);
@@ -63,13 +52,13 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
         //  let actor  = createActor().await
         //  let files = actor.read_files().await
         //spawn_local(async move {
-            //let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-            //let files = read(canister_id).await;
-            //log!(files);
-            // let file_component = FileComponent::new(actor, file_node);
-            // let vnode = yew::utils::document().create_element("div").unwrap();
-            // file_component.mount(vnode);
-            // map.borrow_mut().insert(id, vnode);
+        //let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+        //let files = read(canister_id).await;
+        //log!(files);
+        // let file_component = FileComponent::new(actor, file_node);
+        // let vnode = yew::utils::document().create_element("div").unwrap();
+        // file_component.mount(vnode);
+        // map.borrow_mut().insert(id, vnode);
         //});
 
         let html_node = html! {
@@ -104,6 +93,6 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
         .into_iter()
         .map(|f| map.borrow().get(f).unwrap().to_owned())
         .collect::<Html>()
-//let x = map.borrow().get(&start).unwrap().clone();
-//x
+    //let x = map.borrow().get(&start).unwrap().clone();
+    //x
 }

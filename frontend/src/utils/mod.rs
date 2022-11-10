@@ -1,3 +1,5 @@
+use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::window;
 
 pub use device_info::DeviceInfo;
