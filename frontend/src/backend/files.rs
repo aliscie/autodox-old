@@ -200,7 +200,7 @@ async fn local_change_directory(
 //
 // fn delete_file(id: Uuid, file_location: FileLocation) {
 //     if file_location == FileLocation.LOCAL {
-//         tauri::commands: delete_file(id);
+//         tauri-src::commands: delete_file(id);
 //     }
 //     if file_location == FileLocation.CLOUD {
 //         params = [("method", "delete_file"), ("id", id)];
@@ -208,7 +208,7 @@ async fn local_change_directory(
 //     }
 //
 //     if file_location == FileLocation.SYNCED {
-//         tauri::commands: delete_file(id);
+//         tauri-src::commands: delete_file(id);
 //         params = [("method", "delete_file"), ("id", id)];
 //         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
 //     }

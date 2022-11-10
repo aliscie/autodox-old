@@ -1,15 +1,16 @@
-run:
-	cargo tauri dev && cd frontend; npx webpack serve
-
 run_web:
 	cd frontend; npx webpack serve
 
+run_desktop:
+	cargo tauri dev
 
 build:
 	cargo tauri build
 
 kill:
 	kill -INT $(lsof -t -i :8080)
+	# for window netstat -ano | findstr :8080
+
 
 update:
 	cargo update
@@ -26,7 +27,7 @@ get_principal:
 create_token:
 	dfx canister create token
 
-ddd:
+dfx_owner:
 	OWNER_PUBLIC_KEY="principal \"$( \dfx identity get-principal )\""
 
 get_dfx_balance:

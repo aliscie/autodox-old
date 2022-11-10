@@ -1,12 +1,16 @@
 use serde::{Deserialize, Serialize};
 use shared::Tree;
 use std::{cell::RefCell, collections::HashMap, hash::Hash, rc::Rc};
+
+use serde::{Deserialize, Serialize};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-pub type ElementId = u64;
+use shared::Tree;
 
 use crate::app_components::Render;
+
+pub type ElementId = u64;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default, Store)]
 pub struct ElementTree {
@@ -40,7 +44,7 @@ impl ElementTree {
         for (id, node) in self.elements.into_iter(start) {
             let mut has_children = false;
             if let Some(children) = self.elements.adjacency.get(id) {
-                has_children = children.len() > 0;
+                has_children = !children.is_empty();
             }
             let html_node = html! {
                 <>

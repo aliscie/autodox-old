@@ -25,6 +25,6 @@ mod tests {
         use std::path::PathBuf;
 
         let dir = PathBuf::from(env::current_dir().unwrap());
-        write(dir.join("backend.did"), export_candid()).expect("Write failed.");
+        write(dir.join("backend.did.js"), export_candid()).expect("Write failed.");
     }
 }

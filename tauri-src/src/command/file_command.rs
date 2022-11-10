@@ -9,9 +9,9 @@ use shared::{
 };
 use tauri::State;
 
-use crate::Context;
 use crate::prelude::*;
 use crate::utils::map;
+use crate::Context;
 
 /// TODO: wrap all the functions around transactions!
 #[tauri::command]
@@ -67,7 +67,7 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
 pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirectory>> {
     let store = ctx.get_store();
     let res: Vec<FileDirectory> = store
-        .exec_get::<FileDirectory>(None, Some("files.vertices.*.*"))
+        .exec_get::<FileDirectory>(None, Some("api.vertices.*.*"))
         .await?
         .into_iter()
         .map(|f| FileDirectory::try_from(f))
@@ -81,7 +81,7 @@ pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirector
 pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDirectory> {
     let store = ctx.get_store();
     let res = store
-        .exec_get::<FileDirectory>(Some(id.to_string()), Some("files.vertices.*.*"))
+        .exec_get::<FileDirectory>(Some(id.to_string()), Some("api.vertices.*.*"))
         .await?
         .remove(0);
     Ok(res.try_into()?)
@@ -173,7 +173,7 @@ mod tests {
         data.files
             .push_children(data.files.root.unwrap(), file.id, file);
         let store = context.get_store();
-        //for i in data.files.vertices.values().into_iter() {
+        //for i in data.api.vertices.values().into_iter() {
         //store.exec_create(i.clone()).await.unwrap();
         //}
         //store.exec_create(data).await.unwrap();

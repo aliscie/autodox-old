@@ -2,7 +2,7 @@
 members = [
     "shared",
     "frontend",
-    "tauri", # tauri is out of the workspace because it works indipdently
+    "tauri-src", # tauri-src is out of the workspace because it works indipdently
     "editor",
     "backend",
 #    "webscoket_server",
