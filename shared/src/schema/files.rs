@@ -1,15 +1,17 @@
 use crate::{
-    traits::{Creatable, Entity, Queryable},
+    traits::{Creatable, Entity, Queryable, Updatable},
     Error, Tree,
 };
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 #[cfg(feature = "tauri")]
-use surrealdb::sql::{Object, Value};
+use surrealdb::sql::{Array, Object, Thing, Value};
 use uuid::Uuid;
 #[cfg(feature = "frontend")]
 use yewdux::store::Store;
+
+use super::{EditorElement, ElementTree};
 
 /// type for creating file
 #[derive(Deserialize, Serialize, Debug)]
@@ -18,6 +20,7 @@ pub struct FileNodeCreate {
     pub name: String,
     pub directory_id: Uuid,
     pub parent_id: Uuid,
+    pub children: Option<IndexSet<Uuid>>,
 }
 
 #[cfg(feature = "tauri")]
@@ -34,12 +37,71 @@ impl Creatable for FileNodeCreate {}
 #[cfg(feature = "tauri")]
 impl From<FileNodeCreate> for Object {
     fn from(val: FileNodeCreate) -> Self {
+        let children: Vec<Value> = match val.children {
+            Some(x) => x
+                .into_iter()
+                .map(|f| Value::Thing(Thing::from((FileNode::table_name(), f.to_string()))))
+                .collect(),
+            None => Vec::new(),
+        };
         BTreeMap::from([
             ("name".into(), val.name.into()),
             ("id".into(), val.id.into()),
-            ("data".into(), "".into())
+            ("children".into(), children.into()),
         ])
         .into()
+    }
+}
+
+/// type for updating file_node
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
+pub struct FileNodeUpdate {
+    pub children: Option<IndexSet<Uuid>>,
+    // TODO : cannot update this using this method think of something else
+    pub parent_id: Option<Uuid>,
+    pub name: Option<String>,
+    pub element_tree: Option<Uuid>,
+}
+
+#[cfg(feature = "tauri")]
+impl Entity for FileNodeUpdate {
+    type DatabaseType = Object;
+    fn table_name() -> String {
+        "file_node".into()
+    }
+}
+
+#[cfg(feature = "tauri")]
+impl Updatable for FileNodeUpdate {}
+
+#[cfg(feature = "tauri")]
+impl From<FileNodeUpdate> for Object {
+    fn from(value: FileNodeUpdate) -> Self {
+        let mut object = BTreeMap::new();
+        if let Some(children) = value.children {
+            object.insert(
+                "children".into(),
+                Array(
+                    children
+                        .into_iter()
+                        .map(|f| -> Value {
+                            Thing::from((FileNode::table_name(), f.to_string())).into()
+                        })
+                        .collect(),
+                )
+                .into(),
+            );
+        }
+        if let Some(name) = value.name {
+            object.insert("name".to_owned(), name.into());
+        }
+        if let Some(element_tree) = value.element_tree {
+            object.insert(
+                "element_tree".into(),
+                Thing::from((ElementTree::table_name(), element_tree.to_string())).into(),
+            );
+        }
+        Object(object)
     }
 }
 
@@ -47,10 +109,7 @@ impl From<FileNodeCreate> for Object {
 pub struct FileNode {
     pub id: Uuid,
     pub name: String,
-    pub element_tree_id: Option<Uuid>,
-    // skipping it now later this will be removed
-    #[serde(skip)]
-    pub data: String,
+    pub element_tree: Option<Uuid>,
 }
 
 impl Default for FileNode {
@@ -58,8 +117,7 @@ impl Default for FileNode {
         Self {
             id: Uuid::new_v4(),
             name: "untitled".to_string(),
-            element_tree_id: None,
-            data: "".to_string(),
+            element_tree: None,
         }
     }
 }
@@ -71,9 +129,6 @@ impl Entity for FileNode {
         "file_node".to_string()
     }
 }
-
-#[cfg(feature = "tauri")]
-impl Creatable for FileNode {}
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileDirectory {
@@ -105,8 +160,7 @@ impl Default for FileDirectory {
             FileNode {
                 id,
                 name: "root".into(),
-                element_tree_id: None,
-                data: "".into(),
+                element_tree: None,
             },
         );
         d.files.adjacency.insert(id.clone(), IndexSet::new());
@@ -154,7 +208,6 @@ impl From<FileNode> for Object {
         BTreeMap::from([
             ("id".into(), val.id.into()),
             ("name".into(), val.name.into()),
-            ("data".into(), val.data.into()),
         ])
         .into()
     }
@@ -184,12 +237,7 @@ impl TryFrom<Object> for FileNode {
                 .ok_or(Error::XPropertyNotFound("name".to_string()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("String"))?,
-            element_tree_id: None,
-            data: object
-                .remove("data")
-                .ok_or(Error::XPropertyNotFound("data".to_string()))?
-                .try_into()
-                .map_err(|_| Error::XValueNotOfType("String"))?,
+            ..Default::default()
         })
     }
 }
@@ -197,8 +245,7 @@ impl TryFrom<Object> for FileNode {
 #[cfg(feature = "tauri")]
 impl TryFrom<Object> for FileDirectory {
     type Error = crate::Error;
-    fn try_from(value: Object) -> Result<Self, Self::Error> {
-        let mut value = value;
+    fn try_from(mut value: Object) -> Result<Self, Self::Error> {
         Ok(Self {
             id: value
                 .remove("id")

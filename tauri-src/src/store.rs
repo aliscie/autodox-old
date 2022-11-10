@@ -1,10 +1,9 @@
-use shared::traits::{Creatable, Entity};
+use shared::traits::{Creatable, Entity, Updatable};
 use shared::traits::Queryable;
 use std::collections::{BTreeMap, HashMap};
 use surrealdb::{Datastore, Session};
 use surrealdb::sql::*;
 use tokio::sync::Mutex;
-
 use crate::error::Error;
 use crate::MouseLoc;
 use crate::prelude::*;
@@ -161,6 +160,36 @@ impl Store {
             v.push(i.try_into()?);
         }
         Ok(v)
+    }
+
+    pub async fn exec_update<T: Updatable + Entity<DatabaseType = Object>>(
+        &self,
+        tb: String,
+        data: T,
+        filter: Option<Object>,
+    ) -> Result<()> {
+        let mut sql = String::from("UPDATE $tb MERGE $va");
+
+        let mut vars = BTreeMap::from([
+            ("tb".into(), tb.into()),
+            ("va".into(), Value::Object(data.into())),
+        ]);
+
+        // --- Apply the filter
+        if let Some(filter) = filter {
+            sql.push_str(" WHERE");
+            for (idx, (k, v)) in filter.into_iter().enumerate() {
+                let var = format!("w{idx}");
+                sql.push_str(&format!(" {k} = ${var}"));
+                vars.insert(var, v);
+            }
+        }
+        let _ = self
+            .datastore
+            .execute(&sql, &self.session, Some(vars), false)
+            .await?;
+
+        Ok(())
     }
 }
 

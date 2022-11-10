@@ -1,4 +1,10 @@
 use async_trait::async_trait;
+
+pub trait GetId{
+    type Id;
+    fn get_id(&self) -> Self::Id;
+}
+
 /// Trait for saving table names
 pub trait Entity {
     type DatabaseType;

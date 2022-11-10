@@ -9,16 +9,25 @@ use shared::{
 };
 use tauri::State;
 
-use crate::Context;
 use crate::prelude::*;
 use crate::utils::map;
+use crate::Context;
 
 /// TODO: wrap all the functions around transactions!
 #[tauri::command]
 pub async fn create_directory(data: FileDirectory, ctx: State<'_, Context>) -> Result<String> {
     let store = ctx.get_store();
-    for (_, i) in &data.files.vertices {
-        store.exec_create(i.clone()).await?;
+    for (id, i) in &data.files.vertices {
+        let children = data.files.adjacency.get(id).unwrap().clone();
+        let file_create = FileNodeCreate {
+            id: *id,
+            name: i.name.clone(),
+            children: Some(children),
+            // these two doesn't matter using any value
+            directory_id: Uuid::new_v4(),
+            parent_id: Uuid::new_v4(),
+        };
+        let _ = store.exec_create(file_create).await;
     }
     store.exec_create(data).await
 }
@@ -27,17 +36,25 @@ pub async fn create_directory(data: FileDirectory, ctx: State<'_, Context>) -> R
 pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Result<()> {
     let store = ctx.get_store();
     let id = data.id;
-    let directory_id = data.directory_id;
     let parent_id = data.parent_id;
+    let directory_id = data.directory_id;
+    println!("create_file data is : {:?}", data);
     store.exec_create(data).await?;
-    let sql = format!(
-        r#"update $tb set api.adjacency.`{:?}` += $va, api.adjacency.`{:?}` = [], api.vertices += $ia"#,
-        parent_id, id
-    );
+    // cannot use store.exec_update here due to pushing value to array
+    let sql = "update $tb set children += $va";
+    let vars: BTreeMap<String, Value> = map![
+        "tb".into() => Value::Thing((FileNode::table_name(), parent_id.to_string()).into()),
+        "va".into() => Value::Thing((FileNode::table_name(), id.to_string()).into()),
+    ];
+    store
+        .datastore
+        .execute(&sql, &store.session, Some(vars), false)
+        .await?;
+    // adding file to the vertices in file_directory
+    let sql = "update $tb set files.vertices += $va";
     let vars: BTreeMap<String, Value> = map![
         "tb".into() => Value::Thing((FileDirectory::table_name(), directory_id.to_string()).into()),
-        "va".into() => id.into(),
-        "ia".into() => Value::Thing((FileNode::table_name(), id.to_string()).into()),
+        "va".into() => Value::Thing((FileNode::table_name(), id.to_string()).into()),
     ];
     store
         .datastore
@@ -54,9 +71,7 @@ pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirector
         .await?
         .into_iter()
         .map(|f| FileDirectory::try_from(f))
-        .filter_map(|f| {
-            f.ok()
-        })
+        .filter_map(|f| f.ok())
         .collect();
     println!("{:?}", res);
     Ok(res)
@@ -73,33 +88,63 @@ pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDire
 }
 
 #[tauri::command]
+pub async fn delete_file(id: Uuid, tree_id: Uuid, ctx: State<'_, Context>) -> Result<()> {
+    let store = ctx.get_store();
+    let mut file_directory: FileDirectory = store
+        .exec_get::<FileDirectory>(Some(tree_id.to_string()), Some("files.vertices.*.*"))
+        .await?
+        .remove(0)
+        .try_into()?;
+    let mut id_to_remove = vec![id];
+    let mut index = 0;
+    while index < id_to_remove.len() {
+        if let Some(x) = file_directory.files.adjacency.remove(&id_to_remove[index]) {
+            for i in x {
+                id_to_remove.push(i.clone());
+            }
+        }
+        index += 1;
+    }
+    Ok(())
+}
+
+#[tauri::command]
 pub async fn change_directory(
     child_id: Uuid,
     parent_id: Uuid,
-    tree_id: Uuid,
     old_parent_id: Uuid,
     ctx: State<'_, Context>,
 ) -> Result<()> {
     let store = ctx.get_store();
-    let sql = format!(
-        "UPDATE $tb SET api.adjacency.`{:?}` -= $val",
-        old_parent_id
-    );
+    let sql = "UPDATE $tb SET children -= $val";
     let vars: BTreeMap<String, Value> = BTreeMap::from([
         (
             "tb".into(),
-            Thing::from((FileDirectory::table_name(), tree_id.to_string())).into(),
+            Thing::from((FileNode::table_name(), old_parent_id.to_string())).into(),
         ),
-        ("val".into(), child_id.into()),
+        (
+            "val".into(),
+            Thing::from((FileNode::table_name(), child_id.to_string())).into(),
+        ),
     ]);
     store
         .datastore
-        .execute(sql.as_str(), &store.session, Some(vars.clone()), false)
+        .execute(sql, &store.session, Some(vars), false)
         .await?;
-    let sql = format!("UPDATE $tb SET api.adjacency.`{:?}` += $val", parent_id);
+    let sql = "UPDATE $tb SET children += $val";
+    let vars: BTreeMap<String, Value> = BTreeMap::from([
+        (
+            "tb".into(),
+            Thing::from((FileNode::table_name(), parent_id.to_string())).into(),
+        ),
+        (
+            "val".into(),
+            Thing::from((FileNode::table_name(), child_id.to_string())).into(),
+        ),
+    ]);
     store
         .datastore
-        .execute(sql.as_str(), &store.session, Some(vars.clone()), false)
+        .execute(sql, &store.session, Some(vars), false)
         .await?;
     Ok(())
 }

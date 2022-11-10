@@ -1,14 +1,12 @@
-use web_sys::MouseEvent;
-use yew::prelude::*;
-use yew_router::prelude::*;
-use yewdux::prelude::*;
-
-use editor::Editor;
-use shared::schema::{FileDirectory, FileNode};
-
 use crate::app_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
+use editor::Editor;
+use shared::schema::{FileDirectory, FileNode};
+use web_sys::{MouseEvent, console};
+use yew::prelude::*;
+use yew_router::prelude::*;
+use yewdux::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -39,7 +37,8 @@ pub fn app() -> Html {
                     "untitled".to_string(),
                     file.id,
                 )
-                    .await;
+                .await;
+                console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
                         .files

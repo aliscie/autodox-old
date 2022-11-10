@@ -14,7 +14,7 @@ pub fn file_data(props: &Props) -> Html {
     let dispatch = Dispatch::<FileDirectory>::new();
     html! {
         <>
-        { &dispatch.get().files.vertices.get(&props.id).unwrap().data }
+        { format!("{:?}" , &dispatch.get().files.vertices.get(&props.id).unwrap()) }
         </>
     }
 }

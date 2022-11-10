@@ -1,49 +1,4 @@
 #V2
-update file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩ set files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` += "other_one";
-select files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` from file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩;
-update file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩ set files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` += "other_one";
-select files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` from file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩;
-update file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩ set files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` += "other_one2";
-select files.adjacency.`e702a655-cb93-413d-93bb-046343ef8dc8` from file_directory:⟨322c2bc4-9691-476a-9a18-94f737c00e96⟩;
-select * from file_directory;
-update file_directory:⟨e451bcc3-7f9b-49ea-a104-ae5f6c5820d0⟩ set files.adjacency.name = "aman";
-select * from file_node;
-select * from file_directory;
-select *.vertex.* from file_directory;
-select *.files.vertex.* from file_directory;
-select files.vertex.* from file_directory;
-select files.vertex.*.* from file_directory;
-select *, files.vertex.*.* from file_directory;
-select *, files.vertex.*.* from file_directory:;
-select *, files.vertex.*.* from file_directory:``;
-select *, files.vertex.*.* from file_directory;
-select * from file_directory;
-select * from file_node;
-list
-show tables;
-show table
-show table;
-show database;
-show databases;
-select * from file_node;
-select * from file_directory;
-select * from file_node;
-select * from file_directory;
-select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" where file.adjacency.*[contains "efe1035f-354f-484f-9c5b-b4ee15fe9b55"]
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")
-select  "9dc82a9f-9028-4dcf-913d-a7dbc2906beb" from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")
-select  `9dc82a9f-9028-4dcf-913d-a7dbc2906beb` from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")
-select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" where file.adjacency.*[contains `efe1035f-354f-484f-9c5b-b4ee15fe9b55`]
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where * contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")[ where contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`]
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")[ where $this  contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`]
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where $this contains `9dc82a9f-9028-4dcf-913d-a7dbc2906beb`
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩")
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where $this contains "efe1035f-354f-484f-9c5b-b4ee15fe9b55"
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where $this contains `efe1035f-354f-484f-9c5b-b4ee15fe9b55`
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where $this.* contains `efe1035f-354f-484f-9c5b-b4ee15fe9b55`
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where true
 select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() {
 select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() { return true; }
 select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() { return false; }
@@ -98,4 +53,49 @@ update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` +
 update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` -= "name"
 update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` += rand::uuid();
 update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` -=  "f53a118b-e9ad-498b-afca-4ac935717006";
+select * from file_directory;
+select * from test;
+create test set name = "aman";
+delete test;
+select * from test;
+create test set name = "aman", roll_no = 16;
+delete result.name where id = "test:qtt1d3ow0kqyhm9qrviw"
+delete result.name where test.id = "test:qtt1d3ow0kqyhm9qrviw"
+delete test.name returning after;
+update test.name = null returning after;
+update test.name = null
+update test set name = null returning after
+update test set name = null return after
+select * from name;
+update test set name = none return after
+update test set name = "aman" return after
+update test set name = none return after
+create test set name = ["aman"];
+update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["nona"] } 
+update  "test:w14c59mu64d1aw9yq49n" set location = "delhi" 
+update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["archi"] } 
+update  "test:w14c59mu64d1aw9yq49n" MERGE { name : "archi" } 
+update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["archi"] } 
+update  "test:w14c59mu64d1aw9yq49n" patch { name : ["archi"] } 
+update  "test:w14c59mu64d1aw9yq49n" patch { name += ["archi"] } 
+update  "test:w14c59mu64d1aw9yq49n" patch  name += ["archi"] }
+update  "test:w14c59mu64d1aw9yq49n" patch  name += ["archi"] 
+update  "test:w14c59mu64d1aw9yq49n" patch  name += "archi"
+select * from test;
+create test set location = "mumbai" , name = ["aman"]
+update test MERGE { location : "mumbai" } where name = ["aman"];
+update test MERGE { location : "delhi" } where name = ["aman"];
+select * from test;
+select * from file_node;
+select * from file_directory;
+select * from file_node;
+select * from file_directory;
+select * form file_node;
+select * from file_node;
+select * from file_directory;
+select * from file_node;
+select * from file_directory;
+select * from file_node;
+select * from file_directory;
+select * from file_node;
 select * from file_directory;

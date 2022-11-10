@@ -10,7 +10,7 @@ use uuid::Uuid;
 use surrealdb::sql::{Array, Id, Object, Value};
 
 use crate::schema::FileNode;
-use crate::traits::Entity;
+use crate::traits::{Entity, GetId};
 use crate::Error;
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -123,23 +123,10 @@ where
 {
     fn from(val: Tree<ID, T>) -> Object {
         let mut map = BTreeMap::new();
-        let mut adjacency_object = BTreeMap::new();
-        for (id, children) in val.adjacency {
-            let mut child_connections: Vec<Value> = Vec::new();
-            for i in children.into_iter() {
-                child_connections.push(i.into());
-            }
-            println!("{:?}", child_connections);
-            adjacency_object.insert(format!("{:?}", id), Value::Array(child_connections.into()));
-        }
         let mut vertices_vec: Vec<Value> = Vec::new();
         for i in val.vertices.keys() {
             vertices_vec.push(Value::Thing((T::table_name(), format!("{:?}", i)).into()));
         }
-        map.insert(
-            "adjacency".to_owned(),
-            Value::Object(adjacency_object.into()),
-        );
         map.insert("vertices".to_owned(), Value::Array(vertices_vec.into()));
         map.insert(
             "root".to_owned(),
@@ -149,47 +136,50 @@ where
     }
 }
 
+
+impl GetId for FileNode{
+    type Id = Uuid;
+    fn get_id(&self) -> Self::Id {
+        self.id
+    }
+}
+
+// cannot make it generic over Tree<ID, T> since Id is conversion 
+// is problematic with surrealdb
 #[cfg(feature = "tauri")]
-impl TryFrom<Object> for Tree<Uuid, FileNode> {
+impl<T> TryFrom<Object> for Tree<Uuid, T> 
+where
+    T: PartialEq + Eq + Clone + Debug + TryFrom<Object> + Entity + Serialize + GetId<Id = Uuid>,
+{
     type Error = crate::Error;
     /// i am asuming we have selected the vertices field with all the data in the nodes
     fn try_from(value: Object) -> Result<Self, Self::Error> {
         let mut value = value;
         let mut tree = Tree::new();
-        let adjacency_list: Object = value
-            .remove("adjacency")
-            .ok_or(crate::Error::XPropertyNotFound("adjacency".into()))?
-            .try_into()
-            .map_err(|_| Error::XValueNotOfType("value"))?;
-        for (parent, child) in adjacency_list {
-            let parent_id = Uuid::from_str(parent.as_str())
-                .map_err(|_| Error::XValueNotOfType("parent not of type uuid"))?;
-            let child: Vec<Value> = child
-                .try_into()
-                .map_err(|_| Error::XValueNotOfType("child not of type Vec<Value>"))?;
-            let child_id: IndexSet<Uuid> = child
-                .into_iter()
-                .map(|f| -> Result<Uuid, Error> {
-                    Uuid::try_from(f)
-                        .map_err(|_| Error::XValueNotOfType("Cannot convert child value to String"))
-                })
-                .take_while(Result::is_ok)
-                .map(Result::unwrap)
-                .collect();
-            tree.adjacency.insert(parent_id, child_id);
-        }
         let vertex_vec: Vec<Value> = value
             .remove("vertices")
             .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?
             .try_into()
             .map_err(|_| Error::XValueNotOfType("value"))?;
         for i in vertex_vec {
-            let vertex_object: Object =
+            let mut vertex_object: Object =
                 i.try_into().map_err(|_| Error::XValueNotOfType("Object"))?;
-            let file_node: FileNode = vertex_object
+            let adjacency_array: Vec<Value> = vertex_object
+                .remove("children")
+                .ok_or(Error::XPropertyNotFound("children not found".into()))?
                 .try_into()
-                .map_err(|_| Error::XValueNotOfType("FileNode"))?;
-            tree.vertices.insert(file_node.id, file_node);
+                .map_err(|_| Error::XValueNotOfType("file_node.children not of type Array"))?;
+            let adjacency: IndexSet<Uuid> = adjacency_array
+                .into_iter()
+                .filter_map(|e| -> Option<Uuid> {
+                    e.record()?.id.to_raw().as_str().try_into().ok()
+                })
+                .collect();
+            let file_node: T = vertex_object
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("T cannot be converted to Object"))?;
+            tree.adjacency.insert(file_node.get_id(), adjacency);
+            tree.vertices.insert(file_node.get_id(), file_node);
         }
         let root: Value = value
             .remove("root")
