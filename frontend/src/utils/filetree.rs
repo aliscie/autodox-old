@@ -18,12 +18,7 @@ use shared::schema::FileDirectory;
 
 use crate::app_components::FileComponent;
 use crate::router::Route;
-
-#[wasm_bindgen(module = "/src/utils/ic_agent.js")]
-extern "C" {
-    #[wasm_bindgen(js_name = read)]
-    pub async fn read(canister_id: String) -> JsValue;
-}
+use crate::utils::{createActor, read};
 
 
 pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
@@ -58,18 +53,14 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
                 }
             })
         };
-        // TODO
-        //  add actor from ./ic_agent.js file
-        //  let actor  = createActor().await
-        //  let files = actor.read_files().await
         spawn_local(async move {
             let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
             let files = read(canister_id).await;
             log!(files);
-            // let file_component = FileComponent::new(actor, file_node);
-            // let vnode = yew::utils::document().create_element("div").unwrap();
-            // file_component.mount(vnode);
-            // map.borrow_mut().insert(id, vnode);
+            // TODO instead of have a read function please call the actor here then call read
+            //  let actor = createActor(canister_id).await;
+            //  let files = actor.read_files().await;
+            //  log!(files);
         });
 
         let html_node = html! {
