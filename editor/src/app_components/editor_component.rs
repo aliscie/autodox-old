@@ -1,19 +1,19 @@
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen::closure::Closure;
-use web_sys::{Element, MouseEvent, window, KeyboardEvent, Event};
+use web_sys::{Element, MouseEvent, window};
 use yew::{function_component, html, UseStateHandle};
 use yew::prelude::*;
-use shared::log;
+
+use shared::schema::EditorElement;
 
 use crate::components::Drag;
-use crate::element_tree::EditorElement;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub node: EditorElement,
 }
 
-#[function_component(Render)]
+#[function_component(EditorComponent)]
 pub fn render(props: &Props) -> Html {
     let node_ref = NodeRef::default();
     let position: UseStateHandle<String> = use_state(|| "display:none".to_string());
@@ -47,34 +47,10 @@ pub fn render(props: &Props) -> Html {
         .unwrap()
         .add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     handle_hovering.forget();
-
-    // let onkeydown = Closure::wrap(Box::new(move |_e: KeyboardEvent| {
-    //     log!(_e)
-    // }) as Box<dyn FnMut(_)>);
-
-    // TODO user posting identifiers like id...
-    let onkeydown = Callback::from(move |e: KeyboardEvent| {
-        // TODO I don't know why this is not working
-        log!(e);
-        // TODO
-        //  log!(e.target().unwrap_throw().value());
-        //  log!(let curr: Element = e.target_unchecked_into();curr.inner_html());
-    });
-
-    let onchange = Callback::from(move |e: Event| {
-        // TODO I don't know why this is not working
-        log!(e);
-        // TODO
-        //  log!(e.target().unwrap_throw().value());
-        //  log!(let curr: Element = e.target_unchecked_into();curr.inner_html());
-    });
-
-    html! {
+    return html! {
     <span ref={node_ref}  >
-             <Drag position={(*(position.clone())).to_string()}/>
+             <Drag position={format!("{}",*(position.clone()))}/>
         <div
-        {onkeydown}
-        {onchange}
                     // style = { &node.attrs
                     // .get(&Attrs::Style).map(|e| e.clone())}
                     // href = { &node.attrs.get(&Attrs::Href).map(|e| e.clone())}
@@ -84,5 +60,5 @@ pub fn render(props: &Props) -> Html {
             { &node.text.clone()}
         </div>
     </span>
-     }
+     };
 }

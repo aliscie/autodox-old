@@ -9,4 +9,4 @@ mod utils;
 pub use app::Editor;
 pub(crate) mod app_components;
 pub(crate) mod components;
-mod element_tree;
+mod render;

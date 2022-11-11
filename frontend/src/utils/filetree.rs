@@ -5,15 +5,14 @@ use std::rc::Rc;
 use indexmap::IndexSet;
 use uuid::Uuid;
 use web_sys::{Element, MouseEvent};
-use yew::{html, Html};
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
+use yew::{html, Html};
 use yew_router::prelude::*;
 
 use shared::schema::FileDirectory;
 
 use crate::app_components::FileComponent;
-use crate::backend;
 use crate::router::Route;
 
 pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
@@ -48,7 +47,19 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
                 }
             })
         };
-        backend::get_files();
+        // TODO
+        //  add actor from ./ic_agent.js file
+        //  let actor  = createActor().await
+        //  let files = actor.read_files().await
+        //spawn_local(async move {
+        //let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+        //let files = read(canister_id).await;
+        //log!(files);
+        // let file_component = FileComponent::new(actor, file_node);
+        // let vnode = yew::utils::document().create_element("div").unwrap();
+        // file_component.mount(vnode);
+        // map.borrow_mut().insert(id, vnode);
+        //});
 
         let html_node = html! {
             <>
@@ -82,6 +93,6 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
         .into_iter()
         .map(|f| map.borrow().get(f).unwrap().to_owned())
         .collect::<Html>()
-//let x = map.borrow().get(&start).unwrap().clone();
-//x
+    //let x = map.borrow().get(&start).unwrap().clone();
+    //x
 }

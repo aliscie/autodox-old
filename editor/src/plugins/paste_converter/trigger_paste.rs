@@ -1,18 +1,10 @@
 extern crate web_sys;
 
-use std::{borrow::Borrow, collections::HashMap};
 // use std::cell::RefCell;
-use std::convert::TryInto;
 use std::rc::Rc;
 
-use serde::{Deserialize, Serialize};
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use wasm_bindgen::prelude::Closure;
-use web_sys::{DragEvent, Element, KeyboardEvent, MouseEvent, window};
-use yew::prelude::*;
-use yewdux::prelude::{Dispatch, use_store};
+use web_sys::Element;
 
-use crate::element_tree::{Attrs, EditorElement, ElementTree};
 use crate::plugins::PluginTraits;
 
 use super::PasteConverter;

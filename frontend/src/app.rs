@@ -16,7 +16,8 @@ pub fn app() -> Html {
     // only do it once
     use_effect_with_deps(
         move |_| {
-            let _x = backend::initialize();
+            let x = backend::initialize();
+            console::log_1(&format!("{:?}", x).into());
             || {}
         },
         (),

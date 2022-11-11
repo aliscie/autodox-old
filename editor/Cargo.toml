@@ -15,6 +15,7 @@ js-sys = "0.3.56"
 markup5ever_rcdom = "0.1.0"
 shared = { path = "../shared", features = ["frontend"] }
 serde = "1.0.144"
+uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "serde"] }
 serde_json = "1.0.85"
 yewdux = "0.8.2"
 yew-style-in-rs = "0.4.1"
