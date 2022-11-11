@@ -3,6 +3,7 @@ use wasm_bindgen::closure::Closure;
 use web_sys::{Element, MouseEvent, window};
 use yew::{function_component, html, UseStateHandle};
 use yew::prelude::*;
+use shared::log;
 
 use shared::schema::EditorElement;
 
@@ -47,10 +48,24 @@ pub fn render(props: &Props) -> Html {
         .unwrap()
         .add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     handle_hovering.forget();
+
+    let onchange = Callback::from(move |_e: Event| {
+        // log!(_e.value())
+    });
+
+    let onkeydown = Callback::from(move |_e: Event| {
+        // let element: Element = e.target_unchecked_into();
+        // log!(element.inner_html())
+        // log!(_e.value())
+    });
+
+
     return html! {
     <span ref={node_ref}  >
              <Drag position={format!("{}",*(position.clone()))}/>
         <div
+        {onkeydown}
+        {onchange}
                     // style = { &node.attrs
                     // .get(&Attrs::Style).map(|e| e.clone())}
                     // href = { &node.attrs.get(&Attrs::Href).map(|e| e.clone())}
