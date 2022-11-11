@@ -113,6 +113,30 @@ where
             stack: other_stack,
         }
     }
+
+    fn find_path_inner(&self, start: &ID, id: &ID, path: &mut Vec<ID>) -> bool {
+        path.push(start.clone());
+        if start == id {
+            // base case
+            return true;
+        }
+        if let Some(children) = self.adjacency.get(start) {
+            for i in children {
+                if self.find_path_inner(i, id, path) {
+                    // found the node
+                    return true;
+                }
+            }
+        }
+        path.pop();
+        false
+    }
+
+    pub fn find_path(&self, start: &ID, id: &ID) -> Vec<ID> {
+        let mut path = Vec::new();
+        self.find_path_inner(start, id, &mut path);
+        path
+    }
 }
 
 #[cfg(feature = "tauri")]
@@ -136,18 +160,17 @@ where
     }
 }
 
-
-impl GetId for FileNode{
+impl GetId for FileNode {
     type Id = Uuid;
     fn get_id(&self) -> Self::Id {
         self.id
     }
 }
 
-// cannot make it generic over Tree<ID, T> since Id is conversion 
+// cannot make it generic over Tree<ID, T> since Id is conversion
 // is problematic with surrealdb
 #[cfg(feature = "tauri")]
-impl<T> TryFrom<Object> for Tree<Uuid, T> 
+impl<T> TryFrom<Object> for Tree<Uuid, T>
 where
     T: PartialEq + Eq + Clone + Debug + TryFrom<Object> + Entity + Serialize + GetId<Id = Uuid>,
 {
@@ -269,5 +292,11 @@ mod tests {
         for i in tree.into_iter(0) {
             println!("{:?}", i);
         }
+    }
+    #[test]
+    fn find_path_test() {
+        let tree = create_tree();
+        println!("{:?}", tree);
+        println!("path is : {:?}", tree.find_path(&0, &9));
     }
 }
