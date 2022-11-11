@@ -1,6 +1,6 @@
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen::closure::Closure;
-use web_sys::{Element, MouseEvent, window};
+use web_sys::{Element, MouseEvent, window, Event, InputEvent};
 use yew::{function_component, html, UseStateHandle};
 use yew::prelude::*;
 use shared::log;
@@ -49,23 +49,28 @@ pub fn render(props: &Props) -> Html {
         .add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     handle_hovering.forget();
 
+    let onkeydown = Callback::from(move |_e: KeyboardEvent| {
+        log!("Kye down")
+    });
+
     let onchange = Callback::from(move |_e: Event| {
-        // log!(_e.value())
+        log!("change")
     });
 
-    let onkeydown = Callback::from(move |_e: Event| {
-        // let element: Element = e.target_unchecked_into();
-        // log!(element.inner_html())
-        // log!(_e.value())
+    let oninput = Callback::from(move |e: InputEvent| {
+        log!("oninput")
     });
 
 
-    return html! {
+    html! {
     <span ref={node_ref}  >
              <Drag position={format!("{}",*(position.clone()))}/>
         <div
+        contenteditable="true"
         {onkeydown}
+        {oninput}
         {onchange}
+
                     // style = { &node.attrs
                     // .get(&Attrs::Style).map(|e| e.clone())}
                     // href = { &node.attrs.get(&Attrs::Href).map(|e| e.clone())}
@@ -75,5 +80,5 @@ pub fn render(props: &Props) -> Html {
             { &node.text.clone()}
         </div>
     </span>
-     };
+     }
 }
