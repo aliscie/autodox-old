@@ -7,14 +7,13 @@
     },
     "frontend": {
       "dependencies": [
-        "registrar","storage"
+        "backend"
       ],
       "frontend": {
         "entrypoint": "frontend/index.html"
       },
       "source": [
-        "frontend/public",
-        "frontend/dist"
+        "frontend/public"
       ],
       "type": "assets"
     }

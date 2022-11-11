@@ -48,7 +48,8 @@ pub fn to_html(file_directory: &FileDirectory, start: Uuid) -> Html {
                 }
             })
         };
-        backend::get_files();
+
+        let data = backend::get_files();
 
         let html_node = html! {
             <>
