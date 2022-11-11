@@ -1,10 +1,13 @@
-use crate::components::Drag;
-use shared::schema::EditorElement;
-use wasm_bindgen::closure::Closure;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use web_sys::{window, Element, MouseEvent};
-use yew::prelude::*;
+use wasm_bindgen::closure::Closure;
+use web_sys::{Element, MouseEvent, window, Event, InputEvent};
 use yew::{function_component, html, UseStateHandle};
+use yew::prelude::*;
+use shared::log;
+
+use shared::schema::EditorElement;
+
+use crate::components::Drag;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -22,7 +25,7 @@ pub fn render(props: &Props) -> Html {
     let _node_ref = node_ref.clone();
     let handle_hovering = Closure::wrap(Box::new(move |_e: MouseEvent| {
         let element = _node_ref.clone().cast::<Element>();
-        if element != None {
+        if element.is_some() {
             let rec = element.unwrap().get_bounding_client_rect();
             let top = rec.top();
             let left = rec.left();
@@ -45,10 +48,29 @@ pub fn render(props: &Props) -> Html {
         .unwrap()
         .add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     handle_hovering.forget();
-    return html! {
+
+    let onkeydown = Callback::from(move |_e: KeyboardEvent| {
+        log!("Kye down")
+    });
+
+    let onchange = Callback::from(move |_e: Event| {
+        log!("change")
+    });
+
+    let oninput = Callback::from(move |e: InputEvent| {
+        log!("oninput")
+    });
+
+
+    html! {
     <span ref={node_ref}  >
              <Drag position={format!("{}",*(position.clone()))}/>
         <div
+        contenteditable="true"
+        {onkeydown}
+        {oninput}
+        {onchange}
+
                     // style = { &node.attrs
                     // .get(&Attrs::Style).map(|e| e.clone())}
                     // href = { &node.attrs.get(&Attrs::Href).map(|e| e.clone())}
@@ -58,5 +80,5 @@ pub fn render(props: &Props) -> Html {
             { &node.text.clone()}
         </div>
     </span>
-     };
+     }
 }

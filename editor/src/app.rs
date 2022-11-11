@@ -1,18 +1,22 @@
 extern crate web_sys;
 
+use std::collections::HashMap;
+use std::rc::Rc;
+
+use uuid::Uuid;
+use wasm_bindgen::UnwrapThrowExt;
+use web_sys::{DragEvent, Element, MouseEvent, window};
+use yew::{function_component, html};
+use yew::prelude::*;
+use yewdux::prelude::Dispatch;
+
+use shared::*;
+use shared::schema::{Attrs, EditorElement, ElementTree};
+
 use crate::plugins::PasteConverter;
 use crate::render::render;
 use crate::utils::my_function;
-use shared::schema::{Attrs, EditorElement, ElementTree};
-use shared::*;
-use std::collections::HashMap;
-use std::rc::Rc;
-use uuid::Uuid;
-use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, DragEvent, Element, MouseEvent};
-use yew::prelude::*;
-use yew::{function_component, html};
-use yewdux::prelude::Dispatch;
+use shared::log;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
@@ -59,6 +63,12 @@ pub fn editor(props: &Props) -> Html {
             // display.set("display: block".to_string());
         }
     };
+    let onchange = {
+        move |e: Event| {
+            log!("change from main");
+        }
+    };
+
 
     let onmousedown = {
         move |e: MouseEvent| {
@@ -121,6 +131,7 @@ pub fn editor(props: &Props) -> Html {
 
     <span
         {onmousemove}
+        {onchange}
         contenteditable="true"
         class="text_editor_container"
     >

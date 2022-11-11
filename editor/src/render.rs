@@ -15,7 +15,9 @@ pub(crate) fn render(tree: &ElementTree, start: Uuid) -> Html {
         }
         let html_node = html! {
             <>
-                <EditorComponent node={node.clone()}/>
+                <EditorComponent
+            // TODO u can add id={id} to help to infinity which file is changed
+            node={node.clone()}/>
                 if has_children {{
                     tree.elements.adjacency.get(id)
                         .unwrap()

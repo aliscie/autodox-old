@@ -2,8 +2,10 @@ use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
+use shared::log;
 
 use shared::schema::{FileDirectory, FileNodeCreate};
+use crate::backend::read;
 
 use crate::utils::DeviceInfo;
 
@@ -67,9 +69,22 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     }
 }
 
+//     let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+//     let files = read(canister_id).await;
+//     log!(files);
+//     // files
+//     // TODO Peter there are 3 cases
+//             // 1. When we have web page we                      =>  will render only the IC files
+//             // 2. When we have desktop app we                   =>  will render only the local files
+//             // 3. When we have desktop app and user is logged in=>  will render both the IC files and local files
+//     //  let actor = createActor(canister_id).await;
+//     //  let files = actor.read_files().await;
+//     //  log!(files);
+
 pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
+        // TODO peter add files here
         unimplemented!();
     }
     if !info.get().web {
