@@ -9,6 +9,9 @@ use std::{
 use surrealdb::sql::{Array, Object, Thing, Value};
 use uuid::Uuid;
 
+#[cfg(feature = "frontend")]
+use yewdux::prelude::*;
+
 use crate::{
     traits::{Creatable, Entity, GetId, Queryable},
     Error, Tree,
@@ -94,7 +97,7 @@ pub struct EditorElementCreate {
     pub text: String,
     pub attrs: HashMap<Attrs, String>,
     pub tree_id: Uuid,
-    pub parent_id : Uuid,
+    pub parent_id: Uuid,
     pub children: Option<IndexSet<Uuid>>,
 }
 
@@ -128,7 +131,7 @@ impl Queryable for ElementTree {}
 impl TryFrom<Object> for ElementTree {
     type Error = Error;
     fn try_from(mut value: Object) -> Result<Self, Self::Error> {
-        Ok(Self{
+        Ok(Self {
             id: value
                 .remove("id")
                 .ok_or(Error::XPropertyNotFound(format!(
@@ -256,5 +259,15 @@ impl TryFrom<Object> for EditorElement {
                 .map_err(|_| Error::XValueNotOfType("String"))?,
             attrs,
         })
+    }
+}
+
+#[cfg(feature = "frontend")]
+impl Store for ElementTree {
+    fn new() -> Self {
+        ElementTree::default()
+    }
+    fn should_notify(&self, old: &Self) -> bool {
+        old != self
     }
 }

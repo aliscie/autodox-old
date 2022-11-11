@@ -49,20 +49,23 @@ pub fn initialize() -> Result<(), String> {
 }
 
 async fn on_startup() -> Result<(), String> {
-    let directories = crate::backend::get_directories().await.unwrap_or_default();
-    log_1(&format!("{:?}", directories).into());
+    let mut directories = crate::backend::get_directories().await.map_err(|e| {
+        log_1(&format!("error is : {:?}", e).into());
+        e
+    }).unwrap_or_default();
+    log_1(&format!("get_directory returned : {:?}", directories).into());
     let file_tree = Dispatch::<FileDirectory>::new();
     if directories.len() == 0 {
         // create new directory tree
         let file_directory = FileDirectory::default();
-        crate::backend::create_directory(&file_directory).await?;
+        let x = crate::backend::create_directory(&file_directory).await;
+        log_1(&format!("create_directory returned : {:?}", x).into());
         // setting the file
         file_tree.set(file_directory);
     } else {
-        let x = directories.get(0).unwrap();
-        let directory = crate::backend::get_directory(x.id).await?;
+        let x = directories.remove(0);
         // setting the file
-        file_tree.set(directory);
+        file_tree.set(x);
     }
     Ok(())
 }

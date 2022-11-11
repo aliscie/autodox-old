@@ -1,17 +1,18 @@
 extern crate web_sys;
 
+use crate::plugins::PasteConverter;
+use crate::render::render;
+use crate::utils::my_function;
+use shared::schema::{Attrs, EditorElement, ElementTree};
+use shared::*;
 use std::collections::HashMap;
 use std::rc::Rc;
+use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yewdux::prelude::Dispatch;
-
-use crate::element_tree::{Attrs, EditorElement, ElementTree};
-use crate::plugins::PasteConverter;
-use crate::utils::my_function;
-use shared::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
@@ -90,21 +91,22 @@ pub fn editor(props: &Props) -> Html {
     };
     let element_tree_dispatch = Dispatch::<ElementTree>::new();
     element_tree_dispatch.reduce_mut(|r| {
-        r.elements
-            .push_vertex(0, EditorElement::new(0, "".to_string(), HashMap::new()));
+        let root = r.elements.root.unwrap();
+        let id = Uuid::new_v4();
         r.elements.push_children(
-            0,
-            1,
+            root,
+            id.clone(),
             EditorElement::new(
-                1,
+                id,
                 "bold text".to_string(),
                 HashMap::from([(Attrs::Style, "font-weight: bold;".to_string())]),
             ),
         );
+        let id = Uuid::new_v4();
         r.elements.push_children(
-            0,
-            2,
-            EditorElement::new(2, r#"Element is here."#.to_string(), HashMap::new()),
+            root,
+            id,
+            EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
         );
     });
 
@@ -118,9 +120,9 @@ pub fn editor(props: &Props) -> Html {
     </h2>
 
     <span
-    {onmousemove}
-    contenteditable="true"
-    class="text_editor_container"
+        {onmousemove}
+        contenteditable="true"
+        class="text_editor_container"
     >
 
 
@@ -133,7 +135,7 @@ pub fn editor(props: &Props) -> Html {
     </div>
 
         <div  class="text_editor" >
-            { element_tree_dispatch.get().to_html(0) }
+            { render(&element_tree_dispatch.get(), element_tree_dispatch.get().elements.root.unwrap()) }
         </div>
     </span>
     </span>
