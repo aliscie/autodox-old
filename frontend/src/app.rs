@@ -1,11 +1,12 @@
 use crate::app_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
+use crate::router::{Route, switch};
 use editor::Editor;
+use yew_router::prelude::*;
 use shared::schema::{FileDirectory, FileNode};
 use web_sys::{MouseEvent, console};
 use yew::prelude::*;
-use yew_router::prelude::*;
 use yewdux::prelude::*;
 
 #[function_component(App)]
@@ -69,9 +70,10 @@ pub fn app() -> Html {
 
         </ul>
         </aside>
-        //TODO
-        // title="string" instead of <Switch<Route> render={Switch::render(switch)} />
-        <Editor title="text"/>
+        //<main>
+            //<Switch<Route> render= {Switch::render(switch)} />
+        //</main>
+        <Editor title = "text"/>
         </div>
         </BrowserRouter>
     }
