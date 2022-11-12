@@ -21,6 +21,15 @@ pub fn render(props: &Props) -> Html {
     let node = props.node.clone();
     let doc = window().unwrap_throw().document().unwrap_throw();
 
+    if let Some(node) = node_ref.clone().cast::<Element>() {
+        // add event lsitner to node_ref cast :: element
+        let closure = Closure::wrap(Box::new(move |event: MouseEvent| {
+            log!("onchage");
+        }) as Box<dyn FnMut(MouseEvent)>);
+        node.add_event_listener_with_callback("onchange", closure.as_ref().unchecked_ref()).unwrap_throw();
+        closure.forget();
+    }
+
     let _position = position.clone();
     let _node_ref = node_ref.clone();
     let handle_hovering = Closure::wrap(Box::new(move |_e: MouseEvent| {
