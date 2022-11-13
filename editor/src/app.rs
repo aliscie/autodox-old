@@ -119,9 +119,15 @@ pub fn editor(props: &Props) -> Html {
             EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
         );
     });
+    let onkeydown = {
 
+    move |event: KeyboardEvent| {
+        log!("log from editor text_editor");
+    }
+    };
     html! {
     <span
+
         class={css_file_macro!("main.css")}
      >
 
@@ -130,6 +136,7 @@ pub fn editor(props: &Props) -> Html {
     </h2>
 
     <span
+        {onkeydown}
         {onmousemove}
         {onchange}
         contenteditable="true"
@@ -144,8 +151,7 @@ pub fn editor(props: &Props) -> Html {
             <span class="btn"><i class="fa-solid fa-comment"></i></span>
             <span class="btn"><i class="fa-solid fa-droplet"></i></span>
     </div>
-
-        <div  class="text_editor" >
+        <div   class="text_editor" >
             { render(&element_tree_dispatch.get(), element_tree_dispatch.get().elements.root.unwrap()) }
         </div>
     </span>
