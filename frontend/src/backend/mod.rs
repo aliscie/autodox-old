@@ -13,10 +13,7 @@ mod main;
 
 #[wasm_bindgen(module = "/src/backend/ic_agent.js")]
 extern "C" {
-    #[wasm_bindgen(js_name = read)]
-    pub async fn read(canister_id: String) -> JsValue;
-
-    #[wasm_bindgen(js_name = createActor)]
-    pub async fn createActor(canister_id: String) -> JsValue;
+    #[wasm_bindgen(js_name = call_actor)]
+    pub async fn call_actor(canister_id: String, method: String, args: Option<String>) -> JsValue;
 }
 

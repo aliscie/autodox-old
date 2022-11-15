@@ -5,7 +5,7 @@ use yewdux::prelude::Dispatch;
 use shared::log;
 
 use shared::schema::{FileDirectory, FileNodeCreate};
-use crate::backend::read;
+use crate::backend;
 
 use crate::utils::DeviceInfo;
 
@@ -27,8 +27,8 @@ pub async fn create_file(
         unimplemented!();
     }
     if !info.get().web {
-        let x = serde_json::json!({ "data": data });
-        return crate::backend::call_surreal("create_file".to_string(), Some(&x)).await;
+        let new_file = serde_json::json!({ "data": data });
+        return crate::backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -69,22 +69,10 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     }
 }
 
-//     let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-//     let files = read(canister_id).await;
-//     log!(files);
-//     // files
-//     // TODO Peter there are 3 cases
-//             // 1. When we have web page we                      =>  will render only the IC files
-//             // 2. When we have desktop app we                   =>  will render only the local files
-//             // 3. When we have desktop app and user is logged in=>  will render both the IC files and local files
-//     //  let actor = createActor(canister_id).await;
-//     //  let files = actor.read_files().await;
-//     //  log!(files);
 
 pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
-        // TODO peter add files here
         unimplemented!();
     }
     if !info.get().web {
@@ -100,6 +88,10 @@ pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
 }
 
 pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
+    let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+    let files = backend::call_actor(canister_id, "read_files".to_string(), None).await;
+    log!(files);
+
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
