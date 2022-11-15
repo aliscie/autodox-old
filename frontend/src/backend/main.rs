@@ -10,7 +10,6 @@ use shared::schema::FileDirectory;
 
 
 use shared::log;
-use crate::backend::read;
 
 
 pub fn initialize() -> Result<(), String> {
@@ -48,8 +47,8 @@ pub async fn call_surreal<T, U>(command: String, args: Option<&U>) -> Result<T, 
         T: DeserializeOwned,
         U: Serialize,
 {
-    let x = invoke_async::<U>(command, args)
+    let new_db_obj = invoke_async::<U>(command, args)
         .await
         .map_err(|e| format!("{:?}", e))?;
-    from_value(x).map_err(|e| e.to_string())
+    from_value(new_db_obj).map_err(|e| e.to_string())
 }
