@@ -1,3 +1,4 @@
+use wasm_bindgen_futures::spawn_local;
 use crate::app_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
@@ -8,9 +9,17 @@ use shared::schema::{FileDirectory, FileNode};
 use web_sys::{MouseEvent, console};
 use yew::prelude::*;
 use yewdux::prelude::*;
+use shared::log;
+use  wasm_bindgen::JsValue;
 
 #[function_component(App)]
 pub fn app() -> Html {
+    spawn_local(async move {
+        let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+        log!(&backend::read(canister_id.clone()).await);
+        log!(JsValue::js_typeof(&backend::read(canister_id.clone()).await));
+    });
+
     let aside_bar_toggle = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_toggle.clone();
     let file_dispatch = Dispatch::<FileDirectory>::new();
@@ -39,7 +48,7 @@ pub fn app() -> Html {
                     "untitled".to_string(),
                     file.id,
                 )
-                .await;
+                    .await;
                 console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
