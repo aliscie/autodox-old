@@ -18,5 +18,14 @@ extern "C" {
 
     #[wasm_bindgen(js_name = createActor)]
     pub async fn createActor(canister_id: String) -> JsValue;
+
+    #[wasm_bindgen(js_name = identify)]
+    pub async fn identify() -> JsValue;
+
+    #[wasm_bindgen(js_name = logout)]
+    pub async fn logout();
+
+    #[wasm_bindgen(js_name = is_logged)]
+    pub async fn is_logged() -> JsValue;
 }
 

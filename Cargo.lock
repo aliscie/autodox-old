@@ -1809,7 +1809,6 @@ dependencies = [
  "futures",
  "getrandom 0.2.8",
  "graphql_client",
- "ic-cdk",
  "indexmap",
  "js-sys",
  "lazy_static",
