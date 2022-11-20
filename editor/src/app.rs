@@ -1,21 +1,26 @@
 extern crate web_sys;
 
 use std::collections::HashMap;
+use wasm_bindgen::{JsObject, JsValue};
 use std::rc::Rc;
 
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{DragEvent, Element, MouseEvent, window};
-use yew::{function_component, html};
+use web_sys::console::log_1;
+use web_sys::{
+    window, DragEvent, Element, HtmlElement, MouseEvent, MutationEvent, MutationObserver,
+    MutationObserverInit,
+};
 use yew::prelude::*;
+use yew::{function_component, html};
 use yewdux::prelude::Dispatch;
 
-use shared::*;
 use shared::schema::{Attrs, EditorElement, ElementTree};
+use shared::*;
+use wasm_bindgen::{prelude::Closure, JsCast};
 
 use crate::plugins::PasteConverter;
 use crate::render::render;
-use crate::utils::my_function;
 use shared::log;
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -36,9 +41,14 @@ pub fn editor(props: &Props) -> Html {
     // get the current focused and sorted it
     // get the previous  focused and sorted it in yewdux
     let empty = "empty".to_string();
+    let oninput_event = Closure::wrap(Box::new(move |e: JsValue, observer : JsValue| {
+        //log_1(&format!("{:?}", e.type_()).into());
+        //log_1(&format!("{:?}", e.attr_name()).into());
+    }) as Box<dyn FnMut(_, _)>);
+    let mutation_observer = MutationObserver::new(oninput_event.as_ref().unchecked_ref()).unwrap();
     use_effect_with_deps(
         move |_my_text| {
-            let data = &my_function();
+            //let data = &my_function();
 
             let doc = window().unwrap_throw().document().unwrap_throw();
             let editor: Rc<Element> = Rc::new(
@@ -46,13 +56,22 @@ pub fn editor(props: &Props) -> Html {
                     .unwrap_throw()
                     .unwrap_throw(),
             );
+            let x = mutation_observer.observe_with_options(
+                &editor.get_root_node(),
+                MutationObserverInit::new()
+                    .attributes(true)
+                    .child_list(true)
+                    .subtree(true),
+            );
             PasteConverter::new(editor.clone());
             //TODO
             // DragAndDrop::new(editor.clone());
             // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline app_components
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
-            || {}
+            move || {
+                mutation_observer.disconnect();
+            }
         },
         empty,
     );
@@ -68,7 +87,6 @@ pub fn editor(props: &Props) -> Html {
             log!("change from main");
         }
     };
-
 
     let onmousedown = {
         move |e: MouseEvent| {
@@ -120,6 +138,10 @@ pub fn editor(props: &Props) -> Html {
         );
     });
 
+    let oninput = Callback::from(|e: InputEvent| {
+        log_1(&format!("{:?}", e).into());
+    });
+
     html! {
     <span
         class={css_file_macro!("main.css")}
@@ -130,10 +152,7 @@ pub fn editor(props: &Props) -> Html {
     </h2>
 
     <span
-        {onmousemove}
-        {onchange}
-        contenteditable="true"
-        class="text_editor_container"
+        class = "text_editor_container"
     >
 
 
@@ -145,7 +164,7 @@ pub fn editor(props: &Props) -> Html {
             <span class="btn"><i class="fa-solid fa-droplet"></i></span>
     </div>
 
-        <div  class="text_editor" >
+        <div /* ref =  {editor_ref} */ contenteditable = "true" class="text_editor">
             { render(&element_tree_dispatch.get(), element_tree_dispatch.get().elements.root.unwrap()) }
         </div>
     </span>

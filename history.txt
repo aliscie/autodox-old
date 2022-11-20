@@ -1,7 +1,4 @@
 #V2
-select * from (select files.adjacency.* from "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩") where function() { return false; }
-select * from ["hello"] -= "hello";
-select * from ["hello"] -= "hello"
 select ["hello"] -= "hello"
 select ["hello"] += "hello"
 select * from ["hello"] += "hello"
@@ -99,3 +96,6 @@ select * from file_node;
 select * from file_directory;
 select * from file_node;
 select * from file_directory;
+create test set names = ["aman"];
+update "test:kihb2b5z38e24l1u7ecj" merge { names : ["archi"] }
+select * from test;

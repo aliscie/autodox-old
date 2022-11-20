@@ -48,28 +48,11 @@ pub fn render(props: &Props) -> Html {
         .unwrap()
         .add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     handle_hovering.forget();
-
-    let onkeydown = Callback::from(move |_e: KeyboardEvent| {
-        log!("Kye down")
-    });
-
-    let onchange = Callback::from(move |_e: Event| {
-        log!("change")
-    });
-
-    let oninput = Callback::from(move |e: InputEvent| {
-        log!("oninput")
-    });
-
-
     html! {
-    <span ref={node_ref}  >
-             <Drag position={format!("{}",*(position.clone()))}/>
+    //<span ref={node_ref}  >
+             //<Drag position={format!("{}",*(position.clone()))}/>
         <div
-        contenteditable="true"
-        {onkeydown}
-        {oninput}
-        {onchange}
+        id = { node.id.to_string() }
 
                     // style = { &node.attrs
                     // .get(&Attrs::Style).map(|e| e.clone())}
@@ -79,6 +62,6 @@ pub fn render(props: &Props) -> Html {
 
             { &node.text.clone()}
         </div>
-    </span>
+    //</span>
      }
 }
