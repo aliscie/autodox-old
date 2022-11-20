@@ -2,10 +2,9 @@ use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 use yewdux::prelude::Dispatch;
 
-use crate::components::{Avatar, Menu};
 use crate::backend;
+use crate::components::{Avatar, Menu};
 use crate::utils::DeviceInfo;
-
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
@@ -21,28 +20,22 @@ pub fn title_avatar_component() -> Html {
         html! {<a><i class="fa-solid fa-eye"></i>{"Who can find me"}</a>},
         html! {<a><i class="fa-solid fa-gear"></i>{"Settings"}</a>},
         html! {<a
-            onclick={
-                Callback::from(move |_| {
-                        spawn_local(async move {backend::logout().await;})
-                })
-                }
+        onclick={
+            Callback::from(move |_| {
+                    spawn_local(async move {backend::logout().await;})
+            })
+            }
 
-            ><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</a>},
+        ><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</a>},
     ];
 
-    let onclick = Callback::from(move |_e: MouseEvent| {
-        spawn_local(async move {
-
-// let x = invoke_async("open_new_window".to_string()).await;
-// TODO
-//     if IS_WEB {
-//         window.open_new_window(),
-//     } else {
-//         let x = invoke_async("open_new_window".to_string()).await;
-//     }
-            let user_token = backend::identify().await;
-// log!(user_token);
-        });
+    let onclick: Callback<MouseEvent> = device_info.reduce_mut_future_callback(|s| {
+        Box::pin(async move {
+            match serde_wasm_bindgen::from_value::<String>(backend::identify().await) {
+                Ok(_x) => s.auth = true,
+                Err(_) =>s.auth = false,
+            }
+        })
     });
 
     if device_info.get().auth {
