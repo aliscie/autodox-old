@@ -88,9 +88,7 @@ pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
 }
 
 pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
-    let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-    let files = backend::call_actor(canister_id, "read_files".to_string(), None).await;
-    log!(files);
+
 
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
