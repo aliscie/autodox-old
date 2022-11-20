@@ -54,7 +54,8 @@ features = [
     "KeyboardEvent",
     "MutationEvent",
     "MutationObserver",
-    "MutationObserverInit"
+    "MutationObserverInit",
+    "MutationRecord",
 ]
 
 #[dev-dependencies]
