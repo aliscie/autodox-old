@@ -7,7 +7,6 @@ use lazy_static::lazy_static;
 use wasm_bindgen::prelude::*;
 
 use app::App;
-use shared::log;
 
 mod app;
 mod app_components;
@@ -17,20 +16,9 @@ mod router;
 mod test;
 mod utils;
 
-use wasm_bindgen_futures::spawn_local;
-use futures::executor::block_on;
 
 lazy_static! {
     pub static ref IS_WEB: bool = cfg!(feature = "web");
-    pub static ref IS_LOGEDIN: bool = {
-        false
-        // TODO
-        // let mut is_logged: Rc<RefCell<bool>> = Rc::new(RefCell::new(false));
-        // spawn_local(async move {
-        //     is_logged.set_value(serde_wasm_bindgen::from_value::<bool>(backend::is_logged().await).unwrap();)
-        // });
-        // *is_logged
-    };
 }
 
 #[wasm_bindgen]
