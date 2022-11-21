@@ -1,7 +1,7 @@
 {
   "canisters": {
     "backend": {
-      "candid": "backend/backend.did",
+      "candid": "canisters/backend/backend.did",
       "package": "backend",
       "type": "rust"
     },
