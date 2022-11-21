@@ -8,6 +8,7 @@ mod render;
 mod plugins;
 mod utils;
 use yew::{function_component, html};
+
 #[function_component(App)]
 pub fn app_component() -> Html {
     html! { <Editor title="text"/> }

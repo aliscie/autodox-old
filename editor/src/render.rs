@@ -16,6 +16,7 @@ pub(crate) fn render(tree: &ElementTree, start: Uuid) -> Html {
         let html_node = html! {
             <>
                 <EditorComponent
+                key = { id.to_string() }
             // TODO u can add id={id} to help to infinity which file is changed
             node={node.clone()}/>
                 if has_children {{

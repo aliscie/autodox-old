@@ -10,7 +10,7 @@ use surrealdb::sql::{Array, Object, Thing, Value};
 use uuid::Uuid;
 
 #[cfg(feature = "frontend")]
-use yewdux::prelude::*;
+use  yewdux::prelude::*;
 
 use crate::{
     traits::{Creatable, Entity, GetId, Queryable},
@@ -267,7 +267,8 @@ impl Store for ElementTree {
     fn new() -> Self {
         ElementTree::default()
     }
-    fn should_notify(&self, old: &Self) -> bool {
-        old != self
+    fn should_notify(&self, _old: &Self) -> bool {
+        //old != self
+        true
     }
 }
