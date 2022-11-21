@@ -38,4 +38,5 @@ deploy:
 	# make sure to run dfx start in order to start the simulated blockchain locally
 	# make sure to have Cargo.lock files so the dfx can install from it because dfx does not install from Cargo.toml
 	#dfx deploy registrar --with-cycles 10000000000000
+	def start --backend
 	dfx deploy backend
