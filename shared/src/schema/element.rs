@@ -10,10 +10,10 @@ use surrealdb::sql::{Array, Object, Thing, Value};
 use uuid::Uuid;
 
 #[cfg(feature = "frontend")]
-use  yewdux::prelude::*;
+use {web_sys::console::log_1, yewdux::prelude::*};
 
 use crate::{
-    traits::{Creatable, Entity, GetId, Queryable},
+    traits::{Creatable, Entity, GetId, Queryable, Updatable},
     Error, Tree,
 };
 
@@ -119,13 +119,46 @@ impl Entity for EditorElementCreate {
 }
 
 #[cfg(feature = "tauri")]
+impl Entity for EditorElementUpdate {
+    type DatabaseType = Object;
+    fn table_name() -> String {
+        "editor_element".to_string()
+    }
+}
+
+#[cfg(feature = "tauri")]
 impl Creatable for EditorElementCreate {}
 
 #[cfg(feature = "tauri")]
 impl Creatable for ElementTree {}
 
 #[cfg(feature = "tauri")]
+impl Updatable for EditorElementUpdate {}
+
+#[cfg(feature = "tauri")]
 impl Queryable for ElementTree {}
+
+#[cfg(feature = "tauri")]
+impl From<EditorElementUpdate> for Object {
+    fn from(value: EditorElementUpdate) -> Self {
+        let mut object = BTreeMap::new();
+        let children: Vec<Value> = match value.children {
+            Some(x) => x
+                .into_iter()
+                .map(|f| Value::Thing(Thing::from((EditorElement::table_name(), f.to_string()))))
+                .collect(),
+            None => Vec::new(),
+        };
+        if let Some(text) = value.text {
+            object.insert("text".to_string(), text.into());
+        }
+        if let Some(attrs) = value.attrs {
+            attrs_to_object(attrs, &mut object);
+        }
+        object.insert("children".to_string() , children.into());
+        object.into() 
+    }
+}
 
 #[cfg(feature = "tauri")]
 impl TryFrom<Object> for ElementTree {
@@ -168,14 +201,14 @@ impl Entity for ElementTree {
 }
 
 #[cfg(feature = "tauri")]
-fn attrs_to_object(attrs: HashMap<Attrs, String>, x: &mut BTreeMap<String, Value>) {
+fn attrs_to_object(attrs: HashMap<Attrs, String>, object: &mut BTreeMap<String, Value>) {
     for (attrs, data) in attrs {
         let attr = match attrs {
             Attrs::Src => "Src",
             Attrs::Href => "Href",
             Attrs::Style => "Style",
         };
-        x.insert(attr.to_string(), data.into());
+        object.insert(attr.to_string(), data.into());
     }
 }
 
@@ -267,8 +300,7 @@ impl Store for ElementTree {
     fn new() -> Self {
         ElementTree::default()
     }
-    fn should_notify(&self, _old: &Self) -> bool {
-        //old != self
-        true
+    fn should_notify(&self, old: &Self) -> bool {
+        old != self
     }
 }
