@@ -414,6 +414,7 @@ dependencies = [
  "ic-kit",
  "ic-stable-memory",
  "serde",
+ "shared",
  "speedy",
 ]
 
