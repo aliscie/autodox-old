@@ -6,8 +6,10 @@ pub(crate) mod app_components;
 pub(crate) mod components;
 mod render;
 mod plugins;
+mod backend;
 mod utils;
 use yew::{function_component, html};
+
 #[function_component(App)]
 pub fn app_component() -> Html {
     html! { <Editor title="text"/> }

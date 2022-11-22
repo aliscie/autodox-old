@@ -5,18 +5,23 @@ use std::rc::Rc;
 
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{DragEvent, Element, MouseEvent, window};
-use yew::{function_component, html};
+use web_sys::console::log_1;
+use web_sys::{
+    window, DragEvent, Element, MouseEvent, MutationObserver, MutationObserverInit, MutationRecord,
+};
 use yew::prelude::*;
-use yewdux::prelude::Dispatch;
+use yew::{function_component, html};
+use yewdux::prelude::{Dispatch, Listener};
 
-use shared::*;
 use shared::schema::{Attrs, EditorElement, ElementTree};
+use shared::*;
+use wasm_bindgen::{prelude::Closure, JsCast};
 
 use crate::plugins::PasteConverter;
 use crate::render::render;
-use crate::utils::my_function;
 use shared::log;
+
+
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
@@ -36,23 +41,62 @@ pub fn editor(props: &Props) -> Html {
     // get the current focused and sorted it
     // get the previous  focused and sorted it in yewdux
     let empty = "empty".to_string();
+    // TODO : this is only a prototype code should be cleaned here!
+    let element_tree = Dispatch::<ElementTree>::new();
+    let oninput_event = Closure::wrap(Box::new(
+        move |e: Vec<MutationRecord>, _observer: MutationObserver| {
+            for i in e {
+                log_1(&format!("{:?}", i.type_()).into());
+                log_1(&format!("{:?}", i.target()).into());
+                match i.type_().as_ref() {
+                    "characterData" => {
+                        if let Some(x) = i.target() {
+                            if let Some(parent_element) = x.parent_element() {
+                                if let Ok(id) = Uuid::parse_str(parent_element.id().as_ref()) {
+                                    log_1(&format!("{:?}", parent_element.inner_html()).into());
+                                    log_1(&format!("{:?}", id).into());
+                                    element_tree.reduce_mut(|f| {
+                                        if let Some(element) = f.elements.vertices.get_mut(&id) {
+                                            element.text = parent_element.inner_html();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    anyt_thing_else => log_1(&anyt_thing_else.into()),
+                }
+            }
+        },
+    ) as Box<dyn FnMut(_, _)>);
+
     use_effect_with_deps(
         move |_my_text| {
-            let data = &my_function();
-
+            //let data = &my_function();
+            let mutation_observer =
+                MutationObserver::new(oninput_event.as_ref().unchecked_ref()).unwrap();
             let doc = window().unwrap_throw().document().unwrap_throw();
-            let editor: Rc<Element> = Rc::new(
-                doc.query_selector(".text_editor")
-                    .unwrap_throw()
-                    .unwrap_throw(),
+            let editor: Rc<Element> = Rc::new(doc.get_element_by_id("text_editor").unwrap_throw());
+            let _ = mutation_observer.observe_with_options(
+                &editor.get_root_node(),
+                MutationObserverInit::new()
+                    .attributes(true)
+                    .child_list(true)
+                    .character_data(true)
+                    .character_data_old_value(true)
+                    .subtree(true),
             );
+            // leaking memory here!
+            oninput_event.forget();
             PasteConverter::new(editor.clone());
             //TODO
             // DragAndDrop::new(editor.clone());
             // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline app_components
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
-            || {}
+            move || {
+                mutation_observer.disconnect();
+            }
         },
         empty,
     );
@@ -68,7 +112,6 @@ pub fn editor(props: &Props) -> Html {
             log!("change from main");
         }
     };
-
 
     let onmousedown = {
         move |e: MouseEvent| {
@@ -119,42 +162,37 @@ pub fn editor(props: &Props) -> Html {
             EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
         );
     });
-    let onkeydown = {
 
-    move |event: KeyboardEvent| {
-        log!("log from editor text_editor");
-    }
-    };
+    let oninput = Callback::from(|e: InputEvent| {
+        log_1(&format!("{:?}", e).into());
+    });
+
     html! {
-    <span
+        <span
+            class={css_file_macro!("main.css")}
+        >
 
-        class={css_file_macro!("main.css")}
-     >
+            <h2 contenteditable="true" class={"editor_title heading"}>
+            {props.title.clone()}
+        </h2>
 
-     <h2 contenteditable="true" class={"editor_title heading"}>
-        {props.title.clone()}
-    </h2>
-
-    <span
-        {onkeydown}
-        {onmousemove}
-        {onchange}
-        contenteditable="true"
-        class="text_editor_container"
-    >
+            <span
+            class = "text_editor_container"
+            >
 
 
-    <div contenteditable="false" id="selection-popper" class="buttons_group_class">
+            <div contenteditable="false" id="selection-popper" class="buttons_group_class">
             <span class="btn"><i class="fa-solid fa-bold"></i></span>
             <span class="btn"><i class="fa-solid fa-italic"></i></span>
             <span class="btn"><i class="fa-solid fa-paint-roller"></i></span>
             <span class="btn"><i class="fa-solid fa-comment"></i></span>
             <span class="btn"><i class="fa-solid fa-droplet"></i></span>
-    </div>
-        <div   class="text_editor" >
+            </div>
+
+            <div /* ref =  {editor_ref} */ contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree_dispatch.get(), element_tree_dispatch.get().elements.root.unwrap()) }
         </div>
-    </span>
-    </span>
+            </span>
+            </span>
     }
 }
