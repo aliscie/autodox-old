@@ -7,12 +7,11 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::console::log_1;
 use web_sys::{
-    window, DragEvent, Element, MouseEvent,
-    MutationObserver, MutationObserverInit, MutationRecord,
+    window, DragEvent, Element, MouseEvent, MutationObserver, MutationObserverInit, MutationRecord,
 };
 use yew::prelude::*;
 use yew::{function_component, html};
-use yewdux::prelude::Dispatch;
+use yewdux::prelude::{Dispatch, Listener};
 
 use shared::schema::{Attrs, EditorElement, ElementTree};
 use shared::*;
@@ -21,6 +20,8 @@ use wasm_bindgen::{prelude::Closure, JsCast};
 use crate::plugins::PasteConverter;
 use crate::render::render;
 use shared::log;
+
+
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
@@ -41,9 +42,9 @@ pub fn editor(props: &Props) -> Html {
     // get the previous  focused and sorted it in yewdux
     let empty = "empty".to_string();
     // TODO : this is only a prototype code should be cleaned here!
+    let element_tree = Dispatch::<ElementTree>::new();
     let oninput_event = Closure::wrap(Box::new(
         move |e: Vec<MutationRecord>, _observer: MutationObserver| {
-            let element_tree = Dispatch::<ElementTree>::new();
             for i in e {
                 log_1(&format!("{:?}", i.type_()).into());
                 log_1(&format!("{:?}", i.target()).into());
@@ -63,10 +64,9 @@ pub fn editor(props: &Props) -> Html {
                             }
                         }
                     }
-                    _ => unimplemented!(),
+                    anyt_thing_else => log_1(&anyt_thing_else.into()),
                 }
             }
-            log_1(&format!("{:?}", element_tree.get()).into());
         },
     ) as Box<dyn FnMut(_, _)>);
 
@@ -80,11 +80,11 @@ pub fn editor(props: &Props) -> Html {
             let _ = mutation_observer.observe_with_options(
                 &editor.get_root_node(),
                 MutationObserverInit::new()
-                .attributes(true)
-                .child_list(true)
-                .character_data(true)
-                .character_data_old_value(true)
-                .subtree(true),
+                    .attributes(true)
+                    .child_list(true)
+                    .character_data(true)
+                    .character_data_old_value(true)
+                    .subtree(true),
             );
             // leaking memory here!
             oninput_event.forget();
@@ -99,7 +99,7 @@ pub fn editor(props: &Props) -> Html {
             }
         },
         empty,
-        );
+    );
 
     let onmousemove = {
         move |e: MouseEvent| {

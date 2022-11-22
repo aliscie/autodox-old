@@ -13,3 +13,4 @@ candid = "0.7"
 serde = "1"
 ic-stable-memory = "0.2.4"
 speedy = "0.8.2"
+shared = { path = "../../shared" }

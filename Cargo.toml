@@ -4,6 +4,6 @@ members = [
     "frontend",
     "tauri-src", # tauri-src is out of the workspace because it works indipdently
     "editor",
-    "backend",
+    "canisters/backend",
     #    "webscoket_server",
 ]

@@ -1,0 +1,89 @@
+type AddChildContentResponse = variant {
+  FileDoesNotExist;
+  Success;
+  Unauthorized;
+  UserNotRegisted;
+};
+type AddViewerData = record { parent_id : text; viewer : text };
+type AddViewerResponse = variant {
+  FileDoesNotExist;
+  AlreadyExist;
+  Success;
+  Unauthorized;
+  InvalidUser;
+  UserNotRegisted;
+};
+type ChangeFileModeData = record { parent_id : text; new_mode : FileMode };
+type ChangeFileModeResponse = variant {
+  FileDoesNotExist;
+  Success;
+  Unauthorized;
+  UserNotRegisted;
+};
+type ChildContent = record { content : text };
+type ChildContentData = record {
+  content : text;
+  child_id : text;
+  parent_id : text;
+};
+type CreateFileData = record {
+  content : text;
+  mode : FileMode;
+  name : text;
+  parent_id : text;
+};
+type CreateFileResponse = variant { Success; UserNotRegisted };
+type DeleteFileData = record { child_id : opt text; parent_id : text };
+type DeleteFileResponse = variant {
+  FileDoesNotExist;
+  Success;
+  Unauthorized;
+  UserNotRegisted;
+};
+type FileMode = variant { Private; Public; Restricted };
+type ReadFileData = record { parent_id : text };
+type ReadFileResponse = variant {
+  FileDoesNotExist;
+  File : record {
+    content : text;
+    name : text;
+    parent_id : text;
+    child_contents : vec record { text; ChildContent };
+  };
+  NotAllowed;
+  UserNotRegisted;
+};
+type RegisterResponse = variant {
+  AlreadyRegistered : record { user_name : text };
+  Success : record { user_name : text };
+  UserNameAlreadyInUse;
+};
+type RemoveViewerResponse = variant {
+  FileDoesNotExist;
+  ViewerNotFound;
+  Success;
+  Unauthorized;
+  InvalidUser;
+  UserNotRegisted;
+};
+type UpdateFileData = record {
+  child_id : opt text;
+  parent_id : text;
+  new_content : text;
+};
+type UserNameResponse = variant {
+  User : record { user_name : text };
+  UserNotRegisted;
+};
+service : () -> {
+  add_child_content : (ChildContentData) -> (AddChildContentResponse);
+  add_viewer : (AddViewerData) -> (AddViewerResponse);
+  change_file_mode : (ChangeFileModeData) -> (ChangeFileModeResponse);
+  create_file : (CreateFileData) -> (CreateFileResponse);
+  delete_file : (DeleteFileData) -> (DeleteFileResponse);
+  read_file : (ReadFileData) -> (ReadFileResponse) query;
+  register : (text) -> (RegisterResponse);
+  remove_viewer : (AddViewerData) -> (RemoveViewerResponse);
+  update_file : (UpdateFileData) -> (DeleteFileResponse);
+  username : () -> (UserNameResponse) query;
+}
