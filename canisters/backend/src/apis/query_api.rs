@@ -1,6 +1,6 @@
 use ic_kit::{
     candid::candid_method,
-    macros::*, ic,
+    macros::*,
 };
 use ic_stable_memory::{
     s, utils::ic_types::SPrincipal
@@ -11,7 +11,7 @@ use crate::{structure::*, response::*};
 #[query]
 #[candid_method(query)]
 pub fn username() -> UserNameResponse{
-    let caller = SPrincipal(ic::caller());
+    let caller = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
     if let Some(name) = check_already_registered(&caller, users.clone()){
         return UserNameResponse::User { user_name: name }
@@ -22,7 +22,7 @@ pub fn username() -> UserNameResponse{
 #[query]
 #[candid_method(query)]
 pub fn read_file(read_file_data: ReadFileData) -> ReadFileResponse{
-    let caller: SPrincipal = SPrincipal(ic::caller());
+    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users){
         None => return ReadFileResponse::UserNotRegisted,
