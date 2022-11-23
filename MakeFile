@@ -4,6 +4,10 @@ run_web:
 run_desktop:
 	cargo tauri dev
 
+run_web:
+	cd frontend; npx webpack serve
+
+
 build:
 	cargo tauri build
 

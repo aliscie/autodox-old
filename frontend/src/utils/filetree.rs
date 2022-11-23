@@ -5,9 +5,9 @@ use std::rc::Rc;
 use indexmap::IndexSet;
 use uuid::Uuid;
 use web_sys::{Element, MouseEvent};
+use yew::{html, Html};
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
-use yew::{html, Html};
 use yew_router::prelude::*;
 
 use shared::schema::FileDirectory;
