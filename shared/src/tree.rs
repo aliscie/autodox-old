@@ -163,7 +163,7 @@ where
 impl GetId for FileNode {
     type Id = Uuid;
     fn get_id(&self) -> Self::Id {
-        self.id
+        *self.id
     }
 }
 

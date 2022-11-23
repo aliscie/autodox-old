@@ -23,12 +23,13 @@ wasm-bindgen-futures = { version = "0.4.28", optional = true }
 yew = { version = "*", optional  = true}
 js-sys = { version = "0.3.59", optional = true }
 surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true}
+candid = { version = "0.7", optional = true }
 
 [features]
 default = ["frontend"]
 frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys", "dep:yew", "dep:stylist"]
 tauri = ["dep:surrealdb"]
-backend = []
+backend = ["dep:candid"]
 full = ["frontend", "backend", "tauri"]
 
 

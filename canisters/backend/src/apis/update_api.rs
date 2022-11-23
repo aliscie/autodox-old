@@ -1,6 +1,6 @@
 use ic_kit::{
     macros::*,
-    candid::candid_method,
+    candid::candid_method, ic,
 };
 use ic_stable_memory::{
     s, utils::ic_types::SPrincipal
@@ -11,7 +11,7 @@ use crate::{structure::*, response::*};
 #[update]
 #[candid_method(update)]
 pub fn register(user_name: String) -> RegisterResponse{
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    let caller = SPrincipal(ic::caller());
     let mut users = s!(Users);
     if let Some(registered_name) = check_already_registered(&caller, users.clone()){
         return RegisterResponse::AlreadyRegistered { user_name: registered_name }
@@ -28,7 +28,7 @@ pub fn register(user_name: String) -> RegisterResponse{
 #[update]
 #[candid_method(update)]
 pub fn create_file(create_file_data: CreateFileData) -> CreateFileResponse{
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    let caller: SPrincipal = SPrincipal(ic::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users){
         None => return CreateFileResponse::UserNotRegisted,
@@ -44,7 +44,7 @@ pub fn create_file(create_file_data: CreateFileData) -> CreateFileResponse{
 #[update]
 #[candid_method(update)]
 pub fn add_viewer(add_viewer_data: AddViewerData) -> AddViewerResponse{
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    let caller: SPrincipal = SPrincipal(ic::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users){
         None => return AddViewerResponse::UserNotRegisted,
@@ -68,7 +68,7 @@ pub fn add_viewer(add_viewer_data: AddViewerData) -> AddViewerResponse{
 #[update]
 #[candid_method(update)]
 pub fn remove_viewer(remove_viewer_data: RemoveViewerData) -> RemoveViewerResponse{
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    let caller: SPrincipal = SPrincipal(ic::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users){
         None => return RemoveViewerResponse::UserNotRegisted,
@@ -92,7 +92,7 @@ pub fn remove_viewer(remove_viewer_data: RemoveViewerData) -> RemoveViewerRespon
 #[update]
 #[candid_method(update)]
 pub fn add_child_content(child_content_data: ChildContentData) -> AddChildContentResponse{
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    let caller: SPrincipal = SPrincipal(ic::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users){
         None => return AddChildContentResponse::UserNotRegisted,
@@ -112,7 +112,7 @@ pub fn add_child_content(child_content_data: ChildContentData) -> AddChildConten
 #[update]
 #[candid_method(update)]
 pub fn update_file(update_file_data: UpdateFileData) -> UpdateFileResponse{
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    let caller: SPrincipal = SPrincipal(ic::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users){
         None => return UpdateFileResponse::UserNotRegisted,
@@ -132,7 +132,7 @@ pub fn update_file(update_file_data: UpdateFileData) -> UpdateFileResponse{
 #[update]
 #[candid_method]
 pub fn delete_file(delete_file_data: DeleteFileData) -> DeleteFileResponse{
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    let caller: SPrincipal = SPrincipal(ic::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users){
         None => return DeleteFileResponse::UserNotRegisted,
@@ -152,7 +152,7 @@ pub fn delete_file(delete_file_data: DeleteFileData) -> DeleteFileResponse{
 #[update]
 #[candid_method(update)]
 pub fn change_file_mode(change_file_mode_data: ChangeFileModeData) -> ChangeFileModeResponse{
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    let caller: SPrincipal = SPrincipal(ic::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users){
         None => return ChangeFileModeResponse::UserNotRegisted,
