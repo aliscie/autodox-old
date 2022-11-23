@@ -17,7 +17,6 @@ mod prelude;
 //mod entity;
 mod context;
 mod error;
-mod model;
 mod store;
 mod tests;
 mod utils;
