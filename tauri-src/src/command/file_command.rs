@@ -170,8 +170,8 @@ mod tests {
         //println!("{:?}", object);
         let mut data = FileDirectory::default();
         let file = FileNode::default();
-        data.files
-            .push_children(data.files.root.unwrap(), file.id, file);
+        //data.files
+            //.push_children(data.files.root.unwrap(), file.id, file);
         let store = context.get_store();
         //for i in data.api.vertices.values().into_iter() {
         //store.exec_create(i.clone()).await.unwrap();

@@ -9,9 +9,9 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ic-kit = "0.4.8"
-# candid = "0.7"
+ candid = "0.7"
 # until uuid get merged into candid crate
-candid = { git = "https://github.com/lunchspider/candid" , features = ["uuid"]}
+#candid = { git = "https://github.com/lunchspider/candid" , features = ["uuid"]}
 serde = "1"
 shared = { path = "./../../shared" , features = ["backend"]}
 

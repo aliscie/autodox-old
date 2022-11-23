@@ -411,6 +411,7 @@ name = "backend"
 version = "0.1.0"
 dependencies = [
  "candid 0.7.18",
+ "ic-cdk 0.6.7",
  "ic-kit",
  "ic-stable-memory",
  "serde",
