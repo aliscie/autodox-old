@@ -10,6 +10,7 @@ pub use error::Error;
 pub mod macros;
 pub mod schema;
 pub mod traits;
+pub mod id;
 
 pub use macros::*;
 

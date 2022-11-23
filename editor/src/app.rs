@@ -1,30 +1,26 @@
 extern crate web_sys;
 
-use std::collections::HashMap;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::console::log_1;
-use web_sys::{
-    window, DragEvent, Element, MouseEvent, MutationObserver, MutationObserverInit, MutationRecord,
-};
+use web_sys::{window, Element, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
-use yewdux::prelude::{Dispatch, Listener};
 
-use shared::schema::{Attrs, EditorElement, ElementTree};
+use shared::schema::ElementTree;
 use shared::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
 
 use crate::plugins::PasteConverter;
 use crate::render::render;
-use shared::log;
-
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
+    pub element_tree: Rc<RefCell<ElementTree>>,
 }
 
 // this is used for the work space
@@ -41,34 +37,39 @@ pub fn editor(props: &Props) -> Html {
     // get the current focused and sorted it
     // get the previous  focused and sorted it in yewdux
     let empty = "empty".to_string();
-    // TODO : this is only a prototype code should be cleaned here!
-    let element_tree = Dispatch::<ElementTree>::new();
-    let oninput_event = Closure::wrap(Box::new(
-        move |e: Vec<MutationRecord>, _observer: MutationObserver| {
-            for i in e {
-                log_1(&format!("{:?}", i.type_()).into());
-                log_1(&format!("{:?}", i.target()).into());
-                match i.type_().as_ref() {
-                    "characterData" => {
-                        if let Some(x) = i.target() {
-                            if let Some(parent_element) = x.parent_element() {
-                                if let Ok(id) = Uuid::parse_str(parent_element.id().as_ref()) {
-                                    log_1(&format!("{:?}", parent_element.inner_html()).into());
-                                    log_1(&format!("{:?}", id).into());
-                                    element_tree.reduce_mut(|f| {
-                                        if let Some(element) = f.elements.vertices.get_mut(&id) {
+    let oninput_event = {
+        let element_tree = props.element_tree.clone();
+        Closure::wrap(
+            Box::new(move |e: Vec<MutationRecord>, _observer: MutationObserver| {
+                for i in e {
+                    log_1(&format!("{:?}", i.type_()).into());
+                    log_1(&format!("{:?}", i.target()).into());
+                    match i.type_().as_ref() {
+                        "characterData" => {
+                            if let Some(x) = i.target() {
+                                if let Some(parent_element) = x.parent_element() {
+                                    if let Ok(id) = Uuid::parse_str(parent_element.id().as_ref()) {
+                                        log_1(&format!("{:?}", parent_element.inner_html()).into());
+                                        log_1(&format!("{:?}", id).into());
+                                        if let Some(element) = element_tree
+                                            .as_ref()
+                                            .borrow_mut()
+                                            .elements
+                                            .vertices
+                                            .get_mut(&id)
+                                        {
                                             element.text = parent_element.inner_html();
                                         }
-                                    });
+                                    }
                                 }
                             }
                         }
+                        anyt_thing_else => log_1(&anyt_thing_else.into()),
                     }
-                    anyt_thing_else => log_1(&anyt_thing_else.into()),
                 }
-            }
-        },
-    ) as Box<dyn FnMut(_, _)>);
+            }) as Box<dyn FnMut(_, _)>,
+        )
+    };
 
     use_effect_with_deps(
         move |_my_text| {
@@ -101,86 +102,18 @@ pub fn editor(props: &Props) -> Html {
         empty,
     );
 
-    let onmousemove = {
-        move |e: MouseEvent| {
-            // log_1(&format!("xxxxxxxxxxxxxxxxxx {:?}", e.page_y()).into());
-            // display.set("display: block".to_string());
-        }
-    };
-    let onchange = {
-        move |e: Event| {
-            log!("change from main");
-        }
-    };
-
-    let onmousedown = {
-        move |e: MouseEvent| {
-            // display.set("display: block".to_string());
-        }
-    };
-
-    let ondragstart = {
-        move |e: DragEvent| {
-            // opacity:0.5
-        }
-    };
-
-    let ondragend = {
-        move |e: DragEvent| {
-            // opacity:1
-        }
-    };
-
-    let ondragenter = {
-        move |e: DragEvent| {
-            // background:lightblue
-        }
-    };
-
-    let ondragleave = {
-        move |e: DragEvent| {
-            // background:none
-        }
-    };
-    let element_tree_dispatch = Dispatch::<ElementTree>::new();
-    element_tree_dispatch.reduce_mut(|r| {
-        let root = r.elements.root.unwrap();
-        let id = Uuid::new_v4();
-        r.elements.push_children(
-            root,
-            id.clone(),
-            EditorElement::new(
-                id,
-                "bold text".to_string(),
-                HashMap::from([(Attrs::Style, "font-weight: bold;".to_string())]),
-            ),
-        );
-        let id = Uuid::new_v4();
-        r.elements.push_children(
-            root,
-            id,
-            EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
-        );
-    });
-
-    let oninput = Callback::from(|e: InputEvent| {
-        log_1(&format!("{:?}", e).into());
-    });
+    let element_tree = props.element_tree.clone();
 
     html! {
         <span
             class={css_file_macro!("main.css")}
         >
-
             <h2 contenteditable="true" class={"editor_title heading"}>
             {props.title.clone()}
         </h2>
-
             <span
             class = "text_editor_container"
             >
-
-
             <div contenteditable="false" id="selection-popper" class="buttons_group_class">
             <span class="btn"><i class="fa-solid fa-bold"></i></span>
             <span class="btn"><i class="fa-solid fa-italic"></i></span>
@@ -190,7 +123,7 @@ pub fn editor(props: &Props) -> Html {
             </div>
 
             <div /* ref =  {editor_ref} */ contenteditable = "true" class="text_editor" id = "text_editor">
-            { render(&element_tree_dispatch.get(), element_tree_dispatch.get().elements.root.unwrap()) }
+            { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
         </div>
             </span>
             </span>

@@ -1,23 +1,24 @@
-use wasm_bindgen_futures::spawn_local;
 use crate::app_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
-use crate::router::{Route, switch};
-use editor::Editor;
-use yew_router::prelude::*;
-use shared::schema::{FileDirectory, FileNode};
-use web_sys::{MouseEvent, console};
-use yew::prelude::*;
-use yewdux::prelude::*;
+use crate::router::{switch, Route};
 use shared::log;
-use  wasm_bindgen::JsValue;
+use shared::schema::{ FileDirectory, FileNode};
+use wasm_bindgen::JsValue;
+use wasm_bindgen_futures::spawn_local;
+use web_sys::{console, MouseEvent};
+use yew::prelude::*;
+use yew_router::prelude::*;
+use yewdux::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
     spawn_local(async move {
         let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
         log!(&backend::read(canister_id.clone()).await);
-        log!(JsValue::js_typeof(&backend::read(canister_id.clone()).await));
+        log!(JsValue::js_typeof(
+            &backend::read(canister_id.clone()).await
+        ));
     });
 
     let aside_bar_toggle = use_state_eq(|| "".to_string());
@@ -43,47 +44,46 @@ pub fn app() -> Html {
             Box::pin(async move {
                 let file = FileNode::default();
                 let x = crate::backend::create_file(
-                    state.id,
+                    *state.id,
                     state.files.root.unwrap(),
                     "untitled".to_string(),
-                    file.id,
+                    *file.id,
                 )
-                    .await;
+                .await;
                 console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
                         .files
-                        .push_children(state.files.root.unwrap(), file.id, file);
+                        .push_children(state.files.root.unwrap(), *file.id, file);
                 }
             })
         });
-
     html! {
         <BrowserRouter>
 
-        <div id = "app">
-        { super::utils::get_titlebar(toggle_aside ) }
+            <div id = "app">
+            { super::utils::get_titlebar(toggle_aside ) }
         <aside style={(*aside_bar_toggle).clone().to_string()}>
 
-        <SearchFiltes/>
+            <SearchFiltes/>
 
-        <ButtonsGroup/>
+            <ButtonsGroup/>
 
-        <ul  id="myUL">
+            <ul  id="myUL">
             <TreeList/>
             <bottom_buttons>
-                <button onclick={handle_create_file}><i class="fa-solid fa-plus"></i>{"Add file"}</button>
-                <span ><input placeholder="Add from test"/></span>
-                <button onclick={onclick_market_place} ><i class="fa-solid fa-globe"></i>{"Market place"}</button>
+            <button onclick={handle_create_file}><i class="fa-solid fa-plus"></i>{"Add file"}</button>
+            <span ><input placeholder="Add from test"/></span>
+            <button onclick={onclick_market_place} ><i class="fa-solid fa-globe"></i>{"Market place"}</button>
             </bottom_buttons>
 
-        </ul>
-        </aside>
-        //<main>
-            //<Switch<Route> render= {Switch::render(switch)} />
-        //</main>
-        <Editor title = "text"/>
-        </div>
+            </ul>
+            </aside>
+            <main>
+                <Switch<Route> render= {Switch::render(switch)} />
+            </main>
+            //<Editor title = "text" element_tree = { element_tree }/>
+            </div>
         </BrowserRouter>
     }
 }
