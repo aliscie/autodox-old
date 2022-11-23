@@ -5397,6 +5397,7 @@ name = "shared"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "candid 0.7.18",
  "cfg-if",
  "indexmap",
  "js-sys",

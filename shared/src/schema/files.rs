@@ -1,6 +1,6 @@
 use crate::{
     traits::{Creatable, Entity, Queryable, Updatable},
-    Error, Tree,
+    Error, Tree, id::Id,
 };
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
@@ -107,7 +107,7 @@ impl From<FileNodeUpdate> for Object {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileNode {
-    pub id: Uuid,
+    pub id: Id,
     pub name: String,
     pub element_tree: Option<Uuid>,
 }
@@ -115,7 +115,7 @@ pub struct FileNode {
 impl Default for FileNode {
     fn default() -> Self {
         Self {
-            id: Uuid::new_v4(),
+            id: Uuid::new_v4().into(),
             name: "untitled".to_string(),
             element_tree: None,
         }
@@ -132,7 +132,7 @@ impl Entity for FileNode {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileDirectory {
-    pub id: Uuid,
+    pub id: Id,
     pub name: String,
     pub files: Tree<Uuid, FileNode>,
 }
@@ -158,7 +158,7 @@ impl Default for FileDirectory {
         d.files.push_vertex(
             id,
             FileNode {
-                id,
+                id : id.into(),
                 name: "root".into(),
                 element_tree: None,
             },
@@ -174,7 +174,7 @@ impl FileDirectory {
     pub fn new(id: Uuid, name: String) -> Self {
         Self {
             files: Tree::new(),
-            id,
+            id : id.into(),
             name,
         }
     }
