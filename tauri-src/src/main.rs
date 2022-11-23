@@ -84,6 +84,7 @@ async fn main() {
             crate::command::element::get_element_tree,
             crate::command::element::create_element_tree,
             crate::command::element::create_element,
+            crate::command::element::update_element,
         ])
         .setup(|app| {
             #[cfg(target_os = "macos")]

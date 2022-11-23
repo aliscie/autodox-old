@@ -1,12 +1,12 @@
 use crate::context::Context;
 use crate::prelude::*;
+use crate::utils::*;
 use shared::schema::*;
 use shared::traits::Entity;
 use std::collections::BTreeMap;
 use surrealdb::sql::Value;
 use tauri::State;
 use uuid::Uuid;
-use crate::utils::*;
 
 #[tauri::command]
 pub async fn create_element_tree(
@@ -23,7 +23,7 @@ pub async fn create_element_tree(
             children: Some(children),
             attrs: i.attrs.clone(),
             // these doesn't matter we are throwing
-            parent_id : Uuid::new_v4(),
+            parent_id: Uuid::new_v4(),
             tree_id: Uuid::new_v4(),
         };
         let _ = store.exec_create(element_create).await?;
@@ -34,7 +34,8 @@ pub async fn create_element_tree(
         name: None,
         element_tree: Some(data.id),
     };
-    let filter: BTreeMap<String, Value> = BTreeMap::from([("id".into(), Value::Uuid(file_id.into()))]);
+    let filter: BTreeMap<String, Value> =
+        BTreeMap::from([("id".into(), Value::Uuid(file_id.into()))]);
     store.exec_create(data).await?;
     store
         .exec_update(
@@ -62,9 +63,7 @@ pub async fn create_element(data: EditorElementCreate, ctx: State<'_, Context>) 
     let parent_id = data.parent_id;
     let id = data.id;
     let tree_id = data.tree_id;
-    let _ = store
-        .exec_create(data)
-        .await?;
+    let _ = store.exec_create(data).await?;
     let sql = "update $tb set children += $va";
     let vars: BTreeMap<String, Value> = map![
         "tb".into() => Value::Thing((EditorElement::table_name(), parent_id.to_string()).into()),
@@ -84,5 +83,12 @@ pub async fn create_element(data: EditorElementCreate, ctx: State<'_, Context>) 
         .datastore
         .execute(&sql, &store.session, Some(vars), false)
         .await?;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn update_element(data: EditorElementUpdate, ctx: State<'_, Context>) -> Result<()> {
+    let store = ctx.get_store();
+    store.exec_update(EditorElement::table_name(), data, None).await?;
     Ok(())
 }
