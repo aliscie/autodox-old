@@ -44,17 +44,17 @@ pub fn app() -> Html {
             Box::pin(async move {
                 let file = FileNode::default();
                 let x = crate::backend::create_file(
-                    state.id,
+                    *state.id,
                     state.files.root.unwrap(),
                     "untitled".to_string(),
-                    file.id,
+                    *file.id,
                 )
                 .await;
                 console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
                         .files
-                        .push_children(state.files.root.unwrap(), file.id, file);
+                        .push_children(state.files.root.unwrap(), *file.id, file);
                 }
             })
         });
