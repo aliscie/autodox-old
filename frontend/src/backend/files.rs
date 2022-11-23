@@ -4,10 +4,8 @@ use web_sys::console;
 use yewdux::prelude::Dispatch;
 use shared::log;
 
-use shared::schema::{FileDirectory, FileNodeCreate};
 use crate::backend;
 
-use crate::utils::DeviceInfo;
 
 use shared::schema::{FileDirectory, FileNodeCreate};
 
