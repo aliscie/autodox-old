@@ -3,6 +3,8 @@ extern crate shared;
 extern crate wasm_bindgen_futures;
 extern crate yew;
 
+use std::env;
+
 use lazy_static::lazy_static;
 use wasm_bindgen::prelude::*;
 
@@ -18,11 +20,10 @@ mod utils;
 
 
 lazy_static! {
-    pub static ref IS_WEB: bool = cfg!(feature = "web");
+    pub static ref IS_WEB: bool = env::var("IS_DESKTOP").is_err();
 }
 
 #[wasm_bindgen]
 pub fn run() {
-
     yew::start_app::<App>();
 }

@@ -4,6 +4,7 @@
 )]
 
 
+use std::env;
 #[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
 use dotenv::dotenv;
