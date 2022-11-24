@@ -4,15 +4,16 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use uuid::Uuid;
+use wasm_bindgen::{JsCast, prelude::Closure};
 use wasm_bindgen::UnwrapThrowExt;
+use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord, window};
 use web_sys::console::log_1;
-use web_sys::{window, Element, MutationObserver, MutationObserverInit, MutationRecord};
-use yew::prelude::*;
 use yew::{function_component, html};
+use yew::prelude::*;
 
-use shared::schema::ElementTree;
+use gloo_timers::callback::Timeout;
 use shared::*;
-use wasm_bindgen::{prelude::Closure, JsCast};
+use shared::schema::ElementTree;
 
 use crate::plugins::PasteConverter;
 use crate::render::render;
@@ -27,7 +28,6 @@ pub struct Props {
 
 #[function_component(Editor)]
 pub fn editor(props: &Props) -> Html {
-    // TODO
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
@@ -36,6 +36,20 @@ pub fn editor(props: &Props) -> Html {
 
     // get the current focused and sorted it
     // get the previous  focused and sorted it in yewdux
+
+    //
+    // let state = use_state(|| "".to_string());
+    // use_effect_with_deps(move |_my_text| {
+    //     let timeout = Timeout::new(250, move || {
+    //         state.set(props.element_tree.clone);
+    //         log!("xxx");
+    //     });
+    //
+    //     timeout.forget();
+    //     || {}
+    // }, props.element_tree.clone());
+
+
     let empty = "empty".to_string();
     let oninput_event = {
         let element_tree = props.element_tree.clone();

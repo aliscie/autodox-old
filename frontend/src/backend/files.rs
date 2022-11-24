@@ -2,10 +2,6 @@ use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
-use shared::log;
-
-use crate::backend;
-
 
 use shared::schema::{FileDirectory, FileNodeCreate};
 
@@ -90,8 +86,6 @@ pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
 }
 
 pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
-
-
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
