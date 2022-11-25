@@ -39,15 +39,15 @@ pub fn editor(props: &Props) -> Html {
 
     //
     // let state = use_state(|| "".to_string());
-    // use_effect_with_deps(move |_my_text| {
-    //     let timeout = Timeout::new(250, move || {
-    //         state.set(props.element_tree.clone);
-    //         log!("xxx");
-    //     });
-    //
-    //     timeout.forget();
-    //     || {}
-    // }, props.element_tree.clone());
+    use_effect_with_deps(move |_my_text| {
+        let timeout = Timeout::new(250, move || {
+            // state.set(props.element_tree.clone);
+            log!("xxx");
+        });
+
+        timeout.forget();
+        || {}
+    }, props.element_tree.clone());
 
 
     let empty = "empty".to_string();
@@ -129,11 +129,11 @@ pub fn editor(props: &Props) -> Html {
             class = "text_editor_container"
             >
             <div contenteditable="false" id="selection-popper" class="buttons_group_class">
-            <span class="btn"><i class="fa-solid fa-bold"></i></span>
-            <span class="btn"><i class="fa-solid fa-italic"></i></span>
-            <span class="btn"><i class="fa-solid fa-paint-roller"></i></span>
-            <span class="btn"><i class="fa-solid fa-comment"></i></span>
-            <span class="btn"><i class="fa-solid fa-droplet"></i></span>
+            <span class="btn"><i class="fa-bold"></i></span>
+            <span class="btn"><i class="fa-italic"></i></span>
+            <span class="btn"><i class="fa-paint-roller"></i></span>
+            <span class="btn"><i class="fa-comment"></i></span>
+            <span class="btn"><i class="fa-droplet"></i></span>
             </div>
 
             <div /* ref =  {editor_ref} */ contenteditable = "true" class="text_editor" id = "text_editor">
