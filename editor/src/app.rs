@@ -10,17 +10,26 @@ use web_sys::{window, Element, MutationObserver, MutationObserverInit, MutationR
 use yew::prelude::*;
 use yew::{function_component, html};
 
-use shared::schema::ElementTree;
+use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
 use shared::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
 
 use crate::plugins::PasteConverter;
 use crate::render::render;
 
+/// this captures all the changes in a editor element
+#[derive(Debug)]
+pub enum EditorChange {
+    Update(EditorElementUpdate),
+    Create(EditorElementCreate),
+    Delete(Uuid),
+}
+
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub title: String,
     pub element_tree: Rc<RefCell<ElementTree>>,
+    pub onchange: Callback<EditorChange>,
 }
 
 // this is used for the work space
@@ -39,6 +48,7 @@ pub fn editor(props: &Props) -> Html {
     let empty = "empty".to_string();
     let oninput_event = {
         let element_tree = props.element_tree.clone();
+        let onchange = props.onchange.clone();
         Closure::wrap(
             Box::new(move |e: Vec<MutationRecord>, _observer: MutationObserver| {
                 for i in e {
@@ -59,12 +69,18 @@ pub fn editor(props: &Props) -> Html {
                                             .get_mut(&id)
                                         {
                                             element.text = parent_element.inner_html();
+                                            let update = EditorElementUpdate {
+                                                id: element.id,
+                                                text: Some(parent_element.inner_html()),
+                                                ..Default::default()
+                                            };
+                                            onchange.emit(EditorChange::Update(update));
                                         }
                                     }
                                 }
                             }
                         }
-                        anyt_thing_else => log_1(&anyt_thing_else.into()),
+                        anything_else => log_1(&anything_else.into()),
                     }
                 }
             }) as Box<dyn FnMut(_, _)>,

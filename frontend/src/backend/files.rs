@@ -2,13 +2,7 @@ use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
-use shared::log;
-
-use crate::backend;
-
-
 use shared::schema::{FileDirectory, FileNodeCreate};
-
 use crate::utils::DeviceInfo;
 
 pub async fn create_file(

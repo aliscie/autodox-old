@@ -6,9 +6,11 @@ use wasm_bindgen::prelude::*;
 // use wasm_bindgen::prelude;
 pub use files::*;
 pub use main::*;
+pub use element::*;
 
 mod files;
 mod main;
+mod element;
 
 
 #[wasm_bindgen(module = "/src/backend/ic_agent.js")]
