@@ -1608,6 +1608,7 @@ dependencies = [
 name = "editor"
 version = "0.1.0"
 dependencies = [
+ "gloo-timers",
  "html-minifier",
  "js-sys",
  "markup5ever_rcdom",

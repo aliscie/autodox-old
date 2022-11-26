@@ -21,12 +21,3 @@ cfg_if::cfg_if! {
         pub use invoke::{invoke, invoke_async};
     }
 }
-
-// lazy_static! {
-//     pub static ref IS_WEB: bool = {
-//         #[cfg(feature = "web")] {
-//             true
-//         }
-//         false
-//     };
-// }

@@ -4,15 +4,17 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use uuid::Uuid;
+use wasm_bindgen::{JsCast, prelude::Closure};
 use wasm_bindgen::UnwrapThrowExt;
+use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord, window};
 use web_sys::console::log_1;
-use web_sys::{window, Element, MutationObserver, MutationObserverInit, MutationRecord};
-use yew::prelude::*;
 use yew::{function_component, html};
+use yew::prelude::*;
+
 
 use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
 use shared::*;
-use wasm_bindgen::{prelude::Closure, JsCast};
+use shared::schema::ElementTree;
 
 use crate::plugins::PasteConverter;
 use crate::render::render;
@@ -36,7 +38,6 @@ pub struct Props {
 
 #[function_component(Editor)]
 pub fn editor(props: &Props) -> Html {
-    // TODO
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
@@ -45,6 +46,20 @@ pub fn editor(props: &Props) -> Html {
 
     // get the current focused and sorted it
     // get the previous  focused and sorted it in yewdux
+
+    //
+    // let state = use_state(|| "".to_string());
+    use_effect_with_deps(move |_my_text| {
+        let timeout = Timeout::new(250, move || {
+            // state.set(props.element_tree.clone);
+            log!("xxx");
+        });
+
+        timeout.forget();
+        || {}
+    }, props.element_tree.clone());
+
+
     let empty = "empty".to_string();
     let oninput_event = {
         let element_tree = props.element_tree.clone();
@@ -131,11 +146,11 @@ pub fn editor(props: &Props) -> Html {
             class = "text_editor_container"
             >
             <div contenteditable="false" id="selection-popper" class="buttons_group_class">
-            <span class="btn"><i class="fa-solid fa-bold"></i></span>
-            <span class="btn"><i class="fa-solid fa-italic"></i></span>
-            <span class="btn"><i class="fa-solid fa-paint-roller"></i></span>
-            <span class="btn"><i class="fa-solid fa-comment"></i></span>
-            <span class="btn"><i class="fa-solid fa-droplet"></i></span>
+            <span class="btn"><i class="fa-bold"></i></span>
+            <span class="btn"><i class="fa-italic"></i></span>
+            <span class="btn"><i class="fa-paint-roller"></i></span>
+            <span class="btn"><i class="fa-comment"></i></span>
+            <span class="btn"><i class="fa-droplet"></i></span>
             </div>
 
             <div /* ref =  {editor_ref} */ contenteditable = "true" class="text_editor" id = "text_editor">
