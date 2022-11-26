@@ -4,7 +4,6 @@ use web_sys::console;
 use yewdux::prelude::Dispatch;
 
 use shared::schema::{FileDirectory, FileNodeCreate};
-
 use crate::utils::DeviceInfo;
 
 pub async fn create_file(

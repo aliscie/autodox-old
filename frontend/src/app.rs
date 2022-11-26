@@ -10,6 +10,7 @@ use web_sys::{console, MouseEvent};
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
+use crate::utils::GetTitleBar;
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -62,7 +63,7 @@ pub fn app() -> Html {
         <BrowserRouter>
 
             <div id = "app">
-            { super::utils::get_titlebar(toggle_aside ) }
+            <GetTitleBar toggle = { toggle_aside }/>
         <aside style={(*aside_bar_toggle).clone().to_string()}>
 
             <SearchFiltes/>
@@ -80,7 +81,7 @@ pub fn app() -> Html {
             </ul>
             </aside>
             <main>
-                <Switch<Route> render= {Switch::render(switch)} />
+                <Switch<Route> render= {switch} />
             </main>
             //<Editor title = "text" element_tree = { element_tree }/>
             </div>

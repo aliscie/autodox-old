@@ -36,7 +36,9 @@ pub async fn create_element_tree(
     };
     let filter: BTreeMap<String, Value> =
         BTreeMap::from([("id".into(), Value::Uuid(file_id.into()))]);
+    // creating the tree
     store.exec_create(data).await?;
+    // updating the file and setting the correct id in file_node
     store
         .exec_update(
             FileNode::table_name(),
@@ -89,6 +91,13 @@ pub async fn create_element(data: EditorElementCreate, ctx: State<'_, Context>) 
 #[tauri::command]
 pub async fn update_element(data: EditorElementUpdate, ctx: State<'_, Context>) -> Result<()> {
     let store = ctx.get_store();
-    store.exec_update(EditorElement::table_name(), data, None).await?;
+    let id = data.id;
+    store
+        .exec_update(
+            EditorElement::table_name(),
+            data,
+            Some(BTreeMap::from([("id".into(), id.into())]).into()),
+        )
+        .await?;
     Ok(())
 }

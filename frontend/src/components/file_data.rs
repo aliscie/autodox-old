@@ -1,11 +1,17 @@
 use editor::Editor;
+use wasm_bindgen_futures::spawn_local;
+use shared::log;
 use shared::schema::{Attrs, EditorElement, ElementTree, FileDirectory};
+use web_sys::console;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::prelude::*;
 use yewdux::prelude::*;
+use editor::EditorChange;
+
+use crate::backend::update_element;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -33,13 +39,28 @@ pub fn file_data(props: &Props) -> Html {
         id,
         EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
     );
-    let element_tree = Rc::new(RefCell::new(r));
+    let onchange: Callback<EditorChange> = Callback::from(move |x| {
+        console::log_1(&format!("got changes in frontend crate : {:?}", x).into());
+        match x {
+            EditorChange::Update(data) => { 
+                spawn_local(async move {
+                    log!(update_element(data).await);
+                })
+            },
+            _ => log!("Not implemented this yet!"),
+        }
+    });
     match dispatch.get().files.vertices.get(&props.id) {
-        Some(x) => html! {
+        Some(x) => {
+            if x.element_tree.is_none() {     
+                // creating new element tree!
+            }
+            let element_tree = Rc::new(RefCell::new(r));
+            html! {
             <>
-                <Editor title = { x.name.clone() } element_tree = { element_tree }/>
+                <Editor title = { x.name.clone() } element_tree = { element_tree } { onchange } />
             </>
-        },
+        }},
         None => html! { <div> {"File not found!"} </div>},
     }
 }

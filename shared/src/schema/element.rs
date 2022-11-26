@@ -91,7 +91,7 @@ impl Entity for EditorElement {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct EditorElementCreate {
     pub id: Uuid,
     pub text: String,
@@ -102,12 +102,25 @@ pub struct EditorElementCreate {
 }
 
 /// type for updating editor elements
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct EditorElementUpdate {
+    pub id : Uuid,
     pub text: Option<String>,
     pub attrs: Option<HashMap<Attrs, String>>,
     pub parent: Option<Uuid>,
     pub children: Option<IndexSet<Uuid>>,
+}
+
+impl Default for EditorElementUpdate {
+    fn default() -> Self {
+        Self{
+            id : Uuid::new_v4(),
+            text : None,
+            attrs : None,
+            parent : None,
+            children : None
+        } 
+    }
 }
 
 #[cfg(feature = "tauri")]

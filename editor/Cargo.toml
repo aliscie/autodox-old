@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 stylist = { version = "0.10.0", features = ["yew"] }
 table-extract = "0.2.2"
-yew = "0.19.3"
+yew = "0.20.0"
 wasm-bindgen = "0.2"
 html-minifier = "3.0.15"
 js-sys = "0.3.56"
@@ -17,7 +17,7 @@ shared = { path = "../shared", features = ["frontend"] }
 serde = "1.0.144"
 uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "serde"] }
 serde_json = "1.0.85"
-yewdux = "0.8.2"
+yewdux = "0.9.0"
 yew-style-in-rs = "0.4.1"
 gloo-timers = "0.2.4"
 

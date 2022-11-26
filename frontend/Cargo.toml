@@ -11,8 +11,8 @@ crate-type = ["cdylib", "rlib"]
 
 
 [dependencies]
-yew = "0.19.3"
-yew-router = "0.16.0"
+yew = {version = "0.20.0", features = ["csr"]}
+yew-router = "0.17.0"
 wasm-bindgen = "0.2.83"
 wasm-bindgen-futures = "0.4.28"
 serde-wasm-bindgen = "0.4"
@@ -25,7 +25,7 @@ reqwest = { version = "0.11", features = ["json"] }
 graphql_client = "0.11.0"
 anyhow = "1.0.62"
 cfg-if = "1.0.0"
-yewdux = "0.8.2"
+yewdux = "0.9.0"
 futures = "0.3.24"
 editor = { path = "../editor" }
 shared = { path = "../shared", features = ["frontend"] }
