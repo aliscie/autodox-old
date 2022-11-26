@@ -1,6 +1,6 @@
 extern crate web_sys;
 extern crate yew;
-pub use app::Editor;
+pub use app::{Editor, EditorChange};
 mod app;
 pub(crate) mod app_components;
 pub(crate) mod components;
@@ -8,5 +8,3 @@ mod render;
 mod plugins;
 mod backend;
 mod utils;
-use yew::{function_component, html, Html};
-

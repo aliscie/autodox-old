@@ -2,9 +2,7 @@ use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
-
 use shared::schema::{FileDirectory, FileNodeCreate};
-
 use crate::utils::DeviceInfo;
 
 pub async fn create_file(
@@ -86,6 +84,8 @@ pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
 }
 
 pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
+
+
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
