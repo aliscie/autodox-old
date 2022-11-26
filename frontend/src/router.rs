@@ -15,10 +15,10 @@ pub enum Route {
     NotFound,
 }
 
-pub fn switch(routes: &Route) -> Html {
+pub fn switch(routes: Route) -> Html {
     match routes {
         Route::Home => html! {<span>{"We are at home!"}</span>},
-        Route::File { id } => html! { <FileData id = { *id }/>},
+        Route::File { id } => html! { <FileData id = { id }/>},
         Route::NotFound => html! { <span>{ "404" }</span> },
     }
 }

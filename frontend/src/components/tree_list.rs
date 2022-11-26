@@ -1,3 +1,4 @@
+use crate::utils::filetree::FileTree;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -17,5 +18,9 @@ pub fn tree_list(props: &TreeListProps) -> Html {
     //d.reduce_mut(|r| r.data.insert(225, "file four!".into()));
 
     //(props.files.clone()).into_iter().map(|file| file.to_html()).collect::<Html>()
-    crate::utils::filetree::to_html(&tree, tree.files.root.unwrap())
+    //crate::utils::filetree::to_html(&tree, tree.files.root.unwrap())
+    let start = tree.files.root.unwrap().clone();
+    html! {
+        <FileTree file_directory = { tree } start = { start }/>
+    }
 }

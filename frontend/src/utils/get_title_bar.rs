@@ -6,8 +6,15 @@ use crate::app_components::{Download, Markdown, PageOptions, TitleAvatarComponen
 use crate::components::{CurrDirectory, TitleBar};
 use crate::*;
 
-pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
+#[derive(Properties, Debug, PartialEq)]
+pub struct Props{
+    pub toggle : UseStateHandle<String>,
+}
+
+#[function_component(GetTitleBar)]
+pub fn get_titlebar(props : &Props) -> Html {
     let is_light_mode = use_state(|| false);
+    let x = props.toggle.clone();
 
     let is_expanded = x.chars().count();
     let doc = window().unwrap_throw().document().unwrap_throw();
@@ -16,7 +23,6 @@ pub fn get_titlebar(x: UseStateHandle<String>) -> Html {
     let handle_light_mod: Callback<MouseEvent> = {
         let is_light_mode = is_light_mode.clone();
         let doc = doc.clone();
-
         Callback::from(move |_e: MouseEvent| {
             let _ = doc
                 .query_selector("html")
