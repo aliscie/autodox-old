@@ -23,6 +23,5 @@ lazy_static! {
 
 #[wasm_bindgen]
 pub fn run() {
-
-    yew::start_app::<App>();
+    yew::Renderer::<App>::new().render();
 }

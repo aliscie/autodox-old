@@ -7602,11 +7602,12 @@ dependencies = [
 
 [[package]]
 name = "yewdux"
-version = "0.8.3"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7639d574e19277721537d6d56b98f328a3afbcce0a6159d962b83b96aed2320"
+checksum = "584036bca909568ef2f123801878b3b1597ca321b0fe427e8c71aa9181728f83"
 dependencies = [
  "anymap",
+ "async-trait",
  "log",
  "serde",
  "serde_json",
@@ -7615,15 +7616,15 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "yew 0.19.3",
+ "yew 0.20.0",
  "yewdux-macros",
 ]
 
 [[package]]
 name = "yewdux-macros"
-version = "0.8.3"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b9edcda9a44e45c503c22f04212a173905fe150d97cbeb678484ed0830bfbf9"
+checksum = "b3c185d226f6600d2b7ae299c5198f604362c7cc331308a1a54ff494a15a7cef"
 dependencies = [
  "darling 0.13.4",
  "proc-macro-error",

@@ -54,7 +54,6 @@ pub fn file_data(props: &Props) -> Html {
         Some(x) => {
             if x.element_tree.is_none() {     
                 // creating new element tree!
-
             }
             let element_tree = Rc::new(RefCell::new(r));
             html! {

@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::window;
 
 pub use device_info::DeviceInfo;
-pub use get_title_bar::get_titlebar;
+pub use get_title_bar::GetTitleBar;
 
 pub mod filetree;
 
