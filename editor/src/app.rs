@@ -3,21 +3,18 @@ extern crate web_sys;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use uuid::Uuid;
-use wasm_bindgen::{JsCast, prelude::Closure};
-use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord, window};
-use web_sys::console::log_1;
-use yew::{function_component, html};
-use yew::prelude::*;
-
-
-use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
-use shared::*;
-use shared::schema::ElementTree;
-
 use crate::plugins::PasteConverter;
 use crate::render::render;
+use gloo_timers::callback::Timeout;
+use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
+use shared::*;
+use uuid::Uuid;
+use wasm_bindgen::UnwrapThrowExt;
+use wasm_bindgen::{prelude::Closure, JsCast};
+use web_sys::console::log_1;
+use web_sys::{window, Element, MutationObserver, MutationObserverInit, MutationRecord};
+use yew::prelude::*;
+use yew::{function_component, html};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -49,16 +46,18 @@ pub fn editor(props: &Props) -> Html {
 
     //
     // let state = use_state(|| "".to_string());
-    use_effect_with_deps(move |_my_text| {
-        let timeout = Timeout::new(250, move || {
-            // state.set(props.element_tree.clone);
-            log!("xxx");
-        });
+    use_effect_with_deps(
+        move |_my_text| {
+            let timeout = Timeout::new(250, move || {
+                // state.set(props.element_tree.clone);
+                log!("xxx");
+            });
 
-        timeout.forget();
-        || {}
-    }, props.element_tree.clone());
-
+            timeout.forget();
+            || {}
+        },
+        props.element_tree.clone(),
+    );
 
     let empty = "empty".to_string();
     let oninput_event = {
