@@ -15,13 +15,14 @@ use web_sys::console::log_1;
 use web_sys::{window, Element, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
+use shared::id::Id;
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
 pub enum EditorChange {
     Update(EditorElementUpdate),
     Create(EditorElementCreate),
-    Delete(Uuid),
+    Delete(Id),
 }
 
 #[derive(Properties, PartialEq)]
@@ -72,7 +73,7 @@ pub fn editor(props: &Props) -> Html {
                         "characterData" => {
                             if let Some(x) = i.target() {
                                 if let Some(parent_element) = x.parent_element() {
-                                    if let Ok(id) = Uuid::parse_str(parent_element.id().as_ref()) {
+                                    if let Ok(id) = Uuid::parse_str(parent_element.id().as_ref()).map(Id::from) {
                                         log_1(&format!("{:?}", parent_element.inner_html()).into());
                                         log_1(&format!("{:?}", id).into());
                                         if let Some(element) = element_tree

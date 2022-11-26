@@ -1,3 +1,4 @@
+use crate::id::Id;
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -25,14 +26,14 @@ use crate::{
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct ElementTree {
-    pub id: Uuid,
-    pub elements: Tree<Uuid, EditorElement>,
+    pub id: Id,
+    pub elements: Tree<Id, EditorElement>,
 }
 
 /// make id as generic
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct EditorElement {
-    pub id: Uuid,
+    pub id: Id,
     pub text: String,
     pub attrs: HashMap<Attrs, String>,
 }
@@ -52,7 +53,7 @@ impl Default for ElementTree {
         tree.root = Some(element.id);
         tree.vertices.insert(element.id, element);
         Self {
-            id: Uuid::new_v4(),
+            id: Uuid::new_v4().into(),
             elements: tree,
         }
     }
@@ -62,7 +63,7 @@ impl Default for EditorElement {
     fn default() -> Self {
         // this creates a root element
         Self {
-            id: Uuid::new_v4(),
+            id: Uuid::new_v4().into(),
             text: "".to_owned(),
             attrs: HashMap::new(),
         }
@@ -71,13 +72,20 @@ impl Default for EditorElement {
 
 impl EditorElement {
     #[inline]
-    pub fn new(id: Uuid, text: String, attrs: HashMap<Attrs, String>) -> Self {
-        Self { id, text, attrs }
+    pub fn new<T>(id: T, text: String, attrs: HashMap<Attrs, String>) -> Self
+    where
+        T: Into<Id>,
+    {
+        Self {
+            id: id.into(),
+            text,
+            attrs,
+        }
     }
 }
 
 impl GetId for EditorElement {
-    type Id = Uuid;
+    type Id = Id;
     fn get_id(&self) -> Self::Id {
         self.id
     }
@@ -93,33 +101,33 @@ impl Entity for EditorElement {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct EditorElementCreate {
-    pub id: Uuid,
+    pub id: Id,
     pub text: String,
     pub attrs: HashMap<Attrs, String>,
-    pub tree_id: Uuid,
-    pub parent_id: Uuid,
-    pub children: Option<IndexSet<Uuid>>,
+    pub tree_id: Id,
+    pub parent_id: Id,
+    pub children: Option<IndexSet<Id>>,
 }
 
 /// type for updating editor elements
 #[derive(Serialize, Deserialize, Debug)]
 pub struct EditorElementUpdate {
-    pub id : Uuid,
+    pub id: Id,
     pub text: Option<String>,
     pub attrs: Option<HashMap<Attrs, String>>,
-    pub parent: Option<Uuid>,
-    pub children: Option<IndexSet<Uuid>>,
+    pub parent: Option<Id>,
+    pub children: Option<IndexSet<Id>>,
 }
 
 impl Default for EditorElementUpdate {
     fn default() -> Self {
-        Self{
-            id : Uuid::new_v4(),
-            text : None,
-            attrs : None,
-            parent : None,
-            children : None
-        } 
+        Self {
+            id: Uuid::new_v4().into(),
+            text: None,
+            attrs: None,
+            parent: None,
+            children: None,
+        }
     }
 }
 
@@ -168,8 +176,8 @@ impl From<EditorElementUpdate> for Object {
         if let Some(attrs) = value.attrs {
             attrs_to_object(attrs, &mut object);
         }
-        object.insert("children".to_string() , children.into());
-        object.into() 
+        object.insert("children".to_string(), children.into());
+        object.into()
     }
 }
 

@@ -1,5 +1,5 @@
-use uuid::Uuid;
 use yew::prelude::*;
+use shared::id::Id;
 use yew_router::prelude::*;
 
 use crate::components::FileData;
@@ -9,7 +9,7 @@ pub enum Route {
     #[at("/")]
     Home,
     #[at("/files/:id")]
-    File { id: Uuid },
+    File { id: Id },
     #[not_found]
     #[at("/404")]
     NotFound,
