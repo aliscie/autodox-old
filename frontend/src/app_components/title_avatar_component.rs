@@ -18,10 +18,10 @@ pub fn title_avatar_component() -> Html {
     });
 
     let items: Vec<Html> = vec![
-        html! {<a><i class="fa-user"></i>{"Profile info"}</a>},
-        html! {<a><i class=" fa-eye"></i>{"Who can find me"}</a>},
-        html! {<a><i class=" fa-gear"></i>{"Settings"}</a>},
-        html! {<a onmousedown={logout} ><i class="fa-right-from-bracket"></i>{"logout"}</a>},
+        html! {<a><i class="fa-solid fa-user"></i>{"Profile info"}</a>},
+        html! {<a><i class="fa-solid fa-eye"></i>{"Who can find me"}</a>},
+        html! {<a><i class="fa-solid fa-gear"></i>{"Settings"}</a>},
+        html! {<a onmousedown={logout} ><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</a>},
     ];
 
     let onclick = Callback::from(move |_e: MouseEvent| {
