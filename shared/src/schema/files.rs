@@ -16,11 +16,11 @@ use super::{EditorElement, ElementTree};
 /// type for creating file
 #[derive(Deserialize, Serialize, Debug)]
 pub struct FileNodeCreate {
-    pub id: Uuid,
+    pub id: Id,
     pub name: String,
-    pub directory_id: Uuid,
-    pub parent_id: Uuid,
-    pub children: Option<IndexSet<Uuid>>,
+    pub directory_id: Id,
+    pub parent_id: Id,
+    pub children: Option<IndexSet<Id>>,
 }
 
 #[cfg(feature = "tauri")]
@@ -56,11 +56,11 @@ impl From<FileNodeCreate> for Object {
 /// type for updating file_node
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileNodeUpdate {
-    pub children: Option<IndexSet<Uuid>>,
+    pub children: Option<IndexSet<Id>>,
     // TODO : cannot update this using this method think of something else
-    pub parent_id: Option<Uuid>,
+    pub parent_id: Option<Id>,
     pub name: Option<String>,
-    pub element_tree: Option<Uuid>,
+    pub element_tree: Option<Id>,
 }
 
 #[cfg(feature = "tauri")]
@@ -109,7 +109,7 @@ impl From<FileNodeUpdate> for Object {
 pub struct FileNode {
     pub id: Id,
     pub name: String,
-    pub element_tree: Option<Uuid>,
+    pub element_tree: Option<Id>,
 }
 
 impl Default for FileNode {
@@ -134,7 +134,7 @@ impl Entity for FileNode {
 pub struct FileDirectory {
     pub id: Id,
     pub name: String,
-    pub files: Tree<Uuid, FileNode>,
+    pub files: Tree<Id, FileNode>,
 }
 
 #[cfg(feature = "tauri")]
@@ -156,15 +156,15 @@ impl Default for FileDirectory {
         let mut d = Self::new(Uuid::new_v4(), "default".to_string());
         let id = Uuid::new_v4();
         d.files.push_vertex(
-            id,
+            id.into(),
             FileNode {
                 id : id.into(),
                 name: "root".into(),
                 element_tree: None,
             },
         );
-        d.files.adjacency.insert(id.clone(), IndexSet::new());
-        d.files.root = Some(id);
+        d.files.adjacency.insert(id.clone().into(), IndexSet::new());
+        d.files.root = Some(id.into());
         return d;
     }
 }

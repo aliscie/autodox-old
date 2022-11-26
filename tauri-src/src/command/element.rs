@@ -23,8 +23,8 @@ pub async fn create_element_tree(
             children: Some(children),
             attrs: i.attrs.clone(),
             // these doesn't matter we are throwing
-            parent_id: Uuid::new_v4(),
-            tree_id: Uuid::new_v4(),
+            parent_id: Uuid::new_v4().into(),
+            tree_id: Uuid::new_v4().into(),
         };
         let _ = store.exec_create(element_create).await?;
     }
@@ -32,7 +32,7 @@ pub async fn create_element_tree(
         children: None,
         parent_id: None,
         name: None,
-        element_tree: Some(data.id),
+        element_tree: Some(data.id.into()),
     };
     let filter: BTreeMap<String, Value> =
         BTreeMap::from([("id".into(), Value::Uuid(file_id.into()))]);

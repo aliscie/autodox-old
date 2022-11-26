@@ -11,11 +11,12 @@ use yew_router::prelude::use_navigator;
 use shared::schema::FileDirectory;
 use crate::app_components::FileComponent;
 use crate::router::Route;
+use shared::id::Id;
 
 #[derive(Properties, PartialEq)]
 pub struct Props{
     pub file_directory: Rc<FileDirectory>,
-    pub start: Uuid
+    pub start: Id
 }
 
 #[function_component(FileTree)]
@@ -76,7 +77,7 @@ pub fn to_html(props : &Props) -> Html {
                 }
             </>
         };
-        map.borrow_mut().insert(*id, html_node);
+        map.borrow_mut().insert(**id, html_node);
     }
     props.file_directory
         .files

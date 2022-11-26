@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 
 use surrealdb::sql::*;
 use uuid::Uuid;
+use shared::id::Id;
 
 use shared::{
     schema::{FileDirectory, FileNode, FileNodeCreate},
@@ -24,8 +25,8 @@ pub async fn create_directory(data: FileDirectory, ctx: State<'_, Context>) -> R
             name: i.name.clone(),
             children: Some(children),
             // these two doesn't matter using any value
-            directory_id: Uuid::new_v4(),
-            parent_id: Uuid::new_v4(),
+            directory_id: Uuid::new_v4().into(),
+            parent_id: Uuid::new_v4().into(),
         };
         let _ = store.exec_create(file_create).await;
     }
@@ -78,7 +79,7 @@ pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirector
 }
 
 #[tauri::command]
-pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDirectory> {
+pub async fn get_directory(id: Id, ctx: State<'_, Context>) -> Result<FileDirectory> {
     let store = ctx.get_store();
     let res = store
         .exec_get::<FileDirectory>(Some(id.to_string()), Some("files.vertices.*.*"))
@@ -88,7 +89,7 @@ pub async fn get_directory(id: Uuid, ctx: State<'_, Context>) -> Result<FileDire
 }
 
 #[tauri::command]
-pub async fn delete_file(id: Uuid, tree_id: Uuid, ctx: State<'_, Context>) -> Result<()> {
+pub async fn delete_file(id: Id, tree_id: Id, ctx: State<'_, Context>) -> Result<()> {
     let store = ctx.get_store();
     let mut file_directory: FileDirectory = store
         .exec_get::<FileDirectory>(Some(tree_id.to_string()), Some("files.vertices.*.*"))

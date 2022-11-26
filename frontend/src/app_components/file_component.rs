@@ -3,7 +3,7 @@ use web_sys::{console::log_1, Element, MouseEvent};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-use shared::schema::FileDirectory;
+use shared::{schema::FileDirectory, id::Id};
 
 use crate::components::Menu;
 
@@ -13,7 +13,7 @@ pub struct FileComponentProps {
     pub onclickfile: Callback<MouseEvent>,
     pub name: String,
     pub class: String,
-    pub id: Uuid,
+    pub id: Id,
 }
 
 #[function_component(FileComponent)]
@@ -95,8 +95,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             let _ = curr.class_list().toggle("dragging_over");
             let dragged = e.data_transfer().unwrap().get_data("dragged_item").unwrap();
             let id = id.clone();
-            let mut old_parent_id: Uuid = Uuid::new_v4();
-            let dragged_uuid = Uuid::parse_str(dragged.as_str()).unwrap();
+            let mut old_parent_id: Id = Uuid::new_v4().into();
+            let dragged_uuid = Uuid::parse_str(dragged.as_str()).map(Id::from).unwrap();
             for (i, value) in &file_dispatch.get().files.adjacency {
                 if value.contains(&dragged_uuid) {
                     old_parent_id = *i;

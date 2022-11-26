@@ -7,7 +7,9 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 #[cfg(feature = "tauri")]
-use surrealdb::sql::{Array, Id, Object, Value};
+use surrealdb::sql::{Array, Object, Value};
+
+use crate::id::Id;
 
 use crate::schema::FileNode;
 use crate::traits::{Entity, GetId};
@@ -161,24 +163,24 @@ where
 }
 
 impl GetId for FileNode {
-    type Id = Uuid;
+    type Id = Id;
     fn get_id(&self) -> Self::Id {
-        *self.id
+        self.id
     }
 }
 
 // cannot make it generic over Tree<ID, T> since Id is conversion
 // is problematic with surrealdb
 #[cfg(feature = "tauri")]
-impl<T> TryFrom<Object> for Tree<Uuid, T>
+impl<T> TryFrom<Object> for Tree<Id, T>
 where
-    T: PartialEq + Eq + Clone + Debug + TryFrom<Object> + Entity + Serialize + GetId<Id = Uuid>,
+    T: PartialEq + Eq + Clone + Debug + TryFrom<Object> + Entity + Serialize + GetId<Id = Id>,
 {
     type Error = crate::Error;
     /// i am asuming we have selected the vertices field with all the data in the nodes
     fn try_from(value: Object) -> Result<Self, Self::Error> {
         let mut value = value;
-        let mut tree = Tree::new();
+        let mut tree: Tree<Id, T> = Tree::new();
         let vertex_vec: Vec<Value> = value
             .remove("vertices")
             .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?
@@ -192,11 +194,9 @@ where
                 .ok_or(Error::XPropertyNotFound("children not found".into()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("file_node.children not of type Array"))?;
-            let adjacency: IndexSet<Uuid> = adjacency_array
+            let adjacency: IndexSet<Id> = adjacency_array
                 .into_iter()
-                .filter_map(|e| -> Option<Uuid> {
-                    e.record()?.id.to_raw().as_str().try_into().ok()
-                })
+                .filter_map(|e| -> Option<Id> { e.record()?.id.to_raw().as_str().try_into().ok() })
                 .collect();
             let file_node: T = vertex_object
                 .try_into()
@@ -208,9 +208,11 @@ where
             .remove("root")
             .ok_or(crate::Error::XPropertyNotFound("root".into()))?;
         tree.root = match root {
-            Value::Strand(x) => {
-                Some(uuid::Uuid::from_str(&x).map_err(|_| Error::XValueNotOfType("uuid"))?)
-            }
+            Value::Strand(x) => Some(
+                uuid::Uuid::from_str(&x)
+                    .map_err(|_| Error::XValueNotOfType("uuid"))?
+                    .into(),
+            ),
             _ => None,
         };
         Ok(tree)

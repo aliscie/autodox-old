@@ -1,7 +1,7 @@
 use shared::schema::FileDirectory;
+use shared::id::Id;
 // use std::collections::{HashMap, HashSet};
 use crate::router::Route;
-use uuid::Uuid;
 use web_sys::{DragEvent, MouseEvent};
 use yew::html;
 use yew::prelude::*;
@@ -13,10 +13,10 @@ pub fn curr_directory() -> Html {
     let display = use_state(|| "display: none;".to_string());
     let (file_tree, _) = use_store::<FileDirectory>();
     let route = use_route::<Route>().unwrap_or_default();
-    let mut path: Vec<Uuid> = match route {
+    let mut path: Vec<Id> = match route {
         Route::File { id } => file_tree
             .files
-            .find_path(file_tree.files.root.as_ref().unwrap(), &id),
+            .find_path(file_tree.files.root.as_ref().unwrap(), &id.into()),
         _ => Vec::new(),
     };
     // remove root
