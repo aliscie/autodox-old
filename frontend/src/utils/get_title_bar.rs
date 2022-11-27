@@ -1,18 +1,18 @@
 use wasm_bindgen::prelude::*;
-use web_sys::{window, MouseEvent};
+use web_sys::{MouseEvent, window};
 use yew::prelude::*;
 
-use crate::app_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
-use crate::components::{CurrDirectory, TitleBar};
 use crate::*;
+use crate::app_components::{CurrDirectory, Download, Markdown, PageOptions, TitleAvatarComponent};
+use crate::components::TitleBar;
 
 #[derive(Properties, Debug, PartialEq)]
-pub struct Props{
-    pub toggle : UseStateHandle<String>,
+pub struct Props {
+    pub toggle: UseStateHandle<String>,
 }
 
 #[function_component(GetTitleBar)]
-pub fn get_titlebar(props : &Props) -> Html {
+pub fn get_titlebar(props: &Props) -> Html {
     let is_light_mode = use_state(|| false);
     let x = props.toggle.clone();
 

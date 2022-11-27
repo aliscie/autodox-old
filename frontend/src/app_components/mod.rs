@@ -2,6 +2,7 @@
 // Note: you can do data handle in app_components but you cannot do it in app_components
 // Note: app_components are reusable but app_components are not.
 
+pub use directory::CurrDirectory;
 pub use download_component::Download;
 pub use file_component::FileComponent;
 pub use files_category::ButtonsGroup;
@@ -10,6 +11,7 @@ pub use page_option_component::PageOptions;
 pub use search_filters::SearchFiltes;
 pub use title_avatar_component::TitleAvatarComponent;
 
+mod directory;
 mod file_component;
 
 mod title_avatar_component;
