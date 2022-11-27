@@ -7,7 +7,7 @@
     "distDir": "../frontend/dist",
     "devPath": "http://localhost:8080/",
     "beforeDevCommand": "",
-    "beforeBuildCommand": "cd frontend; npx webpack build"
+    "beforeBuildCommand": "cd frontend; yarn build"
   },
   "tauri": {
     "bundle": {
