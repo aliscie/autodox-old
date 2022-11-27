@@ -185,10 +185,10 @@ where
             .remove("vertices")
             .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?
             .try_into()
-            .map_err(|_| Error::XValueNotOfType("value"))?;
+            .map_err(|_| Error::XValueNotOfType("vertices not of type Value"))?;
         for i in vertex_vec {
             let mut vertex_object: Object =
-                i.try_into().map_err(|_| Error::XValueNotOfType("Object"))?;
+                i.try_into().map_err(|_| Error::XValueNotOfType("vertices not of type Value::Object"))?;
             let adjacency_array: Vec<Value> = vertex_object
                 .remove("children")
                 .ok_or(Error::XPropertyNotFound("children not found".into()))?

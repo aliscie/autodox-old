@@ -94,8 +94,15 @@ pub fn editor(props: &Props) -> Html {
                                     }
                                 }
                             }
-                        }
-                        anything_else => log_1(&anything_else.into()),
+                        },
+                        "attributes" => {
+                            if let Some(x) = i.target(){
+                                if let Some(parent_element) = x.parent_element() {
+                                    log!(parent_element.inner_html());
+                                }
+                            }
+                        },
+                        anything_else => log!(anything_else),
                     }
                 }
             }) as Box<dyn FnMut(_, _)>,
