@@ -1,12 +1,14 @@
 {
   "scripts": {
-    "build": "webpack",
     "prebuild": "npm run copy:types",
     "prestart": "npm run copy:types",
     "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --exclude='*.most' --delete src/declarations",
     "start": "webpack -w",
     "server": "ws -d dist",
-    "clean": "rimraf dist pkg target"
+    "clean": "rimraf dist pkg target",
+    "wasm": "wasm-pack build ./pkg --target web",
+    "dev": "vite wasm && vite",
+    "build": "vite build"
   },
   "devDependencies": {
     "@wasm-tool/wasm-pack-plugin": "1.6.0",

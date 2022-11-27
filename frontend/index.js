@@ -7,3 +7,11 @@ if (typeof BigInt === 'undefined') global.BigInt = require('big-integer')
 import('./pkg').then((module) => {
     module.run()
 })
+
+// import { defineConfig } from 'vite';
+// import wasmPack from 'vite-plugin-wasm-pack';
+//
+// export default defineConfig({
+//   // pass your local crate path to the plugin
+//   plugins: [wasmPack('./pkg')]
+// });
