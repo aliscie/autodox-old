@@ -1,4 +1,5 @@
 use uuid::Uuid;
+use shared::log;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
@@ -97,6 +98,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
             None,
         )
         .await;
+        log!(&x);
         return x;
     } else {
         // user is offline throw a error
