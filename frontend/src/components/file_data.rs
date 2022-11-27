@@ -1,16 +1,17 @@
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::rc::Rc;
+
+use uuid::Uuid;
+use wasm_bindgen_futures::spawn_local;
+use yew::prelude::*;
+use yewdux::prelude::*;
+
 use editor::Editor;
 use editor::EditorChange;
 use shared::id::Id;
 use shared::log;
-use shared::schema::{Attrs, EditorElement, ElementTree, FileDirectory};
-use std::cell::RefCell;
-use std::collections::HashMap;
-use std::rc::Rc;
-use uuid::Uuid;
-use wasm_bindgen_futures::spawn_local;
-use web_sys::console;
-use yew::prelude::*;
-use yewdux::prelude::*;
+use shared::schema::{Attrs, EditorElement, ElementTree, FileDirectory, SaveButtonState};
 
 use crate::backend::update_element;
 
@@ -21,6 +22,7 @@ pub struct Props {
 
 #[function_component(FileData)]
 pub fn file_data(props: &Props) -> Html {
+    let button_state = Dispatch::<SaveButtonState>::new();
     let dispatch = Dispatch::<FileDirectory>::new();
     let mut r: ElementTree = ElementTree::default();
     let root = r.elements.root.unwrap();
@@ -41,7 +43,7 @@ pub fn file_data(props: &Props) -> Html {
         EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
     );
     let onchange: Callback<EditorChange> = Callback::from(move |x| {
-        console::log_1(&format!("got changes in frontend crate : {:?}", x).into());
+        button_state.set(SaveButtonState { style: "color:tomato".to_string() });
         match x {
             EditorChange::Update(data) => spawn_local(async move {
                 log!(update_element(data).await);
