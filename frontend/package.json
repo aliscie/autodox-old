@@ -6,8 +6,8 @@
     "start": "webpack -w",
     "server": "ws -d dist",
     "clean": "rimraf dist pkg target",
-    "wasm": "wasm-pack build ./pkg --target web",
-    "dev": "vite wasm && vite",
+    "wasm": "wasm-pack build . --target web",
+    "dev": "yarn wasm && vite",
     "build": "vite build"
   },
   "devDependencies": {
@@ -27,6 +27,7 @@
     "@dfinity/candid": "^0.14.0",
     "@dfinity/identity": "^0.14.0",
     "@dfinity/principal": "^0.14.0",
-    "big-integer": "^1.6.51"
+    "big-integer": "^1.6.51",
+    "vite-plugin-wasm-pack": "^0.1.12"
   }
 }

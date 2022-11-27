@@ -4,8 +4,16 @@ if (typeof BigInt === 'undefined') global.BigInt = require('big-integer')
 //         (anonymous function)
 //         promiseReactionJob
 
-import('./pkg').then((module) => {
-    module.run()
+// webpack config
+//import('./pkg').then((module) => {
+    //module.run()
+//})
+
+// vite config
+import init , {run} from 'frontend';
+init().then(() => {
+    consolg.log('init wasm-pack vite');
+    run()
 })
 
 // import { defineConfig } from 'vite';
