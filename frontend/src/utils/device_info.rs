@@ -12,7 +12,7 @@ impl Default for DeviceInfo {
     fn default() -> Self {
         Self {
             online: false,
-            web: *crate::IS_WEB,
+            web: false,
             auth: false,
         }
     }

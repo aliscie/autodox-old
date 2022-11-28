@@ -28,7 +28,8 @@ pub async fn create_directory(data: FileDirectory, ctx: State<'_, Context>) -> R
             directory_id: Uuid::new_v4().into(),
             parent_id: Uuid::new_v4().into(),
         };
-        let _ = store.exec_create(file_create).await;
+        let x = store.exec_create(file_create).await;
+        println!("{:?}", x);
     }
     store.exec_create(data).await
 }
@@ -72,7 +73,10 @@ pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirector
         .await?
         .into_iter()
         .map(|f| FileDirectory::try_from(f))
-        .filter_map(|f| f.ok())
+        .filter_map(|f| {
+            println!("{:?}", f);
+            f.ok()
+        })
         .collect();
     println!("{:?}", res);
     Ok(res)
