@@ -43,7 +43,7 @@ pub fn file_data(props: &Props) -> Html {
         EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
     );
     let onchange: Callback<EditorChange> = Callback::from(move |x| {
-        button_state.set(SaveButtonState { style: "color:tomato".to_string() });
+        button_state.set(SaveButtonState { is_saved: false });
         match x {
             EditorChange::Update(data) => spawn_local(async move {
                 log!(update_element(data).await);
