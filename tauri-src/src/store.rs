@@ -164,7 +164,7 @@ impl Store {
 
     pub async fn exec_update<T: Updatable + Entity<DatabaseType = Object>>(
         &self,
-        tb: String,
+        tb: Thing,
         data: T,
         filter: Option<Object>,
     ) -> Result<()> {

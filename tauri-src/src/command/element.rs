@@ -1,22 +1,23 @@
 use crate::context::Context;
+use shared::id::Id;
 use crate::prelude::*;
 use crate::utils::*;
 use shared::schema::*;
 use shared::traits::Entity;
 use std::collections::BTreeMap;
-use surrealdb::sql::Value;
+use surrealdb::sql::{Value, Thing};
 use tauri::State;
 use uuid::Uuid;
 
 #[tauri::command]
 pub async fn create_element_tree(
-    file_id: Uuid,
-    data: ElementTree,
+    file_id: Id,
+    mut data: ElementTree,
     ctx: State<'_, Context>,
 ) -> Result<()> {
     let store = ctx.get_store();
     for (id, i) in &data.elements.vertices {
-        let children = data.elements.adjacency.get(id).unwrap().clone();
+        let children = data.elements.adjacency.entry(*id).or_default().clone();
         let element_create = EditorElementCreate {
             id: *id,
             text: i.text.clone(),
@@ -28,22 +29,22 @@ pub async fn create_element_tree(
         };
         let _ = store.exec_create(element_create).await?;
     }
+    println!("file_id is : {:?}", file_id);
     let file_node_update = FileNodeUpdate {
+        id : file_id,
         children: None,
         parent_id: None,
         name: None,
         element_tree: Some(data.id.into()),
     };
-    let filter: BTreeMap<String, Value> =
-        BTreeMap::from([("id".into(), Value::Uuid(file_id.into()))]);
     // creating the tree
     store.exec_create(data).await?;
     // updating the file and setting the correct id in file_node
     store
         .exec_update(
-            FileNode::table_name(),
+            Thing::from((FileNode::table_name(), file_id.to_string())),
             file_node_update,
-            Some(filter.into()),
+            None,
         )
         .await?;
     Ok(())
@@ -53,7 +54,7 @@ pub async fn create_element_tree(
 pub async fn get_element_tree(id: Uuid, ctx: State<'_, Context>) -> Result<ElementTree> {
     let store = ctx.get_store();
     let res = store
-        .exec_get::<ElementTree>(Some(id.to_string()), Some(""))
+        .exec_get::<ElementTree>(Some(id.to_string()), Some("elements.vertices.*.*"))
         .await?
         .remove(0);
     Ok(res.try_into()?)
@@ -94,9 +95,9 @@ pub async fn update_element(data: EditorElementUpdate, ctx: State<'_, Context>) 
     let id = data.id;
     store
         .exec_update(
-            EditorElement::table_name(),
+            Thing::from((EditorElement::table_name(), id.to_string())),
             data,
-            Some(BTreeMap::from([("id".into(), id.into())]).into()),
+            None,
         )
         .await?;
     Ok(())

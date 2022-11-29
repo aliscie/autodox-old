@@ -1,51 +1,4 @@
 #V2
-select * from file_directory;
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-select * from file_directory;
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-select * from file_directory;
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-select  files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -  `efe1035f-354f-484f-9c5b-b4ee15fe9b55` from file_directory;
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-create test set name = ["aman", "vaibhav" , "some"];
-update test set name -= "some";
-update test set name += `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-update test set name += "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update test set name -= null;
-update test set name -= "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update test set name += uuid::new();
-uuid::new()
-select * from uuid::new_v4();
-update test set name += rand::uuid::v4();
-select * from rand::uuid::v4;
-select * from rand::uuid;
-select * from rand::uuid()
-update test set name += rand::uuid();
-update test name -=  "668dd31c-74e3-495c-a542-e5bd398955d2";
-update test set name -=  "668dd31c-74e3-495c-a542-e5bd398955d2";
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-select files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` from file_directory;
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` += "name";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "name";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "3e4681e4-4522-4685-805a-8f75c3a1c201";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` += "name";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "name";
-select * from rand::uuid();
-create test set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` = [];
-select * from test
-delete "test:o3we3sjz6n5gxmqdvwmi"
-select * from test
-update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` += "name"
-update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` -= "name"
-update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` += rand::uuid();
-update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` -=  "f53a118b-e9ad-498b-afca-4ac935717006";
-select * from file_directory;
-select * from test;
-create test set name = "aman";
 delete test;
 select * from test;
 create test set name = "aman", roll_no = 16;
@@ -98,4 +51,51 @@ select * from file_directory;
 select count(*) from file_directory;
 select count(id) from file_directory;
 select *, files.vertices.* from file_directory;
+select * from file_node;
+select * from file_directory;
+select * from file_node;
+select *, files.vertices.* from file_directory;
+select *, files.vertices.id from file_directory;
+select *  from file_npde;
+select *  from file_node;
+select *, files.vertices.id from file_directory FETCH file_node;
+select *, files.vertices.* from file_directory FETCH file_node;
+select files.vertices.* from file_directory;
+select * from file_node;
+select * from element_tree;
+update file_node MERGE { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" } where id = "8650656c-16c5-4580-a354-77732c3be8cd";
+update file_node patch { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" } where id = "8650656c-16c5-4580-a354-77732c3be8cd";
+update "file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩" patch  { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" }
+update file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩ set element_tree = None;
+update file_node set element_tree = None where id = "[200~8650656c-16c5-4580-a354-77732c3be8cd";
+update file_node set name =  where id = "[200~8650656c-16c5-4580-a354-77732c3be8cd";
+update file_node set name =  "aman" where id = "[200~8650656c-16c5-4580-a354-77732c3be8cd";
+select * from element_tree;
+select * from file_node;
+update file_node set name =  "aman" where id = [200~8650656c-16c5-4580-a354-77732c3be8cd;
+update file_node set name =  "aman" where id = 8650656c-16c5-4580-a354-77732c3be8cd;
+select * from file_node;
+update file_node set name = "some" where { id : "8650656c-16c5-4580-a354-77732c3be8cd" }
+update file_node set name = "aman" where { id : "file_node:8650656c-16c5-4580-a354-77732c3be8cd" }
+update file_node set name = "aman " where id = "file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩"
+update file_node:8650656c-16c5-4580-a354-77732c3be8cd set name = "un";
+update file_node:8650656c-16c5-4580-a354-77732c3be8cd set name = "un"
+update "file_node:8650656c-16c5-4580-a354-77732c3be8cd" set name = "un"
+select * from editor_element:
+select * from editor_element;
+select * from file_node;
+select * from element_tree;
+update file_node:⟨5d8ee6c1-9edd-4587-9203-087d2f438c46⟩ merge { element_tree : "element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩" }
+select * from file_nodel
+select * from file_node
+update file_node:⟨767b0f8a-b9f6-4060-84eb-311496a8b420⟩ merge { element_tree : "element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩" }
+select * from element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩
+select *, elements.vertices.* from element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩
+select *, elements.vertices.*.* from element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩
+select * from file_node;
+select * from editor_element;
+select *, elements.vertices.*.* from element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩
+select * from editor_element;
+select * from editor_tree;
+select * from element_tree;
 select * from file_node;

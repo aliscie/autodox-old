@@ -1,6 +1,7 @@
 use crate::{
+    id::Id,
     traits::{Creatable, Entity, Queryable, Updatable},
-    Error, Tree, id::Id,
+    Error, Tree,
 };
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
@@ -56,6 +57,7 @@ impl From<FileNodeCreate> for Object {
 /// type for updating file_node
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileNodeUpdate {
+    pub id : Id,
     pub children: Option<IndexSet<Id>>,
     // TODO : cannot update this using this method think of something else
     pub parent_id: Option<Id>,
@@ -95,10 +97,10 @@ impl From<FileNodeUpdate> for Object {
         if let Some(name) = value.name {
             object.insert("name".to_owned(), name.into());
         }
-        if let Some(element_tree) = value.element_tree {
+        if let Some(element_tree_id) = value.element_tree {
             object.insert(
-                "element_tree".into(),
-                Thing::from((ElementTree::table_name(), element_tree.to_string())).into(),
+                ElementTree::table_name(),
+                Thing::from((ElementTree::table_name(), element_tree_id.0.to_string())).into(),
             );
         }
         Object(object)
@@ -158,7 +160,7 @@ impl Default for FileDirectory {
         d.files.push_vertex(
             id.into(),
             FileNode {
-                id : id.into(),
+                id: id.into(),
                 name: "root".into(),
                 element_tree: None,
             },
@@ -174,7 +176,7 @@ impl FileDirectory {
     pub fn new(id: Uuid, name: String) -> Self {
         Self {
             files: Tree::new(),
-            id : id.into(),
+            id: id.into(),
             name,
         }
     }
@@ -208,6 +210,12 @@ impl From<FileNode> for Object {
         BTreeMap::from([
             ("id".into(), val.id.into()),
             ("name".into(), val.name.into()),
+            (
+                "element_tree".into(),
+                val.element_tree.map_or(Value::None, |id| {
+                    Value::Thing(Thing::from((ElementTree::table_name(), id.to_string())))
+                }),
+            ),
         ])
         .into()
     }
@@ -237,7 +245,14 @@ impl TryFrom<Object> for FileNode {
                 .ok_or(Error::XPropertyNotFound("name".to_string()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("String"))?,
-            ..Default::default()
+            element_tree: object
+                .remove("element_tree")
+                .map_or(None, |f| {
+                    match f{
+                        Value::Thing(x) => x.id.to_raw().as_str().parse::<Uuid>().map(Id::from).ok(),
+                        _ => None,
+                    }
+                }),
         })
     }
 }

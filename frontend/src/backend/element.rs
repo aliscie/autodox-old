@@ -1,5 +1,5 @@
 use crate::backend::call_surreal;
-use uuid::Uuid;
+use shared::id::Id;
 use shared::schema::{EditorElementUpdate, ElementTree};
 use yewdux::prelude::Dispatch;
 use crate::utils::DeviceInfo;
@@ -21,7 +21,7 @@ pub async fn update_element(data: EditorElementUpdate) -> Result<(), String> {
     }
 }
 
-pub async fn get_element_tree(id : &Uuid) -> Result<ElementTree, String> {
+pub async fn get_element_tree(id : &Id) -> Result<ElementTree, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
@@ -38,7 +38,7 @@ pub async fn get_element_tree(id : &Uuid) -> Result<ElementTree, String> {
     }
 }
 
-pub async fn create_element_tree(data : &ElementTree, file_id : Uuid) -> Result<(), String> {
+pub async fn create_element_tree(data : &ElementTree, file_id : Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();

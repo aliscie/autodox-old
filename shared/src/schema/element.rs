@@ -110,7 +110,7 @@ pub struct EditorElementCreate {
 }
 
 /// type for updating editor elements
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EditorElementUpdate {
     pub id: Id,
     pub text: Option<String>,
@@ -128,6 +128,16 @@ impl Default for EditorElementUpdate {
             parent: None,
             children: None,
         }
+    }
+}
+
+impl From<EditorElementCreate> for EditorElement{
+    fn from(v: EditorElementCreate) -> Self {
+        Self{
+            id : v.id,
+            text : v.text,
+            attrs : v.attrs
+        } 
     }
 }
 
@@ -303,9 +313,18 @@ impl TryFrom<Object> for EditorElement {
         Ok(Self {
             id: value
                 .remove("id")
-                .ok_or(Error::XPropertyNotFound("uuid not found".into()))?
+                .ok_or(Error::XPropertyNotFound("id".to_string()))?
+                // convert value into a id type
+                .record()
+                .ok_or(Error::XValueNotOfType("id not of type surrealdb::Thing"))?
+                // get the actual id
+                .id
+                // converting into string
+                .to_raw()
+                .as_str()
+                // into uuid
                 .try_into()
-                .map_err(|_| Error::XValueNotOfType("Uuid"))?,
+                .map_err(|_| Error::XValueNotOfType("uuid"))?,
             text: value
                 .remove("text")
                 .ok_or(Error::XPropertyNotFound("text".into()))?
