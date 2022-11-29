@@ -99,7 +99,7 @@ impl Entity for EditorElement {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EditorElementCreate {
     pub id: Id,
     pub text: String,
@@ -131,13 +131,13 @@ impl Default for EditorElementUpdate {
     }
 }
 
-impl From<EditorElementCreate> for EditorElement{
+impl From<EditorElementCreate> for EditorElement {
     fn from(v: EditorElementCreate) -> Self {
-        Self{
-            id : v.id,
-            text : v.text,
-            attrs : v.attrs
-        } 
+        Self {
+            id: v.id,
+            text: v.text,
+            attrs: v.attrs,
+        }
     }
 }
 

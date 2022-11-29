@@ -1,14 +1,15 @@
+use crate::backend::create_element;
+use crate::backend::update_element;
 use editor::Editor;
 use editor::EditorChange;
 use shared::id::Id;
 use shared::log;
 use shared::schema::{Attrs, EditorElement, ElementTree, FileDirectory};
-use wasm_bindgen_futures::spawn_local;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use crate::backend::update_element;
 use std::rc::Rc;
 use uuid::Uuid;
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 use yew::suspense::use_future;
 use yewdux::prelude::*;
@@ -48,6 +49,11 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
             }
             EditorChange::Create(x) => {
                 log!(&x);
+                let create_data = x.clone();
+                spawn_local(async move {
+                    let result = create_element(create_data).await;
+                    log!(result);
+                });
                 element_tree.as_ref().borrow_mut().elements.push_children(
                     x.parent_id,
                     x.id,
@@ -129,7 +135,7 @@ pub fn file_data(props: &Props) -> HtmlResult {
         Err(ref failure) => {
             log!(failure);
             failure.to_string().into()
-        },
+        }
     };
     Ok(result_html)
 }

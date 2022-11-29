@@ -83,8 +83,10 @@ pub fn editor(props: &Props) -> Html {
                                 if element.id() == "text_editor" {
                                     continue;
                                 }
+                                let new_id = Uuid::new_v4();
+                                element.set_id(&new_id.to_string());
                                 let element_create = EditorElementCreate {
-                                    id : Uuid::new_v4().into(),
+                                    id : new_id.into(),
                                     text : element.text_content().unwrap_or_default(),
                                     attrs: HashMap::new(),
                                     tree_id : element_tree.as_ref().borrow().id,
