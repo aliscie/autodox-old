@@ -51,50 +51,45 @@ pub fn editor(props: &Props) -> Html {
                 for mutation_type in mutation_event {
                     log_1(&format!("{:?}", mutation_type.type_()).into());
                     log_1(&format!("{:?}", mutation_type.target()).into());
+                    let current_element = mutation_type.target().unwrap();
                     match mutation_type.type_().as_ref() {
                         "characterData" => {
-                            if let Some(current_element) = mutation_type.target() {
-                                if let Some(parent_element) = current_element.parent_element() {
-                                    if let Ok(id) =
-                                        Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
-                                    {
-                                        log_1(&format!("{:?}", parent_element.inner_html()).into());
-                                        log_1(&format!("{:?}", id).into());
-                                        let update = EditorElementUpdate {
-                                            id,
-                                            text: Some(parent_element.inner_html().clone()),
-                                            ..Default::default()
-                                        };
-                                        onchange.emit(EditorChange::Update(update));
-                                    }
+                            if let Some(parent_element) = current_element.parent_element() {
+                                if let Ok(id) =
+                                    Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
+                                {
+                                    log_1(&format!("{:?}", parent_element.inner_html()).into());
+                                    log_1(&format!("{:?}", id).into());
+                                    let update = EditorElementUpdate {
+                                        id,
+                                        text: Some(parent_element.inner_html().clone()),
+                                        ..Default::default()
+                                    };
+                                    onchange.emit(EditorChange::Update(update));
                                 }
                             }
                         }
                         "attributes" => {
-                            if let Some(current_element) = mutation_type.target() {
-                                if let Some(parent_element) = current_element.parent_element() {
-                                    log!(format!("Got create: {:?}", parent_element.inner_html()));
-                                }
+                            if let Some(parent_element) = current_element.parent_element() {
+                                log!(format!("Got create: {:?}", parent_element.inner_html()));
                             }
                         }
                         "childList" => {
-                            if let Some(current_element) = mutation_type.target() {
-                                let element = current_element.unchecked_into::<Element>();
-                                if element.id() == "text_editor" {
-                                    continue;
-                                }
-                                let new_id = Uuid::new_v4();
-                                element.set_id(&new_id.to_string());
-                                let element_create = EditorElementCreate {
-                                    id : new_id.into(),
-                                    text : element.text_content().unwrap_or_default(),
-                                    attrs: HashMap::new(),
-                                    tree_id : element_tree.as_ref().borrow().id,
-                                    parent_id : element_tree.as_ref().borrow().elements.root.unwrap(),
-                                    children : None,
-                                };
-                                onchange.emit(EditorChange::Create(element_create));
+                            let element = current_element.unchecked_into::<Element>();
+                            if element.id() == "text_editor" {
+                                continue;
                             }
+                            let new_id = Uuid::new_v4();
+                            element.set_id(&new_id.to_string());
+                            let element_create = EditorElementCreate {
+                                id: new_id.into(),
+                                text: element.text_content().unwrap_or_default(),
+                                attrs: HashMap::new(),
+                                tree_id: element_tree.as_ref().borrow().id,
+                                parent_id: element_tree.as_ref().borrow().elements.root.unwrap(),
+                                children: None,
+                            };
+                            onchange.emit(EditorChange::Create(element_create));
                         }
                         anything_else => log!(anything_else),
                     }
@@ -113,11 +108,11 @@ pub fn editor(props: &Props) -> Html {
             let _ = mutation_observer.observe_with_options(
                 &editor_ref.get().unwrap(),
                 MutationObserverInit::new()
-                .attributes(true)
-                .child_list(true)
-                .character_data(true)
-                .character_data_old_value(true)
-                .subtree(true),
+                    .attributes(true)
+                    .child_list(true)
+                    .character_data(true)
+                    .character_data_old_value(true)
+                    .subtree(true),
             );
             // leaking memory here!
             oninput_event.forget();
@@ -132,7 +127,7 @@ pub fn editor(props: &Props) -> Html {
             }
         },
         editor_ref.clone(),
-        );
+    );
 
     let element_tree = props.element_tree.clone();
 
