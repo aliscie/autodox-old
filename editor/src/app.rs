@@ -47,13 +47,13 @@ pub fn editor(props: &Props) -> Html {
         let element_tree = props.element_tree.clone();
         let onchange = props.onchange.clone();
         Closure::wrap(
-            Box::new(move |e: Vec<MutationRecord>, _observer: MutationObserver| {
-                for i in e {
-                    log_1(&format!("{:?}", i.type_()).into());
-                    log_1(&format!("{:?}", i.target()).into());
-                    match i.type_().as_ref() {
+            Box::new(move |mutation_event: Vec<MutationRecord>, _observer: MutationObserver| {
+                for mutation_type in mutation_event {
+                    log_1(&format!("{:?}", mutation_type.type_()).into());
+                    log_1(&format!("{:?}", mutation_type.target()).into());
+                    match mutation_type.type_().as_ref() {
                         "characterData" => {
-                            if let Some(x) = i.target() {
+                            if let Some(x) = mutation_type.target() {
                                 if let Some(parent_element) = x.parent_element() {
                                     if let Ok(id) =
                                         Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
@@ -71,14 +71,14 @@ pub fn editor(props: &Props) -> Html {
                             }
                         }
                         "attributes" => {
-                            if let Some(x) = i.target() {
+                            if let Some(x) = mutation_type.target() {
                                 if let Some(parent_element) = x.parent_element() {
                                     log!(format!("Got create: {:?}", parent_element.inner_html()));
                                 }
                             }
                         }
                         "childList" => {
-                            if let Some(x) = i.target() {
+                            if let Some(x) = mutation_type.target() {
                                 let element = x.unchecked_into::<Element>();
                                 if element.id() == "text_editor" {
                                     continue;
