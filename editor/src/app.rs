@@ -53,8 +53,8 @@ pub fn editor(props: &Props) -> Html {
                     log_1(&format!("{:?}", mutation_type.target()).into());
                     match mutation_type.type_().as_ref() {
                         "characterData" => {
-                            if let Some(x) = mutation_type.target() {
-                                if let Some(parent_element) = x.parent_element() {
+                            if let Some(curry_mutation) = mutation_type.target() {
+                                if let Some(parent_element) = curry_mutation.parent_element() {
                                     if let Ok(id) =
                                         Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
                                     {
@@ -71,15 +71,15 @@ pub fn editor(props: &Props) -> Html {
                             }
                         }
                         "attributes" => {
-                            if let Some(x) = mutation_type.target() {
-                                if let Some(parent_element) = x.parent_element() {
+                            if let Some(curry_mutation) = mutation_type.target() {
+                                if let Some(parent_element) = curry_mutation.parent_element() {
                                     log!(format!("Got create: {:?}", parent_element.inner_html()));
                                 }
                             }
                         }
                         "childList" => {
-                            if let Some(x) = mutation_type.target() {
-                                let element = x.unchecked_into::<Element>();
+                            if let Some(curry_mutation) = mutation_type.target() {
+                                let element = curry_mutation.unchecked_into::<Element>();
                                 if element.id() == "text_editor" {
                                     continue;
                                 }
