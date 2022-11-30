@@ -52,14 +52,14 @@ pub fn editor(props: &Props) -> Html {
         let element_tree = props.element_tree.clone();
         let onchange = props.onchange.clone();
         Closure::wrap(
-            Box::new(move |e: Vec<MutationRecord>, _observer: MutationObserver| {
-                for i in e {
-                    log_1(&format!("{:?}", i.type_()).into());
-                    log_1(&format!("{:?}", i.target()).into());
-                    match i.type_().as_ref() {
-                        "characterData" => {
-                            if let Some(x) = i.target() {
-                                if let Some(parent_element) = x.parent_element() {
+            Box::new(move |mutation_event: Vec<MutationRecord>, _observer: MutationObserver| {
+                for mutation_type in mutation_event {
+                    log_1(&format!("{:?}", mutation_type.type_()).into());
+                    log_1(&format!("{:?}", mutation_type.target()).into());
+                    if let Some(current_element) = mutation_type.target() {
+                        match mutation_type.type_().as_ref() {
+                            "characterData" => {
+                                if let Some(parent_element) = current_element.parent_element() {
                                     if let Ok(id) =
                                         Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
                                     {
@@ -74,18 +74,13 @@ pub fn editor(props: &Props) -> Html {
                                     }
                                 }
                             }
-                        }
-                        "attributes" => {
-                            if let Some(x) = i.target() {
-                                if let Some(parent_element) = x.parent_element() {
-                                    log!(format!("Got attributes change : {:?}", parent_element.inner_html()));
+                            "attributes" => {
+                                if let Some(parent_element) = current_element.parent_element() {
+                                    log!(format!("Got create: {:?}", parent_element.inner_html()));
                                 }
                             }
-                        }
-                        "childList" => {
-                            if let Some(x) = i.target() {
-                                let element = x.unchecked_into::<Element>();
-                                log!(format!("got childList for id : {:?}", element.id()));
+                            "childList" => {
+                                let element = current_element.unchecked_into::<Element>();
                                 if element.id() == "text_editor" {
                                     continue;
                                 }
@@ -95,18 +90,18 @@ pub fn editor(props: &Props) -> Html {
                                     log!(format!("previous element id : {:?}", prev_element.id()));
                                 }
                                 let element_create = EditorElementCreate {
-                                    id : new_id.into(),
-                                    text : element.text_content().unwrap_or_default(),
+                                    id: new_id.into(),
+                                    text: element.text_content().unwrap_or_default(),
                                     attrs: HashMap::new(),
-                                    tree_id : element_tree.as_ref().borrow().id,
-                                    parent_id : element_tree.as_ref().borrow().elements.root.unwrap(),
-                                    children : None,
+                                    tree_id: element_tree.as_ref().borrow().id,
+                                    parent_id: element_tree.as_ref().borrow().elements.root.unwrap(),
+                                    children: None,
                                 };
                                 onchange.emit(EditorChange::Create(element_create));
                                 element.set_id(&new_id.to_string());
                             }
+                            anything_else => log!(anything_else),
                         }
-                        anything_else => log!(anything_else),
                     }
                 }
             }) as Box<dyn FnMut(_, _)>,
@@ -123,14 +118,14 @@ pub fn editor(props: &Props) -> Html {
             let _ = mutation_observer.observe_with_options(
                 &editor_ref.get().unwrap(),
                 MutationObserverInit::new()
-                // child attributes or editor attributes chanding
-                .attributes(true)
-                // a new child get created or deleted
-                .child_list(true)
-                // user typed something
-                .character_data(true)
-                .character_data_old_value(true)
-                .subtree(true),
+                    // child attributes or editor attributes chanding
+                    .attributes(true)
+                    // a new child get created or deleted
+                    .child_list(true)
+                    // user typed something
+                    .character_data(true)
+                    .character_data_old_value(true)
+                    .subtree(true),
             );
             // leaking memory here!
             oninput_event.forget();
@@ -145,7 +140,7 @@ pub fn editor(props: &Props) -> Html {
             }
         },
         editor_ref.clone(),
-        );
+    );
 
     let element_tree = props.element_tree.clone();
 
