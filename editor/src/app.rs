@@ -27,6 +27,11 @@ pub struct Props {
     pub onchange: Callback<EditorChange>,
 }
 
+struct EditorState{
+    color : String,
+    is_bold : bool,
+}
+
 // this is used for the work space
 
 #[function_component(Editor)]
@@ -73,18 +78,22 @@ pub fn editor(props: &Props) -> Html {
                         "attributes" => {
                             if let Some(x) = i.target() {
                                 if let Some(parent_element) = x.parent_element() {
-                                    log!(format!("Got create: {:?}", parent_element.inner_html()));
+                                    log!(format!("Got attributes change : {:?}", parent_element.inner_html()));
                                 }
                             }
                         }
                         "childList" => {
                             if let Some(x) = i.target() {
                                 let element = x.unchecked_into::<Element>();
+                                log!(format!("got childList for id : {:?}", element.id()));
                                 if element.id() == "text_editor" {
                                     continue;
                                 }
                                 let new_id = Uuid::new_v4();
-                                element.set_id(&new_id.to_string());
+                                if let Some(prev_node) = element.previous_sibling() {
+                                    let prev_element = prev_node.unchecked_into::<Element>();
+                                    log!(format!("previous element id : {:?}", prev_element.id()));
+                                }
                                 let element_create = EditorElementCreate {
                                     id : new_id.into(),
                                     text : element.text_content().unwrap_or_default(),
@@ -94,6 +103,7 @@ pub fn editor(props: &Props) -> Html {
                                     children : None,
                                 };
                                 onchange.emit(EditorChange::Create(element_create));
+                                element.set_id(&new_id.to_string());
                             }
                         }
                         anything_else => log!(anything_else),
@@ -113,8 +123,11 @@ pub fn editor(props: &Props) -> Html {
             let _ = mutation_observer.observe_with_options(
                 &editor_ref.get().unwrap(),
                 MutationObserverInit::new()
+                // child attributes or editor attributes chanding
                 .attributes(true)
+                // a new child get created or deleted
                 .child_list(true)
+                // user typed something
                 .character_data(true)
                 .character_data_old_value(true)
                 .subtree(true),

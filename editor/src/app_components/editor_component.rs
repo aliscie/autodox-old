@@ -54,17 +54,19 @@ pub fn editor_component(props: &Props) -> Html {
     html! {
     //<span ref={node_ref}  >
              //<Drag position={format!("{}",*(position.clone()))}/>
-        <div
-        id = { node.id.to_string() }
+        <>
+            <div id = { format!("{:?}-display-block",node.id.to_string())} style = "display : none"></div>
+            <div style = "display : align-block"
+                id = { node.id.to_string() }
+                        // style = { &node.attrs
+                        // .get(&Attrs::Style).map(|e| e.clone())}
+                        // href = { &node.attrs.get(&Attrs::Href).map(|e| e.clone())}
+                        // src = { &node.attrs.get(&Attrs::Src).map(|e| e.clone())}
+                    >
 
-                    // style = { &node.attrs
-                    // .get(&Attrs::Style).map(|e| e.clone())}
-                    // href = { &node.attrs.get(&Attrs::Href).map(|e| e.clone())}
-                    // src = { &node.attrs.get(&Attrs::Src).map(|e| e.clone())}
-                >
-
-            { &node.text }
-        </div>
+                { &node.text }
+            </div>
+        </>
     //</span>
      }
 }
