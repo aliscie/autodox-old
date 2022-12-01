@@ -26,7 +26,9 @@ dotenv = "0.15.0"
 thiserror = "*"
 indexmap = {version = "1.9.1", features = ["serde"] }
 # For dev and to easy first time build experience, just have memory surrealdb for  now.
-surrealdb = { git = "https://github.com/lunchspider/surrealdb" }
+surrealdb = { version = "1.0.0-beta.8", default-features = false, features = ['parallel', 'kv-mem'], optional = true }
+parking_lot = "0.12"
+#surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true}
 async-trait = "0.1.57"
 
 [target.'cfg(target_os = "macos")'.dependencies]
