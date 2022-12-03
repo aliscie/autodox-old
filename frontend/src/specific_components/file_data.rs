@@ -137,5 +137,5 @@ pub fn file_data(props: &Props) -> HtmlResult {
             failure.to_string().into()
         }
     };
-    Ok(result_html) // this should be Result<HtmlResult> instead of <HtmlResult>? right?
+    Ok(result_html)
 }
