@@ -72,17 +72,17 @@ pub fn file_data(props: &Props) -> HtmlResult {
     let file_id = props.id.clone();
     let res = use_future(|| async move {
         match dispatch.get().files.vertices.get(&file_id) {
-            Some(x) => {
-                match x.element_tree {
+            Some(current_file_data) => {
+                match current_file_data.element_tree {
                     Some(tree_id) => {
                         return get_element_tree(&tree_id).await;
                     }
                     None => {
                         // create new element_tree
-                        let mut r = ElementTree::default();
-                        let root = r.elements.root.unwrap();
+                        let mut defualt_element = ElementTree::default();
+                        let root = defualt_element.elements.root.unwrap();
                         let id: Id = Uuid::new_v4().into();
-                        r.elements.push_children(
+                        defualt_element.elements.push_children(
                             root,
                             id.clone(),
                             EditorElement::new(
@@ -92,7 +92,7 @@ pub fn file_data(props: &Props) -> HtmlResult {
                             ),
                         );
                         let id: Id = Uuid::new_v4().into();
-                        r.elements.push_children(
+                        defualt_element.elements.push_children(
                             root,
                             id,
                             EditorElement::new(
@@ -101,13 +101,13 @@ pub fn file_data(props: &Props) -> HtmlResult {
                                 HashMap::new(),
                             ),
                         );
-                        let _ = create_element_tree(&r, file_id).await?;
-                        let tree_id = r.id;
+                        let _ = create_element_tree(&defualt_element, file_id).await?;
+                        let tree_id = defualt_element.id;
                         dispatch.reduce_mut(|f| {
                             let file_node = f.files.vertices.get_mut(&file_id).unwrap();
                             file_node.id = tree_id;
                         });
-                        return Ok(r);
+                        return Ok(defualt_element);
                     }
                 };
             }
@@ -137,5 +137,5 @@ pub fn file_data(props: &Props) -> HtmlResult {
             failure.to_string().into()
         }
     };
-    Ok(result_html)
+    Ok(result_html) // this should be Result<HtmlResult> instead of <HtmlResult>? right?
 }
