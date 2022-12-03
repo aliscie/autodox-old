@@ -56,7 +56,7 @@ pub fn editor_component(props: &Props) -> Html {
              //<Drag position={format!("{}",*(position.clone()))}/>
         <>
             <div id = { format!("{:?}-display-block",node.id.to_string())} style = "display : none"></div>
-            <div style = "display : align-block"
+            <div style = "display : inline-block"
                 id = { node.id.to_string() }
                         // style = { &node.attrs
                         // .get(&Attrs::Style).map(|e| e.clone())}
