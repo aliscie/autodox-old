@@ -2,7 +2,7 @@ use yew::prelude::*;
 use shared::id::Id;
 use yew_router::prelude::*;
 
-use crate::app_components::FileData;
+use crate::specific_components::FileData;
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
