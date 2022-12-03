@@ -84,6 +84,8 @@ impl EditorElement {
     }
 }
 
+impl Queryable for EditorElement {}
+
 impl GetId for EditorElement {
     type Id = Id;
     fn get_id(&self) -> Self::Id {

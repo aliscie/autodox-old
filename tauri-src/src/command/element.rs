@@ -1,6 +1,7 @@
 use crate::context::Context;
 use crate::prelude::*;
 use crate::utils::*;
+use indexmap::IndexSet;
 use shared::id::Id;
 use shared::schema::*;
 use shared::traits::Entity;
@@ -68,16 +69,48 @@ pub async fn create_element(data: EditorElementCreate, ctx: State<'_, Context>) 
     let id = data.id;
     let tree_id = data.tree_id;
     match data.prev_element_id {
-        Some(x) => {
-            let sql = "select children from $tb";
-            let vars: BTreeMap<String, Value> = map![
-            "tb".into() => Value::Thing((EditorElement::table_name(), parent_id.to_string()).into()),
-            ];
-            let res = store
-                .datastore
-                .execute(&sql, &store.session, Some(vars), false)
+        Some(prev_element_id) => {
+            let children_value: Vec<Value> = store
+                .exec_select_only::<EditorElement>(parent_id.to_string(), &["children"])
+                .await?
+                .remove("children")
+                .ok_or(Error::XPropertyNotFound("children".into()))?
+                .try_into()?;
+            let mut children: IndexSet<Id> = IndexSet::new();
+            for i in children_value {
+                match i {
+                    Value::Thing(x) => {
+                        children.insert(
+                            Uuid::parse_str(x.id.to_string().as_str())
+                                .map_err(|_| {
+                                    Error::XValueNotOfType("create_element value not of type Uuid")
+                                })?
+                                .into(),
+                        );
+                    }
+                    _ => {
+                        return Err(Error::XValueNotOfType(
+                            "create_element Value not of type Thing",
+                        ))
+                    }
+                }
+            }
+            children.move_index(
+                children.get_index_of(&id).unwrap(),
+                children.get_index_of(&prev_element_id).unwrap() + 1,
+            );
+            let editor_element_update = EditorElementUpdate {
+                children: Some(children),
+                id: parent_id,
+                ..Default::default()
+            };
+            store
+                .exec_update(
+                    Thing::from((EditorElement::table_name(), parent_id.to_string())),
+                    editor_element_update,
+                    None,
+                )
                 .await?;
-            todo!()
         }
         None => {
             let _ = store.exec_create(data).await?;

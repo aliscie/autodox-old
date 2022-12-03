@@ -14,6 +14,8 @@ use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 use yew::suspense::use_future_with_deps;
+use yew::suspense::SuspensionResult;
+use yew::suspense::UseFutureHandle;
 use yewdux::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -74,10 +76,37 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
 
 #[function_component(FileData)]
 pub fn file_data(props: &Props) -> HtmlResult {
+    let res = use_element_tree(props.id)?;
+    let result_html = match *res {
+        Ok(ref tree) => {
+            let file_node = Dispatch::<FileDirectory>::new()
+                .get()
+                .files
+                .vertices
+                .get(&props.id)
+                .unwrap()
+                .clone();
+            let element_tree = Rc::new(RefCell::new(tree.clone()));
+            html! {
+                <Editor
+                    title = { file_node.name.clone() }
+                element_tree = { element_tree.clone() }
+                onchange = { onchange_element_tree(element_tree.clone())}
+                />
+            }
+        }
+        Err(ref failure) => {
+            log!(failure);
+            failure.to_string().into()
+        }
+    };
+    Ok(result_html)
+}
+
+#[hook]
+fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<ElementTree, String>>> {
     let dispatch = Dispatch::<FileDirectory>::new();
-    let element_tree: Rc<RefCell<ElementTree>>;
-    // TODO : create a hook for this
-    let res = use_future_with_deps(
+    use_future_with_deps(
         |file_id| async move {
             match dispatch.get().files.vertices.get(&file_id) {
                 Some(current_file_data) => {
@@ -125,30 +154,6 @@ pub fn file_data(props: &Props) -> HtmlResult {
                 None => return Err(String::from("Not found!")),
             }
         },
-        props.id,
-    )?;
-    let result_html = match *res {
-        Ok(ref tree) => {
-            let file_node = Dispatch::<FileDirectory>::new()
-                .get()
-                .files
-                .vertices
-                .get(&props.id)
-                .unwrap()
-                .clone();
-            element_tree = Rc::new(RefCell::new(tree.clone()));
-            html! {
-                <Editor
-                    title = { file_node.name.clone() }
-                element_tree = { element_tree.clone() }
-                onchange = { onchange_element_tree(element_tree.clone())}
-                />
-            }
-        }
-        Err(ref failure) => {
-            log!(failure);
-            failure.to_string().into()
-        }
-    };
-    Ok(result_html)
+        file_id,
+    )
 }
