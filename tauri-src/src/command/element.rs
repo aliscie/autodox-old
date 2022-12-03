@@ -1,11 +1,11 @@
 use crate::context::Context;
-use shared::id::Id;
 use crate::prelude::*;
 use crate::utils::*;
+use shared::id::Id;
 use shared::schema::*;
 use shared::traits::Entity;
 use std::collections::BTreeMap;
-use surrealdb::sql::{Value, Thing};
+use surrealdb::sql::{Thing, Value};
 use tauri::State;
 use uuid::Uuid;
 
@@ -26,12 +26,13 @@ pub async fn create_element_tree(
             // these doesn't matter we are throwing
             parent_id: Uuid::new_v4().into(),
             tree_id: Uuid::new_v4().into(),
+            prev_element_id: None,
         };
         let _ = store.exec_create(element_create).await?;
     }
     println!("file_id is : {:?}", file_id);
     let file_node_update = FileNodeUpdate {
-        id : file_id,
+        id: file_id,
         children: None,
         parent_id: None,
         name: None,
@@ -66,16 +67,31 @@ pub async fn create_element(data: EditorElementCreate, ctx: State<'_, Context>) 
     let parent_id = data.parent_id;
     let id = data.id;
     let tree_id = data.tree_id;
-    let _ = store.exec_create(data).await?;
-    let sql = "update $tb set children += $va";
-    let vars: BTreeMap<String, Value> = map![
-        "tb".into() => Value::Thing((EditorElement::table_name(), parent_id.to_string()).into()),
-        "va".into() => Value::Thing((EditorElement::table_name(), id.to_string()).into()),
-    ];
-    store
-        .datastore
-        .execute(&sql, &store.session, Some(vars), false)
-        .await?;
+    match data.prev_element_id {
+        Some(x) => {
+            let sql = "select children from $tb";
+            let vars: BTreeMap<String, Value> = map![
+            "tb".into() => Value::Thing((EditorElement::table_name(), parent_id.to_string()).into()),
+            ];
+            let res = store
+                .datastore
+                .execute(&sql, &store.session, Some(vars), false)
+                .await?;
+            todo!()
+        }
+        None => {
+            let _ = store.exec_create(data).await?;
+            let sql = "update $tb set children += $va";
+            let vars: BTreeMap<String, Value> = map![
+                "tb".into() => Value::Thing((EditorElement::table_name(), parent_id.to_string()).into()),
+                "va".into() => Value::Thing((EditorElement::table_name(), id.to_string()).into()),
+            ];
+            store
+                .datastore
+                .execute(&sql, &store.session, Some(vars), false)
+                .await?;
+        }
+    }
 
     let sql = "update $tb set elements.vertices += $va";
     let vars: BTreeMap<String, Value> = map![

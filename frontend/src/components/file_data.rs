@@ -5,15 +5,14 @@ use editor::EditorChange;
 use shared::id::Id;
 use shared::log;
 use shared::schema::{Attrs, EditorElement, ElementTree, FileDirectory};
+use yew::suspense::use_future_with_deps;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
-use yew::suspense::use_future;
 use yewdux::prelude::*;
-
 use crate::backend::create_element_tree;
 use crate::backend::get_element_tree;
 
@@ -55,10 +54,18 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                     log!(result);
                 });
                 element_tree.as_ref().borrow_mut().elements.push_children(
-                    x.parent_id,
-                    x.id,
-                    x.into(),
+                    x.parent_id.clone(),
+                    x.id.clone(),
+                    x.clone().into(),
                 );
+                //if let Some(prev_element_id) = x.prev_element_id{
+                    //let mut element_tree = element_tree.as_ref().borrow_mut();
+                    //let children_list_of_parent_element = element_tree.elements.adjacency.get_mut(&x.parent_id).unwrap();
+                    //let index_of_prev_element  = children_list_of_parent_element.get_index_of(&prev_element_id).unwrap();
+                    //let index_of_last_element =  children_list_of_parent_element.get_index_of(&x.id).unwrap();
+                    //children_list_of_parent_element.move_index(index_of_last_element, index_of_prev_element + 1);
+                    ////log!(element_tree.elements.adjacency.get(&x.parent_id));
+                //}
             }
             _ => {}
         };
@@ -69,8 +76,8 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
 pub fn file_data(props: &Props) -> HtmlResult {
     let dispatch = Dispatch::<FileDirectory>::new();
     let element_tree: Rc<RefCell<ElementTree>>;
-    let file_id = props.id.clone();
-    let res = use_future(|| async move {
+    // TODO : create a hook for this
+    let res = use_future_with_deps(|file_id| async move {
         match dispatch.get().files.vertices.get(&file_id) {
             Some(x) => {
                 match x.element_tree {
@@ -101,7 +108,7 @@ pub fn file_data(props: &Props) -> HtmlResult {
                                 HashMap::new(),
                             ),
                         );
-                        let _ = create_element_tree(&r, file_id).await?;
+                        let _ = create_element_tree(&r, *file_id).await?;
                         let tree_id = r.id;
                         dispatch.reduce_mut(|f| {
                             let file_node = f.files.vertices.get_mut(&file_id).unwrap();
@@ -113,7 +120,7 @@ pub fn file_data(props: &Props) -> HtmlResult {
             }
             None => return Err(String::from("Not found!")),
         }
-    })?;
+    }, props.id)?;
     let result_html = match *res {
         Ok(ref tree) => {
             let file_node = Dispatch::<FileDirectory>::new()
@@ -127,8 +134,8 @@ pub fn file_data(props: &Props) -> HtmlResult {
             html! {
                 <Editor
                     title = { file_node.name.clone() }
-                    element_tree = { element_tree.clone() }
-                    onchange = { onchange_element_tree(element_tree.clone())}
+                element_tree = { element_tree.clone() }
+                onchange = { onchange_element_tree(element_tree.clone())}
                 />
             }
         }

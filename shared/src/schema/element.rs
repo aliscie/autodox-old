@@ -107,6 +107,8 @@ pub struct EditorElementCreate {
     pub tree_id: Id,
     pub parent_id: Id,
     pub children: Option<IndexSet<Id>>,
+    // represents the element after which the current element should be pushed
+    pub prev_element_id : Option<Id>,
 }
 
 /// type for updating editor elements

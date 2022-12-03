@@ -9,7 +9,7 @@ use dotenv::dotenv;
 
 use context::Context;
 use store::Store;
-use tauri::{Runtime, Window};
+use tauri::{Runtime, Window, Manager};
 
 mod command;
 mod prelude;
@@ -85,11 +85,11 @@ async fn main() {
             crate::command::element::update_element,
         ])
         .setup(|app| {
+            let win = app.get_window("main").unwrap();
             #[cfg(target_os = "macos")]
-            {
-                let win = app.get_window("main").unwrap();
-                win.set_transparent_titlebar(true);
-            }
+            win.set_transparent_titlebar(true);
+
+            win.open_devtools();
             Ok(())
         })
         .run(tauri::generate_context!())

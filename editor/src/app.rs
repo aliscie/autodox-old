@@ -85,9 +85,11 @@ pub fn editor(props: &Props) -> Html {
                                     continue;
                                 }
                                 let new_id = Uuid::new_v4();
+                                let mut prev_element_id : Option<Id> = None;
                                 if let Some(prev_node) = element.previous_sibling() {
                                     let prev_element = prev_node.unchecked_into::<Element>();
                                     log!(format!("previous element id : {:?}", prev_element.id()));
+                                    prev_element_id = Uuid::parse_str(prev_element.id().as_str()).map(Id::from).ok();
                                 }
                                 let element_create = EditorElementCreate {
                                     id: new_id.into(),
@@ -95,6 +97,7 @@ pub fn editor(props: &Props) -> Html {
                                     attrs: HashMap::new(),
                                     tree_id: element_tree.as_ref().borrow().id,
                                     parent_id: element_tree.as_ref().borrow().elements.root.unwrap(),
+                                    prev_element_id,
                                     children: None,
                                 };
                                 onchange.emit(EditorChange::Create(element_create));

@@ -162,6 +162,10 @@ impl Store {
         Ok(v)
     }
 
+    pub async fn exec_select_only<T>(&self, tb : Thing, selections : &[&'static str]) -> Result<Vec<T>> {
+
+    }
+
     pub async fn exec_update<T: Updatable + Entity<DatabaseType = Object>>(
         &self,
         tb: Thing,
