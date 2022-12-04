@@ -1,14 +1,14 @@
-use std::cell::RefCell;
-use std::collections::HashMap;
-use std::rc::Rc;
 use crate::render::render;
 use shared::id::Id;
 use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
 use shared::*;
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::console::log_1;
-use web_sys::{MutationObserver, MutationObserverInit, MutationRecord, Element};
+use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
 
@@ -25,11 +25,6 @@ pub struct Props {
     pub title: String,
     pub element_tree: Rc<RefCell<ElementTree>>,
     pub onchange: Callback<EditorChange>,
-}
-
-struct EditorState{
-    color : String,
-    is_bold : bool,
 }
 
 // this is used for the work space
@@ -51,8 +46,8 @@ pub fn editor(props: &Props) -> Html {
     let oninput_event = {
         let element_tree = props.element_tree.clone();
         let onchange = props.onchange.clone();
-        Closure::wrap(
-            Box::new(move |mutation_event: Vec<MutationRecord>, _observer: MutationObserver| {
+        Closure::wrap(Box::new(
+            move |mutation_event: Vec<MutationRecord>, _observer: MutationObserver| {
                 for mutation_type in mutation_event {
                     log_1(&format!("{:?}", mutation_type.type_()).into());
                     log_1(&format!("{:?}", mutation_type.target()).into());
@@ -80,23 +75,46 @@ pub fn editor(props: &Props) -> Html {
                                 }
                             }
                             "childList" => {
+                                let removed_nodes = mutation_type.removed_nodes();
+                                for i in 0..removed_nodes.length() {
+                                    removed_nodes
+                                        .get(i)
+                                        .and_then(|node| node.dyn_into::<Element>().ok())
+                                        .and_then(|element| {
+                                            Uuid::parse_str(element.id().as_str()).ok()
+                                        })
+                                        .map(|id| onchange.emit(EditorChange::Delete(id.into())));
+                                }
+                                if removed_nodes.length() > 0{
+                                    // move to next mutation record!
+                                    log!("got element delete!");
+                                    log!(mutation_type.removed_nodes());
+                                    continue;
+                                }
                                 let element = current_element.unchecked_into::<Element>();
                                 if element.id() == "text_editor" {
                                     continue;
                                 }
                                 let new_id = Uuid::new_v4();
-                                let mut prev_element_id : Option<Id> = None;
+                                let mut prev_element_id: Option<Id> = None;
                                 if let Some(prev_node) = element.previous_sibling() {
                                     let prev_element = prev_node.unchecked_into::<Element>();
                                     log!(format!("previous element id : {:?}", prev_element.id()));
-                                    prev_element_id = Uuid::parse_str(prev_element.id().as_str()).map(Id::from).ok();
+                                    prev_element_id = Uuid::parse_str(prev_element.id().as_str())
+                                        .map(Id::from)
+                                        .ok();
                                 }
                                 let element_create = EditorElementCreate {
                                     id: new_id.into(),
                                     text: element.text_content().unwrap_or_default(),
                                     attrs: HashMap::new(),
                                     tree_id: element_tree.as_ref().borrow().id,
-                                    parent_id: element_tree.as_ref().borrow().elements.root.unwrap(),
+                                    parent_id: element_tree
+                                        .as_ref()
+                                        .borrow()
+                                        .elements
+                                        .root
+                                        .unwrap(),
                                     prev_element_id,
                                     children: None,
                                 };
@@ -107,8 +125,8 @@ pub fn editor(props: &Props) -> Html {
                         }
                     }
                 }
-            }) as Box<dyn FnMut(_, _)>,
-        )
+            },
+        ) as Box<dyn FnMut(_, _)>)
     };
 
     use_effect_with_deps(

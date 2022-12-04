@@ -129,11 +129,11 @@ pub async fn update_element(data: EditorElementUpdate, ctx: State<'_, Context>) 
 }
 
 #[tauri::command]
-pub async fn delete_element(data: DeleteEditorElement, ctx: State<'_, Context>) -> Result<()> {
+pub async fn delete_element(data: EditorElementDelete, ctx: State<'_, Context>) -> Result<()> {
     let store = ctx.get_store();
     let mut stack = vec![data.id];
     let mut current_index = 0;
-    while current_index <= stack.len() {
+    while current_index < stack.len() {
         let children: Vec<Value> = store
             .exec_delete::<EditorElement>(stack[current_index].to_string())
             .await?
@@ -165,14 +165,16 @@ pub async fn delete_element(data: DeleteEditorElement, ctx: State<'_, Context>) 
         .await?;
     // deleting all nodes from the element_tree.vertices column
     let sql = "update $tb set elements.vertices -= $va";
-    let stack: Vec<Value> = stack
-        .into_iter()
-        .map(|f| Value::Thing((EditorElement::table_name(), f.to_string()).into()))
-        .collect();
-    let vars: BTreeMap<String, Value> = map![
-        "tb".into() => Value::Thing((ElementTree::table_name(), data.tree_id.to_string()).into()),
-        "va".into() => stack.into(),
-    ];
+    for i in stack {
+        let vars: BTreeMap<String, Value> = map![
+            "tb".into() => Value::Thing((ElementTree::table_name(), data.tree_id.to_string()).into()),
+            "va".into() => Value::Thing((EditorElement::table_name(), i.to_string()).into()),
+        ];
+        store
+            .datastore
+            .execute(&sql, &store.session, Some(vars), false)
+            .await?;
+    }
     Ok(())
 }
 

@@ -351,7 +351,7 @@ impl Store for ElementTree {
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
-pub struct DeleteEditorElement {
+pub struct EditorElementDelete {
     pub parent_id : Id,
     pub id : Id,
     pub tree_id : Id,

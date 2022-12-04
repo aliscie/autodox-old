@@ -55,7 +55,6 @@ pub fn editor_component(props: &Props) -> Html {
     //<span ref={node_ref}  >
              //<Drag position={format!("{}",*(position.clone()))}/>
         <>
-            <div id = { format!("{:?}-display-block",node.id.to_string())} style = "display : none"></div>
             <div style = "display : inline-block"
                 id = { node.id.to_string() }
                         // style = { &node.attrs

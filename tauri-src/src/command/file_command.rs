@@ -92,6 +92,7 @@ pub async fn get_directory(id: Id, ctx: State<'_, Context>) -> Result<FileDirect
     Ok(res.try_into()?)
 }
 
+/// returns the ids of the deleted items
 #[tauri::command]
 pub async fn delete_file(data: FileNodeDelete, ctx: State<'_, Context>) -> Result<()> {
     let store = ctx.get_store();
@@ -129,14 +130,18 @@ pub async fn delete_file(data: FileNodeDelete, ctx: State<'_, Context>) -> Resul
         .await?;
     // deleting all nodes from the element_tree.vertices column
     let sql = "update $tb set elements.vertices -= $va";
-    let stack: Vec<Value> = stack
-        .into_iter()
-        .map(|f| Value::Thing((FileNode::table_name(), f.to_string()).into()))
-        .collect();
+    let mut vertices: Vec<Value> = Vec::with_capacity(stack.len());
+    for i in &stack {
+        vertices.push(Value::Thing((FileNode::table_name(), i.to_string()).into()));
+    }
     let vars: BTreeMap<String, Value> = map![
         "tb".into() => Value::Thing((FileDirectory::table_name(), data.tree_id.to_string()).into()),
-        "va".into() => stack.into(),
+        "va".into() => vertices.into(),
     ];
+    store
+        .datastore
+        .execute(&sql, &store.session, Some(vars), false)
+        .await?;
     Ok(())
 }
 

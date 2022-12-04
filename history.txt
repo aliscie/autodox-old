@@ -1,25 +1,4 @@
 #V2
-select * from file_node;
-select * from file_directory;
-select * form file_node;
-select * from file_node;
-select * from file_directory;
-select * from file_node;
-select * from file_directory;
-select * from file_node;
-select * from file_directory;
-select * from file_node;
-select * from file_directory;
-select * from file_node;
-select * from file_directory;
-create test set names = ["aman"];
-update "test:kihb2b5z38e24l1u7ecj" merge { names : ["archi"] }
-select * from test;
-select * from file_directory;
-select count(*) from file_directory;
-select count(id) from file_directory;
-select *, files.vertices.* from file_directory;
-select * from file_node;
 select * from file_directory;
 select * from file_node;
 select *, files.vertices.* from file_directory;
@@ -99,3 +78,24 @@ delete person where [person:archi, person:aman] ?~ id
 select * from person;
 create person:test set friends = ["aman", "archi", "vaibhav", "pushkar"]
 update person:test set friends -= ["aman", "archi"]
+select * from file_node;
+select * from  "element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5"
+select * from  element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5
+select * from element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5⟩
+select *, elements.vertices.* from element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5⟩
+select *, elements.vertices.*.* from element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5⟩
+select * from element_tree;
+select *, elements.vertices.* from element_tree;
+select *, elements.vertices.*.* from element_tree;
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set vertices -= [ editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩ ]
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set vertices -= [ "editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩" ]
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set vertices = array::difference(vertices,[ "editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩" ])
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set vertices = array::difference(vertices,[ editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩ ])
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set elements.vertices = array::difference(vertices,[ editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩ ])
+select *, elements.vertices.*.* from element_tree;
+update element_tree:⟨ded7264d-24e9-41d6-bf1b-4547a2a86e99⟩ set elements.vertices -= [ editor_element:⟨c0fab713-b249-434b-a18b-63c646643c34⟩ ]
+select * from element_tree
+select *, elements.vertices.*.* from element_tree;
+update element_tree:⟨ded7264d-24e9-41d6-bf1b-4547a2a86e99⟩ set elements.vertices -= [ editor_element:⟨7dd0e932-859e-47db-9e7e-7d1c39712d5f⟩ ]
+select * from element_tree
+select *, elements.vertices.*.* from element_tree;

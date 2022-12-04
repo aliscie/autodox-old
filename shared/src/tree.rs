@@ -75,7 +75,7 @@ where
         visited_nodes.len()
     }
 
-    pub fn remove(&mut self, id: &ID) {
+    pub fn remove(&mut self, id: &ID) -> ID {
         let mut remove_stack = VecDeque::from([id.clone()]);
         while remove_stack.len() > 0 {
             let r = remove_stack.pop_front().unwrap();
@@ -86,9 +86,13 @@ where
                 }
             }
         }
+        let mut parent_id = ID::default();
         for (_id, children) in self.adjacency.iter_mut() {
-            children.remove(id);
+            if children.remove(id) {
+                parent_id = _id.clone();
+            }
         }
+        parent_id
     }
 
     pub fn into_iter<'a>(&'a self, start: ID) -> TreeIter<'a, ID, T> {

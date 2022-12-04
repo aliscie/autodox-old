@@ -1,11 +1,13 @@
 use crate::backend::create_element;
 use crate::backend::create_element_tree;
+use crate::backend::delete_element;
 use crate::backend::get_element_tree;
 use crate::backend::update_element;
 use editor::Editor;
 use editor::EditorChange;
 use shared::id::Id;
 use shared::log;
+use shared::schema::EditorElementDelete;
 use shared::schema::{Attrs, EditorElement, ElementTree, FileDirectory};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -55,7 +57,7 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                     let result = create_element(create_data).await;
                     log!(result);
                 });
-                element_tree.as_ref().borrow_mut().elements.push_children(
+                element_tree.clone().borrow_mut().elements.push_children(
                     x.parent_id.clone(),
                     x.id.clone(),
                     x.clone().into(),
@@ -70,13 +72,17 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                 //}
             }
             EditorChange::Delete(id) => {
-                log!(&id); 
-                let mut elements_to_delete = vec![id];
-                for i in element_tree.as_ref().borrow().elements.adjacency.get(&id){
-                    for i in i.into_iter(){
-                        elements_to_delete.push(*i);
-                    }
-                }
+                log!(&id);
+                let parent_id = element_tree.clone().borrow_mut().elements.remove(&id);
+                let data = EditorElementDelete {
+                    id,
+                    parent_id,
+                    tree_id: element_tree.clone().borrow().id,
+                };
+                spawn_local(async move {
+                    let result = delete_element(data).await;
+                    log!(result);
+                });
             }
         };
     })

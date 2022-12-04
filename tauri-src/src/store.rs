@@ -112,7 +112,7 @@ impl Store {
         &self,
         id: String,
     ) -> Result<Object> {
-        let sql = "DELETE $th RETURNING BEFORE";
+        let sql = "DELETE $th RETURN BEFORE";
 
         let vars = map!["th".into() => Thing::from((T::table_name(), id)).into()];
 
@@ -124,10 +124,10 @@ impl Store {
         let first_res = ress.into_iter().next().expect("Did not get a response");
 
         // Return the error if result failed
-        let res: Object = first_res.result?.try_into()?;
+        let mut res: Vec<Value> = first_res.result?.try_into()?;
 
         // return success
-        Ok(res)
+        Ok(res.remove(0).try_into()?)
     }
 
     pub async fn exec_select(&self, tb: &str, filter: Option<Value>) -> Result<Vec<Object>> {
