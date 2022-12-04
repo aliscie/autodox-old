@@ -1,36 +1,4 @@
 #V2
-delete test;
-select * from test;
-create test set name = "aman", roll_no = 16;
-delete result.name where id = "test:qtt1d3ow0kqyhm9qrviw"
-delete result.name where test.id = "test:qtt1d3ow0kqyhm9qrviw"
-delete test.name returning after;
-update test.name = null returning after;
-update test.name = null
-update test set name = null returning after
-update test set name = null return after
-select * from name;
-update test set name = none return after
-update test set name = "aman" return after
-update test set name = none return after
-create test set name = ["aman"];
-update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["nona"] } 
-update  "test:w14c59mu64d1aw9yq49n" set location = "delhi" 
-update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["archi"] } 
-update  "test:w14c59mu64d1aw9yq49n" MERGE { name : "archi" } 
-update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["archi"] } 
-update  "test:w14c59mu64d1aw9yq49n" patch { name : ["archi"] } 
-update  "test:w14c59mu64d1aw9yq49n" patch { name += ["archi"] } 
-update  "test:w14c59mu64d1aw9yq49n" patch  name += ["archi"] }
-update  "test:w14c59mu64d1aw9yq49n" patch  name += ["archi"] 
-update  "test:w14c59mu64d1aw9yq49n" patch  name += "archi"
-select * from test;
-create test set location = "mumbai" , name = ["aman"]
-update test MERGE { location : "mumbai" } where name = ["aman"];
-update test MERGE { location : "delhi" } where name = ["aman"];
-select * from test;
-select * from file_node;
-select * from file_directory;
 select * from file_node;
 select * from file_directory;
 select * form file_node;
@@ -99,3 +67,35 @@ select * from editor_element;
 select * from editor_tree;
 select * from element_tree;
 select * from file_node;
+create person:aman set friends = ["archi", "vaibhav"]
+crreate person:archi set friends = ["aman", "manu"]
+create person:archi set friends = ["aman", "manu"]
+delete person where id contains ["person:archi", "person:aman"]
+selectt * from person;
+select * from person;
+delete person where id containsany ["person:archi", "person:aman"]
+select * from person;
+delete person where id containsany [person:archi, person:aman]
+select * from person;
+delete person where id anyinside [person:archi, person:aman]
+select * from person;
+delete person where id anyinside ["person:archi", "person:aman"]
+delete person where id contains ["person:archi", "person:aman"]
+delete person where id containsany [person:archi, person:aman]
+delete person where [person:archi, person:aman] containsany id
+select * from person;
+delete person where [person:archi, person:aman] ?> id
+delete person where id ?= [person:archi, person:aman]
+select * from person;
+select * from true ?> ["true", "test", "text"]
+select * from ["true", "test", "text"] ?> true
+select * from ["true", "test", "text"] ?> true;
+SELECT * FROM ["true", "test", "text"] ?~ true;
+SELECT * FROM ["true", "test", "text"] ?~ true
+delete person where id ?~ [person:archi, person:aman]
+select * from person where id ?~ [person:archi, person:aman]
+select * from person where [person:archi, person:aman] ?~ id
+delete person where [person:archi, person:aman] ?~ id
+select * from person;
+create person:test set friends = ["aman", "archi", "vaibhav", "pushkar"]
+update person:test set friends -= ["aman", "archi"]

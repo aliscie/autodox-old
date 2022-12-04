@@ -57,7 +57,7 @@ impl From<FileNodeCreate> for Object {
 /// type for updating file_node
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileNodeUpdate {
-    pub id : Id,
+    pub id: Id,
     pub children: Option<IndexSet<Id>>,
     // TODO : cannot update this using this method think of something else
     pub parent_id: Option<Id>,
@@ -114,6 +114,7 @@ pub struct FileNode {
     pub element_tree: Option<Id>,
 }
 
+
 impl Default for FileNode {
     fn default() -> Self {
         Self {
@@ -131,6 +132,9 @@ impl Entity for FileNode {
         "file_node".to_string()
     }
 }
+
+#[cfg(feature = "tauri")]
+impl Queryable for FileNode {}
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 pub struct FileDirectory {
@@ -245,14 +249,10 @@ impl TryFrom<Object> for FileNode {
                 .ok_or(Error::XPropertyNotFound("name".to_string()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("String"))?,
-            element_tree: object
-                .remove("element_tree")
-                .map_or(None, |f| {
-                    match f{
-                        Value::Thing(x) => x.id.to_raw().as_str().parse::<Uuid>().map(Id::from).ok(),
-                        _ => None,
-                    }
-                }),
+            element_tree: object.remove("element_tree").map_or(None, |f| match f {
+                Value::Thing(x) => x.id.to_raw().as_str().parse::<Uuid>().map(Id::from).ok(),
+                _ => None,
+            }),
         })
     }
 }
@@ -294,4 +294,12 @@ impl TryFrom<Object> for FileDirectory {
                 .try_into()?,
         })
     }
+}
+
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct FileNodeDelete {
+    pub id: Id,
+    pub tree_id: Id,
+    pub parent_id: Id,
 }

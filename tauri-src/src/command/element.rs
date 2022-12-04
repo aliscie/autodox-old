@@ -70,31 +70,7 @@ pub async fn create_element(data: EditorElementCreate, ctx: State<'_, Context>) 
     let tree_id = data.tree_id;
     match data.prev_element_id {
         Some(prev_element_id) => {
-            let children_value: Vec<Value> = store
-                .exec_select_only::<EditorElement>(parent_id.to_string(), &["children"])
-                .await?
-                .remove("children")
-                .ok_or(Error::XPropertyNotFound("children".into()))?
-                .try_into()?;
-            let mut children: IndexSet<Id> = IndexSet::new();
-            for i in children_value {
-                match i {
-                    Value::Thing(x) => {
-                        children.insert(
-                            Uuid::parse_str(x.id.to_string().as_str())
-                                .map_err(|_| {
-                                    Error::XValueNotOfType("create_element value not of type Uuid")
-                                })?
-                                .into(),
-                        );
-                    }
-                    _ => {
-                        return Err(Error::XValueNotOfType(
-                            "create_element Value not of type Thing",
-                        ))
-                    }
-                }
-            }
+            let mut children = load_children_ids(parent_id, &store).await?;
             children.move_index(
                 children.get_index_of(&id).unwrap(),
                 children.get_index_of(&prev_element_id).unwrap() + 1,
@@ -150,4 +126,81 @@ pub async fn update_element(data: EditorElementUpdate, ctx: State<'_, Context>) 
         )
         .await?;
     Ok(())
+}
+
+#[tauri::command]
+pub async fn delete_element(data: DeleteEditorElement, ctx: State<'_, Context>) -> Result<()> {
+    let store = ctx.get_store();
+    let mut stack = vec![data.id];
+    let mut current_index = 0;
+    while current_index <= stack.len() {
+        let children: Vec<Value> = store
+            .exec_delete::<EditorElement>(stack[current_index].to_string())
+            .await?
+            .remove("children")
+            .ok_or(Error::XPropertyNotFound("children".into()))?
+            .try_into()?;
+        for i in children {
+            match i {
+                Value::Thing(x) => {
+                    let id = Uuid::parse_str(x.id.to_string().as_str());
+                    if let Ok(id) = id {
+                        stack.push(id.into());
+                    }
+                }
+                _ => continue,
+            }
+        }
+        current_index += 1;
+    }
+    // deleting node from the parent_element
+    let sql = "update $tb set children -= $va";
+    let vars: BTreeMap<String, Value> = map![
+        "tb".into() => Value::Thing((EditorElement::table_name(), data.parent_id.to_string()).into()),
+        "va".into() => Value::Thing((EditorElement::table_name(), data.id.to_string()).into()),
+    ];
+    store
+        .datastore
+        .execute(&sql, &store.session, Some(vars), false)
+        .await?;
+    // deleting all nodes from the element_tree.vertices column
+    let sql = "update $tb set elements.vertices -= $va";
+    let stack: Vec<Value> = stack
+        .into_iter()
+        .map(|f| Value::Thing((EditorElement::table_name(), f.to_string()).into()))
+        .collect();
+    let vars: BTreeMap<String, Value> = map![
+        "tb".into() => Value::Thing((ElementTree::table_name(), data.tree_id.to_string()).into()),
+        "va".into() => stack.into(),
+    ];
+    Ok(())
+}
+
+async fn load_children_ids(parent_id: Id, store: &Store) -> Result<IndexSet<Id>> {
+    let children_value: Vec<Value> = store
+        .exec_select_only::<EditorElement>(parent_id.to_string(), &["children"])
+        .await?
+        .remove("children")
+        .ok_or(Error::XPropertyNotFound("children".into()))?
+        .try_into()?;
+    let mut children: IndexSet<Id> = IndexSet::new();
+    for i in children_value {
+        match i {
+            Value::Thing(x) => {
+                children.insert(
+                    Uuid::parse_str(x.id.to_string().as_str())
+                        .map_err(|_| {
+                            Error::XValueNotOfType("create_element value not of type Uuid")
+                        })?
+                        .into(),
+                );
+            }
+            _ => {
+                return Err(Error::XValueNotOfType(
+                    "create_element Value not of type Thing",
+                ))
+            }
+        }
+    }
+    Ok(children)
 }

@@ -83,6 +83,7 @@ async fn main() {
             crate::command::element::create_element_tree,
             crate::command::element::create_element,
             crate::command::element::update_element,
+            crate::command::element::delete_element,
         ])
         .setup(|app| {
             let win = app.get_window("main").unwrap();

@@ -69,7 +69,15 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                 ////log!(element_tree.elements.adjacency.get(&x.parent_id));
                 //}
             }
-            _ => {}
+            EditorChange::Delete(id) => {
+                log!(&id); 
+                let mut elements_to_delete = vec![id];
+                for i in element_tree.as_ref().borrow().elements.adjacency.get(&id){
+                    for i in i.into_iter(){
+                        elements_to_delete.push(*i);
+                    }
+                }
+            }
         };
     })
 }

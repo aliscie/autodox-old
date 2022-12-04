@@ -108,10 +108,13 @@ impl Store {
         }
     }
 
-    pub async fn exec_delete(&self, tid: &str) -> Result<String> {
-        let sql = "DELETE $th";
+    pub async fn exec_delete<T: Queryable<DatabaseType = Object>>(
+        &self,
+        id: String,
+    ) -> Result<Object> {
+        let sql = "DELETE $th RETURNING BEFORE";
 
-        let vars = map!["th".into() => thing(tid)?.into()];
+        let vars = map!["th".into() => Thing::from((T::table_name(), id)).into()];
 
         let ress = self
             .datastore
@@ -121,10 +124,10 @@ impl Store {
         let first_res = ress.into_iter().next().expect("Did not get a response");
 
         // Return the error if result failed
-        first_res.result?;
+        let res: Object = first_res.result?.try_into()?;
 
         // return success
-        Ok(tid.to_string())
+        Ok(res)
     }
 
     pub async fn exec_select(&self, tb: &str, filter: Option<Value>) -> Result<Vec<Object>> {

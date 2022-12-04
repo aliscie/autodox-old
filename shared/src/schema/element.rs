@@ -84,6 +84,7 @@ impl EditorElement {
     }
 }
 
+#[cfg(feature = "tauri")]
 impl Queryable for EditorElement {}
 
 impl GetId for EditorElement {
@@ -347,4 +348,11 @@ impl Store for ElementTree {
     fn should_notify(&self, old: &Self) -> bool {
         old != self
     }
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct DeleteEditorElement {
+    pub parent_id : Id,
+    pub id : Id,
+    pub tree_id : Id,
 }
