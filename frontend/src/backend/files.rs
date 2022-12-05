@@ -1,5 +1,5 @@
 use uuid::Uuid;
-use shared::log;
+use shared::{log, schema::FileNodeDelete};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
@@ -36,7 +36,7 @@ pub async fn create_file(
     }
 }
 
-pub async fn delete_file(tree_id: Id, file_id: Id) -> Result<(), String> {
+pub async fn delete_file(data : FileNodeDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
@@ -44,7 +44,7 @@ pub async fn delete_file(tree_id: Id, file_id: Id) -> Result<(), String> {
     if !info.get().web {
         return crate::backend::call_surreal(
             "delete_file".to_string(),
-            Some(&serde_json::json!({"tree_id" : tree_id, "file_id" : file_id})),
+            Some(&serde_json::json!({ "data" : data })),
         )
         .await;
     } else {

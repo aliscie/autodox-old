@@ -9,7 +9,7 @@ use yew::prelude::*;
 use yew::virtual_dom::VNode;
 use yew_router::prelude::use_navigator;
 use shared::schema::FileDirectory;
-use crate::app_components::FileComponent;
+use crate::specific_components::FileComponent;
 use crate::router::Route;
 use shared::id::Id;
 

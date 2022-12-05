@@ -1,11 +1,11 @@
 use std::collections::BTreeMap;
+use surrealdb::sql::Thing;
 
-use surrealdb::sql::*;
-use uuid::Uuid;
 use shared::id::Id;
+use uuid::Uuid;
 
 use shared::{
-    schema::{FileDirectory, FileNode, FileNodeCreate},
+    schema::{FileDirectory, FileNode, FileNodeCreate, FileNodeDelete},
     traits::Entity,
 };
 use tauri::State;
@@ -92,24 +92,56 @@ pub async fn get_directory(id: Id, ctx: State<'_, Context>) -> Result<FileDirect
     Ok(res.try_into()?)
 }
 
+/// returns the ids of the deleted items
 #[tauri::command]
-pub async fn delete_file(id: Id, tree_id: Id, ctx: State<'_, Context>) -> Result<()> {
+pub async fn delete_file(data: FileNodeDelete, ctx: State<'_, Context>) -> Result<()> {
     let store = ctx.get_store();
-    let mut file_directory: FileDirectory = store
-        .exec_get::<FileDirectory>(Some(tree_id.to_string()), Some("files.vertices.*.*"))
-        .await?
-        .remove(0)
-        .try_into()?;
-    let mut id_to_remove = vec![id];
-    let mut index = 0;
-    while index < id_to_remove.len() {
-        if let Some(x) = file_directory.files.adjacency.remove(&id_to_remove[index]) {
-            for i in x {
-                id_to_remove.push(i.clone());
+    let mut stack = vec![data.id];
+    let mut current_index = 0;
+    while current_index <= stack.len() {
+        let children: Vec<Value> = store
+            .exec_delete::<FileNode>(stack[current_index].to_string())
+            .await?
+            .remove("children")
+            .ok_or(Error::XPropertyNotFound("children".into()))?
+            .try_into()?;
+        for i in children {
+            match i {
+                Value::Thing(x) => {
+                    let id = Uuid::parse_str(x.id.to_string().as_str());
+                    if let Ok(id) = id {
+                        stack.push(id.into());
+                    }
+                }
+                _ => continue,
             }
         }
-        index += 1;
+        current_index += 1;
     }
+    // deleting node from the parent_element
+    let sql = "update $tb set children -= $va";
+    let vars: BTreeMap<String, Value> = map![
+        "tb".into() => Value::Thing((FileNode::table_name(), data.parent_id.to_string()).into()),
+        "va".into() => Value::Thing((FileNode::table_name(), data.id.to_string()).into()),
+    ];
+    store
+        .datastore
+        .execute(&sql, &store.session, Some(vars), false)
+        .await?;
+    // deleting all nodes from the element_tree.vertices column
+    let sql = "update $tb set elements.vertices -= $va";
+    let mut vertices: Vec<Value> = Vec::with_capacity(stack.len());
+    for i in &stack {
+        vertices.push(Value::Thing((FileNode::table_name(), i.to_string()).into()));
+    }
+    let vars: BTreeMap<String, Value> = map![
+        "tb".into() => Value::Thing((FileDirectory::table_name(), data.tree_id.to_string()).into()),
+        "va".into() => vertices.into(),
+    ];
+    store
+        .datastore
+        .execute(&sql, &store.session, Some(vars), false)
+        .await?;
     Ok(())
 }
 
@@ -176,7 +208,7 @@ mod tests {
         let mut data = FileDirectory::default();
         let file = FileNode::default();
         //data.files
-            //.push_children(data.files.root.unwrap(), file.id, file);
+        //.push_children(data.files.root.unwrap(), file.id, file);
         let store = context.get_store();
         //for i in data.api.vertices.values().into_iter() {
         //store.exec_create(i.clone()).await.unwrap();
