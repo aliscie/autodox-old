@@ -84,6 +84,9 @@ impl EditorElement {
     }
 }
 
+#[cfg(feature = "tauri")]
+impl Queryable for EditorElement {}
+
 impl GetId for EditorElement {
     type Id = Id;
     fn get_id(&self) -> Self::Id {
@@ -99,7 +102,7 @@ impl Entity for EditorElement {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EditorElementCreate {
     pub id: Id,
     pub text: String,
@@ -107,10 +110,12 @@ pub struct EditorElementCreate {
     pub tree_id: Id,
     pub parent_id: Id,
     pub children: Option<IndexSet<Id>>,
+    // represents the element after which the current element should be pushed
+    pub prev_element_id : Option<Id>,
 }
 
 /// type for updating editor elements
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EditorElementUpdate {
     pub id: Id,
     pub text: Option<String>,
@@ -127,6 +132,16 @@ impl Default for EditorElementUpdate {
             attrs: None,
             parent: None,
             children: None,
+        }
+    }
+}
+
+impl From<EditorElementCreate> for EditorElement {
+    fn from(v: EditorElementCreate) -> Self {
+        Self {
+            id: v.id,
+            text: v.text,
+            attrs: v.attrs,
         }
     }
 }
@@ -303,9 +318,18 @@ impl TryFrom<Object> for EditorElement {
         Ok(Self {
             id: value
                 .remove("id")
-                .ok_or(Error::XPropertyNotFound("uuid not found".into()))?
+                .ok_or(Error::XPropertyNotFound("id".to_string()))?
+                // convert value into a id type
+                .record()
+                .ok_or(Error::XValueNotOfType("id not of type surrealdb::Thing"))?
+                // get the actual id
+                .id
+                // converting into string
+                .to_raw()
+                .as_str()
+                // into uuid
                 .try_into()
-                .map_err(|_| Error::XValueNotOfType("Uuid"))?,
+                .map_err(|_| Error::XValueNotOfType("uuid"))?,
             text: value
                 .remove("text")
                 .ok_or(Error::XPropertyNotFound("text".into()))?
@@ -324,4 +348,11 @@ impl Store for ElementTree {
     fn should_notify(&self, old: &Self) -> bool {
         old != self
     }
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct EditorElementDelete {
+    pub parent_id : Id,
+    pub id : Id,
+    pub tree_id : Id,
 }

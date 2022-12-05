@@ -2,7 +2,7 @@ use yew::prelude::*;
 use shared::id::Id;
 use yew_router::prelude::*;
 
-use crate::components::FileData;
+use crate::specific_components::FileData;
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
@@ -16,9 +16,11 @@ pub enum Route {
 }
 
 pub fn switch(routes: Route) -> Html {
+    let fallback = html!{ <div> {"loading"}</div>};
     match routes {
+        // Dashboard
         Route::Home => html! {<span>{"We are at home!"}</span>},
-        Route::File { id } => html! { <FileData id = { id }/>},
+        Route::File { id } => html! { <Suspense {fallback}> <FileData id = { id }/> </Suspense>},
         Route::NotFound => html! { <span>{ "404" }</span> },
     }
 }

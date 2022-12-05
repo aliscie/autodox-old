@@ -1,4 +1,4 @@
-use crate::app_components::{ButtonsGroup, SearchFiltes};
+use crate::specific_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
 use crate::router::{switch, Route};

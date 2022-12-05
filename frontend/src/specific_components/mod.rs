@@ -1,9 +1,10 @@
-// Note you can import from app_components to app_components but not the apposite.
-// Note: you can do data handle in app_components but you cannot do it in app_components
-// Note: app_components are reusable but app_components are not.
+// Note you can import from specific_components to specific_components but not the apposite.
+// Note: you can do data handle in specific_components but you cannot do it in specific_components
+// Note: specific_components are reusable but specific_components are not.
 
 pub use download_component::Download;
 pub use file_component::FileComponent;
+pub use file_data::FileData;
 pub use files_category::ButtonsGroup;
 pub use markdown_button::Markdown;
 pub use page_option_component::PageOptions;
@@ -22,3 +23,5 @@ mod search_filters;
 mod files_category;
 mod markdown_button;
 mod save_button;
+
+mod file_data;

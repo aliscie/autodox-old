@@ -2,7 +2,7 @@ use wasm_bindgen::prelude::*;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
 
-use crate::app_components::{Download, SaveButton, Markdown, PageOptions, TitleAvatarComponent};
+use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::components::{CurrDirectory, TitleBar};
 use crate::*;
 
@@ -64,7 +64,6 @@ pub fn get_titlebar(props : &Props) -> Html {
 
     let right_content: Html = html! {
        <>
-                <SaveButton/>
                <Download/>
                <i
                onclick={handle_light_mod}
