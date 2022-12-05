@@ -1,16 +1,4 @@
 #V2
-select * from file_directory;
-select * from file_node;
-select *, files.vertices.* from file_directory;
-select *, files.vertices.id from file_directory;
-select *  from file_npde;
-select *  from file_node;
-select *, files.vertices.id from file_directory FETCH file_node;
-select *, files.vertices.* from file_directory FETCH file_node;
-select files.vertices.* from file_directory;
-select * from file_node;
-select * from element_tree;
-update file_node MERGE { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" } where id = "8650656c-16c5-4580-a354-77732c3be8cd";
 update file_node patch { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" } where id = "8650656c-16c5-4580-a354-77732c3be8cd";
 update "file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩" patch  { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" }
 update file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩ set element_tree = None;
@@ -99,3 +87,15 @@ select *, elements.vertices.*.* from element_tree;
 update element_tree:⟨ded7264d-24e9-41d6-bf1b-4547a2a86e99⟩ set elements.vertices -= [ editor_element:⟨7dd0e932-859e-47db-9e7e-7d1c39712d5f⟩ ]
 select * from element_tree
 select *, elements.vertices.*.* from element_tree;
+create person:test set gender = "male"
+create peroson:test2 set gender = "female"
+select * from person where [ person:test ] containsany id
+select * from person where [ person:test, person:test2 ] containsany id
+select * from person where id containsany [ person:test, person:test2 ]
+select * from person where id inside [ person:test, person:test2 ]
+select * from person where [ person:test, person:test2 ] ?~ id
+select * from person
+create peroson:test2 set gender = "female"
+create person:test2 set gender = "female"
+select * from person where [ person:test ] contains id
+select * from person where [ person:test , person:test2] contains id
