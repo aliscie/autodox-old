@@ -90,7 +90,7 @@ async fn main() -> Result<()> {
             let win = app.get_window("main").unwrap();
             #[cfg(target_os = "macos")]
             win.set_transparent_titlebar(true);
-
+            #[cfg(debug_assertions)]
             win.open_devtools();
             Ok(())
         })
