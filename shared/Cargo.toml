@@ -24,12 +24,13 @@ yew = { version = "*", optional  = true}
 js-sys = { version = "0.3.59", optional = true }
 surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true}
 candid = { version = "0.7", optional = true }
+speedy = { version = "0.8.5", optional = true, features = ["uuid"]}
 
 [features]
 default = ["frontend"]
 frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys", "dep:yew", "dep:stylist"]
 tauri = ["dep:surrealdb"]
-backend = ["dep:candid"]
+backend = ["dep:candid", "dep:speedy"]
 full = ["frontend", "backend", "tauri"]
 
 
