@@ -5,8 +5,8 @@
   },
   "build": {
     "distDir": "../frontend/dist",
-    "devPath": "../frontend/dist/index.html",
-    "beforeDevCommand": "cd frontend && yarn build",
+    "devPath": "http://localhost:5173/",
+    "beforeDevCommand": "cd frontend && yarn dev",
     "beforeBuildCommand": "cd frontend && yarn build",
     "withGlobalTauri" : true
   },
