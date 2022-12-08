@@ -1,4 +1,5 @@
 use uuid::Uuid;
+use shared::{log, schema::FileNodeDelete};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
@@ -35,7 +36,7 @@ pub async fn create_file(
     }
 }
 
-pub async fn delete_file(tree_id: Id, file_id: Id) -> Result<(), String> {
+pub async fn delete_file(data : FileNodeDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
@@ -43,7 +44,7 @@ pub async fn delete_file(tree_id: Id, file_id: Id) -> Result<(), String> {
     if !info.get().web {
         return crate::backend::call_surreal(
             "delete_file".to_string(),
-            Some(&serde_json::json!({"tree_id" : tree_id, "file_id" : file_id})),
+            Some(&serde_json::json!({ "data" : data })),
         )
         .await;
     } else {
@@ -97,6 +98,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
             None,
         )
         .await;
+        log!(&x);
         return x;
     } else {
         // user is offline throw a error
@@ -152,66 +154,3 @@ async fn local_change_directory(
     }
     return Err("user is offline".to_string());
 }
-
-//  async fn cloud_change_directory(parent_id: String, child_id: String) -> Result<(), String> {
-//     ....
-// }
-
-//  async fn synced_change_directory(parent_id: String, child_id: String) -> Result<(), String> {
-//     backends::local_change_directory(parent_id,child_id);
-//     backends::cloud_change_directory(parent_id,child_id);
-// }
-
-//
-//
-// fn add_file() {
-//     let mut new_file: Option<None> = Some(None);
-//
-//     if IS_WEB {
-//         params = [("method", "add_file"), ("name", "untitled")];
-//         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
-//         new_file = res.file
-//     } else {
-//         let file = crate::backend::files::create_file(
-//             state.files.id,
-//             state.files.root.unwrap(),
-//             "untitled".to_string(),
-//         )
-//             .await;
-//         new_file = file
-//     }
-//
-//     if let Ok(f) = file {
-//         state.files.push_children(state.files.root.unwrap(), f.id, f);
-//     }
-//
-// }
-//
-// fn get_files() -> Vec<FileTree> {
-//     let files = [];
-//     if IS_LOGEDIN {
-//         params = [("method", "files")];
-//         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
-//         files.extends(res.files)
-//     }
-//     if IS_WEB == false {
-//         files.extends(get_directory());
-//     }
-//     return files;
-// }
-//
-// fn delete_file(id: Uuid, file_location: FileLocation) {
-//     if file_location == FileLocation.LOCAL {
-//         tauri-src::commands: delete_file(id);
-//     }
-//     if file_location == FileLocation.CLOUD {
-//         params = [("method", "delete_file"), ("id", id)];
-//         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
-//     }
-//
-//     if file_location == FileLocation.SYNCED {
-//         tauri-src::commands: delete_file(id);
-//         params = [("method", "delete_file"), ("id", id)];
-//         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
-//     }
-// }

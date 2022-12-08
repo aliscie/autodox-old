@@ -5,8 +5,6 @@ use shared::{schema::{FileMode, FileDirectory, FileNode}, id::Id, Tree};
 
 use std::collections::HashMap;
 
-use crate::response::{AddViewerResponse, RemoveViewerResponse};
-
 #[derive(Clone, Readable, Writable)]
 pub struct User{
     pub user_name: String,

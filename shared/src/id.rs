@@ -11,17 +11,32 @@ use speedy::{Readable, Writable};
 use surrealdb::sql::Value;
 
 use serde::{Deserialize, Serialize};
-use std::{ops::{Deref, DerefMut}, str::FromStr};
+use std::fmt::{Display, Debug};
+use std::{
+    ops::{Deref, DerefMut},
+    str::FromStr,
+};
 use uuid::Uuid;
-use std::fmt::Display;
 
+<<<<<<< HEAD
 #[derive(PartialEq, Eq, Clone, Copy, Debug, PartialOrd, Ord, Hash, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
+=======
+#[derive(
+    PartialEq, Eq, Clone, Copy, PartialOrd, Ord, Hash, Serialize, Deserialize, Default,
+)]
+>>>>>>> 33e4823c791ebbb794a9e5efdcf5c56f09a2d570
 pub struct Id(pub Uuid);
 
 impl From<Uuid> for Id {
     fn from(id: Uuid) -> Self {
         Self(id)
+    }
+}
+
+impl Debug for Id {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
 
@@ -60,16 +75,16 @@ impl TryFrom<Value> for Id {
     }
 }
 
-impl Display for Id{
+impl Display for Id {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
 
-impl FromStr for Id{
+impl FromStr for Id {
     type Err = uuid::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Self(Uuid::parse_str(s)?)) 
+        Uuid::parse_str(s).map(|f| Self(f))
     }
 }
 
@@ -85,6 +100,7 @@ impl CandidType for Id {
         serializer.serialize_text(&self.0.to_string())
     }
 }
+<<<<<<< HEAD
 
 // #[cfg(feature = "backend")]
 // impl<'a_, C_: speedy::Context> speedy::Readable<'a_, C_> for Id {
@@ -168,3 +184,5 @@ impl CandidType for Id {
 //         }
 //     }
 // }
+=======
+>>>>>>> 33e4823c791ebbb794a9e5efdcf5c56f09a2d570

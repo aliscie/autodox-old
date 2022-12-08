@@ -2,7 +2,7 @@ use wasm_bindgen::prelude::*;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
 
-use crate::app_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
+use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::components::{CurrDirectory, TitleBar};
 use crate::*;
 

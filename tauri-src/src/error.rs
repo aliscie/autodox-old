@@ -25,7 +25,7 @@ pub enum Error {
     StoreFailToCreate(String),
 
     #[error(transparent)]
-    Surreal(surrealdb::Error),
+    Surreal(#[from] surrealdb::Error),
     //#[error(transparent)]
     //IO(#[from] std::io::Error),
 }
@@ -36,11 +36,5 @@ impl From<SharedError> for Error {
             SharedError::XValueNotOfType(x) => Self::XValueNotOfType(x),
             SharedError::XPropertyNotFound(x) => Self::XPropertyNotFound(x),
         }
-    }
-}
-
-impl From<surrealdb::Error> for Error {
-    fn from(val: surrealdb::Error) -> Self {
-        Self::Surreal(val)
     }
 }

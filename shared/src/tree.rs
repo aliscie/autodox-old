@@ -77,7 +77,7 @@ where
         visited_nodes.len()
     }
 
-    pub fn remove(&mut self, id: &ID) {
+    pub fn remove(&mut self, id: &ID) -> ID {
         let mut remove_stack = VecDeque::from([id.clone()]);
         while remove_stack.len() > 0 {
             let r = remove_stack.pop_front().unwrap();
@@ -88,9 +88,13 @@ where
                 }
             }
         }
+        let mut parent_id = ID::default();
         for (_id, children) in self.adjacency.iter_mut() {
-            children.remove(id);
+            if children.remove(id) {
+                parent_id = _id.clone();
+            }
         }
+        parent_id
     }
 
     pub fn into_iter<'a>(&'a self, start: ID) -> TreeIter<'a, ID, T> {
@@ -176,7 +180,7 @@ impl GetId for FileNode {
 #[cfg(feature = "tauri")]
 impl<T> TryFrom<Object> for Tree<Id, T>
 where
-    T: PartialEq + Eq + Clone + Debug + TryFrom<Object> + Entity + Serialize + GetId<Id = Id>,
+    T: PartialEq + Eq + Clone + Debug + TryFrom<Object, Error = Error> + Entity + Serialize + GetId<Id = Id>,
 {
     type Error = crate::Error;
     /// i am asuming we have selected the vertices field with all the data in the nodes
@@ -187,10 +191,10 @@ where
             .remove("vertices")
             .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?
             .try_into()
-            .map_err(|_| Error::XValueNotOfType("value"))?;
+            .map_err(|_| Error::XValueNotOfType("vertices not of type Value"))?;
         for i in vertex_vec {
             let mut vertex_object: Object =
-                i.try_into().map_err(|_| Error::XValueNotOfType("Object"))?;
+                i.try_into().map_err(|_| Error::XValueNotOfType("vertices not of type Value::Object"))?;
             let adjacency_array: Vec<Value> = vertex_object
                 .remove("children")
                 .ok_or(Error::XPropertyNotFound("children not found".into()))?
@@ -201,8 +205,7 @@ where
                 .filter_map(|e| -> Option<Id> { e.record()?.id.to_raw().as_str().try_into().ok() })
                 .collect();
             let file_node: T = vertex_object
-                .try_into()
-                .map_err(|_| Error::XValueNotOfType("T cannot be converted to Object"))?;
+                .try_into()?;
             tree.adjacency.insert(file_node.get_id(), adjacency);
             tree.vertices.insert(file_node.get_id(), file_node);
         }

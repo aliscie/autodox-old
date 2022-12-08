@@ -1,6 +1,7 @@
 use crate::{
+    id::Id,
     traits::{Creatable, Entity, Queryable, Updatable},
-    Error, Tree, id::Id,
+    Error, Tree,
 };
 // use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
@@ -171,7 +172,12 @@ impl From<FileNodeCreate> for Object {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct FileNodeUpdate {
+<<<<<<< HEAD
     pub children: Option<HashSet<Id>>,
+=======
+    pub id: Id,
+    pub children: Option<IndexSet<Id>>,
+>>>>>>> 33e4823c791ebbb794a9e5efdcf5c56f09a2d570
     // TODO : cannot update this using this method think of something else
     pub parent_id: Option<Id>,
     pub name: Option<String>,
@@ -210,10 +216,10 @@ impl From<FileNodeUpdate> for Object {
         if let Some(name) = value.name {
             object.insert("name".to_owned(), name.into());
         }
-        if let Some(element_tree) = value.element_tree {
+        if let Some(element_tree_id) = value.element_tree {
             object.insert(
-                "element_tree".into(),
-                Thing::from((ElementTree::table_name(), element_tree.to_string())).into(),
+                ElementTree::table_name(),
+                Thing::from((ElementTree::table_name(), element_tree_id.0.to_string())).into(),
             );
         }
         Object(object)
@@ -228,6 +234,7 @@ pub struct FileNode {
     pub element_tree: Option<Id>,
 }
 
+<<<<<<< HEAD
 #[cfg(feature = "backend")]
 impl candid::types::CandidType for FileNode {
     fn _ty() -> ::candid::types::Type {
@@ -267,6 +274,8 @@ impl candid::types::CandidType for FileNode {
         Ok(())
     }
 }
+=======
+>>>>>>> 33e4823c791ebbb794a9e5efdcf5c56f09a2d570
 
 impl Default for FileNode {
     fn default() -> Self {
@@ -285,6 +294,9 @@ impl Entity for FileNode {
         "file_node".to_string()
     }
 }
+
+#[cfg(feature = "tauri")]
+impl Queryable for FileNode {}
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
@@ -355,7 +367,7 @@ impl Default for FileDirectory {
         d.files.push_vertex(
             id.into(),
             FileNode {
-                id : id.into(),
+                id: id.into(),
                 name: "root".into(),
                 element_tree: None,
             },
@@ -371,7 +383,7 @@ impl FileDirectory {
     pub fn new(id: Uuid, name: String) -> Self {
         Self {
             files: Tree::new(),
-            id : id.into(),
+            id: id.into(),
             name,
         }
     }
@@ -405,6 +417,12 @@ impl From<FileNode> for Object {
         BTreeMap::from([
             ("id".into(), val.id.into()),
             ("name".into(), val.name.into()),
+            (
+                "element_tree".into(),
+                val.element_tree.map_or(Value::None, |id| {
+                    Value::Thing(Thing::from((ElementTree::table_name(), id.to_string())))
+                }),
+            ),
         ])
         .into()
     }
@@ -434,7 +452,10 @@ impl TryFrom<Object> for FileNode {
                 .ok_or(Error::XPropertyNotFound("name".to_string()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("String"))?,
-            ..Default::default()
+            element_tree: object.remove("element_tree").map_or(None, |f| match f {
+                Value::Thing(x) => x.id.to_raw().as_str().parse::<Uuid>().map(Id::from).ok(),
+                _ => None,
+            }),
         })
     }
 }
@@ -476,4 +497,12 @@ impl TryFrom<Object> for FileDirectory {
                 .try_into()?,
         })
     }
+}
+
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct FileNodeDelete {
+    pub id: Id,
+    pub tree_id: Id,
+    pub parent_id: Id,
 }
