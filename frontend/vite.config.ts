@@ -8,7 +8,9 @@ export default defineConfig({
         }
     },
     build: {
-        minify: false
+        minify: true,
+        outDir : "./dist",
+        assetsDir: "./",
     },
     plugins: [
         wasmPack(["../frontend"])

@@ -6,8 +6,9 @@
   "build": {
     "distDir": "../frontend/dist",
     "devPath": "http://localhost:5173/",
-    "beforeDevCommand": "",
-    "beforeBuildCommand": "cd frontend; yarn build"
+    "beforeDevCommand": "cd frontend && yarn dev",
+    "beforeBuildCommand": "cd frontend && yarn build",
+    "withGlobalTauri" : true
   },
   "tauri": {
     "bundle": {
