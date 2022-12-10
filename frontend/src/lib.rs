@@ -17,7 +17,8 @@ mod components;
 mod router;
 mod test;
 mod utils;
-
+mod specific_hooks;
+use specific_hooks::*;
 
 lazy_static! {
     pub static ref IS_WEB: bool = env::var("IS_DESKTOP").is_err();

@@ -10,6 +10,8 @@ pub use markdown_button::Markdown;
 pub use page_option_component::PageOptions;
 pub use search_filters::SearchFiltes;
 pub use title_avatar_component::TitleAvatarComponent;
+pub use save_button::SaveButton;
+mod save_button;
 
 mod file_component;
 
