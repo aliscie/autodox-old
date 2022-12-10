@@ -11,21 +11,15 @@ use speedy::{Readable, Writable};
 use surrealdb::sql::Value;
 
 use serde::{Deserialize, Serialize};
-use std::fmt::{Display, Debug};
+use std::fmt::{Debug, Display};
 use std::{
     ops::{Deref, DerefMut},
     str::FromStr,
 };
 use uuid::Uuid;
 
-<<<<<<< HEAD
-#[derive(PartialEq, Eq, Clone, Copy, Debug, PartialOrd, Ord, Hash, Serialize, Deserialize, Default)]
+#[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord, Hash, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
-=======
-#[derive(
-    PartialEq, Eq, Clone, Copy, PartialOrd, Ord, Hash, Serialize, Deserialize, Default,
-)]
->>>>>>> 33e4823c791ebbb794a9e5efdcf5c56f09a2d570
 pub struct Id(pub Uuid);
 
 impl From<Uuid> for Id {
@@ -100,7 +94,6 @@ impl CandidType for Id {
         serializer.serialize_text(&self.0.to_string())
     }
 }
-<<<<<<< HEAD
 
 // #[cfg(feature = "backend")]
 // impl<'a_, C_: speedy::Context> speedy::Readable<'a_, C_> for Id {
@@ -184,5 +177,3 @@ impl CandidType for Id {
 //         }
 //     }
 // }
-=======
->>>>>>> 33e4823c791ebbb794a9e5efdcf5c56f09a2d570

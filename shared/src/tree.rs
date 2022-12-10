@@ -1,3 +1,4 @@
+use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
@@ -24,7 +25,7 @@ where
     T: PartialEq + Eq + Clone + Debug,
 {
     pub vertices: HashMap<ID, T>,
-    pub adjacency: HashMap<ID, HashSet<ID>>,
+    pub adjacency: HashMap<ID, Vec<ID>>,
     pub root: Option<ID>,
 }
 
@@ -45,11 +46,14 @@ where
     }
     pub fn push_edge(&mut self, from: ID, to: ID) {
         let adjacency_to_from = self.adjacency.entry(from).or_default();
-        adjacency_to_from.insert(to);
+        adjacency_to_from.push(to);
     }
     pub fn delete_edge(&mut self, parent_id: ID, child_id: ID) {
         let adjacency = self.adjacency.entry(parent_id).or_default();
-        adjacency.remove(&child_id);
+        adjacency
+            .iter()
+            .position(|x| child_id == *x)
+            .map(|index| adjacency.swap_remove(index));
     }
 
     pub fn push_children(&mut self, parent_id: ID, child_id: ID, child: T) {
@@ -90,7 +94,12 @@ where
         }
         let mut parent_id = ID::default();
         for (_id, children) in self.adjacency.iter_mut() {
-            if children.remove(id) {
+            if children
+                .iter()
+                .position(|x| *x == *id)
+                .map(|e| children.swap_remove(e))
+                .is_some()
+            {
                 parent_id = _id.clone();
             }
         }
@@ -180,7 +189,14 @@ impl GetId for FileNode {
 #[cfg(feature = "tauri")]
 impl<T> TryFrom<Object> for Tree<Id, T>
 where
-    T: PartialEq + Eq + Clone + Debug + TryFrom<Object, Error = Error> + Entity + Serialize + GetId<Id = Id>,
+    T: PartialEq
+        + Eq
+        + Clone
+        + Debug
+        + TryFrom<Object, Error = Error>
+        + Entity
+        + Serialize
+        + GetId<Id = Id>,
 {
     type Error = crate::Error;
     /// i am asuming we have selected the vertices field with all the data in the nodes
@@ -193,19 +209,19 @@ where
             .try_into()
             .map_err(|_| Error::XValueNotOfType("vertices not of type Value"))?;
         for i in vertex_vec {
-            let mut vertex_object: Object =
-                i.try_into().map_err(|_| Error::XValueNotOfType("vertices not of type Value::Object"))?;
+            let mut vertex_object: Object = i
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("vertices not of type Value::Object"))?;
             let adjacency_array: Vec<Value> = vertex_object
                 .remove("children")
                 .ok_or(Error::XPropertyNotFound("children not found".into()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("file_node.children not of type Array"))?;
-            let adjacency: HashSet<Id> = adjacency_array
+            let adjacency: Vec<Id> = adjacency_array
                 .into_iter()
                 .filter_map(|e| -> Option<Id> { e.record()?.id.to_raw().as_str().try_into().ok() })
                 .collect();
-            let file_node: T = vertex_object
-                .try_into()?;
+            let file_node: T = vertex_object.try_into()?;
             tree.adjacency.insert(file_node.get_id(), adjacency);
             tree.vertices.insert(file_node.get_id(), file_node);
         }
@@ -263,45 +279,33 @@ where
     }
 }
 
-#[cfg( feature = "backend")]
-impl<
-    ID: candid::types::CandidType,
-    T: candid::types::CandidType,
-> candid::types::CandidType for Tree<ID, T>
+#[cfg(feature = "backend")]
+impl<ID: candid::types::CandidType, T: candid::types::CandidType> candid::types::CandidType
+    for Tree<ID, T>
 where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
 {
     fn _ty() -> candid::types::Type {
-        candid::types::Type::Record(
-            <[_]>::into_vec(
-                Box::new([
-                    candid::types::Field {
-                        id: candid::types::Label::Named("root".to_string()),
-                        ty: <Option<ID> as candid::types::CandidType>::ty(),
-                    },
-                    candid::types::Field {
-                        id: candid::types::Label::Named("vertices".to_string()),
-                        ty: <HashMap<ID, T> as candid::types::CandidType>::ty(),
-                    },
-                    candid::types::Field {
-                        id: candid::types::Label::Named("adjacency".to_string()),
-                        ty: <HashMap<
-                            ID,
-                            HashSet<ID>,
-                        > as candid::types::CandidType>::ty(),
-                    },
-                ]),
-            ),
-        )
+        candid::types::Type::Record(<[_]>::into_vec(Box::new([
+            candid::types::Field {
+                id: candid::types::Label::Named("root".to_string()),
+                ty: <Option<ID> as candid::types::CandidType>::ty(),
+            },
+            candid::types::Field {
+                id: candid::types::Label::Named("vertices".to_string()),
+                ty: <HashMap<ID, T> as candid::types::CandidType>::ty(),
+            },
+            candid::types::Field {
+                id: candid::types::Label::Named("adjacency".to_string()),
+                ty: <HashMap<ID, HashSet<ID>> as candid::types::CandidType>::ty(),
+            },
+        ])))
     }
     fn id() -> candid::types::TypeId {
         candid::types::TypeId::of::<Tree<ID, T>>()
     }
-    fn idl_serialize<__S>(
-        &self,
-        __serializer: __S,
-    ) -> std::result::Result<(), __S::Error>
+    fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
     where
         __S: candid::types::Serializer,
     {
@@ -313,7 +317,7 @@ where
     }
 }
 
-#[cfg( feature = "backend")]
+#[cfg(feature = "backend")]
 impl<'a_, ID, T, C_: speedy::Context> speedy::Readable<'a_, C_> for Tree<ID, T>
 where
     ID: speedy::Readable<'a_, C_>,
@@ -337,13 +341,19 @@ where
             _reader_.read_key_value_collection(_length_)
         }?;
         let root: Option<ID> = {
-            _reader_
-                .read_u8()
-                .and_then(|_flag_| {
-                    if _flag_ != 0 { Ok(Some(_reader_.read_value()?)) } else { Ok(None) }
-                })
+            _reader_.read_u8().and_then(|_flag_| {
+                if _flag_ != 0 {
+                    Ok(Some(_reader_.read_value()?))
+                } else {
+                    Ok(None)
+                }
+            })
         }?;
-        Ok(Tree { vertices, adjacency, root })
+        Ok(Tree {
+            vertices,
+            adjacency,
+            root,
+        })
     }
     #[inline]
     fn minimum_bytes_needed() -> usize {
@@ -395,7 +405,6 @@ where
         Ok(())
     }
 }
-
 
 #[cfg(test)]
 mod tests {

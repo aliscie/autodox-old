@@ -1,26 +1,26 @@
+use crate::router::Route;
+use crate::specific_components::FileComponent;
+use indexmap::IndexSet;
+use shared::id::Id;
+use shared::schema::FileDirectory;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use indexmap::IndexSet;
 use uuid::Uuid;
 use web_sys::{Element, MouseEvent};
-use yew::{html, Html};
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
+use yew::{html, Html};
 use yew_router::prelude::use_navigator;
-use shared::schema::FileDirectory;
-use crate::specific_components::FileComponent;
-use crate::router::Route;
-use shared::id::Id;
 
 #[derive(Properties, PartialEq)]
-pub struct Props{
+pub struct Props {
     pub file_directory: Rc<FileDirectory>,
-    pub start: Id
+    pub start: Id,
 }
 
 #[function_component(FileTree)]
-pub fn to_html(props : &Props) -> Html {
+pub fn to_html(props: &Props) -> Html {
     let map: Rc<RefCell<HashMap<Uuid, VNode>>> = Rc::new(RefCell::new(HashMap::new()));
     let history = use_navigator().unwrap();
     let onclick_file = Callback::from(move |e: MouseEvent| {
@@ -79,11 +79,12 @@ pub fn to_html(props : &Props) -> Html {
         };
         map.borrow_mut().insert(**id, html_node);
     }
-    props.file_directory
+    props
+        .file_directory
         .files
         .adjacency
         .get(&props.start)
-        .unwrap_or(&IndexSet::new())
+        .unwrap_or(&Vec::new())
         .into_iter()
         .map(|f| map.borrow().get(f).unwrap().to_owned())
         .collect::<Html>()
