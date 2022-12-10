@@ -43,7 +43,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -60,7 +60,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -71,13 +71,15 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
+        // TODO
+        //  return Convert_serde_json(backend::rad_files());
     }
     if !info.get().web {
         return crate::backend::call_surreal(
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -94,7 +96,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-        .await;
+            .await;
         log!(&x);
         return x;
     } else {
@@ -146,7 +148,7 @@ async fn local_change_directory(
                     }
                     f.files.push_edge(
                         Uuid::parse_str(&parent_id).map(Id::from).unwrap(),
-                        child_id
+                        child_id,
                     );
                 });
                 e
