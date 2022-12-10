@@ -27,6 +27,7 @@
     "@dfinity/identity": "^0.14.0",
     "@dfinity/principal": "^0.14.0",
     "big-integer": "^1.6.51",
+    "cross-env": "^7.0.3",
     "vite": "^3.2.4",
     "vite-plugin-wasm-pack": "^0.1.12",
     "vite-rust-plugin": "^1.0.5"

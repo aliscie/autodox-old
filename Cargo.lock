@@ -5343,6 +5343,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
+ "speedy",
  "stylist 0.11.0",
  "surrealdb",
  "thiserror",
@@ -5482,6 +5483,7 @@ checksum = "37d686619bd990cf4d94762d6a2ea473f5a8abe206c9289417bf2945dbff9909"
 dependencies = [
  "memoffset 0.7.1",
  "speedy-derive",
+ "uuid 1.2.2",
 ]
 
 [[package]]
