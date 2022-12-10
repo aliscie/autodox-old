@@ -4,7 +4,7 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 use shared::log;
-use shared::schema::SaveButtonState;
+use specific_hooks::SaveButtonState;
 
 use crate::*;
 
@@ -35,7 +35,7 @@ pub fn save_button(props: &SaveButtonProps) -> Html {
     if *IS_WEB {
         res = html! {<>
             <span  {onmouseup} class="btn" ><i
-            style={format!("{:?}",&state.style)}
+            style={format!("{:?}",if state.is_saved {"color: lightgreen"} else {"color: tomato"})}
             class="fa-solid fa-check"></i>{"Save"}</span>
         </>};
     };
