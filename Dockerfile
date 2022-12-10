@@ -33,8 +33,32 @@ RUN dnf install -y webkit2gtk4.0-devel.x86_64 \
 RUN dnf group install -y "C Development Tools and Libraries"
 RUN dnf install patch -y
 
-COPY . .
+COPY ./shared shared
+COPY ./editor ./editor
+COPY ./tauri-src ./tauri-src
+COPY ./canisters ./canisters
+COPY ./webscoket_server ./webscoket_server
+# copying frontend files
+COPY ./frontend/package.json ./frontend/package.json
+COPY ./frontend/yarn.lock ./frontend/yarn.lock
+COPY ./frontend/Cargo.toml ./frontend/Cargo.toml
+COPY ./frontend/Cargo.toml ./frontend/Cargo.toml
+COPY ./frontend/public ./frontend/public
+COPY ./frontend/backend ./frontend/backend
+COPY ./frontend/index.js ./frontend/index.js
+COPY ./frontend/index.html ./frontend/index.html
+COPY ./frontend/src ./frontend/src
+COPY ./frontend/icons ./frontend/icons
+COPY ./frontend/vite.config.ts ./frontend/vite.config.ts
+
+# installing frontend files
 RUN cd ./frontend && yarn install
-RUN cd ./frontend && yarn run wasm
-RUN cd tauri-src && cargo build
-CMD ["cargo", "tauri" , "dev"]
+RUN cd ./frontend && wasm-pack build . --target=web --dev
+
+COPY ./Cargo.toml ./Cargo.toml
+COPY ./Cargo.lock ./Cargo.lock
+
+RUN cargo tauri build --debug
+RUN mv ./target/debug/tauri /usr/bin/autodox
+RUN rm -rf /usr/src/myapp
+CMD ["/usr/bin/autodox"]
