@@ -1,5 +1,5 @@
-use uuid::Uuid;
 use shared::{log, schema::FileNodeDelete};
+use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
@@ -10,17 +10,14 @@ use shared::{
     schema::{FileDirectory, FileNodeCreate},
 };
 
-pub async fn create_file(
-    tree_id: Id,
-    parent_id: Id,
-    name: String,
-    id: Id,
-) -> Result<(), String> {
+pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     let data = FileNodeCreate {
         directory_id: tree_id.into(),
         parent_id: parent_id.into(),
         name,
+        // using this for right now
+        mode: shared::schema::FileMode::Public,
         id: id.into(),
         children: None,
     };
@@ -36,7 +33,7 @@ pub async fn create_file(
     }
 }
 
-pub async fn delete_file(data : FileNodeDelete) -> Result<(), String> {
+pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
@@ -44,7 +41,7 @@ pub async fn delete_file(data : FileNodeDelete) -> Result<(), String> {
     if !info.get().web {
         return crate::backend::call_surreal(
             "delete_file".to_string(),
-            Some(&serde_json::json!({ "data" : data })),
+            Some(&serde_json::json!({ "data": data })),
         )
         .await;
     } else {
@@ -141,12 +138,15 @@ async fn local_change_directory(
             .await
             .map(|e| {
                 file_dispatch.reduce_mut(|f| {
+                    let child_id = Uuid::parse_str(&child_id).map(Id::from).unwrap();
                     for i in f.files.adjacency.values_mut() {
-                        i.remove(&Uuid::parse_str(&child_id).map(Id::from).unwrap());
+                        i.iter()
+                            .position(|x| *x == child_id)
+                            .map(|index| i.remove(index));
                     }
                     f.files.push_edge(
                         Uuid::parse_str(&parent_id).map(Id::from).unwrap(),
-                        Uuid::parse_str(&child_id).map(Id::from).unwrap(),
+                        child_id
                     );
                 });
                 e

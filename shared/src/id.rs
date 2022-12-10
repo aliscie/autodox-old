@@ -11,14 +11,13 @@ use speedy::{Readable, Writable};
 use surrealdb::sql::Value;
 
 use serde::{Deserialize, Serialize};
-use std::fmt::{Display, Debug};
+use std::fmt::{Debug, Display};
 use std::{
     ops::{Deref, DerefMut},
     str::FromStr,
 };
 use uuid::Uuid;
 
-// Debug is conflicting implementation for `id::Id`
 #[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord, Hash, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct Id(pub Uuid);
@@ -95,3 +94,86 @@ impl CandidType for Id {
         serializer.serialize_text(&self.0.to_string())
     }
 }
+
+// #[cfg(feature = "backend")]
+// impl<'a_, C_: speedy::Context> speedy::Readable<'a_, C_> for Id {
+//     #[inline]
+//     fn read_from<R_: speedy::Reader<'a_, C_>>(
+//         _reader_: &mut R_,
+//     ) -> std::result::Result<Self, C_::Error> {
+//         let t0: Uuid = _reader_.read_value()?;
+//         Ok(Id(t0))
+//     }
+//     #[inline]
+//     fn minimum_bytes_needed() -> usize {
+//         {
+//             let mut out = 0;
+//             out += <Uuid as speedy::Readable<'a_, C_>>::minimum_bytes_needed();
+//             out
+//         }
+//     }
+//     #[inline(always)]
+//     fn speedy_is_primitive() -> bool {
+//         <Uuid as speedy::Readable<'a_, C_>>::speedy_is_primitive()
+//             && (std::mem::size_of::<Uuid>()) == std::mem::size_of::<Self>()
+//     }
+//     #[inline]
+//     unsafe fn speedy_slice_from_bytes(slice: &[u8]) -> &[Self] {
+//         unsafe {
+//             std::slice::from_raw_parts(
+//                 slice.as_ptr() as *const Self,
+//                 slice.len() / std::mem::size_of::<Self>(),
+//             )
+//         }
+//     }
+//     #[inline(always)]
+//     fn speedy_flip_endianness(itself: *mut Self) {
+//         unsafe {
+//             <Uuid as speedy::Readable<
+//                 'a_,
+//                 C_,
+//             >>::speedy_flip_endianness(&raw mut (*itself).0);
+//         }
+//     }
+//     #[inline(always)]
+//     fn speedy_convert_slice_endianness(
+//         endianness: speedy::Endianness,
+//         slice: &mut [Self],
+//     ) {
+//         if endianness.conversion_necessary() {
+//             for value in slice {
+//                 <Self as speedy::Readable<'a_, C_>>::speedy_flip_endianness(value);
+//             }
+//         }
+//     }
+// }
+
+// #[cfg(feature = "backend")]
+// impl<C_: speedy::Context> speedy::Writable<C_> for Id {
+//     #[inline]
+//     fn write_to<T_: ?Sized + speedy::Writer<C_>>(
+//         &self,
+//         _writer_: &mut T_,
+//     ) -> std::result::Result<(), C_::Error> {
+//         let t0 = &self.0;
+//         _writer_.write_value(t0)?;
+//         Ok(())
+//     }
+//     #[inline(always)]
+//     fn speedy_is_primitive() -> bool {
+//         <Uuid as speedy::Writable<C_>>::speedy_is_primitive()
+//             && (std::mem::size_of::<Uuid>()) == std::mem::size_of::<Self>()
+//     }
+//     #[inline(always)]
+//     unsafe fn speedy_slice_as_bytes(slice: &[Self]) -> &[u8]
+//     where
+//         Self: Sized,
+//     {
+//         unsafe {
+//             std::slice::from_raw_parts(
+//                 slice.as_ptr() as *const u8,
+//                 slice.len() * std::mem::size_of::<Self>(),
+//             )
+//         }
+//     }
+// }

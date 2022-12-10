@@ -109,9 +109,9 @@ pub struct EditorElementCreate {
     pub attrs: HashMap<Attrs, String>,
     pub tree_id: Id,
     pub parent_id: Id,
-    pub children: Option<IndexSet<Id>>,
+    pub children: Option<Vec<Id>>,
     // represents the element after which the current element should be pushed
-    pub prev_element_id : Option<Id>,
+    pub prev_element_id: Option<Id>,
 }
 
 /// type for updating editor elements
@@ -352,7 +352,7 @@ impl Store for ElementTree {
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub struct EditorElementDelete {
-    pub parent_id : Id,
-    pub id : Id,
-    pub tree_id : Id,
+    pub parent_id: Id,
+    pub id: Id,
+    pub tree_id: Id,
 }

@@ -5,7 +5,7 @@
     "start": "webpack -w",
     "server": "ws -d dist",
     "clean": "rimraf dist pkg target",
-    "wasm": "wasm-pack build . --target web",
+    "wasm": "wasm-pack build . --target web --dev",
     "dev": "yarn wasm && vite",
     "build": "vite build"
   },
