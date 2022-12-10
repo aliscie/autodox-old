@@ -5,6 +5,6 @@ use yewdux::prelude::*;
 
 #[derive(Default, Clone, PartialEq, Eq, Store)]
 pub struct SaveButtonState {
-    pub style: String,
+    pub is_saved: bool,
     // element: EditorElementUpdate,
 }

@@ -25,7 +25,7 @@ pub fn save_button(props: &SaveButtonProps) -> Html {
         // TODO
         //  let is_saved  crate::backend::update_file(state.element.id, state.data);
         //  if is_saved{
-        button_state.set(SaveButtonState { style: "color:lightgreen".to_string() });
+        button_state.set(SaveButtonState { is_saved: true });
         log!("save...");
         //   }
     });
