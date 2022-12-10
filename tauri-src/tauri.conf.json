@@ -6,7 +6,7 @@
   "build": {
     "distDir": "../frontend/dist",
     "devPath": "http://localhost:5173/",
-    "beforeDevCommand": "cd frontend && yarn cross-env BROWSER=none yarn start",
+    "beforeDevCommand": "cd frontend && yarn dev",
     "beforeBuildCommand": "cd frontend && yarn build",
     "withGlobalTauri" : true
   },

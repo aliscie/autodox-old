@@ -3,7 +3,7 @@ use crate::{
     traits::{Creatable, Entity, Queryable, Updatable},
     Error, Tree,
 };
-// use indexmap::IndexSet;
+use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap, HashSet};
 #[cfg(feature = "tauri")]
@@ -172,12 +172,8 @@ impl From<FileNodeCreate> for Object {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct FileNodeUpdate {
-<<<<<<< HEAD
-    pub children: Option<HashSet<Id>>,
-=======
     pub id: Id,
     pub children: Option<IndexSet<Id>>,
->>>>>>> 33e4823c791ebbb794a9e5efdcf5c56f09a2d570
     // TODO : cannot update this using this method think of something else
     pub parent_id: Option<Id>,
     pub name: Option<String>,
@@ -234,7 +230,6 @@ pub struct FileNode {
     pub element_tree: Option<Id>,
 }
 
-<<<<<<< HEAD
 #[cfg(feature = "backend")]
 impl candid::types::CandidType for FileNode {
     fn _ty() -> ::candid::types::Type {
@@ -274,8 +269,6 @@ impl candid::types::CandidType for FileNode {
         Ok(())
     }
 }
-=======
->>>>>>> 33e4823c791ebbb794a9e5efdcf5c56f09a2d570
 
 impl Default for FileNode {
     fn default() -> Self {
