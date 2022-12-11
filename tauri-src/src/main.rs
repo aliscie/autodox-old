@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-#[cfg(target_os = "macos")]
+#[cfg_attr(target_os = "macos", allow(dead_code))]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
 use dotenv::dotenv;
 
@@ -30,12 +30,12 @@ pub struct MouseLoc {
 }
 
 pub trait WindowExt {
-    #[cfg(target_os = "macos")]
+    #[cfg_attr(target_os = "macos", allow(dead_code))]
     fn set_transparent_titlebar(&self, transparent: bool);
 }
 
 impl<R: Runtime> WindowExt for Window<R> {
-    #[cfg(target_os = "macos")]
+    #[cfg_attr(target_os = "macos", allow(dead_code))]
     fn set_transparent_titlebar(&self, transparent: bool) {
         use cocoa::appkit::NSWindowTitleVisibility;
 

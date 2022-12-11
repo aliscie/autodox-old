@@ -85,7 +85,7 @@ pub fn editor(props: &Props) -> Html {
                                         })
                                         .map(|id| onchange.emit(EditorChange::Delete(id.into())));
                                 }
-                                if removed_nodes.length() > 0{
+                                if removed_nodes.length() > 0 {
                                     // move to next mutation record!
                                     log!("got element delete!");
                                     log!(mutation_type.removed_nodes());
