@@ -1,0 +1,28 @@
+name: test dfx
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  runs-on: macos
+
+  build:
+    only:
+      changes:
+        - canisters/**/*
+    steps:
+      - name: run deploy action
+        uses: FleekHQ/IC-Deploy-Action # https://github.com/FleekHQ/IC-Deploy-Action
+
+      - name: tests
+#        with:
+#          identity: ${{ secrets.DFX_IDENTITY }}
+#          wallets: ${{ secrets.DFX_WALLETS }}
+        run: dfx start --background && dfx test
+
+
+  publish:
+    needs: [build]

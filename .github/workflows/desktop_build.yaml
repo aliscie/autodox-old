@@ -1,0 +1,16 @@
+name: test dfx
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  runs-on: ${{matrix.os}}
+  strategy:
+    matrix:
+      os: [ fedora-latest, windows-latest, macOs-latest ]
+  steps:
+    - name: build linux version
+      run: cargo tauri build --release --features "tauri"

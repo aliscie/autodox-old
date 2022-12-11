@@ -2,7 +2,6 @@
 /*.iml
 /.idea
 /target/
-/.github
 .env
 .dfx
 /declarations
