@@ -298,7 +298,7 @@ where
             },
             candid::types::Field {
                 id: candid::types::Label::Named("adjacency".to_string()),
-                ty: <HashMap<ID, HashSet<ID>> as candid::types::CandidType>::ty(),
+                ty: <HashMap<ID, Vec<ID>> as candid::types::CandidType>::ty(),
             },
         ])))
     }
@@ -323,7 +323,7 @@ where
     ID: speedy::Readable<'a_, C_>,
     T: speedy::Readable<'a_, C_>,
     ID: speedy::Readable<'a_, C_>,
-    HashSet<ID>: speedy::Readable<'a_, C_>,
+    Vec<ID>: speedy::Readable<'a_, C_>,
     Option<ID>: speedy::Readable<'a_, C_>,
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
@@ -373,7 +373,7 @@ where
     ID: speedy::Writable<C_>,
     T: speedy::Writable<C_>,
     ID: speedy::Writable<C_>,
-    HashSet<ID>: speedy::Writable<C_>,
+    Vec<ID>: speedy::Writable<C_>,
     Option<ID>: speedy::Writable<C_>,
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,

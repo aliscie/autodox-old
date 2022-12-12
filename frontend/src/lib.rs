@@ -20,7 +20,7 @@ mod utils;
 
 
 lazy_static! {
-    pub static ref IS_WEB: bool = env::var("IS_DESKTOP").is_err();
+    pub static ref IS_WEB: bool = cfg!(feature = "web");
 }
 
 #[wasm_bindgen]

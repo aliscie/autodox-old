@@ -1,9 +1,9 @@
 use crate::app_components::EditorComponent;
+use shared::id::Id;
 use shared::schema::ElementTree;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use shared::id::Id;
 use yew::prelude::*;
 
 pub(crate) fn render(tree: &ElementTree, start: Id) -> Html {
