@@ -1,101 +1,101 @@
 #V2
-select ["hello"] -= "hello"
-select ["hello"] += "hello"
-select * from ["hello"] += "hello"
-select * from ["hello"]
-select * from ["hello"] + "hello"
-select * from file_directory;
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-select * from file_directory;
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-select * from file_directory;
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-select  files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -  `efe1035f-354f-484f-9c5b-b4ee15fe9b55` from file_directory;
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-create test set name = ["aman", "vaibhav" , "some"];
-update test set name -= "some";
-update test set name += `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-update test set name += "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update test set name -= null;
-update test set name -= "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update test set name += uuid::new();
-uuid::new()
-select * from uuid::new_v4();
-update test set name += rand::uuid::v4();
-select * from rand::uuid::v4;
-select * from rand::uuid;
-select * from rand::uuid()
-update test set name += rand::uuid();
-update test name -=  "668dd31c-74e3-495c-a542-e5bd398955d2";
-update test set name -=  "668dd31c-74e3-495c-a542-e5bd398955d2";
-update file_directory set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-select files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` from file_directory;
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` += "name";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "name";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "efe1035f-354f-484f-9c5b-b4ee15fe9b55";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= `efe1035f-354f-484f-9c5b-b4ee15fe9b55`;
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -=  "3e4681e4-4522-4685-805a-8f75c3a1c201";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` += "name";
-update "file_directory:⟨18da0b38-8532-432d-9971-4b406771eb17⟩" set files.adjacency.`9dc82a9f-9028-4dcf-913d-a7dbc2906beb` -= "name";
-select * from rand::uuid();
-create test set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` = [];
-select * from test
-delete "test:o3we3sjz6n5gxmqdvwmi"
-select * from test
-update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` += "name"
-update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` -= "name"
-update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` += rand::uuid();
-update  "test:l5esn61k1e5r3bpl4brh" set `ea8a7a80-e554-4b63-a8d6-b67c36cc776c` -=  "f53a118b-e9ad-498b-afca-4ac935717006";
-select * from file_directory;
-select * from test;
-create test set name = "aman";
-delete test;
-select * from test;
-create test set name = "aman", roll_no = 16;
-delete result.name where id = "test:qtt1d3ow0kqyhm9qrviw"
-delete result.name where test.id = "test:qtt1d3ow0kqyhm9qrviw"
-delete test.name returning after;
-update test.name = null returning after;
-update test.name = null
-update test set name = null returning after
-update test set name = null return after
-select * from name;
-update test set name = none return after
-update test set name = "aman" return after
-update test set name = none return after
-create test set name = ["aman"];
-update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["nona"] } 
-update  "test:w14c59mu64d1aw9yq49n" set location = "delhi" 
-update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["archi"] } 
-update  "test:w14c59mu64d1aw9yq49n" MERGE { name : "archi" } 
-update  "test:w14c59mu64d1aw9yq49n" MERGE { name : ["archi"] } 
-update  "test:w14c59mu64d1aw9yq49n" patch { name : ["archi"] } 
-update  "test:w14c59mu64d1aw9yq49n" patch { name += ["archi"] } 
-update  "test:w14c59mu64d1aw9yq49n" patch  name += ["archi"] }
-update  "test:w14c59mu64d1aw9yq49n" patch  name += ["archi"] 
-update  "test:w14c59mu64d1aw9yq49n" patch  name += "archi"
-select * from test;
-create test set location = "mumbai" , name = ["aman"]
-update test MERGE { location : "mumbai" } where name = ["aman"];
-update test MERGE { location : "delhi" } where name = ["aman"];
-select * from test;
+update file_node patch { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" } where id = "8650656c-16c5-4580-a354-77732c3be8cd";
+update "file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩" patch  { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" }
+update file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩ set element_tree = None;
+update file_node set element_tree = None where id = "[200~8650656c-16c5-4580-a354-77732c3be8cd";
+update file_node set name =  where id = "[200~8650656c-16c5-4580-a354-77732c3be8cd";
+update file_node set name =  "aman" where id = "[200~8650656c-16c5-4580-a354-77732c3be8cd";
+select * from element_tree;
 select * from file_node;
-select * from file_directory;
+update file_node set name =  "aman" where id = [200~8650656c-16c5-4580-a354-77732c3be8cd;
+update file_node set name =  "aman" where id = 8650656c-16c5-4580-a354-77732c3be8cd;
 select * from file_node;
-select * from file_directory;
-select * form file_node;
+update file_node set name = "some" where { id : "8650656c-16c5-4580-a354-77732c3be8cd" }
+update file_node set name = "aman" where { id : "file_node:8650656c-16c5-4580-a354-77732c3be8cd" }
+update file_node set name = "aman " where id = "file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩"
+update file_node:8650656c-16c5-4580-a354-77732c3be8cd set name = "un";
+update file_node:8650656c-16c5-4580-a354-77732c3be8cd set name = "un"
+update "file_node:8650656c-16c5-4580-a354-77732c3be8cd" set name = "un"
+select * from editor_element:
+select * from editor_element;
 select * from file_node;
-select * from file_directory;
+select * from element_tree;
+update file_node:⟨5d8ee6c1-9edd-4587-9203-087d2f438c46⟩ merge { element_tree : "element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩" }
+select * from file_nodel
+select * from file_node
+update file_node:⟨767b0f8a-b9f6-4060-84eb-311496a8b420⟩ merge { element_tree : "element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩" }
+select * from element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩
+select *, elements.vertices.* from element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩
+select *, elements.vertices.*.* from element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩
 select * from file_node;
-select * from file_directory;
+select * from editor_element;
+select *, elements.vertices.*.* from element_tree:⟨ffd8ecb3-7527-4a4c-bb59-144a686a4c6d⟩
+select * from editor_element;
+select * from editor_tree;
+select * from element_tree;
 select * from file_node;
-select * from file_directory;
+create person:aman set friends = ["archi", "vaibhav"]
+crreate person:archi set friends = ["aman", "manu"]
+create person:archi set friends = ["aman", "manu"]
+delete person where id contains ["person:archi", "person:aman"]
+selectt * from person;
+select * from person;
+delete person where id containsany ["person:archi", "person:aman"]
+select * from person;
+delete person where id containsany [person:archi, person:aman]
+select * from person;
+delete person where id anyinside [person:archi, person:aman]
+select * from person;
+delete person where id anyinside ["person:archi", "person:aman"]
+delete person where id contains ["person:archi", "person:aman"]
+delete person where id containsany [person:archi, person:aman]
+delete person where [person:archi, person:aman] containsany id
+select * from person;
+delete person where [person:archi, person:aman] ?> id
+delete person where id ?= [person:archi, person:aman]
+select * from person;
+select * from true ?> ["true", "test", "text"]
+select * from ["true", "test", "text"] ?> true
+select * from ["true", "test", "text"] ?> true;
+SELECT * FROM ["true", "test", "text"] ?~ true;
+SELECT * FROM ["true", "test", "text"] ?~ true
+delete person where id ?~ [person:archi, person:aman]
+select * from person where id ?~ [person:archi, person:aman]
+select * from person where [person:archi, person:aman] ?~ id
+delete person where [person:archi, person:aman] ?~ id
+select * from person;
+create person:test set friends = ["aman", "archi", "vaibhav", "pushkar"]
+update person:test set friends -= ["aman", "archi"]
 select * from file_node;
-select * from file_directory;
-select * from file_node;
-select * from file_directory;
-create test set names = ["aman"];
-update "test:kihb2b5z38e24l1u7ecj" merge { names : ["archi"] }
-select * from test;
+select * from  "element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5"
+select * from  element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5
+select * from element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5⟩
+select *, elements.vertices.* from element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5⟩
+select *, elements.vertices.*.* from element_tree:⟨9e05c52b-a354-460d-b1a3-755c7210f0b5⟩
+select * from element_tree;
+select *, elements.vertices.* from element_tree;
+select *, elements.vertices.*.* from element_tree;
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set vertices -= [ editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩ ]
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set vertices -= [ "editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩" ]
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set vertices = array::difference(vertices,[ "editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩" ])
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set vertices = array::difference(vertices,[ editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩ ])
+update element_tree:⟨a8704648-58c7-48f2-9847-0425d4f01224⟩ set elements.vertices = array::difference(vertices,[ editor_element:⟨4c3d6c48-43ba-4919-9138-0bda943f77a0⟩ ])
+select *, elements.vertices.*.* from element_tree;
+update element_tree:⟨ded7264d-24e9-41d6-bf1b-4547a2a86e99⟩ set elements.vertices -= [ editor_element:⟨c0fab713-b249-434b-a18b-63c646643c34⟩ ]
+select * from element_tree
+select *, elements.vertices.*.* from element_tree;
+update element_tree:⟨ded7264d-24e9-41d6-bf1b-4547a2a86e99⟩ set elements.vertices -= [ editor_element:⟨7dd0e932-859e-47db-9e7e-7d1c39712d5f⟩ ]
+select * from element_tree
+select *, elements.vertices.*.* from element_tree;
+create person:test set gender = "male"
+create peroson:test2 set gender = "female"
+select * from person where [ person:test ] containsany id
+select * from person where [ person:test, person:test2 ] containsany id
+select * from person where id containsany [ person:test, person:test2 ]
+select * from person where id inside [ person:test, person:test2 ]
+select * from person where [ person:test, person:test2 ] ?~ id
+select * from person
+create peroson:test2 set gender = "female"
+create person:test2 set gender = "female"
+select * from person where [ person:test ] contains id
+select * from person where [ person:test , person:test2] contains id

@@ -3,14 +3,13 @@
     windows_subsystem = "windows"
 )]
 
-
-#[cfg(target_os = "macos")]
+#[cfg_attr(target_os = "macos", allow(dead_code))]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
 use dotenv::dotenv;
 
 use context::Context;
 use store::Store;
-use tauri::{Runtime, Window};
+use tauri::{Manager, Runtime, Window};
 
 mod command;
 mod prelude;
@@ -21,6 +20,9 @@ mod store;
 mod tests;
 mod utils;
 
+use crate::prelude::*;
+use crate::utils::map;
+
 #[derive(Debug, Clone, Copy, Default)]
 pub struct MouseLoc {
     x: i32,
@@ -28,12 +30,12 @@ pub struct MouseLoc {
 }
 
 pub trait WindowExt {
-    #[cfg(target_os = "macos")]
+    #[cfg_attr(target_os = "macos", allow(dead_code))]
     fn set_transparent_titlebar(&self, transparent: bool);
 }
 
 impl<R: Runtime> WindowExt for Window<R> {
-    #[cfg(target_os = "macos")]
+    #[cfg_attr(target_os = "macos", allow(dead_code))]
     fn set_transparent_titlebar(&self, transparent: bool) {
         use cocoa::appkit::NSWindowTitleVisibility;
 
@@ -62,11 +64,9 @@ impl<R: Runtime> WindowExt for Window<R> {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
     dotenv().ok();
-    let store = Store::new()
-        .await
-        .expect("Cannot create connection to database!");
+    let store = Store::new().await?;
     tauri::Builder::default()
         .manage(Context::new(store))
         .invoke_handler(tauri::generate_handler![
@@ -84,35 +84,37 @@ async fn main() {
             crate::command::element::create_element_tree,
             crate::command::element::create_element,
             crate::command::element::update_element,
+            crate::command::element::delete_element,
         ])
         .setup(|app| {
+            let win = app.get_window("main").unwrap();
             #[cfg(target_os = "macos")]
-            {
-                let win = app.get_window("main").unwrap();
-                win.set_transparent_titlebar(true);
-            }
+            win.set_transparent_titlebar(true);
+            #[cfg(debug_assertions)]
+            win.open_devtools();
             Ok(())
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri-src application");
+    Ok(())
 }
 
 #[tauri::command]
-fn close_window(window: Window) -> Result<(), tauri::Error> {
-    return window.close();
+fn close_window(window: Window) -> tauri::Result<()> {
+    return Ok(window.close()?);
 }
 
 #[tauri::command]
-fn minimize_window(window: Window) -> Result<(), tauri::Error> {
-    return window.minimize();
+fn minimize_window(window: Window) -> tauri::Result<()> {
+    return Ok(window.minimize()?);
 }
 
 #[tauri::command]
-fn maximize_window(window: Window) -> Result<(), tauri::Error> {
-    if window.is_fullscreen().unwrap() {
-        return window.set_fullscreen(false);
+fn maximize_window(window: Window) -> tauri::Result<()> {
+    if window.is_fullscreen()? {
+        return Ok(window.set_fullscreen(false)?);
     }
-    window.set_fullscreen(true)
+    Ok(window.set_fullscreen(true)?)
 }
 
 // #[tauri-src::command]

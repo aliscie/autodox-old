@@ -1,9 +1,10 @@
-use crate::app_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
 use crate::router::{switch, Route};
+use crate::specific_components::{ButtonsGroup, SearchFiltes};
+use crate::utils::GetTitleBar;
 use shared::log;
-use shared::schema::{ FileDirectory, FileNode};
+use shared::schema::{FileDirectory, FileNode};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{console, MouseEvent};
@@ -20,7 +21,6 @@ pub fn app() -> Html {
             &backend::read(canister_id.clone()).await
         ));
     });
-
     let aside_bar_toggle = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_toggle.clone();
     let file_dispatch = Dispatch::<FileDirectory>::new();
@@ -44,17 +44,17 @@ pub fn app() -> Html {
             Box::pin(async move {
                 let file = FileNode::default();
                 let x = crate::backend::create_file(
-                    *state.id,
+                    state.id,
                     state.files.root.unwrap(),
                     "untitled".to_string(),
-                    *file.id,
+                    file.id,
                 )
                 .await;
                 console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
                         .files
-                        .push_children(state.files.root.unwrap(), *file.id, file);
+                        .push_children(state.files.root.unwrap(), file.id, file);
                 }
             })
         });
@@ -62,7 +62,7 @@ pub fn app() -> Html {
         <BrowserRouter>
 
             <div id = "app">
-            { super::utils::get_titlebar(toggle_aside ) }
+            <GetTitleBar toggle = { toggle_aside }/>
         <aside style={(*aside_bar_toggle).clone().to_string()}>
 
             <SearchFiltes/>
@@ -80,7 +80,7 @@ pub fn app() -> Html {
             </ul>
             </aside>
             <main>
-                <Switch<Route> render= {Switch::render(switch)} />
+                <Switch<Route> render= {switch} />
             </main>
             //<Editor title = "text" element_tree = { element_tree }/>
             </div>

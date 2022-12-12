@@ -1,13 +1,13 @@
 use crate::app_components::EditorComponent;
+use shared::id::Id;
 use shared::schema::ElementTree;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use uuid::Uuid;
 use yew::prelude::*;
 
-pub(crate) fn render(tree: &ElementTree, start: Uuid) -> Html {
-    let map: Rc<RefCell<HashMap<Uuid, Html>>> = Rc::new(RefCell::new(HashMap::new()));
+pub(crate) fn render(tree: &ElementTree, start: Id) -> Html {
+    let map: Rc<RefCell<HashMap<Id, Html>>> = Rc::new(RefCell::new(HashMap::new()));
     for (id, node) in tree.elements.into_iter(start) {
         let mut has_children = false;
         if let Some(children) = tree.elements.adjacency.get(id) {
@@ -17,8 +17,7 @@ pub(crate) fn render(tree: &ElementTree, start: Uuid) -> Html {
             <>
                 <EditorComponent
                 key = { id.to_string() }
-            // TODO u can add id={id} to help to infinity which file is changed
-            node={node.clone()}/>
+                node={node.clone()}/>
                 if has_children {{
                     tree.elements.adjacency.get(id)
                         .unwrap()

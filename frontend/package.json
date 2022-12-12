@@ -1,16 +1,18 @@
 {
   "scripts": {
-    "build": "webpack",
-    "prebuild": "npm run copy:types",
     "prestart": "npm run copy:types",
     "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --exclude='*.most' --delete src/declarations",
     "start": "webpack -w",
     "server": "ws -d dist",
-    "clean": "rimraf dist pkg target"
+    "clean": "rimraf dist pkg target",
+    "wasm": "wasm-pack build . --target web --dev",
+    "dev": "yarn wasm && vite",
+    "build": "vite build"
   },
   "devDependencies": {
     "@wasm-tool/wasm-pack-plugin": "1.6.0",
     "copy-webpack-plugin": "^11.0.0",
+    "crypto-browserify": "^3.12.0",
     "html-webpack-plugin": "^5.3.1",
     "local-web-server": "^2.6.0",
     "rimraf": "^2.6.2",
@@ -25,6 +27,10 @@
     "@dfinity/candid": "^0.14.0",
     "@dfinity/identity": "^0.14.0",
     "@dfinity/principal": "^0.14.0",
-    "big-integer": "^1.6.51"
+    "big-integer": "^1.6.51",
+    "cross-env": "^7.0.3",
+    "vite": "^3.2.4",
+    "vite-plugin-wasm-pack": "^0.1.12",
+    "vite-rust-plugin": "^1.0.5"
   }
 }

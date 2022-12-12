@@ -9,9 +9,6 @@ use shared::invoke_async;
 use shared::schema::FileDirectory;
 
 
-use shared::log;
-
-
 pub fn initialize() -> Result<(), String> {
     spawn_local(async move {
         let x = self::on_startup().await;

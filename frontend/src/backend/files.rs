@@ -1,28 +1,24 @@
+use shared::{log, schema::FileNodeDelete};
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
-use shared::log;
-
-use crate::backend;
-
-
-use shared::schema::{FileDirectory, FileNodeCreate};
 
 use crate::utils::DeviceInfo;
+use shared::{
+    id::Id,
+    schema::{FileDirectory, FileNodeCreate},
+};
 
-pub async fn create_file(
-    tree_id: Uuid,
-    parent_id: Uuid,
-    name: String,
-    id: Uuid,
-) -> Result<(), String> {
+pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     let data = FileNodeCreate {
-        directory_id: tree_id,
-        parent_id,
+        directory_id: tree_id.into(),
+        parent_id: parent_id.into(),
         name,
-        id,
+        // using this for right now
+        mode: shared::schema::FileMode::Public,
+        id: id.into(),
         children: None,
     };
     if info.get().web || info.get().online {
@@ -37,7 +33,7 @@ pub async fn create_file(
     }
 }
 
-pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
+pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
@@ -45,9 +41,9 @@ pub async fn delete_file(tree_id: Uuid, file_id: Uuid) -> Result<(), String> {
     if !info.get().web {
         return crate::backend::call_surreal(
             "delete_file".to_string(),
-            Some(&serde_json::json!({"tree_id" : tree_id, "file_id" : file_id})),
+            Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -64,15 +60,14 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
     }
 }
 
-
-pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
+pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
@@ -82,7 +77,7 @@ pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -90,8 +85,6 @@ pub async fn get_directory(id: Uuid) -> Result<FileDirectory, String> {
 }
 
 pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
-
-
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().web || info.get().online {
         unimplemented!();
@@ -101,7 +94,8 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-            .await;
+        .await;
+        log!(&x);
         return x;
     } else {
         // user is offline throw a error
@@ -144,12 +138,15 @@ async fn local_change_directory(
             .await
             .map(|e| {
                 file_dispatch.reduce_mut(|f| {
+                    let child_id = Uuid::parse_str(&child_id).map(Id::from).unwrap();
                     for i in f.files.adjacency.values_mut() {
-                        i.remove(&Uuid::parse_str(&child_id).unwrap());
+                        i.iter()
+                            .position(|x| *x == child_id)
+                            .map(|index| i.remove(index));
                     }
                     f.files.push_edge(
-                        Uuid::parse_str(&parent_id).unwrap(),
-                        Uuid::parse_str(&child_id).unwrap(),
+                        Uuid::parse_str(&parent_id).map(Id::from).unwrap(),
+                        child_id
                     );
                 });
                 e
@@ -157,66 +154,3 @@ async fn local_change_directory(
     }
     return Err("user is offline".to_string());
 }
-
-//  async fn cloud_change_directory(parent_id: String, child_id: String) -> Result<(), String> {
-//     ....
-// }
-
-//  async fn synced_change_directory(parent_id: String, child_id: String) -> Result<(), String> {
-//     backends::local_change_directory(parent_id,child_id);
-//     backends::cloud_change_directory(parent_id,child_id);
-// }
-
-//
-//
-// fn add_file() {
-//     let mut new_file: Option<None> = Some(None);
-//
-//     if IS_WEB {
-//         params = [("method", "add_file"), ("name", "untitled")];
-//         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
-//         new_file = res.file
-//     } else {
-//         let file = crate::backend::files::create_file(
-//             state.files.id,
-//             state.files.root.unwrap(),
-//             "untitled".to_string(),
-//         )
-//             .await;
-//         new_file = file
-//     }
-//
-//     if let Ok(f) = file {
-//         state.files.push_children(state.files.root.unwrap(), f.id, f);
-//     }
-//
-// }
-//
-// fn get_files() -> Vec<FileTree> {
-//     let files = [];
-//     if IS_LOGEDIN {
-//         params = [("method", "files")];
-//         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
-//         files.extends(res.files)
-//     }
-//     if IS_WEB == false {
-//         files.extends(get_directory());
-//     }
-//     return files;
-// }
-//
-// fn delete_file(id: Uuid, file_location: FileLocation) {
-//     if file_location == FileLocation.LOCAL {
-//         tauri-src::commands: delete_file(id);
-//     }
-//     if file_location == FileLocation.CLOUD {
-//         params = [("method", "delete_file"), ("id", id)];
-//         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
-//     }
-//
-//     if file_location == FileLocation.SYNCED {
-//         tauri-src::commands: delete_file(id);
-//         params = [("method", "delete_file"), ("id", id)];
-//         let res = reqwest::post("host.io?canister_id=aaa-aa").from(params);
-//     }
-// }

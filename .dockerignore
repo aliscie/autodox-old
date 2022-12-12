@@ -1,0 +1,12 @@
+/dist
+/*.iml
+/.idea
+/target/
+/.github
+.env
+.dfx
+/declarations
+/node_modules
+.cache
+.parcel-cache
+*.old.did

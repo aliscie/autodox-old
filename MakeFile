@@ -1,11 +1,8 @@
 run_web:
-	cd frontend; npx webpack serve
+	cd frontend && yarn dev
 
 run_desktop:
 	cargo tauri dev
-
-run_web:
-	cd frontend; npx webpack serve
 
 
 build:

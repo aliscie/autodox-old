@@ -6,8 +6,13 @@ use std::hash::Hash;
 use std::str::FromStr;
 use uuid::Uuid;
 
+#[cfg(feature = "backend")]
+use speedy::{Readable, Writable};
+
 #[cfg(feature = "tauri")]
-use surrealdb::sql::{Array, Id, Object, Value};
+use surrealdb::sql::{Array, Object, Value};
+
+use crate::id::Id;
 
 use crate::schema::FileNode;
 use crate::traits::{Entity, GetId};
@@ -20,7 +25,7 @@ where
     T: PartialEq + Eq + Clone + Debug,
 {
     pub vertices: HashMap<ID, T>,
-    pub adjacency: HashMap<ID, IndexSet<ID>>,
+    pub adjacency: HashMap<ID, Vec<ID>>,
     pub root: Option<ID>,
 }
 
@@ -41,11 +46,14 @@ where
     }
     pub fn push_edge(&mut self, from: ID, to: ID) {
         let adjacency_to_from = self.adjacency.entry(from).or_default();
-        adjacency_to_from.insert(to);
+        adjacency_to_from.push(to);
     }
     pub fn delete_edge(&mut self, parent_id: ID, child_id: ID) {
         let adjacency = self.adjacency.entry(parent_id).or_default();
-        adjacency.swap_remove(&child_id);
+        adjacency
+            .iter()
+            .position(|x| child_id == *x)
+            .map(|index| adjacency.swap_remove(index));
     }
 
     pub fn push_children(&mut self, parent_id: ID, child_id: ID, child: T) {
@@ -73,7 +81,7 @@ where
         visited_nodes.len()
     }
 
-    pub fn remove(&mut self, id: &ID) {
+    pub fn remove(&mut self, id: &ID) -> ID {
         let mut remove_stack = VecDeque::from([id.clone()]);
         while remove_stack.len() > 0 {
             let r = remove_stack.pop_front().unwrap();
@@ -84,9 +92,18 @@ where
                 }
             }
         }
+        let mut parent_id = ID::default();
         for (_id, children) in self.adjacency.iter_mut() {
-            children.remove(id);
+            if children
+                .iter()
+                .position(|x| *x == *id)
+                .map(|e| children.swap_remove(e))
+                .is_some()
+            {
+                parent_id = _id.clone();
+            }
         }
+        parent_id
     }
 
     pub fn into_iter<'a>(&'a self, start: ID) -> TreeIter<'a, ID, T> {
@@ -161,46 +178,50 @@ where
 }
 
 impl GetId for FileNode {
-    type Id = Uuid;
+    type Id = Id;
     fn get_id(&self) -> Self::Id {
-        *self.id
+        self.id
     }
 }
 
 // cannot make it generic over Tree<ID, T> since Id is conversion
 // is problematic with surrealdb
 #[cfg(feature = "tauri")]
-impl<T> TryFrom<Object> for Tree<Uuid, T>
+impl<T> TryFrom<Object> for Tree<Id, T>
 where
-    T: PartialEq + Eq + Clone + Debug + TryFrom<Object> + Entity + Serialize + GetId<Id = Uuid>,
+    T: PartialEq
+        + Eq
+        + Clone
+        + Debug
+        + TryFrom<Object, Error = Error>
+        + Entity
+        + Serialize
+        + GetId<Id = Id>,
 {
     type Error = crate::Error;
     /// i am asuming we have selected the vertices field with all the data in the nodes
     fn try_from(value: Object) -> Result<Self, Self::Error> {
         let mut value = value;
-        let mut tree = Tree::new();
+        let mut tree: Tree<Id, T> = Tree::new();
         let vertex_vec: Vec<Value> = value
             .remove("vertices")
             .ok_or(crate::Error::XPropertyNotFound("vertices".into()))?
             .try_into()
-            .map_err(|_| Error::XValueNotOfType("value"))?;
+            .map_err(|_| Error::XValueNotOfType("vertices not of type Value"))?;
         for i in vertex_vec {
-            let mut vertex_object: Object =
-                i.try_into().map_err(|_| Error::XValueNotOfType("Object"))?;
+            let mut vertex_object: Object = i
+                .try_into()
+                .map_err(|_| Error::XValueNotOfType("vertices not of type Value::Object"))?;
             let adjacency_array: Vec<Value> = vertex_object
                 .remove("children")
                 .ok_or(Error::XPropertyNotFound("children not found".into()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("file_node.children not of type Array"))?;
-            let adjacency: IndexSet<Uuid> = adjacency_array
+            let adjacency: Vec<Id> = adjacency_array
                 .into_iter()
-                .filter_map(|e| -> Option<Uuid> {
-                    e.record()?.id.to_raw().as_str().try_into().ok()
-                })
+                .filter_map(|e| -> Option<Id> { e.record()?.id.to_raw().as_str().try_into().ok() })
                 .collect();
-            let file_node: T = vertex_object
-                .try_into()
-                .map_err(|_| Error::XValueNotOfType("T cannot be converted to Object"))?;
+            let file_node: T = vertex_object.try_into()?;
             tree.adjacency.insert(file_node.get_id(), adjacency);
             tree.vertices.insert(file_node.get_id(), file_node);
         }
@@ -208,9 +229,11 @@ where
             .remove("root")
             .ok_or(crate::Error::XPropertyNotFound("root".into()))?;
         tree.root = match root {
-            Value::Strand(x) => {
-                Some(uuid::Uuid::from_str(&x).map_err(|_| Error::XValueNotOfType("uuid"))?)
-            }
+            Value::Strand(x) => Some(
+                uuid::Uuid::from_str(&x)
+                    .map_err(|_| Error::XValueNotOfType("uuid"))?
+                    .into(),
+            ),
             _ => None,
         };
         Ok(tree)
@@ -253,6 +276,133 @@ where
             return self.tree.vertices.get_key_value(&x);
         }
         None
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<ID: candid::types::CandidType, T: candid::types::CandidType> candid::types::CandidType
+    for Tree<ID, T>
+where
+    ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Debug,
+{
+    fn _ty() -> candid::types::Type {
+        candid::types::Type::Record(<[_]>::into_vec(Box::new([
+            candid::types::Field {
+                id: candid::types::Label::Named("root".to_string()),
+                ty: <Option<ID> as candid::types::CandidType>::ty(),
+            },
+            candid::types::Field {
+                id: candid::types::Label::Named("vertices".to_string()),
+                ty: <HashMap<ID, T> as candid::types::CandidType>::ty(),
+            },
+            candid::types::Field {
+                id: candid::types::Label::Named("adjacency".to_string()),
+                ty: <HashMap<ID, Vec<ID>> as candid::types::CandidType>::ty(),
+            },
+        ])))
+    }
+    fn id() -> candid::types::TypeId {
+        candid::types::TypeId::of::<Tree<ID, T>>()
+    }
+    fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
+    where
+        __S: candid::types::Serializer,
+    {
+        let mut ser = __serializer.serialize_struct()?;
+        candid::types::Compound::serialize_element(&mut ser, &self.root)?;
+        candid::types::Compound::serialize_element(&mut ser, &self.vertices)?;
+        candid::types::Compound::serialize_element(&mut ser, &self.adjacency)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<'a_, ID, T, C_: speedy::Context> speedy::Readable<'a_, C_> for Tree<ID, T>
+where
+    ID: speedy::Readable<'a_, C_>,
+    T: speedy::Readable<'a_, C_>,
+    ID: speedy::Readable<'a_, C_>,
+    Vec<ID>: speedy::Readable<'a_, C_>,
+    Option<ID>: speedy::Readable<'a_, C_>,
+    ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Debug,
+{
+    #[inline]
+    fn read_from<R_: speedy::Reader<'a_, C_>>(
+        _reader_: &mut R_,
+    ) -> std::result::Result<Self, C_::Error> {
+        let vertices: HashMap<ID, T> = {
+            let _length_ = speedy::private::read_length_u32(_reader_)?;
+            _reader_.read_key_value_collection(_length_)
+        }?;
+        let adjacency: HashMap<ID, Vec<ID>> = {
+            let _length_ = speedy::private::read_length_u32(_reader_)?;
+            _reader_.read_key_value_collection(_length_)
+        }?;
+        let root: Option<ID> = {
+            _reader_.read_u8().and_then(|_flag_| {
+                if _flag_ != 0 {
+                    Ok(Some(_reader_.read_value()?))
+                } else {
+                    Ok(None)
+                }
+            })
+        }?;
+        Ok(Tree {
+            vertices,
+            adjacency,
+            root,
+        })
+    }
+    #[inline]
+    fn minimum_bytes_needed() -> usize {
+        {
+            let mut out = 0;
+            out += 4usize;
+            out += 4usize;
+            out += 1;
+            out
+        }
+    }
+}
+
+#[cfg(feature = "backend")]
+impl<ID, T, C_: speedy::Context> speedy::Writable<C_> for Tree<ID, T>
+where
+    ID: speedy::Writable<C_>,
+    T: speedy::Writable<C_>,
+    ID: speedy::Writable<C_>,
+    Vec<ID>: speedy::Writable<C_>,
+    Option<ID>: speedy::Writable<C_>,
+    ID: Hash + PartialEq + Eq + Clone + Default + Debug,
+    T: PartialEq + Eq + Clone + Debug,
+{
+    #[inline]
+    fn write_to<T_: ?Sized + speedy::Writer<C_>>(
+        &self,
+        _writer_: &mut T_,
+    ) -> std::result::Result<(), C_::Error> {
+        let vertices = &self.vertices;
+        let adjacency = &self.adjacency;
+        let root = &self.root;
+        {
+            speedy::private::write_length_u32(vertices.len(), _writer_)?;
+            _writer_.write_collection(vertices.iter())?;
+        }
+        {
+            speedy::private::write_length_u32(adjacency.len(), _writer_)?;
+            _writer_.write_collection(adjacency.iter())?;
+        }
+        {
+            if let Some(ref root) = root {
+                _writer_.write_u8(1)?;
+                _writer_.write_value(root)?;
+            } else {
+                _writer_.write_u8(0)?;
+            }
+        }
+        Ok(())
     }
 }
 

@@ -1,4 +1,4 @@
-// here we create general app_components that are reusable by anyapp
+// here we create general specific_components that are reusable by anyapp
 // Don't import anything this folder from outside.
 
 use wasm_bindgen::JsValue;
@@ -6,9 +6,11 @@ use wasm_bindgen::prelude::*;
 // use wasm_bindgen::prelude;
 pub use files::*;
 pub use main::*;
+pub use element::*;
 
 mod files;
 mod main;
+mod element;
 
 
 #[wasm_bindgen(module = "/src/backend/ic_agent.js")]

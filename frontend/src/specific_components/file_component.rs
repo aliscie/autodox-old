@@ -1,9 +1,13 @@
 use uuid::Uuid;
-use web_sys::{console::log_1, Element, MouseEvent};
+use web_sys::{Element, MouseEvent};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-use shared::schema::FileDirectory;
+use shared::{
+    id::Id,
+    log,
+    schema::{FileDirectory, FileNodeDelete},
+};
 
 use crate::components::Menu;
 
@@ -13,7 +17,7 @@ pub struct FileComponentProps {
     pub onclickfile: Callback<MouseEvent>,
     pub name: String,
     pub class: String,
-    pub id: Uuid,
+    pub id: Id,
 }
 
 #[function_component(FileComponent)]
@@ -33,42 +37,49 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
 
     let caret = use_state(|| "".to_string());
-    let id = props.id.clone().to_string();
+    let id = props.id.clone();
 
-    let _position = position.clone();
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        if _e.which() == 3 {
-            _position.set(Some(_e));
-        }
-    });
+    let onmouseup: Callback<MouseEvent> = {
+        let position = position.clone();
+        Callback::from(move |e: MouseEvent| {
+            if e.which() == 3 {
+                position.set(Some(e));
+            }
+        })
+    };
 
-    let _caret = caret.clone();
     let toggle_caret = {
+        let caret = caret.clone();
         move |_e: MouseEvent| {
-            if _caret.len() == 0 {
-                _caret.set("caret-down".to_string())
+            if caret.len() == 0 {
+                caret.set("caret-down".to_string())
             } else {
-                _caret.set("".to_string())
+                caret.set("".to_string())
             }
         }
     };
 
-    let _is_dragged = is_dragged.clone();
-    let _id = id.clone();
-    let ondragstart: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _e.data_transfer()
-            .unwrap()
-            .set_data("dragged_item", &_id)
-            .unwrap();
-        _is_dragged.set("dragged".to_string())
-    });
+    let ondragstart: Callback<DragEvent> = {
+        let is_dragged = is_dragged.clone();
+        let id = id.clone();
 
-    let _is_dragged = is_dragged.clone();
-    let _is_enter = is_enter.clone();
-    let ondragend: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _is_dragged.set("".to_string());
-        _is_enter.set("".to_string());
-    });
+        Callback::from(move |e: DragEvent| {
+            e.data_transfer()
+                .unwrap()
+                .set_data("dragged_item", &id.to_string())
+                .unwrap();
+            is_dragged.set("dragged".to_string())
+        })
+    };
+
+    let ondragend: Callback<DragEvent> = {
+        let is_dragged = is_dragged.clone();
+        let is_enter = is_enter.clone();
+        Callback::from(move |_e: DragEvent| {
+            is_dragged.set("".to_string());
+            is_enter.set("".to_string());
+        })
+    };
 
     let _is_enter = is_enter.clone();
     let _is_dragged = is_dragged.clone();
@@ -95,19 +106,15 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             let _ = curr.class_list().toggle("dragging_over");
             let dragged = e.data_transfer().unwrap().get_data("dragged_item").unwrap();
             let id = id.clone();
-            let mut old_parent_id: Uuid = Uuid::new_v4();
-            let dragged_uuid = Uuid::parse_str(dragged.as_str()).unwrap();
+            let mut old_parent_id: Id = Uuid::new_v4().into();
+            let dragged_uuid = Uuid::parse_str(dragged.as_str()).map(Id::from).unwrap();
             for (i, value) in &file_dispatch.get().files.adjacency {
                 if value.contains(&dragged_uuid) {
                     old_parent_id = *i;
                     break;
                 }
             }
-            crate::backend::change_directory(
-                id,
-                dragged,
-                old_parent_id.to_string(),
-            );
+            crate::backend::change_directory(id.to_string(), dragged, old_parent_id.to_string());
         })
     };
 
@@ -134,9 +141,25 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
     let ondelete = {
         let id = id.clone();
-        Callback::from(move |_e: MouseEvent| {
-            // TODO: complete this
-            log_1(&format!("{:?}", id).into());
+        let file_dispatch = Dispatch::<FileDirectory>::new();
+        let mut parent_id = Id::default();
+        for (parent, child_id) in &file_dispatch.get().files.adjacency {
+            if child_id.contains(&id) {
+                parent_id = *parent;
+            }
+        }
+        let delete_file_node = FileNodeDelete {
+            id,
+            parent_id,
+            tree_id: file_dispatch.get().id,
+        };
+        file_dispatch.reduce_mut_future_callback(move |state| {
+            Box::pin(async move {
+                let id = id.clone();
+                let result = crate::backend::delete_file(delete_file_node).await;
+                log!(result);
+                state.files.remove(&id);
+            })
         })
     };
 
@@ -186,7 +209,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            {ondragstart}
            {ondragend}
            {onmouseup}
-           id = { id }
+           id = { id.to_string()}
            onclick={props.onclickfile.clone()}
            draggable="true"
            class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(),(*is_enter).clone(), "")}

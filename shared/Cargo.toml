@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-stylist = { version = "0.10.0", features = ["yew"] , optional = true}
+stylist = { version = "0.11.0", features = ["yew" , "yew_integration"] , optional = true}
 thiserror = "*"
 serde = { version = "1.0.144", features = ["derive"] }
 uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js", "serde"] }
@@ -17,19 +17,20 @@ cfg-if = "1.0.0"
 lazy_static = "1.4.0"
 async-trait = "0.1.57"
 
-yewdux = { version = "0.8.2", optional = true }
+yewdux = { version = "0.9.0", optional = true }
 wasm-bindgen = { version = "0.2.78", optional = true }
 wasm-bindgen-futures = { version = "0.4.28", optional = true }
 yew = { version = "*", optional  = true}
 js-sys = { version = "0.3.59", optional = true }
 surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true}
 candid = { version = "0.7", optional = true }
+speedy = { version = "0.8.5", optional = true, features = ["uuid"]}
 
 [features]
 default = ["frontend"]
 frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys", "dep:yew", "dep:stylist"]
 tauri = ["dep:surrealdb"]
-backend = ["dep:candid"]
+backend = ["dep:candid", "dep:speedy"]
 full = ["frontend", "backend", "tauri"]
 
 
