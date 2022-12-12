@@ -1,16 +1,16 @@
-use crate::specific_components::{ButtonsGroup, SearchFiltes};
 use crate::backend;
 use crate::components::TreeList;
 use crate::router::{switch, Route};
+use crate::specific_components::{ButtonsGroup, SearchFiltes};
+use crate::utils::GetTitleBar;
 use shared::log;
-use shared::schema::{ FileDirectory, FileNode};
+use shared::schema::{FileDirectory, FileNode};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{console, MouseEvent};
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use crate::utils::GetTitleBar;
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -21,7 +21,6 @@ pub fn app() -> Html {
             &backend::read(canister_id.clone()).await
         ));
     });
-
     let aside_bar_toggle = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_toggle.clone();
     let file_dispatch = Dispatch::<FileDirectory>::new();
