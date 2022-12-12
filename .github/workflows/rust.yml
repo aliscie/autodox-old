@@ -16,10 +16,11 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
-      - uses: jetli/wasm-pack-action@v0.4.0
 
       - name: setup node
         uses: actions/setup-node@v3
+      - name: install wasm
+        uses: jetli/wasm-pack-action@v0.4.0
         with:
           node-version: 16
       - name: install Rust stable
