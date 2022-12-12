@@ -336,7 +336,7 @@ where
             let _length_ = speedy::private::read_length_u32(_reader_)?;
             _reader_.read_key_value_collection(_length_)
         }?;
-        let adjacency: HashMap<ID, HashSet<ID>> = {
+        let adjacency: HashMap<ID, Vec<ID>> = {
             let _length_ = speedy::private::read_length_u32(_reader_)?;
             _reader_.read_key_value_collection(_length_)
         }?;
