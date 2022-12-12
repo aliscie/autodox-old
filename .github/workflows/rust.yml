@@ -32,7 +32,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
       - name: install app dependencies and build it
-        run: cd frontend && yarn install && yarn wasm && yarn build
+        run: cd frontend && yarn install && yarn build
       - name: build desktop app
         run: cargo tarui build
       - uses: tauri-apps/tauri-action@v0
