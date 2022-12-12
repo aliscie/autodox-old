@@ -5972,6 +5972,7 @@ checksum = "18203448b9d4dcad55607eafeda6dc7fe135848e5f567cd8bdade6cafd8b1a85"
 dependencies = [
  "anyhow",
  "attohttpc",
+ "clap",
  "cocoa",
  "dirs-next",
  "embed_plist",

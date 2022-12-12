@@ -2,12 +2,12 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-
-#[cfg_attr(target_os = "macos", allow(dead_code))]
+#[cfg(target_os = "macos")]
 use cocoa::appkit::{NSWindow, NSWindowStyleMask};
 use dotenv::dotenv;
 
 use context::Context;
+use serde_json::Value;
 use store::Store;
 use tauri::{Manager, Runtime, Window};
 
@@ -30,12 +30,12 @@ pub struct MouseLoc {
 }
 
 pub trait WindowExt {
-    #[cfg_attr(target_os = "macos", allow(dead_code))]
+    #[cfg(target_os = "macos")]
     fn set_transparent_titlebar(&self, transparent: bool);
 }
 
 impl<R: Runtime> WindowExt for Window<R> {
-    #[cfg_attr(target_os = "macos", allow(dead_code))]
+    #[cfg(target_os = "macos")]
     fn set_transparent_titlebar(&self, transparent: bool) {
         use cocoa::appkit::NSWindowTitleVisibility;
 
@@ -63,12 +63,9 @@ impl<R: Runtime> WindowExt for Window<R> {
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     dotenv().ok();
-    let store = Store::new().await?;
     tauri::Builder::default()
-        .manage(Context::new(store))
         .invoke_handler(tauri::generate_handler![
             minimize_window,
             maximize_window,
@@ -87,6 +84,27 @@ async fn main() -> Result<()> {
             crate::command::element::delete_element,
         ])
         .setup(|app| {
+            // if not found use memory
+            let mut database_url = String::from("memory");
+            match app.get_cli_matches() {
+                Ok(mut matches) => {
+                    let entry = matches
+                        .args
+                        .remove(&"database_url".to_string())
+                        .unwrap_or_default();
+                    match entry.value {
+                        Value::String(v) => {
+                            database_url = v;
+                        }
+                        _ => {}
+                    }
+                }
+                Err(e) => {
+                    println!("{:?}", e);
+                }
+            }
+            let store = tauri::async_runtime::block_on(async { Store::new().await }).unwrap();
+            app.manage(Context::new(store));
             let win = app.get_window("main").unwrap();
             #[cfg(target_os = "macos")]
             win.set_transparent_titlebar(true);

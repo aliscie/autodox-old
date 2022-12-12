@@ -17,7 +17,7 @@ pub struct Store {
 
 impl Store {
     pub async fn new() -> Result<Self> {
-        let datastore = Datastore::new("file://test.db").await?;
+        let datastore = Datastore::new("memory").await?;
         let session = Session::for_db("appns", "appdb");
         Ok(Store {
             datastore,

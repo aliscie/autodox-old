@@ -11,6 +11,12 @@
     "withGlobalTauri" : true
   },
   "tauri": {
+    "cli" : {
+        "args" : [{
+            "name" : "database_file",
+            "takesValue" : true
+        }]
+    },
     "bundle": {
       "active": true,
       "targets": "all",
