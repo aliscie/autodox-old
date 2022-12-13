@@ -67,3 +67,6 @@ features = [
 
 #[dev-dependencies]
 #colored = "2.0.0"
+[build-dependencies.cc]
+version = "=1.0.61"
+features = ["parallel"]

@@ -796,9 +796,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.0.77"
+version = "1.0.61"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9f73505338f7d905b19d18738976aae232eb46b8efc15554ffc56deb5d9ebe4"
+checksum = "ed67cbde08356238e75fc4656be4749481eeffb09e19f320a25237d5221c985d"
 dependencies = [
  "jobserver",
 ]
@@ -5336,6 +5336,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "candid 0.7.18",
+ "cc",
  "cfg-if",
  "indexmap",
  "js-sys",
