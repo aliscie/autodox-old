@@ -22,7 +22,7 @@ wasm-bindgen = { version = "0.2.78", optional = true }
 wasm-bindgen-futures = { version = "0.4.28", optional = true }
 yew = { version = "*", optional  = true}
 js-sys = { version = "0.3.59", optional = true }
-surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true}
+surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true, branch = "testing"}
 candid = { version = "0.7", optional = true }
 speedy = { version = "0.8.5", optional = true, features = ["uuid"]}
 ic-kit = { version = "0.4.8", optional = true } 
