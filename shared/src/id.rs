@@ -22,6 +22,13 @@ use uuid::Uuid;
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct Id(pub Uuid);
 
+impl Id {
+    #[cfg(not(feature = "backend"))]
+    pub fn new() -> Self {
+        Self(Uuid::new_v4())
+    }
+}
+
 impl From<Uuid> for Id {
     fn from(id: Uuid) -> Self {
         Self(id)
