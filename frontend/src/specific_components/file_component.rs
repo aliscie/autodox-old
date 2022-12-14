@@ -229,6 +229,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             class="drag_under" />
 
            <Menu
+        click_on={Some(true)}
            items={vec![
            html! {<a><i class="fa-solid fa-signature"></i>{"Rename"}</a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
