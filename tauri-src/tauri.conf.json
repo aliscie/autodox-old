@@ -6,8 +6,8 @@
   "build": {
     "distDir": "../frontend/dist",
     "devPath": "http://localhost:5173/",
-    "beforeDevCommand": "cd frontend && yarn dev",
-    "beforeBuildCommand": "cd frontend && yarn build",
+    "beforeDevCommand": "cd frontend && wasm-pack build . --target web --dev  && npx vite",
+    "beforeBuildCommand": "cd frontend && wasm-pack build . --target web  && npx vite build",
     "withGlobalTauri" : true
   },
   "tauri": {
