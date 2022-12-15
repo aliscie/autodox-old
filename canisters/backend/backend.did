@@ -1,5 +1,6 @@
 service : {
-    "add_my_string": (entry: text);
-    "get_my_strings_page": (from: int, to: int) -> (vec text) query;
+
+    "get_my_strings_page": (from: nat64, to: nat64) -> (vec text) query;
+    "add_my_string": (entry: text) ->();
 }
 
