@@ -148,8 +148,6 @@ pub fn editor(props: &Props) -> Html {
                     .character_data_old_value(true)
                     .subtree(true),
             );
-            // leaking memory here!
-            oninput_event.forget();
             //PasteConverter::new(editor.clone());
             //TODO
             // DragAndDrop::new(editor.clone());
@@ -157,6 +155,7 @@ pub fn editor(props: &Props) -> Html {
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
             move || {
+                drop(oninput_event);
                 mutation_observer.disconnect();
             }
         },

@@ -11,7 +11,7 @@ use shared::{
     schema::{FileDirectory, FileNodeDelete},
 };
 
-use crate::{components::Menu, router::Route};
+use crate::{components::ContextMenu, router::Route};
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -33,24 +33,14 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     //let drop_data = use_state(|| "".to_string());
     //let is_drag_over = use_state(|| "".to_string());
     let is_drag_under = use_state(|| "".to_string());
-
+    let position: UseStateHandle<Option<(i32, i32)>> = use_state(|| None);
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
-    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let navigator = use_navigator().unwrap();
     let route = use_route::<Route>().unwrap_or_default();
 
     let caret = use_toggle("", "caret-down");
     let id = props.id.clone();
-
-    let onmouseup: Callback<MouseEvent> = {
-        let position = position.clone();
-        Callback::from(move |e: MouseEvent| {
-            if e.which() == 3 {
-                position.set(Some(e));
-            }
-        })
-    };
 
     let toggle_caret = {
         let caret = caret.clone();
@@ -176,6 +166,15 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _is_drag_under.set("".to_string());
     });
+    let oncontextmenu = {
+        let position = position.clone();
+        Callback::from(move |e: MouseEvent| {
+            log!("this got fired");
+            let y = e.page_y();
+            let x = e.page_x();
+            position.set(Some((y, x)));
+        })
+    };
 
     // let ondragenter_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
     //     _is_drag_above.set("height: 20px; opacity:1;".to_string());
@@ -203,7 +202,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         //         }
         //  }}
 
-        <div style="position: relative; width:100%; display: block;">
+        <div {oncontextmenu} style="position: relative; width:100%; display: block;">
            if props.class.contains("caret"){
                <button class={format!("{} crate_button",(*caret))}
                onmouseup={toggle_caret}
@@ -216,7 +215,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            {ondragleave}
            {ondragstart}
            {ondragend}
-           {onmouseup}
            id = { id.to_string()}
            onclick={props.onclickfile.clone()}
            draggable="true"
@@ -236,8 +234,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             ondragleave={ondragleave_under}
             class="drag_under" />
 
-           <Menu
-        click_on={Some(true)}
+           <ContextMenu
+           position = {position.clone()}
            items={vec![
            html! {<a><i class="fa-solid fa-signature"></i>{"Rename"}</a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
@@ -245,7 +243,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
            ]}
-           event={position.clone()}
            />
 
         </div>

@@ -2,13 +2,13 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{DragEvent, Element, MouseEvent, window};
-use yew::{html, Html};
+use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
+use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::Menu;
+use crate::components::ContextMenu;
 use crate::router::Route;
 
 #[derive(PartialEq, Properties)]
@@ -41,10 +41,6 @@ pub fn page_options(props: &PageOptionsProps) -> Html {
         </span>
 
 
-        <Menu
-        event={position.clone()}
-        {items}
-      />
     </>
     }
 }

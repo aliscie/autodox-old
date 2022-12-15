@@ -9,7 +9,7 @@ use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::Menu;
+use crate::components::ContextMenu;
 use crate::router::Route;
 use crate::utils::DeviceInfo;
 use crate::*;
@@ -36,7 +36,6 @@ pub fn download(props: &DownloadProps) -> Html {
 
     if device.is_web {
         return html! {<>
-            <Menu event={position.clone()}{items}/>
 
                 <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
         </>};
