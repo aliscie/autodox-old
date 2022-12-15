@@ -1,6 +1,7 @@
 use uuid::Uuid;
 use web_sys::{Element, MouseEvent};
 use yew::prelude::*;
+use yew_hooks::use_toggle;
 use yewdux::prelude::*;
 
 use shared::{
@@ -36,7 +37,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let is_enter = use_state(|| "".to_string());
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
 
-    let caret = use_state(|| "".to_string());
+    let caret = use_toggle("", "caret-down");
     let id = props.id.clone();
 
     let onmouseup: Callback<MouseEvent> = {
@@ -51,11 +52,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let toggle_caret = {
         let caret = caret.clone();
         move |_e: MouseEvent| {
-            if caret.len() == 0 {
-                caret.set("caret-down".to_string())
-            } else {
-                caret.set("".to_string())
-            }
+            caret.toggle();
         }
     };
 
@@ -195,11 +192,10 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         //  }}
 
         <div style="position: relative; width:100%; display: block;">
-           {if props.class.contains("caret"){
-           html!{<button class={format!("{} crate_button",(*caret))}
-           onmouseup={toggle_caret}
-           onclick = { props.onclick.clone() } ><i class="fa-solid fa-caret-right"></i></button>}
-           } else{ html!{} }
+           if props.class.contains("caret"){
+               <button class={format!("{} crate_button",(*caret))}
+               onmouseup={toggle_caret}
+               onclick = { props.onclick.clone() } ><i class="fa-solid fa-caret-right"></i></button>
            }
            <li
            ondragover={ondragover.clone()}
