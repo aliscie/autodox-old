@@ -99,7 +99,7 @@ pub async fn delete_file(data: FileNodeDelete, ctx: State<'_, Context>) -> Resul
     let store = ctx.get_store();
     let mut stack = vec![data.id];
     let mut current_index = 0;
-    while current_index <= stack.len() {
+    while current_index < stack.len() {
         let children: Vec<Value> = store
             .exec_delete::<FileNode>(stack[current_index].to_string())
             .await?
@@ -109,7 +109,7 @@ pub async fn delete_file(data: FileNodeDelete, ctx: State<'_, Context>) -> Resul
         for i in children {
             match i {
                 Value::Thing(x) => {
-                    let id = Uuid::parse_str(x.id.to_string().as_str());
+                    let id = Uuid::parse_str(x.id.to_raw().as_str());
                     if let Ok(id) = id {
                         stack.push(id.into());
                     }
@@ -130,19 +130,17 @@ pub async fn delete_file(data: FileNodeDelete, ctx: State<'_, Context>) -> Resul
         .execute(&sql, &store.session, Some(vars), false)
         .await?;
     // deleting all nodes from the element_tree.vertices column
-    let sql = "update $tb set elements.vertices -= $va";
-    let mut vertices: Vec<Value> = Vec::with_capacity(stack.len());
+    let sql = "update $tb set files.vertices -= $va";
     for i in &stack {
-        vertices.push(Value::Thing((FileNode::table_name(), i.to_string()).into()));
+        let vars: BTreeMap<String, Value> = map![
+            "tb".into() => Value::Thing((FileDirectory::table_name(), data.tree_id.to_string()).into()),
+            "va".into() => Value::Thing((FileNode::table_name(), i.to_string()).into()),
+        ];
+        store
+            .datastore
+            .execute(&sql, &store.session, Some(vars), false)
+            .await?;
     }
-    let vars: BTreeMap<String, Value> = map![
-        "tb".into() => Value::Thing((FileDirectory::table_name(), data.tree_id.to_string()).into()),
-        "va".into() => vertices.into(),
-    ];
-    store
-        .datastore
-        .execute(&sql, &store.session, Some(vars), false)
-        .await?;
     Ok(())
 }
 
