@@ -1,46 +1,5 @@
-    //type ChildContent = record {
-        //    content : text
-        //};
-        //
-        //type CreateFileData = record {
-        //    content : text;
-        //    mode : FileMode;
-        //    name : text;
-        //    parent_id : text;
-        //};
-        //
-        //type CreateFileResponse = variant {
-        //    Success;
-        //    UserNotRegisted
-        //};
-        //
-        //type FileMode = variant {
-        //    Private;
-        //    Public;
-        //    Restricted
-        //};
-        //
-        //type ReadFileData = record {
-        //    parent_id : text
-        //};
-        //
-        //type ReadFileResponse = variant {
-        //    FileDoesNotExist;
-        //    File : record {
-        //        content : text;
-        //        name : text;
-        //        parent_id : text;
-        //        child_contents : vec record {
-        //            text;
-        //            ChildContent
-        //        };
-        //    };
-        //    NotAllowed;
-        //    UserNotRegisted;
-        //};
-    service : () -> {
-        //    create_file : (CreateFileData) -> (CreateFileResponse);
-        //    read_file : (ReadFileData) -> (ReadFileResponse) query;
-        "greet": (text) -> (text) query;
+service : {
+    "add_my_string": (entry: text);
+    "get_my_strings_page": (from: int, to: int) -> (vec text) query;
+}
 
-    }

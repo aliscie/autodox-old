@@ -1,81 +1,50 @@
-use ic_kit::{
-    candid::candid_method,
-    macros::*,
-};
-use ic_stable_memory::{
-    s, utils::ic_types::SPrincipal
-};
+use ic_cdk_macros::*;
+use ic_stable_memory::collections::vec::SVec;
+use ic_stable_memory::{s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade};
 
-use crate::{structure::*, response::*};
+type MyStrings = SVec<String>;
+type MyStringsSlice = Vec<String>;
 
+#[init]
+fn init() {
+    stable_memory_init(true, 0);
 
-#[ic_cdk_macros::query]
-#[candid_method(query)]
-fn greet(name: String) -> String {
-    format!("Hello, {}!", name)
+    // now, our stable variable will hold an SVec pointer instead of the the whole Vec as it was previously
+    s! { MyStrings = MyStrings::new() };
 }
 
+#[pre_upgrade]
+fn pre_upgrade() {
+    stable_memory_pre_upgrade();
+}
 
-// use ic_kit::{
-//     macros::*,
-//     candid::candid_method,
-// };
-// use ic_stable_memory::{
-//     s, utils::ic_types::SPrincipal
-// };
-//
-//
-// // use crate::{structure::*, response::*};
-// // #[update]
-// // #[candid_method(update)]
-// // pub fn change_file_mode(change_file_mode_data: ChangeFileModeData) -> ChangeFileModeResponse{
-// //     let caller: SPrincipal = SPrincipal(ic_cdk::caller());
-// //     let users = s!(Users);
-// //     let username = match get_username(caller, &users){
-// //         None => return ChangeFileModeResponse::UserNotRegisted,
-// //         Some(username) => username
-// //     };
-// //     let mut user_files = s!(UserFiles);
-// //     match _change_mode(username, change_file_mode_data, &mut user_files){
-// //         UpdateResponse::Success => {
-// //             s!{ UserFiles = user_files};
-// //             ChangeFileModeResponse::Success
-// //         },
-// //         UpdateResponse::Unauthorized => ChangeFileModeResponse::Unauthorized,
-// //         UpdateResponse::FileDoesNotExist => ChangeFileModeResponse::FileDoesNotExist
-// //     }
-// // }
-//
-// // #[query]
-// // #[candid_method(query)]
-// // pub fn read_file(read_content_data: ReadContentData) -> ReadContentResponse{
-// //     let caller: SPrincipal = SPrincipal(ic::caller());
-// //     let users = s!(Users);
-// //     let username = match get_username(caller, &users){
-// //         None => return ReadFileResponse::UserNotRegisted,
-// //         Some(username) => username,
-// //     };
-// //     let user_files = s!(UserFiles);
-// //     unimplemented!()
-// // }
-//
-// #[query]
-// #[candid_method(query)]
-// pub fn read_file(s: String) -> String {
-//     return "Hello".to_string();
-// }
-//
-// // #[cfg(test)]
-// // mod tests{
-// //     use super::*;
-// //
-// //     #[test]
-// //     pub fn save_candid() {
-// //         use std::env;
-// //         use std::fs::write;
-// //         use std::path::PathBuf;
-// //
-// //         let dir = PathBuf::from(env::current_dir().unwrap());
-// //         write(dir.join("backend.did"), export_candid()).expect("Write failed.");
-// //     }
-// // }
+#[post_upgrade]
+fn post_upgrade() {
+    stable_memory_post_upgrade(0);
+}
+
+#[query]
+fn get_my_strings_page(from: u64, to: u64) -> MyStringsSlice {
+    let my_strings = s!(MyStrings);
+
+    // our stable collection can be very big, so we only return a page of it
+    let mut result = MyStringsSlice::new();
+
+    for i in from..to {
+        let entry: String = my_strings.get_cloned(i).expect(format!("No entry at pos {}", i).as_str());
+        result.push(entry);
+    }
+
+    result
+}
+
+#[update]
+fn add_my_string(entry: String) {
+    let mut my_strings = s!(MyStrings);
+
+    // this call now pushes new value directly to stable memory
+    my_strings.push(&entry);
+
+    // only saves SVec's pointer, instead of the whole collection
+    s! { MyStrings = my_strings };
+}
