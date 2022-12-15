@@ -19,9 +19,6 @@ mod test;
 mod utils;
 
 
-lazy_static! {
-    pub static ref IS_WEB: bool = cfg!(feature = "web");
-}
 
 #[wasm_bindgen]
 pub fn run() {

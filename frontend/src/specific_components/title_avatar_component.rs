@@ -28,7 +28,7 @@ pub fn title_avatar_component() -> Html {
         spawn_local(async move {
             // let x = invoke_async("open_new_window".to_string()).await;
             // TODO
-            //     if IS_WEB {
+            //     if devices.is_web {
             //         window.open_new_window(),
             //     } else {
             //         let x = invoke_async("open_new_window".to_string()).await;
