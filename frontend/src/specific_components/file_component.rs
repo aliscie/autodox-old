@@ -231,7 +231,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
            html! {<a><i class="fa-solid fa-trash" onclick = {ondelete}/>{"Delete"}</a>},
            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
-
            ]}
            event={position.clone()}
            />
