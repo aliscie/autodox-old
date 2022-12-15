@@ -30,13 +30,15 @@ pub fn download(props: &DownloadProps) -> Html {
 
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-brands fa-apple"></i>{"Mac"}</a>},
-        html! {<a><i class="fa-brands fa-windows"></i>{"Window"}</a>},
+        html! {<a href="https://codeload.github.com/aliscie/autodox-build/zip/refs/heads/main?token=AOAVFVEUSBRXF53A3PWFUSDDTMFXS"><i class="fa-brands fa-windows"></i>{"Window"}</a>},
         html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
 
     if device.is_web {
         return html! {<>
-            <Menu event={position.clone()}{items}/>
+            <Menu
+            click_on={Some(true)}
+            event={position.clone()}{items}/>
 
                 <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
         </>};

@@ -48,9 +48,6 @@ pub fn menu(props: &MenuProps) -> Html {
     }) as Box<dyn FnMut(_)>);
 
     let _ = &doc
-        .query_selector("#app")
-        .unwrap()
-        .unwrap()
         .add_event_listener_with_callback(
             "mousedown",
             &click_away_handler.as_ref().unchecked_ref(),
