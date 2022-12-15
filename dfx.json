@@ -13,7 +13,6 @@
         "entrypoint": "frontend/index.html"
       },
       "source": [
-        "frontend/public",
         "frontend/dist"
       ],
       "type": "assets"
@@ -25,6 +24,5 @@
       "packtool": ""
     }
   },
-
   "version": 1
 }

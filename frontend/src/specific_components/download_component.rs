@@ -11,6 +11,7 @@ use yewdux::prelude::*;
 
 use crate::components::Menu;
 use crate::router::Route;
+use crate::utils::DeviceInfo;
 use crate::*;
 
 #[derive(PartialEq, Properties)]
@@ -21,6 +22,7 @@ pub struct DownloadProps {
 #[function_component(Download)]
 pub fn download(props: &DownloadProps) -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
+    let (device, _) = use_store::<DeviceInfo>();
     let _position = position.clone();
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _position.set(Some(_e));
@@ -32,10 +34,11 @@ pub fn download(props: &DownloadProps) -> Html {
         html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
 
-    if *IS_WEB {
+    if device.is_web {
         return html! {<>
             <Menu event={position.clone()}{items}/>
-            <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
+
+                <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
         </>};
     }
     return html! {""};

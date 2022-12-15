@@ -5,13 +5,14 @@
     "start": "webpack -w",
     "server": "ws -d dist",
     "clean": "rimraf dist pkg target",
-    "wasm": "wasm-pack build . --target web --dev",
+    "wasm": "wasm-pack build . --target web --dev -- --features \"web\"",
     "dev": "yarn wasm && vite",
     "build": "vite build"
   },
   "devDependencies": {
     "@wasm-tool/wasm-pack-plugin": "1.6.0",
     "copy-webpack-plugin": "^11.0.0",
+    "crypto-browserify": "^3.12.0",
     "html-webpack-plugin": "^5.3.1",
     "local-web-server": "^2.6.0",
     "rimraf": "^2.6.2",
@@ -20,12 +21,11 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@dfinity/agent": "^0.14.0",
-    "@dfinity/auth-client": "^0.14.0",
-    "@dfinity/authentication": "^0.14.0",
-    "@dfinity/candid": "^0.14.0",
-    "@dfinity/identity": "^0.14.0",
-    "@dfinity/principal": "^0.14.0",
+    "@dfinity/agent": "^0.15.0",
+    "@dfinity/auth-client": "^0.15.0",
+    "@dfinity/candid": "^0.15.0",
+    "@dfinity/identity": "^0.15.0",
+    "@dfinity/principal": "^0.15.0",
     "big-integer": "^1.6.51",
     "cross-env": "^7.0.3",
     "vite": "^3.2.4",

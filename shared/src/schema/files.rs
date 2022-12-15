@@ -167,7 +167,7 @@ impl From<FileNodeCreate> for Object {
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct FileNodeUpdate {
     pub id: Id,
-    pub children: Option<IndexSet<Id>>,
+    pub children: Option<Vec<Id>>,
     // TODO : cannot update this using this method think of something else
     pub parent_id: Option<Id>,
     pub name: Option<String>,
@@ -257,10 +257,11 @@ impl candid::types::CandidType for FileNode {
     }
 }
 
+#[cfg(not(feature = "backend"))]
 impl Default for FileNode {
     fn default() -> Self {
         Self {
-            id: Uuid::new_v4().into(),
+            id: Id::new(),
             name: "untitled".to_string(),
             element_tree: None,
         }
@@ -333,10 +334,11 @@ impl Creatable for FileDirectory {}
 #[cfg(feature = "tauri")]
 impl Queryable for FileDirectory {}
 
+#[cfg(not(feature = "backend"))]
 impl Default for FileDirectory {
     fn default() -> Self {
-        let mut d = Self::new(Uuid::new_v4(), "default".to_string());
-        let id = Uuid::new_v4();
+        let mut d = Self::new(Id::new(), "default".to_string());
+        let id = Id::new();
         d.files.push_vertex(
             id.into(),
             FileNode {
@@ -353,7 +355,7 @@ impl Default for FileDirectory {
 
 impl FileDirectory {
     #[inline]
-    pub fn new(id: Uuid, name: String) -> Self {
+    pub fn new(id: Id, name: String) -> Self {
         Self {
             files: Tree::new(),
             id: id.into(),

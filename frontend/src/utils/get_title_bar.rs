@@ -1,18 +1,20 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
+use crate::utils::DeviceInfo;
+use yewdux::prelude::*;
 
 use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::components::{CurrDirectory, TitleBar};
 use crate::*;
 
 #[derive(Properties, Debug, PartialEq)]
-pub struct Props{
-    pub toggle : UseStateHandle<String>,
+pub struct Props {
+    pub toggle: UseStateHandle<String>,
 }
 
 #[function_component(GetTitleBar)]
-pub fn get_titlebar(props : &Props) -> Html {
+pub fn get_titlebar(props: &Props) -> Html {
     let is_light_mode = use_state(|| false);
     let x = props.toggle.clone();
 
@@ -75,9 +77,10 @@ pub fn get_titlebar(props : &Props) -> Html {
            <PageOptions/>
        </>
     };
+    let (device, _) = use_store::<DeviceInfo>();
     html! {
         <TitleBar
-            style={(if !(*IS_WEB) {"padding-left: 75px; cursor: grab;"} else {""}).to_string()}
+            style={(if !(device.is_web) {"padding-left: 75px; cursor: grab;"} else {""}).to_string()}
             title={current_directory}
             {right_content}
          >

@@ -62,7 +62,8 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 
 
 ## Development:
-- make sure to install `zstd` `llvm`, `clang` and `openssl` in order for the desktop app to work (surealdb requirements).
+- make sure to install `zstd` `llvm`, `clang` and `openssl`, `gcc`, `rocksdb` in order for the desktop app to work (surealdb requirements).
+- `brew tap homebrew/versions; brew install gcc7 --use-llvm`
 - [Quick Start](https://smartcontracts.org/docs/quickstart/quickstart-intro.html)
 - [SDK Developer Tools](https://smartcontracts.org/docs/developers-guide/sdk-guide.html)
 - [Rust Canister Devlopment Guide](https://smartcontracts.org/docs/rust-guide/rust-intro.html)

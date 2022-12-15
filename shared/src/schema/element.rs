@@ -46,6 +46,7 @@ pub enum Attrs {
     Src,
 }
 
+#[cfg(not(feature = "backend"))]
 impl Default for ElementTree {
     fn default() -> Self {
         let mut tree = Tree::new();
@@ -53,17 +54,18 @@ impl Default for ElementTree {
         tree.root = Some(element.id);
         tree.vertices.insert(element.id, element);
         Self {
-            id: Uuid::new_v4().into(),
+            id: Id::new(),
             elements: tree,
         }
     }
 }
 
+#[cfg(not(feature = "backend"))]
 impl Default for EditorElement {
     fn default() -> Self {
         // this creates a root element
         Self {
-            id: Uuid::new_v4().into(),
+            id: Id::new(),
             text: "".to_owned(),
             attrs: HashMap::new(),
         }
@@ -124,10 +126,11 @@ pub struct EditorElementUpdate {
     pub children: Option<IndexSet<Id>>,
 }
 
+#[cfg(not(feature = "backend"))]
 impl Default for EditorElementUpdate {
     fn default() -> Self {
         Self {
-            id: Uuid::new_v4().into(),
+            id: Id::new(),
             text: None,
             attrs: None,
             parent: None,

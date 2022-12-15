@@ -9,7 +9,7 @@ edition = "2021"
 stylist = { version = "0.11.0", features = ["yew" , "yew_integration"] , optional = true}
 thiserror = "*"
 serde = { version = "1.0.144", features = ["derive"] }
-uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js", "serde"] }
+uuid = { version = "1.1.2", features = ["serde"] }
 indexmap = { version = "1.9.1", features = ["serde"] }
 serde_json = "1.0.85"
 serde_derive = "1.0.144"
@@ -22,15 +22,16 @@ wasm-bindgen = { version = "0.2.78", optional = true }
 wasm-bindgen-futures = { version = "0.4.28", optional = true }
 yew = { version = "*", optional  = true}
 js-sys = { version = "0.3.59", optional = true }
-surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true}
+surrealdb = { git = "https://github.com/lunchspider/surrealdb", optional = true, branch = "testing"}
 candid = { version = "0.7", optional = true }
 speedy = { version = "0.8.5", optional = true, features = ["uuid"]}
+ic-kit = { version = "0.4.8", optional = true } 
 
 [features]
-default = ["frontend"]
-frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys", "dep:yew", "dep:stylist"]
-tauri = ["dep:surrealdb"]
-backend = ["dep:candid", "dep:speedy"]
+default = []
+frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys", "dep:yew", "dep:stylist", "uuid/js", "uuid/fast-rng", "uuid/macro-diagnostics"]
+tauri = ["dep:surrealdb", "uuid/fast-rng", "uuid/macro-diagnostics"]
+backend = ["dep:candid", "dep:speedy","dep:ic-kit"]
 full = ["frontend", "backend", "tauri"]
 
 
