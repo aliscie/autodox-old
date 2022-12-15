@@ -2,6 +2,7 @@ use crate::router::Route;
 use crate::specific_components::FileComponent;
 use indexmap::IndexSet;
 use shared::id::Id;
+use shared::log;
 use shared::schema::{FileDirectory, FileNode};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -22,7 +23,7 @@ pub struct Props {
 
 #[function_component(FileTree)]
 pub fn to_html(props: &Props) -> Html {
-    let map: Rc<RefCell<HashMap<Uuid, VNode>>> = Rc::new(RefCell::new(HashMap::new()));
+    let map: Rc<RefCell<HashMap<Id, VNode>>> = Rc::new(RefCell::new(HashMap::new()));
     for (id, file_node) in props.file_directory.files.into_iter(props.start) {
         let mut class_name = "";
         let mut has_children = false;
@@ -34,17 +35,16 @@ pub fn to_html(props: &Props) -> Html {
         }
 
         let html_node = html! {
-            <>
-                <RenderFileElement
-                    file_node = {file_node.clone()}
-                    has_children = {has_children}
-                    map = {map.clone()}
-                    file_directory = {props.file_directory.clone()}
-                    class_name = {class_name}/>
-            </>
+            <RenderFileElement
+                file_node = {file_node.clone()}
+                has_children = {has_children}
+                map = {map.clone()}
+                file_directory = {props.file_directory.clone()}
+                class_name = {class_name}/>
         };
-        map.borrow_mut().insert(**id, html_node);
+        map.borrow_mut().insert(*id, html_node);
     }
+    log!(map.borrow());
     props
         .file_directory
         .files
@@ -62,7 +62,7 @@ pub fn to_html(props: &Props) -> Html {
 struct RenderFileElementProps {
     file_node: FileNode,
     has_children: bool,
-    map: Rc<RefCell<HashMap<Uuid, VNode>>>,
+    map: Rc<RefCell<HashMap<Id, VNode>>>,
     file_directory: Rc<FileDirectory>,
     class_name: &'static str,
 }
