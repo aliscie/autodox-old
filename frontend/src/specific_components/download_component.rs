@@ -34,12 +34,11 @@ pub fn download(props: &DownloadProps) -> Html {
         html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
 
-    if *IS_WEB {
+    if device.is_web {
         return html! {<>
             <Menu event={position.clone()}{items}/>
-            if device.web {
+
                 <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
-            }
         </>};
     }
     return html! {""};
