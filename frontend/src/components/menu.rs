@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::Closure;
-use web_sys::{DragEvent, Element, MouseEvent, Node, window};
+use web_sys::{DragEvent, Element, MouseEvent, Node, window,Event};
 use yew::prelude::*;
-
+use shared::*;
 use crate::router::Route;
 
 #[derive(PartialEq, Properties)]
@@ -21,6 +21,20 @@ pub fn menu(props: &MenuProps) -> Html {
     let doc = window().unwrap_throw().document().unwrap();
 
     let event = (*props.event).clone();
+    let _event = event.clone();
+    let prevent_context_menu = Closure::wrap(Box::new(move |_e: web_sys::Event| {
+        _e.prevent_default();
+    }));
+
+    if &event != &None {
+        let clicked_element: Node = _event.unwrap().target_unchecked_into();
+        let _ = &clicked_element
+            .add_event_listener_with_callback(
+                "contextmenu",
+                &prevent_context_menu.as_ref().unchecked_ref(),
+            );
+        &prevent_context_menu.forget();
+    }
 
     let _event = props.event.clone();
     let _doc = doc.clone();

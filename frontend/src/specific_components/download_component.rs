@@ -36,7 +36,9 @@ pub fn download(props: &DownloadProps) -> Html {
 
     if device.is_web {
         return html! {<>
-            <Menu event={position.clone()}{items}/>
+            <Menu
+            click_on={Some(true)}
+            event={position.clone()}{items}/>
 
                 <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
         </>};
