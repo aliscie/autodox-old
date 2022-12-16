@@ -11,6 +11,7 @@ use web_sys::console::log_1;
 use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
+use crate::utils::my_function;
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -131,7 +132,7 @@ pub fn editor(props: &Props) -> Html {
 
     use_effect_with_deps(
         move |editor_ref| {
-            //let data = &my_function();
+            let data = &my_function();
             let mutation_observer =
                 MutationObserver::new(oninput_event.as_ref().unchecked_ref()).unwrap();
             //let doc = window().unwrap_throw().document().unwrap_throw();
