@@ -10,3 +10,4 @@
 .cache
 .parcel-cache
 *.old.did
+.github
