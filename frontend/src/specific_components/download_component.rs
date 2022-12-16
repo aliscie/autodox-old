@@ -1,18 +1,19 @@
 use serde::{Deserialize, Serialize};
-use shared::invoke;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{window, DragEvent, Element, MouseEvent};
-use yew::prelude::*;
+use web_sys::{DragEvent, Element, MouseEvent, window};
 use yew::{html, Html};
+use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
+use shared::invoke;
+
+use crate::*;
 use crate::components::ContextMenu;
 use crate::router::Route;
 use crate::utils::DeviceInfo;
-use crate::*;
 
 #[derive(PartialEq, Properties)]
 pub struct DownloadProps {
@@ -21,19 +22,11 @@ pub struct DownloadProps {
 
 #[function_component(Download)]
 pub fn download(props: &DownloadProps) -> Html {
-    let position: UseStateHandle<Option<(i32, i32)>> = use_state(|| None);
-    let onmouseup: Callback<MouseEvent> = {
-        let position = position.clone();
-        Callback::from(move |_e: MouseEvent| {
-            position.set(None);
-        })
-    };
+    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let onclick = {
         let position = position.clone();
         Callback::from(move |e: MouseEvent| {
-            let y = e.page_y();
-            let x = e.page_x();
-            position.set(Some((y, x)));
+            position.set(Some(e));
         })
     };
 
@@ -46,7 +39,7 @@ pub fn download(props: &DownloadProps) -> Html {
     return html! {
     <>
         <ContextMenu items = {items} position = {position.clone()}/>
-        <span  {onclick} {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
+        <span  {onclick} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
     </>
     };
 }

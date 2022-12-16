@@ -23,7 +23,7 @@ pub struct MarkdownProps {
 pub fn markdown(props: &MarkdownProps) -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let _position = position.clone();
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+    let onclick: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _position.set(Some(_e));
     });
 
@@ -43,6 +43,7 @@ pub fn markdown(props: &MarkdownProps) -> Html {
     ];
 
     html! {<>
-        <li {onmouseup} class="btn right_clickable"> <i class="fa-brands fa-markdown"></i></li>
+        <ContextMenu items = {items} position = {position.clone()}/>
+        <li {onclick} class="btn right_clickable"> <i class="fa-brands fa-markdown"></i></li>
     </>}
 }

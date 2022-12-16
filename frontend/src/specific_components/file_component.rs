@@ -33,7 +33,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     //let drop_data = use_state(|| "".to_string());
     //let is_drag_over = use_state(|| "".to_string());
     let is_drag_under = use_state(|| "".to_string());
-    let position: UseStateHandle<Option<(i32, i32)>> = use_state(|| None);
+    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
     let navigator = use_navigator().unwrap();
@@ -169,10 +169,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let oncontextmenu = {
         let position = position.clone();
         Callback::from(move |e: MouseEvent| {
-            log!("this got fired");
-            let y = e.page_y();
-            let x = e.page_x();
-            position.set(Some((y, x)));
+            position.set(Some(e));
         })
     };
 
