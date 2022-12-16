@@ -25,8 +25,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: update rustup
         run: rustup target add wasm32-unknown-unknown
-      - name: install dependencies (fedora only)
-        if: matrix.platform == 'fedora-latest'
+      - name: install dependencies (linux only)
+        if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo dnf install -y gcc \
           zstd \
@@ -52,3 +52,17 @@ jobs:
         run: cargo tauri build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+#       - name: commit
+#         run: |
+#           git config --local user.email "action@github.com"
+#           git config --local user.name "GitHub Action"
+#           git add -A
+#           git diff-index --quiet HEAD 1 || (git commit -a -m "updated logs" --allow-empty)
+        
+#       - name: push changes
+#         uses: ad-m/github-push-action@master
+#         with:
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
+#           branch: main
+
