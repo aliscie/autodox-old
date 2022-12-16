@@ -45,7 +45,7 @@ jobs:
 
 
       - name: install rust dependencies and build it
-        run: cargo install wasm-pack tauri_cli
+        run: cargo install wasm-pack tauri-cli
       - name: building wasm-frontend-package
         run: cd ./frontend && yarn install && yarn wasm
       - name: building tauri-app
