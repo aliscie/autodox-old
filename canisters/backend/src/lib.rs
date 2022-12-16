@@ -1,5 +1,7 @@
 mod files;
 mod initialize;
+mod users;
+
 use initialize::*;
 use ic_cdk_macros::*;
 use ic_stable_memory::collections::vec::SVec;
