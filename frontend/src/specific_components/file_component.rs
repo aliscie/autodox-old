@@ -1,6 +1,8 @@
 use uuid::Uuid;
 use web_sys::{Element, MouseEvent};
 use yew::prelude::*;
+use yew_hooks::use_toggle;
+use yew_router::prelude::{use_navigator, use_route};
 use yewdux::prelude::*;
 
 use shared::{
@@ -9,7 +11,7 @@ use shared::{
     schema::{FileDirectory, FileNodeDelete},
 };
 
-use crate::components::Menu;
+use crate::{components::ContextMenu, router::Route};
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -31,31 +33,19 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     //let drop_data = use_state(|| "".to_string());
     //let is_drag_over = use_state(|| "".to_string());
     let is_drag_under = use_state(|| "".to_string());
-
+    let position: UseStateHandle<Option<(i32, i32)>> = use_state(|| None);
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
-    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
+    let navigator = use_navigator().unwrap();
+    let route = use_route::<Route>().unwrap_or_default();
 
-    let caret = use_state(|| "".to_string());
+    let caret = use_toggle("", "caret-down");
     let id = props.id.clone();
-
-    let onmouseup: Callback<MouseEvent> = {
-        let position = position.clone();
-        Callback::from(move |e: MouseEvent| {
-            if e.which() == 3 {
-                position.set(Some(e));
-            }
-        })
-    };
 
     let toggle_caret = {
         let caret = caret.clone();
         move |_e: MouseEvent| {
-            if caret.len() == 0 {
-                caret.set("caret-down".to_string())
-            } else {
-                caret.set("".to_string())
-            }
+            caret.toggle();
         }
     };
 
@@ -153,12 +143,21 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             parent_id,
             tree_id: file_dispatch.get().id,
         };
+        let file_id = id.clone();
         file_dispatch.reduce_mut_future_callback(move |state| {
+            match route {
+                // the current file is in use navigate to home!
+                Route::File { id } => {
+                    if file_id == id {
+                        navigator.push(&Route::Home);
+                    }
+                }
+                _ => {}
+            }
             Box::pin(async move {
-                let id = id.clone();
                 let result = crate::backend::delete_file(delete_file_node).await;
                 log!(result);
-                state.files.remove(&id);
+                state.files.remove(&file_id);
             })
         })
     };
@@ -167,6 +166,15 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _is_drag_under.set("".to_string());
     });
+    let oncontextmenu = {
+        let position = position.clone();
+        Callback::from(move |e: MouseEvent| {
+            log!("this got fired");
+            let y = e.page_y();
+            let x = e.page_x();
+            position.set(Some((y, x)));
+        })
+    };
 
     // let ondragenter_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
     //     _is_drag_above.set("height: 20px; opacity:1;".to_string());
@@ -194,12 +202,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         //         }
         //  }}
 
-        <div style="position: relative; width:100%; display: block;">
-           {if props.class.contains("caret"){
-           html!{<button class={format!("{} crate_button",(*caret))}
-           onmouseup={toggle_caret}
-           onclick = { props.onclick.clone() } ><i class="fa-solid fa-caret-right"></i></button>}
-           } else{ html!{} }
+        <div {oncontextmenu} style="position: relative; width:100%; display: block;">
+           if props.class.contains("caret"){
+               <button class={format!("{} crate_button",(*caret))}
+               onmouseup={toggle_caret}
+               onclick = { props.onclick.clone() } ><i class="fa-solid fa-caret-right"></i></button>
            }
            <li
            ondragover={ondragover.clone()}
@@ -208,7 +215,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            {ondragleave}
            {ondragstart}
            {ondragend}
-           {onmouseup}
            id = { id.to_string()}
            onclick={props.onclickfile.clone()}
            draggable="true"
@@ -228,16 +234,15 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             ondragleave={ondragleave_under}
             class="drag_under" />
 
-           <Menu
+           <ContextMenu
+           position = {position.clone()}
            items={vec![
            html! {<a><i class="fa-solid fa-signature"></i>{"Rename"}</a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
-           html! {<a><i class="fa-solid fa-trash" onclick = {ondelete}/>{"Delete"}</a>},
+           html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
-
            ]}
-           event={position.clone()}
            />
 
         </div>

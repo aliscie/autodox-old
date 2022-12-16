@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use crate::components::{Avatar, Menu};
+use crate::components::{Avatar, ContextMenu};
 
 #[function_component(SearchFiltes)]
 pub fn search_filters() -> Html {
@@ -31,12 +31,6 @@ pub fn search_filters() -> Html {
     ];
 
     html! { <>
-    <Menu
-        event={event.clone()}
-        {items}
-     />
-
-
     <div class="search_button">
        <div class="search">
           <input type="text" class="searchTerm" placeholder="Search..."/>

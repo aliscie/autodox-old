@@ -1,6 +1,4 @@
 #V2
-update file_node patch { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" } where id = "8650656c-16c5-4580-a354-77732c3be8cd";
-update "file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩" patch  { element_tree : "element_tree:⟨57b5a947-4bac-492e-8c2c-d5d46f4c38e1⟩" }
 update file_node:⟨8650656c-16c5-4580-a354-77732c3be8cd⟩ set element_tree = None;
 update file_node set element_tree = None where id = "[200~8650656c-16c5-4580-a354-77732c3be8cd";
 update file_node set name =  where id = "[200~8650656c-16c5-4580-a354-77732c3be8cd";
@@ -99,3 +97,5 @@ create peroson:test2 set gender = "female"
 create person:test2 set gender = "female"
 select * from person where [ person:test ] contains id
 select * from person where [ person:test , person:test2] contains id
+select * from file_directory;
+select *, files.vertices.*.* from file_directory;

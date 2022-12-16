@@ -9,8 +9,9 @@ use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::Menu;
+use crate::components::ContextMenu;
 use crate::router::Route;
+use crate::utils::DeviceInfo;
 use crate::*;
 
 #[derive(PartialEq, Properties)]
@@ -20,11 +21,21 @@ pub struct DownloadProps {
 
 #[function_component(Download)]
 pub fn download(props: &DownloadProps) -> Html {
-    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
-    let _position = position.clone();
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        _position.set(Some(_e));
-    });
+    let position: UseStateHandle<Option<(i32, i32)>> = use_state(|| None);
+    let onmouseup: Callback<MouseEvent> = {
+        let position = position.clone();
+        Callback::from(move |_e: MouseEvent| {
+            position.set(None);
+        })
+    };
+    let onclick = {
+        let position = position.clone();
+        Callback::from(move |e: MouseEvent| {
+            let y = e.page_y();
+            let x = e.page_x();
+            position.set(Some((y, x)));
+        })
+    };
 
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-brands fa-apple"></i>{"Mac"}</a>},
@@ -32,11 +43,10 @@ pub fn download(props: &DownloadProps) -> Html {
         html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
 
-    if *IS_WEB {
-        return html! {<>
-            <Menu event={position.clone()}{items}/>
-            <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
-        </>};
-    }
-    return html! {""};
+    return html! {
+    <>
+        <ContextMenu items = {items} position = {position.clone()}/>
+        <span  {onclick} {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
+    </>
+    };
 }

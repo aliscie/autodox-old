@@ -21,10 +21,10 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         id: id.into(),
         children: None,
     };
-    if info.get().web || info.get().online {
+    if info.get().is_web || info.get().is_online {
         unimplemented!();
     }
-    if !info.get().web {
+    if !info.get().is_web {
         let new_file = serde_json::json!({ "data": data });
         return crate::backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
     } else {
@@ -35,10 +35,10 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
 
 pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
-    if info.get().web || info.get().online {
+    if info.get().is_web || info.get().is_online {
         unimplemented!();
     }
-    if !info.get().web {
+    if !info.get().is_web {
         return crate::backend::call_surreal(
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
@@ -52,10 +52,10 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
 
 pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
-    if info.get().web || info.get().online {
+    if info.get().is_web || info.get().is_online {
         unimplemented!();
     }
-    if !info.get().web {
+    if !info.get().is_web {
         return crate::backend::call_surreal(
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
@@ -69,10 +69,10 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
 
 pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
-    if info.get().web || info.get().online {
+    if info.get().is_web || info.get().is_online {
         unimplemented!();
     }
-    if !info.get().web {
+    if !info.get().is_web {
         return crate::backend::call_surreal(
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
@@ -86,10 +86,10 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
 
 pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
-    if info.get().web || info.get().online {
+    if info.get().is_web || info.get().is_online {
         unimplemented!();
     }
-    if !info.get().web {
+    if !info.get().is_web {
         let x = crate::backend::call_surreal::<Vec<FileDirectory>, String>(
             "get_directories".to_string(),
             None,
@@ -127,10 +127,10 @@ async fn local_change_directory(
 ) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     let file_dispatch = Dispatch::<FileDirectory>::new();
-    if info.get().web || info.get().online {
+    if info.get().is_web || info.get().is_online {
         unimplemented!();
     }
-    if !info.get().web {
+    if !info.get().is_web {
         return crate::backend::call_surreal(
             "change_directory".to_string(),
             Some(&serde_json::json!({ "childId": child_id , "parentId" : parent_id, "oldParentId" : old_parent_id})),
