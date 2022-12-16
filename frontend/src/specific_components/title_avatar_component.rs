@@ -2,7 +2,7 @@ use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
 use crate::backend;
-use crate::components::{Avatar, ContextMenu};
+use crate::components::{Avatar, PopOverMenu};
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {

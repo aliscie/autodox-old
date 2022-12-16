@@ -10,7 +10,7 @@ use yewdux::prelude::*;
 
 use shared::invoke;
 
-use crate::components::ContextMenu;
+use crate::components::PopOverMenu;
 use crate::router::Route;
 use crate::*;
 
@@ -43,7 +43,7 @@ pub fn markdown(props: &MarkdownProps) -> Html {
     ];
 
     html! {<>
-        <ContextMenu items = {items} position = {position.clone()}/>
+        <PopOverMenu items = {items} position = {position.clone()}/>
         <li {onclick} class="btn right_clickable"> <i class="fa-brands fa-markdown"></i></li>
     </>}
 }

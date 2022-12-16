@@ -16,7 +16,7 @@ pub struct MenuProps {
     pub position: UseStateHandle<Option<MouseEvent>>,
 }
 
-#[function_component(ContextMenu)]
+#[function_component(PopOverMenu)]
 pub fn menu(props: &MenuProps) -> Html {
     let clicked_element: Option<Element> = if let Some(p) = &*props.position {
         Some(p.target_unchecked_into::<Element>())

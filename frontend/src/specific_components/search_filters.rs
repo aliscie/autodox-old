@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use crate::components::{Avatar, ContextMenu};
+use crate::components::{Avatar, PopOverMenu};
 
 #[function_component(SearchFiltes)]
 pub fn search_filters() -> Html {

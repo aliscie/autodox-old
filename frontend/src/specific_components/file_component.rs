@@ -11,7 +11,7 @@ use shared::{
     schema::{FileDirectory, FileNodeDelete},
 };
 
-use crate::{components::ContextMenu, router::Route};
+use crate::{components::PopOverMenu, router::Route};
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -231,7 +231,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             ondragleave={ondragleave_under}
             class="drag_under" />
 
-           <ContextMenu
+           <PopOverMenu
            position = {position.clone()}
            items={vec![
            html! {<a><i class="fa-solid fa-signature"></i>{"Rename"}</a>},

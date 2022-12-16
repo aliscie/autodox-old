@@ -11,7 +11,7 @@ use yewdux::prelude::*;
 use shared::invoke;
 
 use crate::*;
-use crate::components::ContextMenu;
+use crate::components::PopOverMenu;
 use crate::router::Route;
 use crate::utils::DeviceInfo;
 
@@ -38,7 +38,7 @@ pub fn download(props: &DownloadProps) -> Html {
 
     return html! {
     <>
-        <ContextMenu items = {items} position = {position.clone()}/>
+        <PopOverMenu items = {items} position = {position.clone()}/>
         <span  {onclick} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
     </>
     };
