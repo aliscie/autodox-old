@@ -5,7 +5,8 @@ use wasm_bindgen::JsValue;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{window, DragEvent, Element, MouseEvent, Node};
 use yew::prelude::*;
-use yew_hooks::use_toggle;
+use yew_hooks::{use_event_with_window, use_toggle};
+use yewdux::prelude::*;
 
 use crate::router::Route;
 
@@ -24,18 +25,14 @@ pub fn menu(props: &MenuProps) -> Html {
             &y, &x
         )
     } else {
-        "display : none".to_string()
+        String::from("display: none;")
     };
-    log!(&display);
     let position = props.position.clone();
-    let onmouseleave = Callback::from(move |e: MouseEvent| {
-        let element = e.target_unchecked_into::<Element>();
-        element.set_attribute("style", "display: none");
+    use_event_with_window("click", move |_e: MouseEvent| {
         position.set(None);
     });
     return html! {
     <div
-        {onmouseleave}
         style={format!("{}", display)}
         class={"dropdown-content"}
     >
