@@ -8,7 +8,7 @@
     "devPath": "http://localhost:5173/",
     "beforeDevCommand": "cd frontend && wasm-pack build . --target web --dev  && npx vite",
     "beforeBuildCommand": "cd frontend && wasm-pack build . --target web  && npx vite build",
-    "withGlobalTauri" : true
+    "withGlobalTauri" : false
   },
   "tauri": {
     "bundle": {
@@ -19,7 +19,8 @@
         "icons/32x32.png",
         "icons/128x128.png",
         "icons/128x128@2x.png",
-        "icons/icon.icns"
+        "icons/icon.icns",
+        "icons/icon.ico"
       ],
       "resources": [],
       "externalBin": [],

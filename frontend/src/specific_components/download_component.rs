@@ -21,10 +21,6 @@ pub struct DownloadProps {
 
 #[function_component(Download)]
 pub fn download(props: &DownloadProps) -> Html {
-    //let (device, _) = use_store::<DeviceInfo>();
-    //if !device.is_web {
-    //    return html! {""};
-    //}
     let position: UseStateHandle<Option<(i32, i32)>> = use_state(|| None);
     let onmouseup: Callback<MouseEvent> = {
         let position = position.clone();
