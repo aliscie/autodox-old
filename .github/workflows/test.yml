@@ -28,7 +28,7 @@ jobs:
       - name: install dependencies (linux only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
-          sudo dnf install -y gcc libgtk-3-dev \
+          sudo dnf install -y gcc \
           zstd \
           llvm \
           clang \
@@ -41,7 +41,8 @@ jobs:
           wget \
           libappindicator-gtk3 \
           librsvg2-devel \
-          cmake patch && sudo dnf group install -y "C Development Tools and Libraries"
+          cmake patch && sudo dnf group install -y "C Development Tools and Libraries" \
+          libgtk-3-dev
 
 
       - name: install rust dependencies and build it
