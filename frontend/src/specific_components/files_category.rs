@@ -4,7 +4,7 @@ use yew::{function_component, html, Html};
 
 use shared::*;
 
-use crate::components::ContextMenu;
+use crate::components::PopOverMenu;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {

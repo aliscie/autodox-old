@@ -8,7 +8,7 @@ use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::ContextMenu;
+use crate::components::PopOverMenu;
 use crate::router::Route;
 
 #[derive(PartialEq, Properties)]

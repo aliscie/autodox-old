@@ -11,7 +11,7 @@ use shared::{
     schema::{FileDirectory, FileNodeDelete},
 };
 
-use crate::{components::ContextMenu, router::Route};
+use crate::{components::PopOverMenu, router::Route};
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -33,7 +33,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     //let drop_data = use_state(|| "".to_string());
     //let is_drag_over = use_state(|| "".to_string());
     let is_drag_under = use_state(|| "".to_string());
-    let position: UseStateHandle<Option<(i32, i32)>> = use_state(|| None);
+    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
     let navigator = use_navigator().unwrap();
@@ -169,10 +169,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let oncontextmenu = {
         let position = position.clone();
         Callback::from(move |e: MouseEvent| {
-            log!("this got fired");
-            let y = e.page_y();
-            let x = e.page_x();
-            position.set(Some((y, x)));
+            position.set(Some(e));
         })
     };
 
@@ -234,7 +231,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             ondragleave={ondragleave_under}
             class="drag_under" />
 
-           <ContextMenu
+           <PopOverMenu
            position = {position.clone()}
            items={vec![
            html! {<a><i class="fa-solid fa-signature"></i>{"Rename"}</a>},

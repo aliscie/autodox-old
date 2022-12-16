@@ -4,7 +4,7 @@
 pub use avatar::Avatar;
 pub use directory::CurrDirectory;
 
-pub use menu::ContextMenu;
+pub use menu::PopOverMenu;
 pub use title_bar::TitleBar;
 pub use tree_list::TreeList;
 
