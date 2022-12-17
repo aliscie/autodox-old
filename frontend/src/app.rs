@@ -27,8 +27,9 @@ pub fn app() -> Html {
     // only do it once
     use_effect_with_deps(
         move |_| {
-            let x = backend::initialize();
-            console::log_1(&format!("{:?}", x).into());
+            spawn_local(async move {
+                let _ = crate::hooks::init_files().await;
+            });
             || {}
         },
         (),
@@ -49,7 +50,7 @@ pub fn app() -> Html {
                     "untitled".to_string(),
                     file.id,
                 )
-                .await;
+                    .await;
                 console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
