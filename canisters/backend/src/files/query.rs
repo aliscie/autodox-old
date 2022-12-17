@@ -5,6 +5,7 @@ use crate::files::types::{MyStringsSlice, MyStrings};
 
 #[query]
 fn get_files(from: u64, to: u64) -> MyStringsSlice {
+// TODO fn get_files() -> Vec<shared::schema::FileDirectory> {
     let my_strings = s!(MyStrings);
     let mut result = MyStringsSlice::new();
 

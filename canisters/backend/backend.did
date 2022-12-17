@@ -1,6 +1,18 @@
-service : {
+type FileMode = variant {
+    Private;
+    Public;
+    Restricted
+};
 
-    "get_my_strings_page": (from: nat64, to: nat64) -> (vec text) query;
-    "add_my_string": (entry: text) ->();
+type CreateFileData = record {
+    content : text;
+    mode : FileMode;
+    name : text;
+    parent_id : text;
+};
+
+service : {
+    "get_files": (CreateFileData) -> (vec text) query;
+    "create_file": (entry: text) ->();
 }
 

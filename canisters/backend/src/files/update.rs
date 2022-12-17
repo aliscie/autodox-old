@@ -1,31 +1,23 @@
-use ic_cdk_macros::*;
+use ic_kit::{
+    macros::*,
+    candid::candid_method,
+};
 use ic_stable_memory::collections::vec::SVec;
 use ic_stable_memory::{s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade};
-use crate::files::types::{MyStringsSlice, MyStrings};
+use crate::files::types;
 use candid::CandidType;
+use ic_stable_memory::utils::ic_types::SPrincipal;
+use shared::schema::FileNode;
+use crate::utils::{Status, UpdateResponse};
 
-
-#[derive(CandidType)]
-pub enum Status {
-    Success,
-    UserNotRegisted,
-    InvalidData,
-}
-
-struct Response<T> {
-    status: Status,
-    data: T,
-}
 
 #[update]
-fn create_file<T>(entry: String) -> Response<T> {
-    let mut my_strings = s!(MyStrings);
-
-    // this call now pushes new value directly to stable memory
-    my_strings.push(&entry);
-
-    // only saves SVec's pointer, instead of the whole collection
-    s! { MyStrings = my_strings }
+#[candid_method(update)]
+fn create_file(create_file_data: types::CreateFileData) -> Status {
+    use crate::users::types::UserFiles;
+    let mut user_files = s!(UserFiles);
+    // user_files.push(HashMap::new(username, new_file_tree));
+    s! { UserFiles = user_files}
     ;
-    ;
+    Status::Success
 }
