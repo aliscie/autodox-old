@@ -6,11 +6,9 @@ pub use directory::CurrDirectory;
 
 pub use menu::PopOverMenu;
 pub use title_bar::TitleBar;
-pub use tree_list::TreeList;
+
 
 pub mod title_bar;
-
-mod tree_list;
 
 mod avatar;
 mod directory;
