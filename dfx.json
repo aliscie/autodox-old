@@ -13,7 +13,6 @@
         "entrypoint": "frontend/index.html"
       },
       "source": [
-        "frontend/public",
         "frontend/dist"
       ],
       "type": "assets"

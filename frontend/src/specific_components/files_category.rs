@@ -1,10 +1,10 @@
 use rand::seq::SliceRandom;
-use yew::{function_component, html, Html};
 use yew::prelude::*;
+use yew::{function_component, html, Html};
 
 use shared::*;
 
-use crate::components::Menu;
+use crate::components::PopOverMenu;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -48,13 +48,6 @@ pub fn buttons_group(props: &Props) -> Html {
 
     html! {
     <>
-    <Menu
-    // {my_items}
-    click_on={Some(*click_on.clone())}
-    event={position.clone()}
-     {items}
-      />
-
         <span {onmouseup} class="ptn" style="width:100%;">{format!("{}",*category.clone())}</span>
     </>
     }

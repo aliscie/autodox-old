@@ -15,10 +15,6 @@ wasm-opt = false
 [package.metadata.wasm-pack.profile.profiling]
 wasm-opt = false
 
-[package.metadata.wasm-pack.profile.release]
-wasm-opt = false
-
-
 [dependencies]
 yew = {version = "0.20.0", features = ["csr"]}
 yew-hooks = "0.2.0"
