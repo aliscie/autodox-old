@@ -49,25 +49,45 @@ pub fn get_username(address: SPrincipal, users: &Vec<User>) -> Option<UserName>{
     None
 }
 
-pub type Files = HashMap<Id, Tree<Id, FileNode>>;
-
-pub type UserFiles = HashMap<String, Files>;
+pub type UserFiles = HashMap<String, Vec<FileDirectory>>;
 
 pub enum CreateResult{
     Ok,
     AlreadyExist,
 }
 
-pub fn create_directory(user_files: &mut UserFiles, username: &String, directory_id: Id) -> CreateResult{
-    unimplemented!()
+pub fn create_directory(user_files: &mut UserFiles, username: &String, directory_id: Id, name: String) -> CreateResult{
+    let fd = FileDirectory::new(id, name);
+    match user_files.get_mut(username){
+        Some(files) => {
+            files.push(fd);
+            return CreateResult::Ok
+        },
+        None => ()
+    }
+    let l_fd = vec![fd];
+    user_files.insert(*username, l_fd);
+    return CreateResult::Ok
 }
 
-pub fn create_file(user_files: &mut UserFiles, username: &String,) -> CreateResult{
-    unimplemented!()
+pub fn get_directories(username: &String) -> Vec<FileDirectory>{
+    let files = s!(UserFiles);
+    match files.get(username){
+        None => Vec::new(),
+        Some(list) => list,
+    }
 }
 
 type ElementTreeStorage = HashMap<UserName, HashMap<Id, ElementTree>>;
 
 pub fn get_element_tree(element_tree_storage: &ElementTree, username: UserName, id: Id) -> Option<ElementTree>{
-    unimplemented!()
+    match element_tree_storage.get(&username){
+        None => None,
+        Some(element_trees) => {
+            match element_trees.get(&id){
+                None => None,
+                Some(element_tree) => Some(element_tree)
+            }
+        }
+    }
 }
