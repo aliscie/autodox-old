@@ -5320,7 +5320,11 @@ checksum = "6bdef32e8150c2a081110b42772ffe7d7c9032b606bc226c8260fd97e0976601"
 [[package]]
 name = "surrealdb"
 version = "1.0.0-beta.8"
+<<<<<<< HEAD
 source = "git+https://github.com/aliscie/surrealdb#d8a3952834a9b72bf0646df2adbb5fcbaeec8536"
+=======
+source = "git+https://github.com/lunchspider/surrealdb?branch=testing#69c548d052236631c239f4598ad71c6e243105ad"
+>>>>>>> f4a9393 (testing out new surrealdb patch to fix macos builds)
 dependencies = [
  "addr",
  "argon2",
