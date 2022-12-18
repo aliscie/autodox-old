@@ -1,25 +1,27 @@
-use crate::backend;
-use crate::specific_components::TreeList;
-use crate::router::{switch, Route};
-use crate::specific_components::{ButtonsGroup, SearchFiltes};
-use crate::utils::GetTitleBar;
-use shared::log;
-use shared::schema::{FileDirectory, FileNode};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{console, MouseEvent};
+use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
+
+// use shared::log;
+use shared::schema::{FileDirectory, FileNode};
+
+use crate::backend;
+use crate::router::{Route, switch};
+use crate::specific_components::{ButtonsGroup, SearchFiltes};
+use crate::utils::filetree::FileTree;
+use crate::utils::GetTitleBar;
 
 #[function_component(App)]
 pub fn app() -> Html {
     spawn_local(async move {
         let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-        log!(&backend::read(canister_id.clone()).await);
-        log!(JsValue::js_typeof(
-            &backend::read(canister_id.clone()).await
-        ));
+        // log!(&backend::read(canister_id.clone()).await);
+        // log!(JsValue::js_typeof(
+        //     &backend::read(canister_id.clone()).await
+        // ));
     });
     let aside_bar_toggle = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_toggle.clone();
@@ -51,7 +53,7 @@ pub fn app() -> Html {
                     file.id,
                 )
                     .await;
-                console::log_1(&format!("create_file response : {:?}", x).into());
+                // console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
                         .files
@@ -71,7 +73,7 @@ pub fn app() -> Html {
             <ButtonsGroup/>
 
             <ul  id="myUL">
-            <TreeList/>
+            <FileTree/>
             <bottom_buttons>
             <button onclick={handle_create_file}><i class="fa-solid fa-plus"></i>{"Add file"}</button>
             <span ><input placeholder="Add from test"/></span>

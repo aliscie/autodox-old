@@ -2,7 +2,7 @@ use crate::router::Route;
 use crate::specific_components::FileComponent;
 use indexmap::IndexSet;
 use shared::id::Id;
-use shared::log;
+// use shared::log;
 use shared::schema::{FileDirectory, FileNode};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -15,19 +15,24 @@ use yew::{html, Html};
 use yew_hooks::{use_bool_toggle, use_toggle};
 use yew_router::prelude::use_navigator;
 
-#[derive(Properties, PartialEq)]
-pub struct Props {
-    pub file_directory: Rc<FileDirectory>,
-    pub start: Id,
-}
+// #[derive(Properties, PartialEq)]
+// pub struct Props {
+//     // pub file_directory: Rc<FileDirectory>,
+//     // pub start: Id,
+// }
+use yew::prelude::*;
+use yewdux::prelude::*;
 
 #[function_component(FileTree)]
-pub fn to_html(props: &Props) -> Html {
+pub fn to_html() -> Html {
+    let (tree, _) = use_store::<FileDirectory>();
+    let start = tree.clone().files.root.unwrap().clone();
+
     let map: Rc<RefCell<HashMap<Id, VNode>>> = Rc::new(RefCell::new(HashMap::new()));
-    for (id, file_node) in props.file_directory.files.into_iter(props.start) {
+    for (id, file_node) in tree.clone().files.into_iter(start) {
         let mut class_name = "";
         let mut has_children = false;
-        if let Some(node_ids) = props.file_directory.files.adjacency.get(id) {
+        if let Some(node_ids) = tree.clone().files.adjacency.get(id) {
             if !node_ids.is_empty() {
                 has_children = true;
                 class_name = "caret";
@@ -39,17 +44,16 @@ pub fn to_html(props: &Props) -> Html {
                 file_node = {file_node.clone()}
                 has_children = {has_children}
                 map = {map.clone()}
-                file_directory = {props.file_directory.clone()}
+                file_directory = {tree.clone()}
                 class_name = {class_name}/>
         };
         map.borrow_mut().insert(*id, html_node);
     }
-    log!(map.borrow());
-    props
-        .file_directory
+    // log!(map.borrow());
+    tree.clone()
         .files
         .adjacency
-        .get(&props.start)
+        .get(&start)
         .unwrap_or(&Vec::new())
         .into_iter()
         .map(|f| map.borrow().get(f).unwrap().to_owned())
