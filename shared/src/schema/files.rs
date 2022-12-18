@@ -76,7 +76,6 @@ impl CandidType for FileMode {
 pub struct FileNodeCreate {
     pub id: Id,
     pub name: String,
-    pub mode: FileMode,
     pub directory_id: Id,
     pub parent_id: Id,
     pub children: Option<Vec<Id>>,
@@ -124,7 +123,6 @@ impl CandidType for FileNodeCreate {
         let mut ser = _serializer.serialize_struct()?;
         candid::types::Compound::serialize_element(&mut ser, &self.id)?;
         candid::types::Compound::serialize_element(&mut ser, &self.name)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.mode)?;
         candid::types::Compound::serialize_element(&mut ser, &self.directory_id)?;
         candid::types::Compound::serialize_element(&mut ser, &self.parent_id)?;
         candid::types::Compound::serialize_element(&mut ser, &self.children)?;

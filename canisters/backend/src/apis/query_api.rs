@@ -1,6 +1,5 @@
-use candid::candid_method;
 use ic_kit::{
-    macros::*, candid::CandidType
+    macros::*, candid::candid_method
 };
 
 use ic_stable_memory::{
@@ -8,7 +7,7 @@ use ic_stable_memory::{
     s,
 };
 
-use shared::schema::*;
+use shared::{schema::*, id::Id};
 
 use crate::*;
 
@@ -22,7 +21,7 @@ pub fn read_element(id: Id) -> Option<ElementTree>{
         Some(username) => username
     };
     let element_storage_tree = s!(ElementTreeStorage);
-    get_element_tree(&element_tree_storage, username, id)
+    _get_element_tree(&element_storage_tree, username, id)
 }
 
 #[query]
@@ -34,5 +33,5 @@ pub fn read_files() -> Result<Vec<FileDirectory>, BackendError>{
         None => return Err(BackendError::UserNotRegisted),
         Some(username) => username
     };
-    Ok(get_directories(username))
+    Ok(_get_directories(&username))
 }

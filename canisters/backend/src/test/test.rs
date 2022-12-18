@@ -5,6 +5,8 @@ use ic_kit::{
     candid::export_service
 };
 
+use shared::{schema::*, id::Id};
+
 #[query(name = "__get_candid_interface_tmp_hack")]
 fn export_candid() -> String {
     export_service!();

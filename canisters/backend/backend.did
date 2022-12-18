@@ -1,89 +1,48 @@
-type AddChildContentResponse = variant {
-  FileDoesNotExist;
-  Success;
-  Unauthorized;
-  UserNotRegisted;
-};
-type AddViewerData = record { parent_id : text; viewer : text };
-type AddViewerResponse = variant {
-  FileDoesNotExist;
+type Attrs = variant { Src; Style; Href };
+type BackendError = variant { UserNotRegisted; DirectoryDoesNotExist };
+type CreateDirectoryResponse = variant {
   AlreadyExist;
   Success;
-  Unauthorized;
-  InvalidUser;
   UserNotRegisted;
 };
-type ChangeFileModeData = record { parent_id : text; new_mode : FileMode };
-type ChangeFileModeResponse = variant {
-  FileDoesNotExist;
-  Success;
-  Unauthorized;
-  UserNotRegisted;
+type EditorElement = record {
+  id : text;
+  attrs : vec record { Attrs; text };
+  "text" : text;
 };
-type ChildContent = record { content : text };
-type ChildContentData = record {
-  content : text;
-  child_id : text;
-  parent_id : text;
-};
-type CreateFileData = record {
-  content : text;
-  mode : FileMode;
+type ElementTree = record { id : text; elements : Tree };
+type FileDirectory = record { id : text; files : Tree_1; name : text };
+type FileMode = variant { Public; Private; Restricted };
+type FileNode = record { id : text; name : text; element_tree : opt text };
+type FileNodeCreate = record {
+  id : text;
   name : text;
+  mode : FileMode;
+  directory_id : text;
   parent_id : text;
-};
-type CreateFileResponse = variant { Success; UserNotRegisted };
-type DeleteFileData = record { child_id : opt text; parent_id : text };
-type DeleteFileResponse = variant {
-  FileDoesNotExist;
-  Success;
-  Unauthorized;
-  UserNotRegisted;
-};
-type FileMode = variant { Private; Public; Restricted };
-type ReadFileData = record { parent_id : text };
-type ReadFileResponse = variant {
-  FileDoesNotExist;
-  File : record {
-    content : text;
-    name : text;
-    parent_id : text;
-    child_contents : vec record { text; ChildContent };
-  };
-  NotAllowed;
-  UserNotRegisted;
+  children : opt vec text;
 };
 type RegisterResponse = variant {
   AlreadyRegistered : record { user_name : text };
   Success : record { user_name : text };
   UserNameAlreadyInUse;
 };
-type RemoveViewerResponse = variant {
-  FileDoesNotExist;
-  ViewerNotFound;
-  Success;
-  Unauthorized;
-  InvalidUser;
-  UserNotRegisted;
+type Result = variant { Ok; Err : BackendError };
+type Result_1 = variant { Ok : vec FileDirectory; Err : BackendError };
+type Tree = record {
+  root : opt text;
+  vertices : vec record { text; EditorElement };
+  adjacency : vec record { text; vec text };
 };
-type UpdateFileData = record {
-  child_id : opt text;
-  parent_id : text;
-  new_content : text;
-};
-type UserNameResponse = variant {
-  User : record { user_name : text };
-  UserNotRegisted;
+type Tree_1 = record {
+  root : opt text;
+  vertices : vec record { text; FileNode };
+  adjacency : vec record { text; vec text };
 };
 service : () -> {
-  add_child_content : (ChildContentData) -> (AddChildContentResponse);
-  add_viewer : (AddViewerData) -> (AddViewerResponse);
-  change_file_mode : (ChangeFileModeData) -> (ChangeFileModeResponse);
-  create_file : (CreateFileData) -> (CreateFileResponse);
-  delete_file : (DeleteFileData) -> (DeleteFileResponse);
-  read_file : (ReadFileData) -> (ReadFileResponse) query;
+  create_directory : (text, text) -> (CreateDirectoryResponse);
+  create_file : (FileNodeCreate) -> (Result);
+  read_element : (text) -> (opt ElementTree) query;
+  read_files : () -> (Result_1) query;
   register : (text) -> (RegisterResponse);
-  remove_viewer : (AddViewerData) -> (RemoveViewerResponse);
-  update_file : (UpdateFileData) -> (DeleteFileResponse);
-  username : () -> (UserNameResponse) query;
 }

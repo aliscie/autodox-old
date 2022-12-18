@@ -1,4 +1,5 @@
 {
+  "version": 1,
   "canisters": {
     "backend": {
       "candid": "canisters/backend/backend.did",
@@ -23,6 +24,5 @@
       "args": "",
       "packtool": ""
     }
-  },
-  "version": 1
+  }
 }

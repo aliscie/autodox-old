@@ -16,7 +16,19 @@ use crate::*;
 #[update]
 #[candid_method(update)]
 pub fn create_directory(directory_id: Id, name: String) -> CreateDirectoryResponse{
-    unimplemented!()
+    let caller = SPrincipal(ic_cdk::caller());
+    let users = s!(Users);
+    let username = match get_username(caller, &users){
+        None => return CreateDirectoryResponse::UserNotRegisted,
+        Some(username) => username
+    };
+    let mut user_files = s!(UserFiles);
+    match _create_directory(&mut user_files, &username, directory_id, name){
+        CreateResult::AlreadyExist => return CreateDirectoryResponse::AlreadyExist,
+        _ => ()
+    }
+    s!{ UserFiles = user_files};
+    CreateDirectoryResponse::Success
 }
 
 #[update]
@@ -28,7 +40,13 @@ pub fn create_file(fnc: FileNodeCreate) -> Result<(), BackendError>{
         None => return Err(BackendError::UserNotRegisted),
         Some(username) => username
     };
-    unimplemented!()
+    let mut user_files = s!(UserFiles);
+    match _create_file(&mut user_files, &username, fnc.directory_id, fnc.id, fnc.name, fnc.children){
+        CreateResult::Ok => (),
+        _ => return Err(BackendError::DirectoryDoesNotExist)
+    }
+    s!{ UserFiles = user_files};
+    Ok(())
 }
 
 #[update]
