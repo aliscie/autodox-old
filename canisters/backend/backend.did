@@ -4,15 +4,51 @@ type FileMode = variant {
     Restricted
 };
 
-type CreateFileData = record {
-    content : text;
-    mode : FileMode;
-    name : text;
-    parent_id : text;
+
+type FileNode = record {
+    id: text;
+    name: text;
+    element_tree: text;
 };
 
+
+type CreateFileData = record {
+    id: text;
+    name: text;
+    mode: FileMode;
+    directory_id: text;
+    parent_id: text;
+    children: opt vec text;
+};
+
+type CreateDirectoryData = record {
+    id: text;
+    name: text;
+    files: opt vec FileNode;
+};
+
+type Tree = record {
+    root : opt text;
+    vertices : vec record {
+        text;
+        FileNode
+    };
+    adjacency : vec record {
+        text;
+        vec text
+    };
+};
+
+
+type FileDirectory = variant {
+    id: text;
+    name: text;
+    files: Tree;
+}
+
 service : {
-    "get_files": (CreateFileData) -> (vec text) query;
-    "create_file": (entry: text) ->();
+    "create_file": (CreateFileData) -> (text);
+    "create_directory": (CreateDirectoryData) -> (text);
+    "get_directories": () ->(vec FileDirectory) query;
 }
 

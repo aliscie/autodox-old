@@ -16,10 +16,10 @@ use yewdux::prelude::*;
 pub fn app() -> Html {
     spawn_local(async move {
         let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-        log!(&backend::read(canister_id.clone()).await);
-        log!(JsValue::js_typeof(
-            &backend::read(canister_id.clone()).await
-        ));
+        // log!(&backend::read(canister_id.clone()).await);
+        // log!(JsValue::js_typeof(
+        //     &backend::read(canister_id.clone()).await
+        // ));
     });
     let aside_bar_toggle = use_state_eq(|| "".to_string());
     let toggle_aside = aside_bar_toggle.clone();

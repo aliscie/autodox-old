@@ -22,13 +22,13 @@ async fn on_startup() -> Result<(), String> {
         log_1(&format!("error is : {:?}", e).into());
         e
     }).unwrap_or_default();
-    log_1(&format!("get_directory returned : {:?}", directories).into());
+    // log_1(&format!("get_directory returned : {:?}", directories).into());
     let file_tree = Dispatch::<FileDirectory>::new();
     if directories.len() == 0 {
         // create new directory tree
         let file_directory = FileDirectory::default();
         let x = crate::backend::create_directory(&file_directory).await;
-        log_1(&format!("create_directory returned : {:?}", x).into());
+        // log_1(&format!("create_directory returned : {:?}", x).into());
         // setting the file
         file_tree.set(file_directory);
     } else {

@@ -5,3 +5,4 @@ mod query;
 pub mod types;
 mod update;
 
+mod utils;
