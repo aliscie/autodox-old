@@ -29,7 +29,10 @@ jobs:
         
       - name: clang
         uses: egor-tensin/setup-clang@v1
-
+      
+#       - name: clang
+#         if: matrix.platform == 'macos-latest'
+#         run: cmake -S . -B build -D CMAKE_C_COMPILER=$(brew --prefix llvm)/bin/clang -D CMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang
     
 #       - name: install dependencies (linux only)
 #         if: matrix.platform == 'ubuntu-latest'
