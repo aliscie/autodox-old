@@ -19,10 +19,12 @@ jobs:
       - uses: actions/checkout@v3
       - name: setup node
         uses: actions/setup-node@v3
+      - name: check
         with:
           node-version: 18
       - name: install Rust stable
         uses: actions/cache@v3
+      - name: rust tool
         uses: dtolnay/rust-toolchain@stable
       - name: update rustup
         run: rustup target add wasm32-unknown-unknown
