@@ -11,6 +11,7 @@ use web_sys::console::log_1;
 use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
+use crate::utils::my_function;
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -131,7 +132,7 @@ pub fn editor(props: &Props) -> Html {
 
     use_effect_with_deps(
         move |editor_ref| {
-            //let data = &my_function();
+            let data = &my_function();
             let mutation_observer =
                 MutationObserver::new(oninput_event.as_ref().unchecked_ref()).unwrap();
             //let doc = window().unwrap_throw().document().unwrap_throw();
@@ -148,8 +149,6 @@ pub fn editor(props: &Props) -> Html {
                     .character_data_old_value(true)
                     .subtree(true),
             );
-            // leaking memory here!
-            oninput_event.forget();
             //PasteConverter::new(editor.clone());
             //TODO
             // DragAndDrop::new(editor.clone());
@@ -157,6 +156,7 @@ pub fn editor(props: &Props) -> Html {
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
             move || {
+                drop(oninput_event);
                 mutation_observer.disconnect();
             }
         },

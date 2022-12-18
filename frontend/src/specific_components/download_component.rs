@@ -1,18 +1,19 @@
 use serde::{Deserialize, Serialize};
-use shared::invoke;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{window, DragEvent, Element, MouseEvent};
-use yew::prelude::*;
+use web_sys::{DragEvent, Element, MouseEvent, window};
 use yew::{html, Html};
+use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::Menu;
+use shared::invoke;
+
+use crate::*;
+use crate::components::PopOverMenu;
 use crate::router::Route;
 use crate::utils::DeviceInfo;
-use crate::*;
 
 #[derive(PartialEq, Properties)]
 pub struct DownloadProps {
@@ -22,11 +23,12 @@ pub struct DownloadProps {
 #[function_component(Download)]
 pub fn download(props: &DownloadProps) -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
-    let (device, _) = use_store::<DeviceInfo>();
-    let _position = position.clone();
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        _position.set(Some(_e));
-    });
+    let onclick = {
+        let position = position.clone();
+        Callback::from(move |e: MouseEvent| {
+            position.set(Some(e));
+        })
+    };
 
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-brands fa-apple"></i>{"Mac"}</a>},
@@ -34,12 +36,10 @@ pub fn download(props: &DownloadProps) -> Html {
         html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
 
-    if device.is_web {
-        return html! {<>
-            <Menu event={position.clone()}{items}/>
-
-                <span  {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
-        </>};
-    }
-    return html! {""};
+    return html! {
+    <>
+        <PopOverMenu items = {items} position = {position.clone()}/>
+        <span  {onclick} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
+    </>
+    };
 }

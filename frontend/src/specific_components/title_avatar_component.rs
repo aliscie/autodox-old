@@ -1,9 +1,8 @@
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
-
 use crate::backend;
-use crate::components::{Avatar, Menu};
+use crate::components::{Avatar, PopOverMenu};
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
@@ -14,7 +13,9 @@ pub fn title_avatar_component() -> Html {
         _position.set(Some(_e));
     });
     let logout = Callback::from(move |e: MouseEvent| {
-        spawn_local(async move { backend::logout().await; })
+        spawn_local(async move {
+            backend::logout().await;
+        })
     });
 
     let items: Vec<Html> = vec![
@@ -47,10 +48,6 @@ pub fn title_avatar_component() -> Html {
 
     if *is_logged_ing {
         return html! { <>
-        <Menu
-        event={position.clone()}
-         {items}
-          />
         <span class="right_clickable main_avatar" {onmouseup}>
         <Avatar />
         </span>

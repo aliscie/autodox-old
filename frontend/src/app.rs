@@ -1,16 +1,18 @@
-use crate::backend;
-use crate::components::TreeList;
-use crate::router::{switch, Route};
-use crate::specific_components::{ButtonsGroup, SearchFiltes};
-use crate::utils::GetTitleBar;
-use shared::log;
-use shared::schema::{FileDirectory, FileNode};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{console, MouseEvent};
+use web_sys::MouseEvent;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
+
+// use shared::log;
+use shared::schema::{FileDirectory, FileNode};
+
+use crate::backend;
+use crate::router::{Route, switch};
+use crate::specific_components::{ButtonsGroup, SearchFiltes};
+use crate::utils::filetree::FileTree;
+use crate::utils::GetTitleBar;
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -27,8 +29,9 @@ pub fn app() -> Html {
     // only do it once
     use_effect_with_deps(
         move |_| {
-            let x = backend::initialize();
-            console::log_1(&format!("{:?}", x).into());
+            spawn_local(async move {
+                let _ = crate::hooks::init_files().await;
+            });
             || {}
         },
         (),
@@ -49,8 +52,8 @@ pub fn app() -> Html {
                     "untitled".to_string(),
                     file.id,
                 )
-                .await;
-                console::log_1(&format!("create_file response : {:?}", x).into());
+                    .await;
+                // console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
                         .files
@@ -70,7 +73,7 @@ pub fn app() -> Html {
             <ButtonsGroup/>
 
             <ul  id="myUL">
-            <TreeList/>
+            <FileTree/>
             <bottom_buttons>
             <button onclick={handle_create_file}><i class="fa-solid fa-plus"></i>{"Add file"}</button>
             <span ><input placeholder="Add from test"/></span>

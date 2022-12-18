@@ -2,17 +2,17 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{DragEvent, Element, MouseEvent, window};
-use yew::{html, Html};
+use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
+use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
 use shared::invoke;
 
-use crate::*;
-use crate::components::Menu;
+use crate::components::PopOverMenu;
 use crate::router::Route;
+use crate::*;
 
 #[derive(PartialEq, Properties)]
 pub struct MarkdownProps {
@@ -23,7 +23,7 @@ pub struct MarkdownProps {
 pub fn markdown(props: &MarkdownProps) -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let _position = position.clone();
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+    let onclick: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _position.set(Some(_e));
     });
 
@@ -43,7 +43,7 @@ pub fn markdown(props: &MarkdownProps) -> Html {
     ];
 
     html! {<>
-        <Menu click_on={Some(true)} event={position.clone()}{items}/>
-        <li {onmouseup} class="btn right_clickable"> <i class="fa-brands fa-markdown"></i></li>
+        <PopOverMenu items = {items} position = {position.clone()}/>
+        <li {onclick} class="btn right_clickable"> <i class="fa-brands fa-markdown"></i></li>
     </>}
 }
