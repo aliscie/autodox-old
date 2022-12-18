@@ -28,8 +28,8 @@ jobs:
         run: rustup target add wasm32-unknown-unknown
         
       - name: configure clang
-        if: matrix.platform == 'macos-latest'
-        run: cmake -S . -B build -D CMAKE_C_COMPILER=$(brew --prefix llvm)/bin/clang -D CMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++
+        uses: RafikFarhad/clang-format-github-action@v3
+
     
       - name: install dependencies (linux only)
         if: matrix.platform == 'ubuntu-latest'
