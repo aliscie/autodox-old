@@ -25,10 +25,10 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: update rustup
         run: rustup target add wasm32-unknown-unknown
-      - name: install dependencies (fedora only)
+      - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run : |
-          sudo apt install libwebkit2gtk-4.0-dev \
+          sudo apt update && sudo apt install libwebkit2gtk-4.0-dev \
             build-essential \
             curl \
             wget \
