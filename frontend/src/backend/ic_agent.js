@@ -1,18 +1,22 @@
 import {AuthClient} from "@dfinity/auth-client";
 import * as backend from './../../../../../backend/index.js'
 
-export const createActor = async canisterId => {
-    // test http://localhost:8000 main https://ic0.app
-    const host = 'http://localhost:8000'
-    const options = {agentOptions: {host}}
-    return backend.createActor(canisterId, options)
-}
+// export const createActor = async canisterId => {
+//     // test http://localhost:8000 main https://ic0.app
+//     const host = 'http://localhost:8000'
+//     const options = {agentOptions: {host}}
+//     return backend.createActor(canisterId, options)
+// }
 
-export const read = async canisterId => {
+// export const read = async canisterId => {
+//     const actor = await createActor(canisterId)
+//     return await actor;
+// }
+
+export const create_file = async (canisterId, text) => {
     const actor = await createActor(canisterId)
-    return await actor;
+    return await actor.create_file(text);
 }
-
 
 export async function identify() {
     const authClient = await AuthClient.create();

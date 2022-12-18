@@ -41,7 +41,7 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
     let id = data.id;
     let parent_id = data.parent_id;
     let directory_id = data.directory_id;
-    println!("create_file data is : {:?}", data);
+    // println!("create_file data is : {:?}", data);
     store.exec_create(data).await?;
     // cannot use store.exec_update here due to pushing value to array
     let sql = "update $tb set children += $va";

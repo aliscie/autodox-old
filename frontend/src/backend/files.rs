@@ -22,9 +22,14 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         children: None,
     };
     if info.get().is_web || info.get().is_online {
+        spawn_local(async move {
+            let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+            crate::backend::create_file_ic(canister_id, "hello world".to_string()).await;
+        });
         unimplemented!();
     }
     if !info.get().is_web {
+        log!("Desktop");
         let new_file = serde_json::json!({ "data": data });
         return crate::backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
     } else {
@@ -43,7 +48,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -60,7 +65,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -77,7 +82,7 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -94,7 +99,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-        .await;
+            .await;
         log!(&x);
         return x;
     } else {
@@ -146,7 +151,7 @@ async fn local_change_directory(
                     }
                     f.files.push_edge(
                         Uuid::parse_str(&parent_id).map(Id::from).unwrap(),
-                        child_id
+                        child_id,
                     );
                 });
                 e
