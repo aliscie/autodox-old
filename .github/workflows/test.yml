@@ -21,8 +21,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: install Rust stable
-        uses: actions/cache@v3
       - name: rust tool
         uses: dtolnay/rust-toolchain@stable
       - name: update rustup
