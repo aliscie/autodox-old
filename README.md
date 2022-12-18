@@ -87,3 +87,23 @@ This app is Notion.so clone, roamresearch clone and obsidian clone. The main pur
 1. $`git clone https://github.com/aliscie/autodox-tauri`
 1. $`cd autodox-tauri`
 1. $`cargo tauri dev`
+
+### running project in ubuntu20.04
+1. $ `cd frontend/`
+1. $ `yarn`
+1. $ `cd ..`
+1. $ `export PATH="$PATH:$HOME/.cargo/bin"`
+1. $ `rustup target add wasm32-unknown-unknown`
+1. $ `cargo install wasm-bindgen-cli`
+1. $ `dfx deploy`
+1. $ `curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh`
+1. $ `cargo install rquickjs-sys`
+1. $ `sudo apt update && sudo apt upgrade -y `
+1. $ `sudo apt install clang-9 --install-suggests`
+1. $ `curl -s https://gist.githubusercontent.com/srimaln91/bea81d8c5ba36a64b0cd1b3b5324f687/raw/ba679250ebf3917203d61c60f01da5c01f441874/rocksdb-install.sh | sudo  bash`
+1. $ `sudo apt install -y gcc zstd llvm clang openssl perl cmake patch && sudo apt group install -y "C Development Tools and Libraries" libgtk-3-dev`
+1. $ `sudo apt install librocksdb-dev`
+1. $ `sudo apt -y install devscripts debhelper build-essential fakeroot zlib1g-dev libbz2-dev libsnappy-dev libgflags-dev libzstd-dev`
+1. $ `git clone https://github.com/ulikoehler/deb-buildscripts.git`
+1. $ `cd deb-buildscripts`
+1. $ `./deb-rocksdb.py`
