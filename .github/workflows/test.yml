@@ -26,8 +26,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: update rustup
         run: rustup target add wasm32-unknown-unknown
-        
-      - name: clang
+      - name: install dependencies (linux only)
+        if: matrix.platform == 'ubuntu-latest'
         uses: egor-tensin/setup-clang@v1
       
 #       - name: clang
