@@ -14,6 +14,7 @@ jobs:
       matrix:
         platform: [macos-latest, ubuntu-latest, windows-latest]
 
+    
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
@@ -25,6 +26,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: update rustup
         run: rustup target add wasm32-unknown-unknown
+        
+      - name: configure clang
+        if: matrix.platform == 'macos-latest'
+        run: cmake -S . -B build -D CMAKE_C_COMPILER=$(brew --prefix llvm)/bin/clang -D CMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++
+    
       - name: install dependencies (linux only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
