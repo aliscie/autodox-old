@@ -297,12 +297,6 @@ pub struct FileDirectory {
     pub files: Tree<Id, FileNode>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable))]
-pub struct FileDirectoryCrate {
-    pub id: Id,
-    pub name: String,
-}
 
 
 #[cfg(feature = "backend")]
