@@ -47,7 +47,7 @@ type FileDirectory = variant {
 }
 
 service : {
-    //    "create_file": (CreateFileData) -> (text);
+    "create_file": (CreateFileData) -> (text);
     "create_directory": (CreateDirectoryData) -> (text);
     "register": (text) -> (text);
     //    "get_directories": () ->(vec FileDirectory) query;

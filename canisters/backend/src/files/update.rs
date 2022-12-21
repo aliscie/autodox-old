@@ -23,14 +23,14 @@ pub fn create_file(create_file_data: FileNodeCreate) -> Status {
         Some(username) => username,
     };
     let mut user_files: UserFiles = s!(UserFiles);
-    if let Some(file_directory) = user_files.get_mut(username) {
+    if let Some(file_directory) = user_files.get_mut(&*username) {
         let mut parent_adjacency = file_directory
-            .adjacency
+            .files.adjacency
             .entry(create_file_data.parent_id)
             .or_default();
-        parent_adjacency.insert(create_file_data.id);
+        parent_adjacency.push(create_file_data.id);
         file_directory
-            .vertices
+            .files.vertices
             .insert(create_file_data.id, create_file_data.into());
     }
     // let _= create::utils::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
