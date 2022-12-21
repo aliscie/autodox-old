@@ -82,6 +82,16 @@ pub struct FileNodeCreate {
     pub children: Option<Vec<Id>>,
 }
 
+impl From<FileNodeCreate> for FileNode {
+    fn from(value: FileNodeCreate) -> Self {
+        Self {
+            id: value.id,
+            name: value.name,
+            element_tree: None,
+        }
+    }
+}
+
 #[cfg(feature = "backend")]
 impl CandidType for FileNodeCreate {
     fn _ty() -> candid::types::Type {
