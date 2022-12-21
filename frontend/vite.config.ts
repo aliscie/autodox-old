@@ -1,6 +1,6 @@
 import {defineConfig} from 'vite';
 import wasmPack from 'vite-plugin-wasm-pack';
-import EnvironmentPlugin from 'vite-plugin-environment'
+// import EnvironmentPlugin from 'vite-plugin-environment'
 
 export default defineConfig({
     publicDir: './public',
@@ -18,7 +18,6 @@ export default defineConfig({
     },
     plugins: [
         wasmPack(["../frontend"]),
-        // EnvironmentPlugin(['BACKEND_CANISTER_ID',"DFX_NETWORK","FRONTEND_CANISTER_ID"]),
 
     ],
     define: {
