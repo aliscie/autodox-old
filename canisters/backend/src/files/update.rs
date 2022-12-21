@@ -1,11 +1,8 @@
-use ic_kit::{
-    candid::candid_method,
-};
+use ic_kit::candid::candid_method;
 use ic_cdk::update;
 use ic_stable_memory::s;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 use crate::files::types::RegisterResponse;
-use crate::files::utils::{check_already_registered, username_check};
 use crate::users;
 use crate::users::types::{User, Users};
 use crate::utils::Status;
@@ -57,19 +54,3 @@ use crate::utils::Status;
 //     s!{ UserFiles = user_files};
 //     Ok(())
 // }
-
-
-#[update]
-#[candid_method(update)]
-pub fn register(user_name: String) -> String {
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
-    let mut users = s!(Users);
-    if let Some(registered_name) = check_already_registered(&caller, users.clone()) {
-        return "already exits".to_string();//RegisterResponse::AlreadyRegistered { user_name: registered_name };
-    }
-    let new_user = User { user_name: user_name.clone(), address: caller.clone() };
-    users.push(new_user);
-    s! { Users = users}
-    ;
-    "ok".to_string()
-}
