@@ -24,7 +24,7 @@ type CreateFileData = record {
 type CreateDirectoryData = record {
     id: text;
     name: text;
-//    files: opt vec (text, FileNode);
+    files: opt vec FileNode;
 };
 
 type Tree = record {
@@ -48,7 +48,7 @@ type FileDirectory = variant {
 
 service : {
     "create_file": (CreateFileData) -> (text);
-    "create_directory": (CreateDirectoryData) -> (text);
+    "create_directory": () -> (text);
     "register": (text) -> (text);
     //    "get_directories": () ->(vec FileDirectory) query;
 }

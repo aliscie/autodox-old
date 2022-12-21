@@ -9,7 +9,7 @@ use ic_stable_memory::collections::vec::SVec;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 
 use shared::id::Id;
-use shared::schema::{FileNode, FileNodeCreate};
+use shared::schema::{FileDirectory, FileNode, FileNodeCreate};
 use shared::Tree;
 
 use crate::files::types::*;
@@ -39,27 +39,39 @@ pub fn create_file(create_file_data: FileNodeCreate) -> Status {
             .insert(create_file_data.id, create_file_data.into());
     }
     // let _= create::utils::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
     Status::Success
 }
 
 
 #[update]
 #[candid_method(update)]
-pub fn create_directory(id:String, name: String) -> Status {
+pub fn create_directory() -> String {
+    // test it with no input
+    // create new id object
+    let id = Id::new();
+    let name = "test".to_string();
     let caller = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users) {
-        None => return Status::UnAuthorized,
+        None => return "Status::UnAuthorized".to_string(),
         Some(username) => username,
     };
     let mut user_files = s!(UserFiles);
-    // let new_tree = Tree::new();
-    // let new_file = FileNode::new(dummy-data);
-    // let new_data = FileDirectory{create_file_data.id, create_file_data.name, new_tree.insert(new_file)}
-    // user_files.insert(username, new_data);
+    let new_dir = FileDirectory {
+        id: id.parse().unwrap(),
+        name: name,
+        files: Tree {
+            vertices: HashMap::new(),
+            adjacency: HashMap::new(),
+            root: None,
+        },
+    };
+    user_files.insert(username, new_dir);
     // let res = _create_directory(&mut user_files, &username, create_file_data.id, create_file_data.name);
+    // println!("{:#?}", res);
     s! { UserFiles = user_files}
     ;
-    Status::Success
+    "Status::Success".to_string()
 }
