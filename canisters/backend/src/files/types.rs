@@ -20,3 +20,14 @@ pub struct CreateFileData {
 }
 
 
+
+pub enum CreateResult{
+    Ok,
+    AlreadyExist,
+    DirectoryDoesNotExist
+}
+
+#[derive(Serialize, Debug)]
+pub struct RegisterResponse {
+    url: String,
+}
