@@ -24,7 +24,7 @@ type CreateFileData = record {
 type CreateDirectoryData = record {
     id: text;
     name: text;
-    files: opt vec FileNode;
+//    files: opt vec (text, FileNode);
 };
 
 type Tree = record {

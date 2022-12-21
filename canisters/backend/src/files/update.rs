@@ -11,7 +11,8 @@ use ic_stable_memory::{
     s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade,
 };
 use shared::id::Id;
-use shared::schema::{FileDirectory, FileNode, FileNodeCreate};
+use shared::schema::{FileDirectory, FileDirectoryCrate, FileNode, FileNodeCreate};
+use shared::Tree;
 
 #[update]
 #[candid_method(update)]
@@ -40,7 +41,7 @@ pub fn create_file(create_file_data: FileNodeCreate) -> Status {
 
 #[update]
 #[candid_method(update)]
-pub fn create_directory(create_file_data: FileDirectory) -> Status {
+pub fn create_directory(create_file_data: FileDirectoryCrate) -> Status {
     let caller = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users) {
@@ -48,7 +49,10 @@ pub fn create_directory(create_file_data: FileDirectory) -> Status {
         Some(username) => username,
     };
     let mut user_files = s!(UserFiles);
-    user_files.insert(username, create_file_data);
+    // let new_tree = Tree::new();
+    // let new_file = FileNode::new(dummy-data);
+    // let new_data = FileDirectoryCrate{create_file_data.id, create_file_data.name, new_tree.insert(new_file)}
+    // user_files.insert(username, new_data);
     // let res = _create_directory(&mut user_files, &username, create_file_data.id, create_file_data.name);
     // println!("{:#?}", res);
     s! { UserFiles = user_files};
