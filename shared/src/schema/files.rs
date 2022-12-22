@@ -297,6 +297,8 @@ pub struct FileDirectory {
     pub files: Tree<Id, FileNode>,
 }
 
+
+
 #[cfg(feature = "backend")]
 impl candid::types::CandidType for FileDirectory {
     fn _ty() -> candid::types::Type {

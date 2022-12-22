@@ -5,4 +5,4 @@ mod query;
 pub mod types;
 mod update;
 
-mod utils;
+pub(crate) mod utils;
