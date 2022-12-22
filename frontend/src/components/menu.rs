@@ -28,12 +28,15 @@ pub fn menu(props: &MenuProps) -> Html {
 
     let display = if let Some(p) = &*props.position {
         let width = window().unwrap_throw().inner_width().unwrap_throw().unchecked_into_f64();
-        let popover_width: f64 = 100 as f64;
-        // let right: f64 = popover.clone().cast::<Element>().unwrap().get_bounding_client_rect().x();
-        crate::shared::log!(format!("right {:#?}, {:#?}",&p.page_x()+popover_width, &width).to_string());
+        let popover_width = 155;
+        let right = &p.page_x() + popover_width;
+        let mut x = p.page_x();
+        if right > width as i32 {
+            x -= popover_width;
+        }
         format!(
             "display : block; top:{}px; left:{}px; z-index: 10000;",
-            &p.page_y(), &p.page_x()
+            &p.page_y(), &x
         )
     } else {
         String::from("display: none;")

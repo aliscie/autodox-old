@@ -82,7 +82,7 @@ pub fn app() -> Html {
 
             </ul>
             </aside>
-            <main>
+            <main style="margin-top: 35px;">
                 <Switch<Route> render= {switch} />
             </main>
             //<Editor title = "text" element_tree = { element_tree }/>

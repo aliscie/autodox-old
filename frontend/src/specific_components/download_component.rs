@@ -22,6 +22,7 @@ pub struct DownloadProps {
 
 #[function_component(Download)]
 pub fn download(props: &DownloadProps) -> Html {
+
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let onclick = {
         let position = position.clone();
@@ -32,7 +33,7 @@ pub fn download(props: &DownloadProps) -> Html {
 
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-brands fa-apple"></i>{"Mac"}</a>},
-        html! {<a><i class="fa-brands fa-windows"></i>{"Window"}</a>},
+        html! {<a href={"blob:https://mega.nz/9b38ed11-8f43-404b-87d5-eb7b2ac37692"} target="_blank"><i class="fa-brands fa-windows"></i>{"Window version"}</a>},
         html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
 
