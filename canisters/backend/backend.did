@@ -59,7 +59,7 @@ type Status = variant {
 service : {
     "create_file": (create_file_data : CreateFileData) -> ();
     "create_directory": (create_file_data : FileDirectory) -> ();
-    "get_directories": () ->(vec FileDirectory) query;
+    "get_directories": () ->(opt FileDirectory) query;
     "test" : (data : text) -> (Status);
 }
 

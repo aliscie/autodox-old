@@ -289,47 +289,45 @@ impl Entity for FileNode {
 impl Queryable for FileNode {}
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable))]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct FileDirectory {
     pub id: Id,
     pub name: String,
     pub files: Tree<Id, FileNode>,
 }
 
-
-
-#[cfg(feature = "backend")]
-impl candid::types::CandidType for FileDirectory {
-    fn _ty() -> candid::types::Type {
-        candid::types::Type::Record(<[_]>::into_vec(Box::new([
-            candid::types::Field {
-                id: candid::types::Label::Named("id".to_string()),
-                ty: <Id as candid::types::CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("files".to_string()),
-                ty: <Tree<Id, FileNode> as candid::types::CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("name".to_string()),
-                ty: <String as candid::types::CandidType>::ty(),
-            },
-        ])))
-    }
-    fn id() -> candid::types::TypeId {
-        candid::types::TypeId::of::<FileDirectory>()
-    }
-    fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
-    where
-        __S: candid::types::Serializer,
-    {
-        let mut ser = __serializer.serialize_struct()?;
-        candid::types::Compound::serialize_element(&mut ser, &self.id)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.files)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.name)?;
-        Ok(())
-    }
-}
+//#[cfg(feature = "backend")]
+//impl candid::types::CandidType for FileDirectory {
+//    fn _ty() -> candid::types::Type {
+//        candid::types::Type::Record(<[_]>::into_vec(Box::new([
+//            candid::types::Field {
+//                id: candid::types::Label::Named("id".to_string()),
+//                ty: <Id as candid::types::CandidType>::ty(),
+//            },
+//            candid::types::Field {
+//                id: candid::types::Label::Named("files".to_string()),
+//                ty: <Tree<Id, FileNode> as candid::types::CandidType>::ty(),
+//            },
+//            candid::types::Field {
+//                id: candid::types::Label::Named("name".to_string()),
+//                ty: <String as candid::types::CandidType>::ty(),
+//            },
+//        ])))
+//    }
+//    fn id() -> candid::types::TypeId {
+//        candid::types::TypeId::of::<FileDirectory>()
+//    }
+//    fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
+//    where
+//        __S: candid::types::Serializer,
+//    {
+//        let mut ser = __serializer.serialize_struct()?;
+//        candid::types::Compound::serialize_element(&mut ser, &self.id)?;
+//        candid::types::Compound::serialize_element(&mut ser, &self.files)?;
+//        candid::types::Compound::serialize_element(&mut ser, &self.name)?;
+//        Ok(())
+//    }
+//}
 
 #[cfg(feature = "tauri")]
 impl Entity for FileDirectory {
