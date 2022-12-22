@@ -27,6 +27,13 @@ impl Id {
     pub fn new() -> Self {
         Self(Uuid::new_v4())
     }
+    //#[cfg(feature = "backend")]
+    //pub fn new() -> Self {
+    //    let (bytes,): (Vec<u8>,) =
+    //        ic_cdk::api::call(Principal.management_canister(), "raw_rand", ())
+    //            .await
+    //            .unwrap;
+    //}
 }
 
 impl From<Uuid> for Id {
@@ -92,13 +99,13 @@ impl FromStr for Id {
 #[cfg(feature = "backend")]
 impl CandidType for Id {
     fn _ty() -> Type {
-        Type::Text
+        Type::Vec(Box::new(Type::Nat8))
     }
     fn idl_serialize<S>(&self, serializer: S) -> Result<(), S::Error>
     where
         S: Serializer,
     {
-        serializer.serialize_text(&self.0.to_string())
+        serializer.serialize_blob(&self.0.to_bytes_le())
     }
 }
 
