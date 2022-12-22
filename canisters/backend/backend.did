@@ -44,7 +44,7 @@ type Tree = record {
 };
 
 
-type FileDirectory = record {
+type FileDirectory = opt variant {
     id : vec nat8;
     name: text;
     files: Tree;
@@ -59,7 +59,7 @@ type Status = variant {
 service : {
     "create_file": (create_file_data : CreateFileData) -> ();
     "create_directory": (create_file_data : FileDirectory) -> ();
-    "get_directories": () ->(opt FileDirectory) query;
+    "get_directories": () ->( FileDirectory) query;
     "register": (text) -> (text);
     "test" : (data : text) -> (Status);
 }
