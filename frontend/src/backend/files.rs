@@ -17,7 +17,7 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         parent_id: parent_id.into(),
         name,
         // using this for right now
-        mode: shared::schema::FileMode::Public,
+        // mode: shared::schema::FileMode::Public,
         id: id.into(),
         children: None,
     };
@@ -59,6 +59,10 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         unimplemented!();
+        spawn_local(async move {
+            let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
+            crate::backend::create_directory_ic().await;
+        });
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(

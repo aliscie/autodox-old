@@ -18,6 +18,11 @@ export const create_file = async (canisterId, text) => {
     return await actor.create_file(text);
 }
 
+export const create_directory = async (canisterId, text) => {
+    const actor = await createActor(canisterId)
+    return await actor.create_directory(id, root, vertices, adjacency, name);
+}
+
 export async function identify() {
     const authClient = await AuthClient.create();
     if (await authClient.isAuthenticated()) {
