@@ -20,7 +20,6 @@ type FileNode = record {
 type CreateFileData = record {
     id : vec nat8;
     name: text;
-    mode: FileMode;
     directory_id : vec nat8;
     parent_id : vec nat8;
     children: opt vec text;
