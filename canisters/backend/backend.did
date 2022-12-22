@@ -60,6 +60,7 @@ service : {
     "create_file": (create_file_data : CreateFileData) -> ();
     "create_directory": (create_file_data : FileDirectory) -> ();
     "get_directories": () ->(opt FileDirectory) query;
+    "register": (text) -> (text);
     "test" : (data : text) -> (Status);
 }
 
