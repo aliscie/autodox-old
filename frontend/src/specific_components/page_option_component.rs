@@ -20,9 +20,13 @@ pub struct PageOptionsProps {
 pub fn page_options(props: &PageOptionsProps) -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let _position = position.clone();
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        _position.set(Some(_e));
-    });
+    let onclick = {
+        let position = position.clone();
+        Callback::from(move |e: MouseEvent| {
+            crate::shared::log!("click");
+            _position.set(Some(e));
+        })
+    };
 
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-solid fa-comment"></i>{"Comments"}</a>},
@@ -36,7 +40,8 @@ pub fn page_options(props: &PageOptionsProps) -> Html {
 
     html! {
     <>
-        <span {onmouseup} class="btn">
+        <PopOverMenu items = {items} position = {position.clone()}/>
+        <span {onclick} class="btn">
             <i class="fa-solid fa-ellipsis-vertical"></i>
         </span>
 
