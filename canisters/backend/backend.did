@@ -50,6 +50,11 @@ type FileDirectory = opt variant {
     files: Tree;
 };
 
+type FileDirectoryUpdate = opt variant {
+    name: text;
+    files: Tree;
+};
+
 type Status = variant {
     Success;
     UnAuthorized;
@@ -58,7 +63,7 @@ type Status = variant {
 
 service : {
     "create_file": (create_file_data : CreateFileData) -> ();
-    "create_directory": (create_file_data : FileDirectory) -> ();
+    "create_directory": (create_file_data : FileDirectoryUpdate) -> ();
     "get_directories": () ->( FileDirectory) query;
     "register": (text) -> (text);
     "test" : (data : text) -> (Status);

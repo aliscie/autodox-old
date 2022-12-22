@@ -1,4 +1,4 @@
-use ic_kit::{candid::candid_method, };
+use ic_kit::{candid::candid_method};
 use ic_kit::macros::update;
 use serde::Serialize;
 use shared::Tree;
@@ -39,12 +39,23 @@ pub fn create_file(create_file_data: FileNodeCreate) {
             .insert(create_file_data.id, create_file_data.into());
     }
     // let _= create::utils::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
 }
+
+use ic_cdk::export::Principal;
+use ic_cdk;
 
 #[update]
 #[candid_method(update)]
-pub fn create_directory(create_file_data: FileDirectory) {
+pub async fn create_directory(create_file_data: FileDirectory) {
+    let id: Result<(Vec<u8>, ), _> = ic_cdk::api::call::call(
+        ic_cdk::export::Principal::management_canister(),
+        // ic_cdk::export::Principal::from_text("aaaaa-aa").unwrap(),
+        "raw_rand",
+        (),
+    ).await;
+
     let caller = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users) {
@@ -53,7 +64,7 @@ pub fn create_directory(create_file_data: FileDirectory) {
     };
     let mut user_files: UserFiles = s!(UserFiles);
     let file_directory = FileDirectory {
-        id: create_file_data.id,
+        id: Id::from(id.unwrap()), // TODO id:: id.unwrap()
         name: create_file_data.name,
         files: create_file_data.files,
     };
