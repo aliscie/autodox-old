@@ -1,28 +1,46 @@
-// use ic_cdk_macros::*;
-use ic_stable_memory::collections::vec::SVec;
-use ic_stable_memory::{s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade};
-use ic_stable_memory::utils::ic_types::SPrincipal;
-use shared::schema::FileDirectory;
-use crate::files::types::{MyStringsSlice, MyStrings};
-// use crate::files::utils::{_get_directories};
-use crate::utils::{BackendError, get_username};
-use crate::users::types::{Users};
+use ic_kit::candid::{candid_method};
+use ic_kit::macros::query;
 
-use ic_kit::{
-    macros::*, candid::candid_method
-};
+use ic_stable_memory::{s, utils::ic_types::SPrincipal};
+use crate::users::types::UserFiles;
+use crate::users::types::Users;
+use crate::utils::get_username;
+use shared::{id::Id, schema::*};
 
+// #[query]
+// #[candid_method(query)]
+// pub fn read_element(id: Id) -> Option<ElementTree>{
+//     let caller = SPrincipal(ic_cdk::caller());
+//     let users = s!(Users);
+//     let username = match get_username(caller, &users){
+//         None => return None,
+//         Some(username) => username
+//     };
+//     let element_storage_tree = s!(ElementTreeStorage);
+//     _get_element_tree(&element_storage_tree, username, id)
+// }
+//
+// #[query]
+// #[candid_method(query)]
+// pub fn read_files() -> Result<Vec<FileDirectory>, BackendError>{
+//     let caller = SPrincipal(ic_cdk::caller());
+//     let users = s!(Users);
+//     let username = match get_username(caller, &users){
+//         None => return Err(BackendError::UserNotRegisted),
+//         Some(username) => username
+//     };
+//     Ok(_get_directories(&username))
+// }
 
 #[query]
 #[candid_method(query)]
-pub fn get_directories(from: u64, to: u64) -> Option<Result<Vec<shared::schema::FileDirectory>, BackendError>> {
+pub fn get_directories() -> Option<FileDirectory> {
     let caller = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users) {
-        None => return Some(Err(BackendError::UserNotRegisted)),
-        Some(username) => username
+        None => return None,
+        Some(username) => username,
     };
-    // Ok(_get_directories(&username))
-    None
+    let mut user_files: UserFiles = s!(UserFiles);
+    user_files.get(&username).map(|s| s.clone())
 }
-
