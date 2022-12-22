@@ -1,11 +1,10 @@
-use ic_kit::candid::candid_method;
+use ic_kit::candid::{candid_method};
+use ic_kit::macros::query;
 
 use ic_stable_memory::{s, utils::ic_types::SPrincipal};
-
 use crate::users::types::UserFiles;
 use crate::users::types::Users;
 use crate::utils::get_username;
-use ic_cdk::query;
 use shared::{id::Id, schema::*};
 
 // #[query]

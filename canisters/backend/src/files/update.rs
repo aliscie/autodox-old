@@ -1,4 +1,5 @@
-use ic_kit::{candid::candid_method, macros::*};
+use ic_kit::{candid::candid_method, };
+use ic_kit::macros::update;
 use serde::Serialize;
 use shared::Tree;
 use std::collections::HashMap;
