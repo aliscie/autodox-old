@@ -3,6 +3,7 @@ use yew::prelude::*;
 
 use crate::backend;
 use crate::components::{Avatar, PopOverMenu};
+// use ic_agent::{Agent, export::Principal};
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
@@ -34,7 +35,14 @@ pub fn title_avatar_component() -> Html {
             //     } else {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
-            let user_token = backend::identify().await;
+
+            //
+            // if agent.isAuthenticated().await {
+            //     crate::shared::log!(authClient.getIdentity());
+            // }
+            // authClient.login({ identityProvider: "https://identity.ic0.app" }).await;
+
+            // let user_token = backend::identify().await;
             // log!(user_token);
         });
     });

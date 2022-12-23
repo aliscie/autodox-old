@@ -16,7 +16,7 @@ tauri-build = { version = "1.2.1", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0.143", features = ["derive"] }
-tauri = { version = "1.2.1", features = ["api-all"] }
+tauri = { version = "1.2", features = ["api-all"] }
 shared = { path = "../shared", features = ["tauri"] }
 tokio = { version = "1.21.1", features = ["full"] }
 #sea-orm = { version = "^0", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"] }
@@ -26,7 +26,7 @@ dotenv = "0.15.0"
 thiserror = "*"
 indexmap = { version = "1.9.1", features = ["serde"] }
 # For dev and to easy first time build experience, just have memory surrealdb for  now.
-surrealdb = { git = "https://github.com/surrealdb/surrealdb"}
+surrealdb = {version = "1.0.0-beta.8", default-features=false, features = ['parallel', 'kv-mem'] }
 
 async-trait = "0.1.57"
 
