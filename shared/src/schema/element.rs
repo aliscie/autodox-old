@@ -35,6 +35,7 @@ pub struct ElementTree {
 pub struct EditorElement {
     pub id: Id,
     pub text: String,
+    pub tag: Option<String>,
     pub attrs: HashMap<Attrs, String>,
 }
 
@@ -66,6 +67,7 @@ impl Default for EditorElement {
         // this creates a root element
         Self {
             id: Id::new(),
+            tag: None,
             text: "".to_owned(),
             attrs: HashMap::new(),
         }
@@ -81,6 +83,7 @@ impl EditorElement {
         Self {
             id: id.into(),
             text,
+            tag: None,
             attrs,
         }
     }
@@ -144,6 +147,7 @@ impl From<EditorElementCreate> for EditorElement {
         Self {
             id: v.id,
             text: v.text,
+            tag: None,
             attrs: v.attrs,
         }
     }
@@ -338,6 +342,7 @@ impl TryFrom<Object> for EditorElement {
                 .ok_or(Error::XPropertyNotFound("text".into()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("String"))?,
+            tag: None,
             attrs,
         })
     }

@@ -5,7 +5,7 @@ use lazy_static::lazy_static;
 pub use tree::Tree;
 
 mod error;
-mod tree;
+pub mod tree;
 pub use error::Error;
 pub mod macros;
 pub mod schema;
