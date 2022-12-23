@@ -103,7 +103,7 @@ pub fn file_data(props: &Props) -> HtmlResult {
             let element_tree = Rc::new(RefCell::new(tree.clone()));
             html! {
                 <Editor
-                    title = { file_node.name.clone() }
+                title = { file_node.name.clone() }
                 element_tree = { element_tree.clone() }
                 onchange = { onchange_element_tree(element_tree.clone())}
                 />

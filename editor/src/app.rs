@@ -11,6 +11,7 @@ use web_sys::console::log_1;
 use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
+use yewdux::dispatch::Dispatch;
 use crate::utils::my_function;
 
 /// this captures all the changes in a editor element
@@ -30,8 +31,8 @@ pub struct Props {
 
 // this is used for the work space
 
-#[function_component(Editor)]
-pub fn editor(props: &Props) -> Html {
+#[function_component]
+pub fn Editor(props: &Props) -> Html {
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
@@ -72,7 +73,8 @@ pub fn editor(props: &Props) -> Html {
                             }
                             "attributes" => {
                                 if let Some(parent_element) = current_element.parent_element() {
-                                    log!(format!("Got create: {:?}", parent_element.inner_html()));
+                                    unimplemented!();
+                                    // crate::shared::log!(format!("Got create: {:?}", parent_element.inner_html()));
                                 }
                             }
                             "childList" => {
@@ -87,9 +89,10 @@ pub fn editor(props: &Props) -> Html {
                                         .map(|id| onchange.emit(EditorChange::Delete(id.into())));
                                 }
                                 if removed_nodes.length() > 0 {
+                                    unimplemented!();
                                     // move to next mutation record!
-                                    log!("got element delete!");
-                                    log!(mutation_type.removed_nodes());
+                                    // crate::shared::log!("got element delete!");
+                                    // crate::shared::log!(mutation_type.removed_nodes());
                                     continue;
                                 }
                                 let element = current_element.unchecked_into::<Element>();
@@ -100,7 +103,8 @@ pub fn editor(props: &Props) -> Html {
                                 let mut prev_element_id: Option<Id> = None;
                                 if let Some(prev_node) = element.previous_sibling() {
                                     let prev_element = prev_node.unchecked_into::<Element>();
-                                    log!(format!("previous element id : {:?}", prev_element.id()));
+                                    unimplemented!();
+                                    // crate::shared::log!(format!("previous element id : {:?}", prev_element.id()));
                                     prev_element_id = Uuid::parse_str(prev_element.id().as_str())
                                         .map(Id::from)
                                         .ok();
@@ -122,7 +126,7 @@ pub fn editor(props: &Props) -> Html {
                                 onchange.emit(EditorChange::Create(element_create));
                                 element.set_id(&new_id.to_string());
                             }
-                            anything_else => log!(anything_else),
+                            anything_else => unimplemented!(), //crate::shared::log!(anything_else),
                         }
                     }
                 }
@@ -191,3 +195,7 @@ pub fn editor(props: &Props) -> Html {
             </span>
     }
 }
+
+use shared::schema::*;
+
+
