@@ -25,6 +25,15 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: update rustup
         run: rustup target add wasm32-unknown-unknown
+      - name: config rocksdb
+        if: matrix.platform == 'macos-latest'
+        run: |
+          brew install cmake
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+          cargo build --release --locked --target x86_64-apple-darwin
+          cargo build --release --locked --target aarch64-apple-darwin
+        
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run : |
