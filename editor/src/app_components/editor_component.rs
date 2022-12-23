@@ -51,10 +51,17 @@ pub fn editor_component(props: &Props) -> Html {
         //.unwrap()
         //.add_event_listener_with_callback("mousemove", &handle_hovering.as_ref().unchecked_ref());
     //handle_hovering.forget();
+    // let mut element = doc.create_element(node.tag.unwrap())
+    // element.innert_text(node.text);
+    // for at in nmod.attr{
+    //     element.add_attributes(at.name, at.value);
+    // }
+
     html! {
     //<span ref={node_ref}  >
              //<Drag position={format!("{}",*(position.clone()))}/>
         <>
+        // {element}
             <div style = "display : inline-block"
                 id = { node.id.to_string() }
                         // style = { &node.attrs
