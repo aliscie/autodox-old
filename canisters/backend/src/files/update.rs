@@ -1,4 +1,4 @@
-use ic_kit::{candid::candid_method};
+use ic_kit::candid::candid_method;
 use ic_kit::macros::update;
 use serde::Serialize;
 use shared::Tree;
@@ -39,21 +39,22 @@ pub fn create_file(create_file_data: FileNodeCreate) {
             .insert(create_file_data.id, create_file_data.into());
     }
     // let _= create::editor_toolbar_plugin::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
-    s! { UserFiles = user_files}
-    ;
+    s! { UserFiles = user_files};
 }
 
-use ic_cdk::export::Principal;
 use ic_cdk;
+use ic_cdk::export::Principal;
 
 #[update]
 #[candid_method(update)]
 pub async fn create_directory(create_file_data: FileDirectory) {
-    let id: Result<(Vec<u8>, ), _> = ic_cdk::api::call::call(
+    let id: ([u8; 16],) = ic_cdk::api::call::call(
         ic_cdk::export::Principal::management_canister(),
         "raw_rand",
         (),
-    ).await;
+    )
+    .await
+    .unwrap();
 
     let caller = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
@@ -63,13 +64,12 @@ pub async fn create_directory(create_file_data: FileDirectory) {
     };
     let mut user_files: UserFiles = s!(UserFiles);
     let file_directory = FileDirectory {
-        id: id.unwrap().into(),
+        id: id.0.into(),
         name: create_file_data.name,
         files: create_file_data.files,
     };
     user_files.insert(username, file_directory);
-    s! { UserFiles = user_files}
-    ;
+    s! { UserFiles = user_files};
 }
 
 #[update]

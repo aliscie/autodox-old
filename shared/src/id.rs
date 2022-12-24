@@ -42,6 +42,12 @@ impl From<Uuid> for Id {
     }
 }
 
+impl From<[u8; 16]> for Id {
+    fn from(value: [u8; 16]) -> Self {
+        Id(Uuid::from_bytes(value))
+    }
+}
+
 impl Debug for Id {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
