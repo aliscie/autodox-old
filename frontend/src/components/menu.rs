@@ -14,6 +14,7 @@ use crate::router::Route;
 pub struct MenuProps {
     pub items: Vec<Html>,
     pub position: UseStateHandle<Option<MouseEvent>>,
+    pub click_on: Option<bool>,
 }
 
 #[function_component(PopOverMenu)]
@@ -43,9 +44,20 @@ pub fn menu(props: &MenuProps) -> Html {
     };
     let position = props.position.clone();
     let _clicked_element = clicked_element.clone();
+    let _popover = popover.clone();
+    let click_on = props.click_on.clone();
     use_event_with_window("click", move |_e: MouseEvent| {
+        let element = _popover.cast::<Node>();
+        let target = &_e.target_unchecked_into::<Element>();
+        let target_node = &_e.target_unchecked_into::<Node>();
+        let mut is_click_on: bool = element.clone().unwrap().contains(Some(target_node));
+
+        if click_on.is_none() {
+            is_click_on &= false;
+        }
+
         if let Some(element) = &_clicked_element.clone() {
-            if element != &_e.target_unchecked_into::<Element>() {
+            if element != target && !is_click_on {
                 &position.set(None);
             }
         }

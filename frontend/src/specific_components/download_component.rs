@@ -22,6 +22,7 @@ pub struct DownloadProps {
 
 #[function_component(Download)]
 pub fn download(props: &DownloadProps) -> Html {
+    let (device, _) = use_store::<DeviceInfo>();
 
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let onclick = {
@@ -36,11 +37,16 @@ pub fn download(props: &DownloadProps) -> Html {
         html! {<a href={"blob:https://mega.nz/9b38ed11-8f43-404b-87d5-eb7b2ac37692"} target="_blank"><i class="fa-brands fa-windows"></i>{"Windows"}</a>},
         html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
+    let mut res = html! {};
 
-    return html! {
-    <>
-        <PopOverMenu items = {items} position = {position.clone()}/>
-        <span  {onclick} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
-    </>
+    if device.is_web {
+        res = html! {
+        <>
+            <PopOverMenu items = {items} position = {position.clone()}/>
+            <span  {onclick} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
+        </>
     };
+    }
+
+    return res;
 }

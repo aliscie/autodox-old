@@ -12,7 +12,9 @@ import * as backend from './../../../../../backend/index.js'
 //     const actor = await createActor(canisterId)
 //     return await actor;
 // }
-const canisterId = env.get("backend_canister_id")
+
+const canisterId = "dummy" //process.env.INTERNET_IDENTITY_CANISTER_ID
+console.log(canisterId)
 
 export const create_file = async (text) => {
     const actor = await createActor(canisterId)
