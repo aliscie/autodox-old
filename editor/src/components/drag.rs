@@ -6,8 +6,8 @@ pub struct Props {
     pub position: String,
 }
 
-#[function_component(Drag)]
-pub fn drag(props: &Props) -> Html {
+#[function_component]
+pub fn Drag(props: &Props) -> Html {
     let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {});
     let p = props.position.clone();
     // let items: Vec<Html> = vec![

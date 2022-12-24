@@ -23,8 +23,7 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
     };
     if info.get().is_web || info.get().is_online {
         spawn_local(async move {
-            let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
-            crate::backend::create_file_ic(canister_id, "hello world".to_string()).await;
+            crate::backend::create_file_ic( "hello world".to_string()).await;
         });
         unimplemented!();
     }
@@ -60,7 +59,6 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     if info.get().is_web || info.get().is_online {
         unimplemented!();
         spawn_local(async move {
-            let canister_id = "rrkah-fqaaa-aaaaa-aaaaq-cai".to_string();
             crate::backend::create_directory_ic().await;
         });
     }

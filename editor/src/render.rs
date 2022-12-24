@@ -1,4 +1,4 @@
-use crate::app_components::EditorComponent;
+use crate::editor_components::EditorComponent;
 use shared::id::Id;
 use shared::schema::ElementTree;
 use std::cell::RefCell;
@@ -13,9 +13,7 @@ pub(crate) fn render(tree: &ElementTree, start: Id) -> Html {
         if let Some(children) = tree.elements.adjacency.get(id) {
             has_children = !children.is_empty();
         }
-        // if tree.tag == "table".into() {
-        //     return html!{<Table data={tree.data}}
-        // }
+
         let html_node = html! {
             <>
                 <EditorComponent

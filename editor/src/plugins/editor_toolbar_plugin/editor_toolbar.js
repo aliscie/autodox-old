@@ -1,4 +1,4 @@
-export function my_function() {
+export function editor_toolbar() {
     const selectableTextArea = document.querySelectorAll(".text_editor");
     const twitterShareBtn = document.querySelector("#selection-popper");
 
@@ -59,5 +59,5 @@ export function my_function() {
         //    whatever
     }
 
-    return "dummy data"
+    return "bold"
 }
