@@ -23,7 +23,6 @@ use crate::{
 
 //impl InternalId for Uuid {}
 //impl InternalId for String {}
-
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct ElementTree {
     pub id: Id,
@@ -36,16 +35,16 @@ pub struct EditorElement {
     pub id: Id,
     pub text: String,
     pub tag: Option<String>,
-    pub attrs: HashMap<Attrs, String>,
+    pub attrs: HashMap<String, String>, //pub attrs: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, Default)]
-pub enum Attrs {
-    #[default]
-    Style,
-    Href,
-    Src,
-}
+// #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, Default)]
+// pub enum Attrs {
+//     #[default]
+//     Style,
+//     Href,
+//     Src,
+// }
 
 #[cfg(not(feature = "backend"))]
 impl Default for ElementTree {
@@ -76,9 +75,9 @@ impl Default for EditorElement {
 
 impl EditorElement {
     #[inline]
-    pub fn new<T>(id: T, text: String, attrs: HashMap<Attrs, String>) -> Self
-    where
-        T: Into<Id>,
+    pub fn new<T>(id: T, text: String, attrs: HashMap<String, String>) -> Self
+        where
+            T: Into<Id>,
     {
         Self {
             id: id.into(),
@@ -111,7 +110,7 @@ impl Entity for EditorElement {
 pub struct EditorElementCreate {
     pub id: Id,
     pub text: String,
-    pub attrs: HashMap<Attrs, String>,
+    pub attrs: HashMap<String, String>,
     pub tree_id: Id,
     pub parent_id: Id,
     pub children: Option<Vec<Id>>,
@@ -124,7 +123,7 @@ pub struct EditorElementCreate {
 pub struct EditorElementUpdate {
     pub id: Id,
     pub text: Option<String>,
-    pub attrs: Option<HashMap<Attrs, String>>,
+    pub attrs: Option<HashMap<String, String>>,
     pub parent: Option<Id>,
     pub children: Option<IndexSet<Id>>,
 }
@@ -270,7 +269,7 @@ impl From<EditorElementCreate> for Object {
             ("text".into(), value.text.into()),
             ("children".into(), Array(children).into()),
         ])
-        .into();
+            .into();
         attrs_to_object(value.attrs, &mut x);
         x.into()
     }
@@ -295,7 +294,7 @@ impl From<ElementTree> for Object {
             ("id".into(), value.id.into()),
             ("elements".into(), Value::Object(value.elements.into())),
         ])
-        .into()
+            .into()
     }
 }
 

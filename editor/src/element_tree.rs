@@ -6,7 +6,7 @@ use yewdux::prelude::*;
 
 use shared::Tree;
 
-use crate::app_components::Render;
+use crate::spesific_components::Render;
 
 pub type ElementId = u64;
 
@@ -22,13 +22,13 @@ pub struct EditorElement {
     pub attrs: HashMap<Attrs, String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, Default)]
-pub enum Attrs {
-    #[default]
-    Style,
-    Href,
-    Src,
-}
+// #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, Default)]
+// pub enum Attrs {
+//     #[default]
+//     Style,
+//     Href,
+//     Src,
+// }
 
 impl ElementTree {
     #[inline]

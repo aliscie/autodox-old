@@ -38,7 +38,7 @@ pub fn create_file(create_file_data: FileNodeCreate) {
             .vertices
             .insert(create_file_data.id, create_file_data.into());
     }
-    // let _= create::utils::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
+    // let _= create::editor_toolbar_plugin::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
     s! { UserFiles = user_files}
     ;
 }
@@ -51,7 +51,6 @@ use ic_cdk;
 pub async fn create_directory(create_file_data: FileDirectory) {
     let id: Result<(Vec<u8>, ), _> = ic_cdk::api::call::call(
         ic_cdk::export::Principal::management_canister(),
-        // ic_cdk::export::Principal::from_text("aaaaa-aa").unwrap(),
         "raw_rand",
         (),
     ).await;
@@ -64,14 +63,13 @@ pub async fn create_directory(create_file_data: FileDirectory) {
     };
     let mut user_files: UserFiles = s!(UserFiles);
     let file_directory = FileDirectory {
-        id: Id::from(id.unwrap()), // TODO id:: id.unwrap()
+        id: id.unwrap().into(),
         name: create_file_data.name,
         files: create_file_data.files,
     };
     user_files.insert(username, file_directory);
-    // let res = _create_directory(&mut user_files, &username, create_file_data.id, create_file_data.name);
-    // println!("{:#?}", res);
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
 }
 
 #[update]

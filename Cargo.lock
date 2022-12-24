@@ -4958,6 +4958,7 @@ dependencies = [
  "async-trait",
  "candid 0.7.18",
  "cfg-if",
+ "ic-cdk 0.6.8",
  "ic-kit",
  "indexmap",
  "js-sys",

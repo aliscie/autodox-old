@@ -12,13 +12,14 @@ import * as backend from './../../../../../backend/index.js'
 //     const actor = await createActor(canisterId)
 //     return await actor;
 // }
+const canisterId = env.get("backend_canister_id")
 
-export const create_file = async (canisterId, text) => {
+export const create_file = async (text) => {
     const actor = await createActor(canisterId)
     return await actor.create_file(text);
 }
 
-export const create_directory = async (canisterId, text) => {
+export const create_directory = async (text) => {
     const actor = await createActor(canisterId)
     return await actor.create_directory(id, root, vertices, adjacency, name);
 }

@@ -16,7 +16,7 @@ mod element;
 #[wasm_bindgen(module = "/src/backend/ic_agent.js")]
 extern "C" {
     #[wasm_bindgen(js_name = create_file)]
-    pub async fn create_file_ic(canister_id: String, text: String) -> JsValue;
+    pub async fn create_file_ic(text: String) -> JsValue;
 
     // #[wasm_bindgen(js_name = read)]
     // pub async fn read(canister_id: String) -> JsValue;
