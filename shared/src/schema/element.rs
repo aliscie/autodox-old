@@ -243,14 +243,14 @@ impl Entity for ElementTree {
 }
 
 #[cfg(feature = "tauri")]
-fn attrs_to_object(attrs: HashMap<Attrs, String>, object: &mut BTreeMap<String, Value>) {
+fn attrs_to_object(attrs: HashMap<String, String>, object: &mut BTreeMap<String, Value>) {
     for (attrs, data) in attrs {
-        let attr = match attrs {
-            Attrs::Src => "Src",
-            Attrs::Href => "Href",
-            Attrs::Style => "Style",
-        };
-        object.insert(attr.to_string(), data.into());
+        // let attr = match attrs {
+        //     Attrs::Src => "Src",
+        //     Attrs::Href => "Href",
+        //     Attrs::Style => "Style",
+        // };
+        object.insert(attrs.to_string(), data.into());
     }
 }
 
@@ -302,22 +302,22 @@ impl From<ElementTree> for Object {
 impl TryFrom<Object> for EditorElement {
     type Error = crate::Error;
     fn try_from(mut value: Object) -> Result<Self, Self::Error> {
-        let mut attrs: HashMap<Attrs, String> = HashMap::new();
+        let mut attrs: HashMap<String, String> = HashMap::new();
         if let Some(x) = value.remove("Src") {
             attrs.insert(
-                Attrs::Src,
+                "src".to_string(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
         if let Some(x) = value.remove("Href") {
             attrs.insert(
-                Attrs::Href,
+                "hrf".to_string(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
         if let Some(x) = value.remove("Style") {
             attrs.insert(
-                Attrs::Style,
+                "style".parse().unwrap(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
