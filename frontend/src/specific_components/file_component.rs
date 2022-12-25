@@ -169,6 +169,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let oncontextmenu = {
         let position = position.clone();
         Callback::from(move |e: MouseEvent| {
+            e.prevent_default();
             position.set(Some(e));
         })
     };
@@ -232,9 +233,10 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             class="drag_under" />
 
            <PopOverMenu
+            click_on={Some(true)}
            position = {position.clone()}
            items={vec![
-           html! {<a><i class="fa-solid fa-signature"></i>{"Rename"}</a>},
+           html! {<a><input  autofocus=true placeholder="rename.."/></a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},

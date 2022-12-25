@@ -16,6 +16,10 @@ pub fn EditorComponent(props: &Props) -> Html {
     //let position: UseStateHandle<String> = use_state(|| "display:none".to_string());
     let node = &props.node;
     let doc = window().unwrap_throw().document().unwrap_throw();
+    if node.tag.is_none() {
+        return html! {<p>{&node.text}</p>};
+    }
+
     let response = match node.clone().tag.unwrap().as_str() {
         "table" => html! { <Table/>},
         "form" => html! { <FromComponent/>},

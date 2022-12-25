@@ -76,8 +76,8 @@ impl Default for EditorElement {
 impl EditorElement {
     #[inline]
     pub fn new<T>(id: T, text: String, attrs: HashMap<String, String>) -> Self
-    where
-        T: Into<Id>,
+        where
+            T: Into<Id>,
     {
         Self {
             id: id.into(),
@@ -245,7 +245,12 @@ impl Entity for ElementTree {
 #[cfg(feature = "tauri")]
 fn attrs_to_object(attrs: HashMap<String, String>, object: &mut BTreeMap<String, Value>) {
     for (attrs, data) in attrs {
-        object.insert(attrs, data.into());
+        // let attr = match attrs {
+        //     Attrs::Src => "Src",
+        //     Attrs::Href => "Href",
+        //     Attrs::Style => "Style",
+        // };
+        object.insert(attrs.to_string(), data.into());
     }
 }
 
@@ -264,7 +269,7 @@ impl From<EditorElementCreate> for Object {
             ("text".into(), value.text.into()),
             ("children".into(), Array(children).into()),
         ])
-        .into();
+            .into();
         attrs_to_object(value.attrs, &mut x);
         x.into()
     }
@@ -289,7 +294,7 @@ impl From<ElementTree> for Object {
             ("id".into(), value.id.into()),
             ("elements".into(), Value::Object(value.elements.into())),
         ])
-        .into()
+            .into()
     }
 }
 
@@ -300,19 +305,19 @@ impl TryFrom<Object> for EditorElement {
         let mut attrs: HashMap<String, String> = HashMap::new();
         if let Some(x) = value.remove("Src") {
             attrs.insert(
-                "Src".into(),
+                "src".to_string(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
         if let Some(x) = value.remove("Href") {
             attrs.insert(
-                "Href".into(),
+                "hrf".to_string(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
         if let Some(x) = value.remove("Style") {
             attrs.insert(
-                "Style".into(),
+                "style".parse().unwrap(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
