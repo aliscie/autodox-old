@@ -45,9 +45,7 @@ pub fn create_file(create_file_data: FileNodeCreate) {
 use ic_cdk;
 use ic_cdk::export::Principal;
 
-#[update]
-#[candid_method(update)]
-pub async fn create_directory(create_file_data: FileDirectory) {
+async fn create_id() -> Id {
     let id: ([u8; 16],) = ic_cdk::api::call::call(
         ic_cdk::export::Principal::management_canister(),
         "raw_rand",
@@ -55,21 +53,38 @@ pub async fn create_directory(create_file_data: FileDirectory) {
     )
     .await
     .unwrap();
+    id.0.into()
+}
 
+#[update]
+#[candid_method(update)]
+pub async fn create_directory() -> Option<FileDirectory> {
+    let id = create_id().await;
     let caller = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users) {
-        None => return (),
+        None => return None,
         Some(username) => username,
     };
     let mut user_files: UserFiles = s!(UserFiles);
-    let file_directory = FileDirectory {
-        id: id.0.into(),
-        name: create_file_data.name,
-        files: create_file_data.files,
-    };
-    user_files.insert(username, file_directory);
+    let mut file_directory = FileDirectory::new(id, "default".to_string());
+    let id = create_id().await;
+    file_directory.files.push_vertex(
+        id.into(),
+        FileNode {
+            id: id.into(),
+            name: "root".into(),
+            element_tree: None,
+        },
+    );
+    file_directory
+        .files
+        .adjacency
+        .insert(id.clone().into(), Vec::new());
+    file_directory.files.root = Some(id.into());
+    user_files.insert(username, file_directory.clone());
     s! { UserFiles = user_files};
+    return Some(file_directory);
 }
 
 #[update]

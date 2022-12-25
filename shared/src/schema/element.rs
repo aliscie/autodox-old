@@ -76,8 +76,8 @@ impl Default for EditorElement {
 impl EditorElement {
     #[inline]
     pub fn new<T>(id: T, text: String, attrs: HashMap<String, String>) -> Self
-        where
-            T: Into<Id>,
+    where
+        T: Into<Id>,
     {
         Self {
             id: id.into(),
@@ -243,14 +243,9 @@ impl Entity for ElementTree {
 }
 
 #[cfg(feature = "tauri")]
-fn attrs_to_object(attrs: HashMap<Attrs, String>, object: &mut BTreeMap<String, Value>) {
+fn attrs_to_object(attrs: HashMap<String, String>, object: &mut BTreeMap<String, Value>) {
     for (attrs, data) in attrs {
-        let attr = match attrs {
-            Attrs::Src => "Src",
-            Attrs::Href => "Href",
-            Attrs::Style => "Style",
-        };
-        object.insert(attr.to_string(), data.into());
+        object.insert(attrs, data.into());
     }
 }
 
@@ -269,7 +264,7 @@ impl From<EditorElementCreate> for Object {
             ("text".into(), value.text.into()),
             ("children".into(), Array(children).into()),
         ])
-            .into();
+        .into();
         attrs_to_object(value.attrs, &mut x);
         x.into()
     }
@@ -294,7 +289,7 @@ impl From<ElementTree> for Object {
             ("id".into(), value.id.into()),
             ("elements".into(), Value::Object(value.elements.into())),
         ])
-            .into()
+        .into()
     }
 }
 
@@ -302,22 +297,22 @@ impl From<ElementTree> for Object {
 impl TryFrom<Object> for EditorElement {
     type Error = crate::Error;
     fn try_from(mut value: Object) -> Result<Self, Self::Error> {
-        let mut attrs: HashMap<Attrs, String> = HashMap::new();
+        let mut attrs: HashMap<String, String> = HashMap::new();
         if let Some(x) = value.remove("Src") {
             attrs.insert(
-                Attrs::Src,
+                "Src".into(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
         if let Some(x) = value.remove("Href") {
             attrs.insert(
-                Attrs::Href,
+                "Href".into(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
         if let Some(x) = value.remove("Style") {
             attrs.insert(
-                Attrs::Style,
+                "Style".into(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }

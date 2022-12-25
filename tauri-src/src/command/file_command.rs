@@ -24,7 +24,7 @@ pub async fn create_directory(data: FileDirectory, ctx: State<'_, Context>) -> R
             id: *id,
             name: i.name.clone(),
             children: Some(children),
-            mode: FileMode::Public,
+            //mode: FileMode::Public,
             // these two doesn't matter using any value
             directory_id: Uuid::new_v4().into(),
             parent_id: Uuid::new_v4().into(),
