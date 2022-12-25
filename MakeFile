@@ -12,6 +12,8 @@ kill:
 	kill -INT $(lsof -t -i :8080)
 	# for window netstat -ano | findstr :8080
 
+kill_dfx:
+	killall dfx replica
 
 update:
 	cargo update

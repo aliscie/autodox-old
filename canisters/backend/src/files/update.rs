@@ -3,7 +3,7 @@ use ic_kit::macros::update;
 use serde::Serialize;
 use shared::Tree;
 use std::collections::HashMap;
-
+use ic_cdk;
 use crate::files::types::*;
 use crate::users::types::*;
 use crate::utils::{get_username, Status, UpdateResponse};
@@ -42,8 +42,6 @@ pub fn create_file(create_file_data: FileNodeCreate) {
     s! { UserFiles = user_files};
 }
 
-use ic_cdk;
-use ic_cdk::export::Principal;
 
 async fn create_id() -> Id {
     let id: ([u8; 16],) = ic_cdk::api::call::call(
