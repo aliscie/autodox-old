@@ -7,11 +7,15 @@ use crate::components::{Avatar, PopOverMenu};
 use shared::*;
 use js_sys::{Promise, Uint8Array};
 use wasm_bindgen::JsValue;
- use web_sys::Url;
+use web_sys::Url;
+
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
+    let image_link: UseStateHandle<Option<String>> = use_state(|| None);
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let _position = position.clone();
+
+
     let open_popover: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _position.set(Some(_e));
     });
@@ -32,6 +36,7 @@ pub fn title_avatar_component() -> Html {
         //         .map(File::from);
         //     result.extend(files);
         // }
+        let _image_link = image_link.clone();
         spawn_local(async move {
             let buffer = input.files().unwrap().get(0).unwrap().array_buffer().value_of();
             let bytes: Vec<u8> = Uint8Array::new(&buffer).to_vec();
@@ -41,6 +46,8 @@ pub fn title_avatar_component() -> Html {
             //  let bytes: Vec<u8> = Uint8Array::new(&buffer).try_into().unwrap();
             //  let image_url = Blob::new_with_buffer_source_sequence_and_options(&vec![bytes], "image/png").unwrap();
             // log!(bytes);
+            // backend::update_profile( Some(bytes), None).await;
+            _image_link.set(Some("https://avatars.githubusercontent.com/u/58806996?v=4".to_string()));
         });
     });
 
@@ -62,6 +69,7 @@ pub fn title_avatar_component() -> Html {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
             let user_token = backend::identify().await;
+            let profile:JsValue = backend::get_profile().await;
             // log!(user_token);
         });
     });
@@ -72,12 +80,13 @@ pub fn title_avatar_component() -> Html {
         let auth = serde_wasm_bindgen::from_value::<bool>(backend::is_logged().await).unwrap();
         _is_logged_ing.set(auth);
     });
-
     if *is_logged_ing {
         return html! { <>
         <PopOverMenu {items} position = {position.clone()}/>
         <span class="right_clickable main_avatar" onclick={open_popover}>
-        <Avatar src={Some("https://avatars.githubusercontent.com/u/58806996?v=4".to_string())} />
+        <Avatar
+            // src={image_link.clone()} TODO fix this
+            />
         </span>
         </>
         };

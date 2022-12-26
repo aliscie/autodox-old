@@ -82,6 +82,8 @@ service : {
     "register": (text) -> (text);
     "test" : (data : text) -> (Status);
     "update_profile" : (data : UserProfile) -> (Status);
+    "get_profile": () -> (UserProfile) query;
+};
 
 }
 

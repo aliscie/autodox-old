@@ -40,6 +40,15 @@ export async function logout() {
     await authClient.logout()
 }
 
+export async function update_profile(data) {
+    const actor = await createActor(canisterId)
+    return await actor.update_profile(data);
+}
+
+export async function get_profile() {
+    const actor = await createActor(canisterId)
+    return await actor.get_profile();
+}
 
 export async function is_logged() {
     const authClient = await AuthClient.create();
