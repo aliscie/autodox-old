@@ -8,6 +8,7 @@ use crate::files::types::*;
 use crate::users::types::*;
 use crate::utils::{get_username, Status, UpdateResponse};
 use candid::{CandidType, Deserialize};
+use ic_cdk::api::call::CallResult;
 use ic_stable_memory::collections::vec::SVec;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 use ic_stable_memory::{
@@ -39,19 +40,19 @@ pub fn create_file(create_file_data: FileNodeCreate) {
             .insert(create_file_data.id, create_file_data.into());
     }
     // let _= create::editor_toolbar_plugin::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
+}
+
+fn pop(barry: &[u8]) -> [u8; 16] {
+    barry.try_into().expect("slice with incorrect length")
 }
 
 
 async fn create_id() -> Id {
-    let id: ([u8; 16],) = ic_cdk::api::call::call(
-        ic_cdk::export::Principal::management_canister(),
-        "raw_rand",
-        (),
-    )
-    .await
-    .unwrap();
-    id.0.into()
+    let id: CallResult<(Vec<u8>, )> = ic_cdk::api::management_canister::main::raw_rand().await;
+    let id: [u8; 16] = pop(id.unwrap().0.as_slice().clone());
+    id.into()
 }
 
 #[update]
@@ -66,7 +67,7 @@ pub async fn create_directory() -> Option<FileDirectory> {
     };
     let mut user_files: UserFiles = s!(UserFiles);
     let mut file_directory = FileDirectory::new(id, "default".to_string());
-    let id = create_id().await;
+    let id: Id = create_id().await;
     file_directory.files.push_vertex(
         id.into(),
         FileNode {
@@ -81,7 +82,8 @@ pub async fn create_directory() -> Option<FileDirectory> {
         .insert(id.clone().into(), Vec::new());
     file_directory.files.root = Some(id.into());
     user_files.insert(username, file_directory.clone());
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
     return Some(file_directory);
 }
 

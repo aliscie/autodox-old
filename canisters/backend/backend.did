@@ -61,6 +61,18 @@ type Status = variant {
     InvalidInput;
 };
 
+
+type UserProfile = record {
+//    principal:hex;
+    image: opt vec nat8;
+    username: opt text;
+    last_name: opt text;
+    first_name: opt text;
+    birthdate: opt text;
+    email: opt text;
+    emails: opt vec text;
+}
+
 service : {
     "create_file": (create_file_data : CreateFileData) -> ();
     "create_directory": (
@@ -69,5 +81,7 @@ service : {
     "get_directories": () ->(FileDirectory) query;
     "register": (text) -> (text);
     "test" : (data : text) -> (Status);
+    "update_profile" : (data : UserProfile) -> (Status);
+
 }
 
