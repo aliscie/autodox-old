@@ -77,7 +77,7 @@ pub fn title_avatar_component() -> Html {
         return html! { <>
         <PopOverMenu {items} position = {position.clone()}/>
         <span class="right_clickable main_avatar" onclick={open_popover}>
-        <Avatar />
+        <Avatar src={Some("https://avatars.githubusercontent.com/u/58806996?v=4".to_string())} />
         </span>
         </>
         };

@@ -1,11 +1,23 @@
-use yew::{function_component, html, Html};
+use yew::prelude::*;
 
-#[function_component(Avatar)]
-pub fn avatar() -> Html {
-    html! {
-       <>
-       <img src="https://avatars.githubusercontent.com/u/58806996?v=4" alt="Avatar" class="avatar"/>
-       // <span class="active-icon"></span>
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub src: Option<String>,
+}
+
+#[function_component]
+pub fn Avatar(props: &Props) -> Html {
+    let src = props.src.clone();
+    let response: Html = match src {
+        None => html! {<>
+            // <span class="active-icon"></span>
+            <i class="fas fa-user"></i>
        </>
-    }
+        },
+        Some(link) => html! {<>
+            // <span class="active-icon"></span>
+            <img src={link} alt="Avatar" class="avatar"/>
+       </>}
+    };
+    response
 }
