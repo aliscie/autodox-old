@@ -1,13 +1,13 @@
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{Blob, HtmlInputElement};
+use web_sys::{ HtmlInputElement};
 use yew::prelude::*;
-use gloo::file::File;
 use crate::backend;
 use crate::components::{Avatar, PopOverMenu};
 use shared::*;
-use js_sys::{Promise, Uint8Array};
+use js_sys::{ Uint8Array};
 use wasm_bindgen::JsValue;
 use web_sys::Url;
+use crate::utils::{decode_image, encode_image};
 
 #[function_component(TitleAvatarComponent)]
 pub fn title_avatar_component() -> Html {
@@ -19,6 +19,13 @@ pub fn title_avatar_component() -> Html {
     let open_popover: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _position.set(Some(_e));
     });
+
+    let _image_link = image_link.clone();
+    spawn_local(async move {
+        // let response =  backend::get_profile().await;
+        // decode_image(response);
+        _image_link.set(Some("https://avatars.githubusercontent.com/u/58806996?v=4".to_string()));
+    });
     let logout = Callback::from(move |e: MouseEvent| {
         spawn_local(async move {
             backend::logout().await;
@@ -27,27 +34,11 @@ pub fn title_avatar_component() -> Html {
 
     let on_upload: Callback<Event> = Callback::from(move |_e: Event| {
         let input: HtmlInputElement = _e.target_unchecked_into();
-        // let mut result = Vec::new();
-        // if let Some(files) = input.files() {
-        //  let files = js_sys::try_iter(&files)
-        //         .unwrap()
-        //         .unwrap()
-        //         .map(|v| web_sys::File::from(v.unwrap()))
-        //         .map(File::from);
-        //     result.extend(files);
-        // }
-        let _image_link = image_link.clone();
+
+        let buffer_bytes = encode_image(input.files().unwrap().get(0).unwrap());
         spawn_local(async move {
-            let buffer = input.files().unwrap().get(0).unwrap().array_buffer().value_of();
-            let bytes: Vec<u8> = Uint8Array::new(&buffer).to_vec();
-            // TODO
-            //  let image_url  = Uint8Array::new(&bytes);
-            //  let x = Url.create_object_url_with_u8_array(Uint8Array::new(&bytes)).unwrap();
-            //  let bytes: Vec<u8> = Uint8Array::new(&buffer).try_into().unwrap();
-            //  let image_url = Blob::new_with_buffer_source_sequence_and_options(&vec![bytes], "image/png").unwrap();
-            // log!(bytes);
-            // backend::update_profile( Some(bytes), None).await;
-            _image_link.set(Some("https://avatars.githubusercontent.com/u/58806996?v=4".to_string()));
+            // log!(buffer_bytes);
+            // let response =  backend::update_profile( Some(buffer_bytes), None).await;
         });
     });
 
@@ -69,7 +60,7 @@ pub fn title_avatar_component() -> Html {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
             let user_token = backend::identify().await;
-            let profile:JsValue = backend::get_profile().await;
+            let profile: JsValue = backend::get_profile().await;
             // log!(user_token);
         });
     });
