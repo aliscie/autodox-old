@@ -7,13 +7,15 @@ use std::collections::HashMap;
 use ic_kit::Principal;
 use serde::{Deserialize, Serialize};
 use ic_cdk::export::candid::CandidType;
+
 #[derive(Clone, Readable, Writable)]
 pub struct User {
     pub user_name: String,
     pub address: SPrincipal,
 }
 
-#[derive(Deserialize, Serialize, Debug, Readable, Writable, CandidType)]
+#[derive(Debug, Readable, Writable, Serialize, Deserialize, PartialEq, Clone, Eq, CandidType)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct Profile {
     // image: SOption<SVec<u8>>,
     // username: Option<String>,

@@ -85,5 +85,4 @@ service : {
     "get_profile": () -> (UserProfile) query;
 };
 
-}
 
