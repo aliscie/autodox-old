@@ -41,6 +41,7 @@ rand = "0.8.1"
 uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics", "js", "serde"] }
 dotenv = "0.15.0"
 gloo = "0.8.0"
+blob = "0.3.0"
 
 
 [dependencies.web-sys]
@@ -74,6 +75,9 @@ features = [
     "MouseEvent",
     "KeyboardEvent",
     "ImageData",
+    "Blob",
+    "BlobPropertyBag",
+    "Url",
 ]
 
 [features]
