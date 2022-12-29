@@ -48,7 +48,7 @@ pub fn title_avatar_component() -> Html {
 
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-solid fa-user"></i>{"Profile info"}</a>},
-        html! {<a><input onchange={on_upload} type="file" id="img" name="img" accept="image/*"/></a>},
+        html! {<a><input onchange={on_upload} type="file" accept="image/*"/></a>},
         html! {<a><i class="fa-solid fa-eye"></i>{"Who can find me"}</a>},
         html! {<a><i class="fa-solid fa-gear"></i>{"Settings"}</a>},
         html! {<a onmousedown={logout} ><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</a>},
