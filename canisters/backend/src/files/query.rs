@@ -44,3 +44,10 @@ pub fn get_directories() -> Option<FileDirectory> {
     let mut user_files: UserFiles = s!(UserFiles);
     user_files.get(&username).map(|s| s.clone())
 }
+
+
+#[query]
+#[candid_method(query)]
+pub async fn test_ic() -> String {
+    "hello from ic 3".to_string()
+}

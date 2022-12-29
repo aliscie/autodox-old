@@ -8,7 +8,6 @@ use crate::files::types::*;
 use crate::users::types::*;
 use crate::utils::{get_username, Status, UpdateResponse};
 use candid::{CandidType, Deserialize};
-use ic_cdk::api::call::CallResult;
 use ic_stable_memory::collections::vec::SVec;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 use ic_stable_memory::{
@@ -44,30 +43,33 @@ pub fn create_file(create_file_data: FileNodeCreate) {
     ;
 }
 
-fn pop(barry: &[u8]) -> [u8; 16] {
-    barry.try_into().expect("slice with incorrect length")
-}
-
 
 async fn create_id() -> Id {
-    let id: CallResult<(Vec<u8>, )> = ic_cdk::api::management_canister::main::raw_rand().await;
-    let id: [u8; 16] = pop(id.unwrap().0.as_slice().clone());
+    // let id: ([u8; 16],) = ic_cdk::api::call::call(
+    //     ic_cdk::export::Principal::management_canister(),
+    //     "raw_rand",
+    //     (),
+    // )
+    // .await
+    // .unwrap();
+    // id.0.into()
+    let id: [u8; 16] = [2; 16];
     id.into()
 }
 
 #[update]
 #[candid_method(update)]
-pub async fn create_directory() -> Option<FileDirectory> {
+pub async fn create_directory() -> UpdateResponse {
     let id = create_id().await;
     let caller = SPrincipal(ic_cdk::caller());
     let users = s!(Users);
     let username = match get_username(caller, &users) {
-        None => return None,
+        None => return UpdateResponse { status: Status::UnAuthorized, message: "User not found".to_string() },
         Some(username) => username,
     };
     let mut user_files: UserFiles = s!(UserFiles);
     let mut file_directory = FileDirectory::new(id, "default".to_string());
-    let id: Id = create_id().await;
+    let id = create_id().await;
     file_directory.files.push_vertex(
         id.into(),
         FileNode {
@@ -84,11 +86,7 @@ pub async fn create_directory() -> Option<FileDirectory> {
     user_files.insert(username, file_directory.clone());
     s! { UserFiles = user_files}
     ;
-    return Some(file_directory);
+    return UpdateResponse { status: Status::Success, message: "Directory created".to_string() };
 }
 
-#[update]
-#[candid_method(update)]
-pub fn test(data: String) -> Status {
-    Status::Success
-}
+

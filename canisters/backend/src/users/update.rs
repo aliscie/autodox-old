@@ -16,19 +16,21 @@ use crate::users::utils::is_registered;
 #[update]
 #[candid_method(update)]
 pub fn register(user_name: String) -> String {
-    println!("{:#?}", ic_cdk::caller());
     let caller: SPrincipal = SPrincipal(ic_cdk::caller());
+    if Principal::anonymous().to_text() == caller.to_string() {
+        return "Anonymous caller".to_string();
+    }
     let _caller: Principal = ic_cdk::caller();
     let mut users = s!(Users);
     if Principal::is_anonymous() {
         "Please login with the IC identity.".to_string();
     }
-    if let Some(registered_name) = is_registered(&caller, users.clone()) {
-        return "already exits".to_string();//RegisterResponse::AlreadyRegistered { user_name: registered_name };
-    }
-    let new_user = User { user_name: user_name.clone(), address: caller.clone() };
-    users.push(new_user);
-    s! { Users = users}
+    // if let Some(registered_name) = is_registered(&caller, users.clone()) {
+    //     return "already exits".to_string();//RegisterResponse::AlreadyRegistered { user_name: registered_name };
+    // }
+    // let new_user = User { user_name: user_name.clone(), address: caller.clone() };
+    // users.push(new_user);
+    // s! { Users = users}
     ;
     "ok".to_string()
 }

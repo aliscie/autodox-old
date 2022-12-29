@@ -1,6 +1,8 @@
 mod files;
 mod initialize;
-pub mod users;
+mod users;
+pub use users::*;
+pub use files::*;
 mod utils;
 
 use initialize::*;
