@@ -50,6 +50,11 @@ type FileDirectory = opt variant {
     files: Tree;
 };
 
+type UpdateRespone = record {
+    status : Status;
+    message: text;
+};
+
 type FileDirectoryUpdate = variant {
     name: text;
     files: Tree;
@@ -65,9 +70,9 @@ service : {
     "create_file": (create_file_data : CreateFileData) -> ();
     "create_directory": (
         //    create_file_data : FileDirectoryUpdate
-    ) -> (opt FileDirectory);
+    ) -> (UpdateRespone);
     "get_directories": () ->(FileDirectory) query;
     "register": (text) -> (text);
-    "test" : (data : text) -> (Status);
+    "test_ic" : () -> (text) query;
 }
 
