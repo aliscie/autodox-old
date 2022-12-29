@@ -1,11 +1,15 @@
 use candid::candid_method;
 use ic_cdk::export::Principal;
-use ic_cdk_macros::update;
+// use ic_cdk_macros::update;
 use ic_stable_memory::s;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 use crate::custom_traits::*;
 
-use crate::users::types::{User, Users};
+use ic_kit::{
+    macros::update,
+};
+
+use crate::users::types::{Profile, User, UserProfile, Users};
 use crate::users::utils::is_registered;
 
 
@@ -28,5 +32,18 @@ pub fn register(user_name: String) -> String {
     // users.push(new_user);
     // s! { Users = users}
     ;
+    "ok".to_string()
+}
+
+
+
+
+
+#[update]
+#[candid_method(update)]
+pub fn update_profile(data: Profile) -> String {
+    let mut profile = s!(UserProfile);
+    // users.push(new_user);
+    s! { UserProfile = profile};
     "ok".to_string()
 }

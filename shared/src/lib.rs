@@ -3,14 +3,14 @@ extern crate uuid;
 
 use lazy_static::lazy_static;
 pub use tree::Tree;
-
+mod data_fields;
+pub use data_fields::*;
 mod error;
 pub mod tree;
 pub use error::Error;
 pub mod macros;
 pub mod schema;
 pub mod traits;
-pub mod id;
 
 pub use macros::*;
 

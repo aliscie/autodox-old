@@ -43,7 +43,7 @@ pub fn markdown(props: &MarkdownProps) -> Html {
     ];
 
     html! {<>
-        <PopOverMenu items = {items} position = {position.clone()}/>
+        <PopOverMenu click_on={Some(true)} items = {items} position = {position.clone()}/>
         <li {onclick} class="btn right_clickable"> <i class="fa-brands fa-markdown"></i></li>
     </>}
 }
