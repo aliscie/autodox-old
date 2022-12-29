@@ -50,6 +50,11 @@ type FileDirectory = opt variant {
     files: Tree;
 };
 
+type UpdateRespone = record {
+    status : Status;
+    message: text;
+};
+
 type FileDirectoryUpdate = variant {
     name: text;
     files: Tree;
@@ -61,28 +66,13 @@ type Status = variant {
     InvalidInput;
 };
 
-
-type UserProfile = record {
-//    principal:hex;
-    image: opt vec nat8;
-    username: opt text;
-    last_name: opt text;
-    first_name: opt text;
-    birthdate: opt text;
-    email: opt text;
-    emails: opt vec text;
-}
-
 service : {
     "create_file": (create_file_data : CreateFileData) -> ();
     "create_directory": (
         //    create_file_data : FileDirectoryUpdate
-    ) -> (opt FileDirectory);
+    ) -> (UpdateRespone);
     "get_directories": () ->(FileDirectory) query;
     "register": (text) -> (text);
-    "test" : (data : text) -> (Status);
-    "update_profile" : (data : UserProfile) -> (Status);
-    "get_profile": () -> (UserProfile) query;
-};
-
+    "test_ic" : () -> (text) query;
+}
 

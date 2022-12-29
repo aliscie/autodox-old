@@ -1,30 +1,5 @@
 import {AuthClient} from "@dfinity/auth-client";
-import * as backend from './../../../../../backend/index.js'
-
-// export const createActor = async canisterId => {
-//     // test http://localhost:8000 main https://ic0.app
-//     const host = 'http://localhost:8000'
-//     const options = {agentOptions: {host}}
-//     return backend.createActor(canisterId, options)
-// }
-
-// export const read = async canisterId => {
-//     const actor = await createActor(canisterId)
-//     return await actor;
-// }
-
-const canisterId = "dummy" //process.env.INTERNET_IDENTITY_CANISTER_ID
-console.log(canisterId)
-
-export const create_file = async (text) => {
-    const actor = await createActor(canisterId)
-    return await actor.create_file(text);
-}
-
-export const create_directory = async (text) => {
-    const actor = await createActor(canisterId)
-    return await actor.create_directory(id, root, vertices, adjacency, name);
-}
+import {createActor} from './../../../../../src/declarations/backend';
 
 export async function identify() {
     const authClient = await AuthClient.create();
@@ -53,4 +28,21 @@ export async function get_profile() {
 export async function is_logged() {
     const authClient = await AuthClient.create();
     return await authClient.isAuthenticated()
+}
+
+
+export const get_actor = async canisterId => {
+    // test http://localhost:8000 main https://ic0.app
+    const host = "https://ic0.app"
+    const options = {agentOptions: {host}}
+    return createActor(canisterId, options)
+}
+
+
+export async function test_connect_wasm_bindgen() {
+    let actor = await get_actor(process.env.BACKEND_CANISTER_ID)
+    // console.log("actor", actor)
+    // console.log("backend",backend)
+    return await backend.test_ic();
+    return await actor.test_ic();
 }
