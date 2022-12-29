@@ -1,25 +1,47 @@
-use web_sys::File;
+use js_sys::{Promise, Uint8Array};
+use web_sys::{BlobPropertyBag, File, Url};
+use web_sys::{Blob};
 
 pub struct Image {
-    pub width: u32,
-    pub height: u32,
+    pub name: String,
     pub format: String,
     pub data: Vec<u8>,
 }
 
+fn decode_image(image: &Vec<u8>) -> Option<String> {
+    let uint8arr = js_sys::Uint8Array::new(&unsafe { js_sys::Uint8Array::view(&image) }.into());
+    let array = js_sys::Array::new();
+    array.push(&uint8arr.buffer());
+    let blob = Blob::new_with_u8_array_sequence_and_options(
+        &array,
+        // web_sys::BlobPropertyBag::new().type_("application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+        web_sys::BlobPropertyBag::new().type_("image/png"),
+    ).unwrap();
 
-// impl From<File> for Image {
-//     fn from(image: File) -> Self {
-//         let buffer = image.array_buffer();
-//         let result = wasm_bindgen_futures::JsFuture::from(buffer).await;
-//         let bytes: Vec<u8> = Uint8Array::new(&result.unwrap()).to_vec();
-//         Self { width: 0, height: 0, format: "".to_string(), data: bytes }
-//     }
-// }
+    let url: String = Url::create_object_url_with_blob(&blob).unwrap();
+    Some(url)
+}
 
-// impl From<File> for Image {
-//     fn as_str(image: File) -> Self {
-//         let blob = Blob::new_with_u8_array_sequence_and_options(&image, &optoins).unwrap();
-//         let url: String = Url::create_object_url_with_blob(&blob).unwrap();
-//     }
-// }
+impl Image {
+    pub async fn new(file: File) -> Self {
+        let name: String = file.name();
+        let name = name.as_str();
+        let v: Vec<&str> = name.split('.').collect();
+        let name = v.get(0).unwrap().to_string();
+        ;
+        let format = v.get(1).unwrap().to_string();
+
+        let buffer: Promise = file.array_buffer();
+        let result = wasm_bindgen_futures::JsFuture::from(buffer).await;
+        let bytes: Vec<u8> = Uint8Array::new(&result.unwrap()).to_vec();
+        Self { name, format, data: bytes }
+    }
+
+    pub fn to_link(image: Vec<u8>) -> Option<String> {
+        decode_image(&image)
+    }
+
+    pub fn link(self: &Self) -> Option<String> {
+        decode_image(&self.data)
+    }
+}
