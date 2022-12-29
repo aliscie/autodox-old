@@ -16,3 +16,10 @@ pub struct Image {
 //         Self { width: 0, height: 0, format: "".to_string(), data: bytes }
 //     }
 // }
+
+// impl From<File> for Image {
+//     fn as_str(image: File) -> Self {
+//         let blob = Blob::new_with_u8_array_sequence_and_options(&image, &optoins).unwrap();
+//         let url: String = Url::create_object_url_with_blob(&blob).unwrap();
+//     }
+// }

@@ -64,7 +64,7 @@ pub fn title_avatar_component() -> Html {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
             let user_token = backend::identify().await;
-            let profile: JsValue = backend::get_profile().await;
+            // let profile: JsValue = backend::get_profile().await;
             // log!(user_token);
         });
     });
