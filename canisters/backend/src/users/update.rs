@@ -9,41 +9,48 @@ use ic_kit::{
     macros::update,
 };
 
-use crate::users::types::{Profile, User, UserProfile, Users};
-use crate::users::utils::is_registered;
+use crate::users::types::{User, Users};
+use crate::utils::{Status, UpdateResponse};
 
 
 #[update]
 #[candid_method(update)]
-pub fn register(user_name: String) -> String {
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
-    if Principal::anonymous().to_text() == caller.to_string() {
-        return "Anonymous caller".to_string();
-    }
-    let _caller: Principal = ic_cdk::caller();
+pub fn register(user_name: String) -> UpdateResponse {
     let mut users = s!(Users);
-    if Principal::is_anonymous() {
-        "Please login with the IC identity.".to_string();
+    let caller: Option<User> = User::new();
+    if caller.is_none() {
+        return UpdateResponse { status: Status::UnAuthorized, message: "Please try to login".to_string() };
     }
-    // if let Some(registered_name) = is_registered(&caller, users.clone()) {
-    //     return "already exits".to_string();//RegisterResponse::AlreadyRegistered { user_name: registered_name };
-    // }
-    // let new_user = User { user_name: user_name.clone(), address: caller.clone() };
-    // users.push(new_user);
-    // s! { Users = users}
+
+    users.push(caller.unwrap());
+    s! { Users = users}
     ;
-    "ok".to_string()
+    UpdateResponse { status: Status::Success, message: "ok".to_string() }
 }
 
+use serde::{Serialize};
+use candid::{CandidType, Deserialize};
 
-
-
+#[derive(Deserialize, Serialize, Debug, CandidType)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
+pub struct UpdateProfile {
+    pub user_name: Option<String>,
+    pub image: Option<Vec<u8>>,
+}
 
 #[update]
 #[candid_method(update)]
-pub fn update_profile(data: Profile) -> String {
-    let mut profile = s!(UserProfile);
+pub fn update_profile(data: UpdateProfile) -> UpdateResponse {
+    let mut users = s!(Users);
+
+    // for user in profile {
+    //     if user.address = caller {
+    //         user.update()
+    //     }
+    // }
     // users.push(new_user);
-    s! { UserProfile = profile};
-    "ok".to_string()
+
+    s! { Users = users}
+    ;
+    UpdateResponse { status: Status::Success, message: "Your profile has been s updated.".to_string() }
 }

@@ -4,9 +4,30 @@ use yew::prelude::*;
 use crate::backend;
 use crate::components::{Avatar, PopOverMenu};
 use shared::*;
+use yewdux::functional::use_store;
+use crate::utils::{DeviceInfo, Image};
+
 
 #[function_component]
 pub fn TitleAvatarComponent() -> Html {
+    let (device, dispatch) = use_store::<DeviceInfo>();
+
+    let _dispatch = dispatch.clone();
+    use_effect_with_deps(
+        move |_| {
+            spawn_local(async move {
+                let auth = backend::is_logged().await.as_bool().unwrap();
+                _dispatch.reduce_mut(|state| state.is_authed = auth);
+                let register = backend::register("ali".to_string()).await;
+                // let profile: JsValue = backend::get_profile().await;
+                log!(register);
+
+            });
+        },
+        (),
+    );
+
+
     let image_link: UseStateHandle<Option<String>> = use_state(|| None);
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let _position = position.clone();
@@ -59,15 +80,11 @@ pub fn TitleAvatarComponent() -> Html {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
             let user_token = backend::identify().await;
-            // let profile: JsValue = backend::get_profile().await;
-            // log!(user_token);
         });
     });
     let auth = true; // serde_wasm_bindgen::from_value::<bool>(backend::is_logged().await).unwrap();
-    let is_logged_ing = use_state(|| true);
-    let _is_logged_ing = is_logged_ing.clone();
 
-    if *is_logged_ing {
+    if device.is_authed {
         return html! { <>
 
         <PopOverMenu {items} position = {position.clone()}/>

@@ -24,6 +24,9 @@ extern "C" {
     #[wasm_bindgen(js_name = is_logged)]
     pub async fn is_logged() -> JsValue;
 
+    #[wasm_bindgen(js_name = register)]
+    pub async fn register(username: String) -> JsValue;
+
     // #[wasm_bindgen(js_name = register)]
     // pub async fn register(username: String) -> JsValue;
     //

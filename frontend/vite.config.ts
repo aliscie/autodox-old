@@ -18,9 +18,8 @@ export default defineConfig({
     },
     plugins: [
         wasmPack(["../frontend"]),
-
     ],
     define: {
-        'process.env': {"BACKEND_CANISTER_ID": "ryjl3-tyaaa-aaaaa-aaaba-cai"}
+        'process.env': {"BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai"}
     },
 });

@@ -34,10 +34,16 @@ export interface Tree {
   'adjacency' : Array<[Uint8Array, Array<Uint8Array>]>,
 }
 export interface UpdateRespone { 'status' : Status, 'message' : string }
+export interface User {
+  'user_name' : string,
+  'address' : Uint8Array,
+  'image' : Uint8Array,
+}
 export interface _SERVICE {
   'create_directory' : ActorMethod<[], UpdateRespone>,
   'create_file' : ActorMethod<[CreateFileData], undefined>,
   'get_directories' : ActorMethod<[], FileDirectory>,
-  'register' : ActorMethod<[string], string>,
+  'register' : ActorMethod<[string], UpdateRespone>,
   'test_ic' : ActorMethod<[], string>,
+  'update_profile' : ActorMethod<[User], UpdateRespone>,
 }

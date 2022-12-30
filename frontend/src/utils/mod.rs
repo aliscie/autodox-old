@@ -4,6 +4,9 @@ use web_sys::window;
 
 pub use device_info::DeviceInfo;
 pub use get_title_bar::GetTitleBar;
+pub use image::*;
+
+mod image;
 
 pub mod filetree;
 

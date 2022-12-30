@@ -8,7 +8,6 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-
 ic-cdk = "0.6.7"
 ic-kit = "0.4.8"
 candid = "0.7"

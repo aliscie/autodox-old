@@ -1,7 +1,7 @@
 use ic_cdk_macros::*;
 use ic_stable_memory::{s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade};
 use crate::files::types::{MyStrings};
-use crate::users::types::{Users, UserFiles, UserProfile};
+use crate::users::types::{Users, UserFiles};
 
 
 #[init]
@@ -12,5 +12,4 @@ fn init() {
     s! { MyStrings = MyStrings::new() }
     s!(Users = Users::new());
     s!(UserFiles = UserFiles::new());
-    s!(UserProfile = UserProfile::new());
 }
