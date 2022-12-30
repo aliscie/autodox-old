@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use ic_cdk;
 use crate::files::types::*;
 use crate::users::types::*;
-use crate::utils::{get_username, Status, UpdateResponse};
+use crate::utils::{Status, UpdateResponse};
 use candid::{CandidType, Deserialize};
 use ic_stable_memory::collections::vec::SVec;
 use ic_stable_memory::utils::ic_types::SPrincipal;
@@ -19,14 +19,9 @@ use shared::schema::{FileDirectory, FileNode, FileNodeCreate};
 #[update]
 #[candid_method(update)]
 pub fn create_file(create_file_data: FileNodeCreate) {
-    let caller = SPrincipal(ic_cdk::caller());
-    let users = s!(Users);
-    let username = match get_username(caller, &users) {
-        None => return (),
-        Some(username) => username,
-    };
+    let user = User::current();
     let mut user_files: UserFiles = s!(UserFiles);
-    if let Some(file_directory) = user_files.get_mut(&username) {
+    if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
         let mut parent_adjacency = file_directory
             .files
             .adjacency
@@ -61,12 +56,10 @@ async fn create_id() -> Id {
 #[candid_method(update)]
 pub async fn create_directory() -> UpdateResponse {
     let id = create_id().await;
-    let caller = SPrincipal(ic_cdk::caller());
-    let users = s!(Users);
-    let username = match get_username(caller, &users) {
-        None => return UpdateResponse { status: Status::UnAuthorized, message: "User not found".to_string() },
-        Some(username) => username,
-    };
+    // let caller = SPrincipal(ic_cdk::caller());
+    let current_user = User::current();
+    // let users = s!(Users);
+
     let mut user_files: UserFiles = s!(UserFiles);
     let mut file_directory = FileDirectory::new(id, "default".to_string());
     let id = create_id().await;
@@ -83,7 +76,7 @@ pub async fn create_directory() -> UpdateResponse {
         .adjacency
         .insert(id.clone().into(), Vec::new());
     file_directory.files.root = Some(id.into());
-    user_files.insert(username, file_directory.clone());
+    user_files.insert(current_user.unwrap(), file_directory.clone());
     s! { UserFiles = user_files}
     ;
     return UpdateResponse { status: Status::Success, message: "Directory created".to_string() };

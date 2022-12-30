@@ -66,13 +66,21 @@ type Status = variant {
     InvalidInput;
 };
 
+
+type User = record {
+    address : vec nat8;
+    user_name: text;
+    image: vec nat8;
+};
+
 service : {
     "create_file": (create_file_data : CreateFileData) -> ();
     "create_directory": (
         //    create_file_data : FileDirectoryUpdate
     ) -> (UpdateRespone);
     "get_directories": () ->(FileDirectory) query;
-    "register": (text) -> (text);
+    "register": (text) -> (UpdateRespone);
     "test_ic" : () -> (text) query;
+    "update_profile" : (User) -> (UpdateRespone);
 }
 

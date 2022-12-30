@@ -1,5 +1,5 @@
 import {AuthClient} from "@dfinity/auth-client";
-import {createActor} from './../../../../../src/declarations/backend';
+import {createActor, backend} from './../../../../../src/declarations/backend';
 
 export async function identify() {
     const authClient = await AuthClient.create();
@@ -46,3 +46,8 @@ export async function test_connect_wasm_bindgen() {
     return await backend.test_ic();
     return await actor.test_ic();
 }
+
+export async function register(username) {
+    return await backend.register(username);
+}
+
