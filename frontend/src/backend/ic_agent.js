@@ -7,7 +7,12 @@ export async function identify() {
     if (await authClient.isAuthenticated()) {
         return authClient.getIdentity();
     }
-    return await authClient.login({identityProvider: "https://identity.ic0.app"});
+    return await authClient.login({
+        identityProvider: "https://identity.ic0.app",
+        onSuccess: () => {
+            window.location.reload()
+        }
+    });
 }
 
 

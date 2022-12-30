@@ -47,7 +47,7 @@ pub fn TitleAvatarComponent() -> Html {
     let logout = Callback::from(move |e: MouseEvent| {
         spawn_local(async move {
             backend::logout().await;
-            // window().unwrap().location().reload().unwrap();
+            window().unwrap().location().reload().unwrap();
         })
     });
 
