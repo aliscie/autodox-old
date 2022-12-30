@@ -36,10 +36,10 @@ export const get_actor = async () => {
     // test http://localhost:8000 main https://ic0.app
     const authClient = await AuthClient.create();
     const identity = await authClient.getIdentity();
-
+    console.log("identity", identity);
     const backend = createActor(canisterId, {
         identity,
-        host:"https://ic0.app",
+        host: "https://ic0.app",
         // host: window.location.href,
     });
     return backend

@@ -47,7 +47,7 @@ pub fn TitleAvatarComponent() -> Html {
     let logout = Callback::from(move |e: MouseEvent| {
         spawn_local(async move {
             backend::logout().await;
-            window().unwrap().location().reload().unwrap();
+            // window().unwrap().location().reload().unwrap();
         })
     });
 
@@ -80,7 +80,7 @@ pub fn TitleAvatarComponent() -> Html {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
             let user_token = backend::identify().await;
-            window().unwrap().location().reload().unwrap();
+            // window().unwrap().location().reload().unwrap();
         });
     });
     let auth = true; // serde_wasm_bindgen::from_value::<bool>(backend::is_logged().await).unwrap();
