@@ -38,9 +38,11 @@ export const get_actor = async () => {
     const identity = await authClient.getIdentity();
     console.log("identity", identity);
     const backend = createActor(canisterId, {
-        identity,
-        host: "https://ic0.app",
-        // host: window.location.href,
+        agentOptions: {
+            identity,
+            host: window.location.href,
+        }
+
     });
     return backend
 }
