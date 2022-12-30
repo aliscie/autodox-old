@@ -23,17 +23,25 @@ use uuid::Uuid;
 pub struct Id(pub Uuid);
 
 impl Id {
-    #[cfg(not(feature = "backend"))]
     pub fn new() -> Self {
-        Self(Uuid::new_v4())
+        //     // let id: ([u8; 16],) = ic_cdk::api::call::call(
+        //     ic_cdk::export::Principal::management_canister(),
+        //     "raw_rand",
+        //     (),
+        // )
+        // .await
+        // .unwrap();
+        // id.0.into()
+
+        let id: [u8; 16] = [0; 16];
+        id.into()
+        // Self(Uuid::new_v4())
     }
-    //#[cfg(feature = "backend")]
-    //pub fn new() -> Self {
-    //    let (bytes,): (Vec<u8>,) =
-    //        ic_cdk::api::call(Principal.management_canister(), "raw_rand", ())
-    //            .await
-    //            .unwrap;
-    //}
+
+    // #[cfg(not(feature = "backend"))]
+    // pub fn new() -> Self {
+    //     Self(Uuid::new_v4())
+    // }
 }
 
 impl From<Uuid> for Id {
@@ -108,8 +116,8 @@ impl CandidType for Id {
         Type::Vec(Box::new(Type::Nat8))
     }
     fn idl_serialize<S>(&self, serializer: S) -> Result<(), S::Error>
-    where
-        S: Serializer,
+        where
+            S: Serializer,
     {
         serializer.serialize_blob(&self.0.to_bytes_le())
     }

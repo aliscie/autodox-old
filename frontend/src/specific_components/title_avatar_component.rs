@@ -1,5 +1,5 @@
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{HtmlInputElement};
+use web_sys::{HtmlInputElement, window};
 use yew::prelude::*;
 use crate::backend;
 use crate::components::{Avatar, PopOverMenu};
@@ -11,17 +11,16 @@ use crate::utils::{DeviceInfo, Image};
 #[function_component]
 pub fn TitleAvatarComponent() -> Html {
     let (device, dispatch) = use_store::<DeviceInfo>();
-
     let _dispatch = dispatch.clone();
     use_effect_with_deps(
         move |_| {
             spawn_local(async move {
                 let auth = backend::is_logged().await.as_bool().unwrap();
-                _dispatch.reduce_mut(|state| state.is_authed = auth);
+                log!("before login");
+                &_dispatch.reduce_mut(|state| state.is_authed = auth);
                 let register = backend::register("ali".to_string()).await;
                 // let profile: JsValue = backend::get_profile().await;
                 log!(register);
-
             });
         },
         (),
@@ -48,6 +47,7 @@ pub fn TitleAvatarComponent() -> Html {
     let logout = Callback::from(move |e: MouseEvent| {
         spawn_local(async move {
             backend::logout().await;
+            window().unwrap().location().reload().unwrap();
         })
     });
 
@@ -70,7 +70,7 @@ pub fn TitleAvatarComponent() -> Html {
         html! {<a onmousedown={logout} ><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</a>},
     ];
 
-    let onclick = Callback::from(move |_e: MouseEvent| {
+    let on_login = Callback::from(move |_| {
         spawn_local(async move {
             // let x = invoke_async("open_new_window".to_string()).await;
             // TODO
@@ -80,6 +80,7 @@ pub fn TitleAvatarComponent() -> Html {
             //         let x = invoke_async("open_new_window".to_string()).await;
             //     }
             let user_token = backend::identify().await;
+            window().unwrap().location().reload().unwrap();
         });
     });
     let auth = true; // serde_wasm_bindgen::from_value::<bool>(backend::is_logged().await).unwrap();
@@ -93,7 +94,6 @@ pub fn TitleAvatarComponent() -> Html {
         </span>
         </>
         };
-    } else {
-        return html! {< span {onclick} class = "btn" > < i class = "fa-solid fa-right-to-bracket" >< / i >{"login"}< / span >};
-    }
+    };
+    return html! {< span onclick={on_login} class = "btn" > < i class = "fa-solid fa-right-to-bracket" >< / i >{"login"}< / span >};
 }

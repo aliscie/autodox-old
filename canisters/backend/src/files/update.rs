@@ -39,30 +39,15 @@ pub fn create_file(create_file_data: FileNodeCreate) {
 }
 
 
-async fn create_id() -> Id {
-    // let id: ([u8; 16],) = ic_cdk::api::call::call(
-    //     ic_cdk::export::Principal::management_canister(),
-    //     "raw_rand",
-    //     (),
-    // )
-    // .await
-    // .unwrap();
-    // id.0.into()
-    let id: [u8; 16] = [2; 16];
-    id.into()
-}
 
 #[update]
 #[candid_method(update)]
 pub async fn create_directory() -> UpdateResponse {
-    let id = create_id().await;
-    // let caller = SPrincipal(ic_cdk::caller());
+    let id = Id::new();
     let current_user = User::current();
-    // let users = s!(Users);
-
     let mut user_files: UserFiles = s!(UserFiles);
     let mut file_directory = FileDirectory::new(id, "default".to_string());
-    let id = create_id().await;
+    let id = Id::new();
     file_directory.files.push_vertex(
         id.into(),
         FileNode {
