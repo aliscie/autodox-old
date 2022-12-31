@@ -18,6 +18,13 @@ use crate::utils::{Status, UpdateResponse};
 pub fn register(user_name: String) -> UpdateResponse {
     let mut users = s!(Users);
     let caller: Option<User> = User::new();
+    if User::is_registered() {
+        return UpdateResponse {
+            status: Status::InvalidInput,
+            message: "User already registered".to_string(),
+        };
+    };
+
     if caller.is_none() {
         return UpdateResponse { status: Status::UnAuthorized, message: "Please try to login".to_string() };
     }
