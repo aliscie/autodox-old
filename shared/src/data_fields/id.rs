@@ -23,7 +23,7 @@ use uuid::Uuid;
 pub struct Id(pub Uuid);
 
 impl Id {
-    pub async fn ic_new() -> Vec<u8> {
+    pub async fn ic_new() -> Self {
         let call_result: Result<(Vec<u8>, ), _> = ic_cdk::api::call::call(ic_cdk::export::Principal::management_canister(), "raw_rand", ()).await;
         let id = match call_result {
             Ok((id, )) => id,
@@ -55,7 +55,9 @@ impl From<[u8; 16]> for Id {
 
 impl From<Vec<u8>> for Id {
     fn from(value: Vec<u8>) -> Self {
-        Id(Uuid::from_bytes(value.as_slice().try_into().unwrap()))
+        let value: &[_] = value.get(..16).unwrap();
+        let value: [u8; 16] = value.try_into().unwrap();
+        Id(Uuid::from_bytes(value.into()))
     }
 }
 
