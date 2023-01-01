@@ -65,6 +65,8 @@ features = [
     "NamedNodeMap",
     "Attr",
     "MouseEvent",
+    "Blob",
+    "Url",
 ]
 
 #[dev-dependencies]

@@ -1,5 +1,7 @@
 // mod mouse_move;
+mod main;
 
+pub use main::*;
 // pub use mouse_move::on_mouse_move;
 use wasm_bindgen::prelude::*;
 

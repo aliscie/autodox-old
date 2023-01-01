@@ -12,7 +12,8 @@ use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yewdux::dispatch::Dispatch;
-// use crate::plugins::editor_toolbar;
+
+use crate::plugins::{EditorToolbar};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -169,6 +170,14 @@ pub fn Editor(props: &Props) -> Html {
 
     let element_tree = props.element_tree.clone();
 
+    // let handle_text_format = Callback::from(move |format: TextFormat| {
+    //     onchange.emit(EditorChange::Update(EditorElementUpdate {
+    //         id: element_tree.as_ref().borrow().elements.root.unwrap(),
+    //         text_format: Some(format),
+    //         ..Default::default()
+    //     }));
+    // });
+
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -180,13 +189,9 @@ pub fn Editor(props: &Props) -> Html {
             class = "text_editor_container"
             id = "text_editor_container"
             >
-            <div contenteditable="false" id="selection-popper" class="buttons_group_class">
-            <span class="btn"><i class="fa-bold"></i></span>
-            <span class="btn"><i class="fa-italic"></i></span>
-            <span class="btn"><i class="fa-paint-roller"></i></span>
-            <span class="btn"><i class="fa-comment"></i></span>
-            <span class="btn"><i class="fa-droplet"></i></span>
-            </div>
+
+            <EditorToolbar // on_select={handle_text_format}
+            />
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
