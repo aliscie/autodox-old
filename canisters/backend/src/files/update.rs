@@ -39,32 +39,31 @@ pub fn create_file(create_file_data: FileNodeCreate) {
 }
 
 
-
 #[update]
 #[candid_method(update)]
 pub async fn create_directory() -> UpdateResponse {
-    let id = Id::new();
-    let current_user = User::current();
-    let mut user_files: UserFiles = s!(UserFiles);
-    let mut file_directory = FileDirectory::new(id, "default".to_string());
-    let id = Id::new();
-    file_directory.files.push_vertex(
-        id.into(),
-        FileNode {
-            id: id.into(),
-            name: "root".into(),
-            element_tree: None,
-        },
-    );
-    file_directory
-        .files
-        .adjacency
-        .insert(id.clone().into(), Vec::new());
-    file_directory.files.root = Some(id.into());
-    user_files.insert(current_user.unwrap(), file_directory.clone());
-    s! { UserFiles = user_files}
+    let id = Id::ic_new().await;
+    // let current_user = User::current();
+    // let mut user_files: UserFiles = s!(UserFiles);
+    // let mut file_directory = FileDirectory::new(id, "default".to_string());
+    // let id: Id = id_new().await;//[0; 16].into();//Id::new();
+    // file_directory.files.push_vertex(
+    //     id.into(),
+    //     FileNode {
+    //         id: id.into(),
+    //         name: "root".into(),
+    //         element_tree: None,
+    //     },
+    // );
+    // file_directory
+    //     .files
+    //     .adjacency
+    //     .insert(id.clone().into(), Vec::new());
+    // file_directory.files.root = Some(id.into());
+    // user_files.insert(current_user.unwrap(), file_directory.clone());
+    // s! { UserFiles = user_files}
     ;
-    return UpdateResponse { status: Status::Success, message: "Directory created".to_string() };
+    return UpdateResponse { status: Status::Success, message: format!("{:#?}", id).to_string() };
 }
 
 
