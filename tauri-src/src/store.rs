@@ -6,7 +6,7 @@ use shared::traits::Queryable;
 use shared::traits::{Creatable, Entity, Updatable};
 use std::collections::{BTreeMap, HashMap};
 use surrealdb::sql::*;
-use surrealdb::{Datastore, Session};
+use surrealdb::{dbs::Session, kvs::Datastore};
 use tokio::sync::Mutex;
 
 pub struct Store {
