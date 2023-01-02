@@ -2,26 +2,27 @@ extern crate web_sys;
 
 mod editor_components;
 
-use shared::schema::{EditorElement, EditorElementCreate, EditorElementUpdate, ElementTree, FileNode};
-use shared::tree::{Tree};
+use app::Editor;
+use shared::schema::{
+    EditorElement, EditorElementCreate, EditorElementUpdate, ElementTree, FileNode,
+};
+use shared::tree::Tree;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
 use web_sys::Element;
-use app::Editor;
 
-mod plugins;
 mod app;
-pub(crate) mod spesific_components;
-pub(crate) mod components;
-mod render;
 mod backend;
+pub(crate) mod components;
+mod plugins;
+mod render;
+pub(crate) mod spesific_components;
 
-use yew::*;
-use shared::id::Id;
 use crate::app::EditorChange;
-
+use shared::id::Id;
+use yew::*;
 
 fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
     Callback::from(move |e| {
@@ -29,47 +30,39 @@ fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
     })
 }
 
-
 #[function_component]
 pub fn App() -> Html {
+    let mut default_element_tree = ElementTree::default();
+    let root = default_element_tree.elements.root.unwrap();
     let id: Id = Uuid::new_v4().into();
-    let element_id: Id = Uuid::new_v4().into();
-    let mut vertices: HashMap<Id, EditorElement> = HashMap::new();
-    let mut adjacency: HashMap<Id, Vec<Id>> = HashMap::new();
-    vertices.insert(id, EditorElement::new(
-        element_id,
-        "bold text".to_string(),
-        HashMap::from([(
-            "style".to_string(),
-            "font-weight: bold;".to_string(),
-        )]),
-    ));
-
-    adjacency.insert(id, vec![id]);  //TODO what is this?
-    // TODO panicked at 'called `Option::unwrap()` on a `None` value', editor/src/render.rs:37:38
-
-    let tree: ElementTree = ElementTree {
-        id: id,
-        elements: Tree {
-            vertices,
-            adjacency,
-            root: Some(id),
-        },
-    };
-
-    let element_tree: Rc<RefCell<ElementTree>> = Rc::new(RefCell::new(tree.clone()));
+    default_element_tree.elements.push_children(
+        root,
+        id.clone(),
+        EditorElement::new(
+            id,
+            "bold text".to_string(),
+            HashMap::from([("style".to_string(), "font-weight: bold;".to_string())]),
+        ),
+    );
+    let id: Id = Uuid::new_v4().into();
+    default_element_tree.elements.push_children(
+        root,
+        id,
+        EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
+    );
+    let element_tree: Rc<RefCell<ElementTree>> =
+        Rc::new(RefCell::new(default_element_tree.clone()));
     html! {
-    < >
+        <div>
         <h1>{"Text editor test"}</h1>
         <Editor
-        title = {"untitled".to_string()}
-        element_tree={element_tree.clone()}
-        onchange = { onchange(element_tree.clone())}
+            title = {"untitled".to_string()}
+            element_tree={element_tree.clone()}
+            onchange = { onchange(element_tree.clone())}
         />
-    < / >
+        </div>
     }
 }
-
 
 fn main() {
     yew::Renderer::<App>::new().render();
