@@ -8,7 +8,7 @@ use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::console::log_1;
-use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord};
+use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yewdux::dispatch::Dispatch;
@@ -137,7 +137,6 @@ pub fn Editor(props: &Props) -> Html {
 
     use_effect_with_deps(
         move |editor_ref| {
-            // let toolbar_action = editor_toolbar();
             let mutation_observer =
                 MutationObserver::new(oninput_event.as_ref().unchecked_ref()).unwrap();
             //let doc = window().unwrap_throw().document().unwrap_throw();
@@ -170,13 +169,16 @@ pub fn Editor(props: &Props) -> Html {
 
     let element_tree = props.element_tree.clone();
 
-    // let handle_text_format = Callback::from(move |format: TextFormat| {
-    //     onchange.emit(EditorChange::Update(EditorElementUpdate {
-    //         id: element_tree.as_ref().borrow().elements.root.unwrap(),
-    //         text_format: Some(format),
-    //         ..Default::default()
-    //     }));
-    // });
+    let action: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
+        let input: HtmlInputElement = e.target_unchecked_into();
+        log!(input.inner_text());
+
+        // onchange.emit(EditorChange::Update(EditorElementUpdate {
+        //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
+        //     text_format: Some(format),
+        //     ..Default::default()
+        // }));
+    });
 
     html! {
         <span
@@ -190,8 +192,7 @@ pub fn Editor(props: &Props) -> Html {
             id = "text_editor_container"
             >
 
-            <EditorToolbar // on_select={handle_text_format}
-            />
+            <EditorToolbar  action={action} />
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }

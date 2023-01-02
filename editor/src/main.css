@@ -1,5 +1,47 @@
-.editor_title, .text_editor_container {
 
+#selection-popper {
+    justify-content: space-evenly;
+    font-size: 1.25rem;
+    background-color: #707070;
+    cursor: pointer;
+    border-radius: 3%;
+    position: absolute;
+    z-index: 10;
+    display: none;
+}
+
+#selection-popper button {
+    height: 100%;
+    position: relative;
+}
+
+
+#selection-popper button:hover {
+    background-color: #56b8f5;
+}
+
+#selection-popper i {
+    pointer-events: none;
+}
+
+.btnEntrance {
+    animation-duration: 0.2s;
+    animation-fill-mode: both;
+    animation-name: btnEntrance;
+}
+
+@keyframes btnEntrance { /* zoomIn */
+    0% {
+        opacity: 0;
+        transform: scale3d(0.3, 0.3, 0.3);
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+.editor_title, .text_editor_container {
     flex-shrink: 0;
     flex-grow: 1;
     /*max-width: 80%;*/
@@ -38,60 +80,3 @@
     border: 0;
 }
 
-
-#selection-popper {
-    width: 2.5rem;
-    height: 2.5rem;
-    font-size: 1.25rem;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    display: none;
-
-}
-
-#selection-popper .btn {
-    background-color: rgba(var(--primary-background), 0.9);
-    width: 40px;
-}
-
-#selection-popper .btn:hover {
-    background: rgba(var(--object-color), 1);
-    width: 40px;
-}
-
-.btnEntrance {
-    animation-duration: 0.2s;
-    animation-fill-mode: both;
-    animation-name: btnEntrance;
-}
-
-@keyframes btnEntrance { /* zoomIn */
-    0% {
-        opacity: 0;
-        transform: scale3d(0.3, 0.3, 0.3);
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-.bold {
-    font-weight: bold;
-}
-
-.italic {
-    font-style: italic;
-}
-
-.header {
-    border-bottom: 2px solid #fcba03;
-    box-sizing: border-box;
-    display: block;
-    font-family: "roboto", sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #333;
-
-}
