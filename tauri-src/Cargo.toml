@@ -26,7 +26,7 @@ dotenv = "0.15.0"
 thiserror = "*"
 indexmap = { version = "1.9.1", features = ["serde"] }
 # For dev and to easy first time build experience, just have memory surrealdb for  now.
-surrealdb = { git = "https://github.com/lunchspider/surrealdb"}
+surrealdb = { git = "https://github.com/surrealdb/surrealdb", features = ["parallel", "kv-rocksdb"] }
 
 async-trait = "0.1.57"
 

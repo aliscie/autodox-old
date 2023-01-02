@@ -25,7 +25,7 @@ pub enum Error {
     StoreFailToCreate(String),
 
     #[error(transparent)]
-    Surreal(#[from] surrealdb::Error),
+    Surreal(#[from] surrealdb::error::Db),
     //#[error(transparent)]
     //IO(#[from] std::io::Error),
 }
