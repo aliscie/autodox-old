@@ -1,5 +1,5 @@
 import {AuthClient} from "@dfinity/auth-client";
-import {createActor, canisterId, idlFactory} from './../../../../../src/declarations/backend';
+import {createActor as backendActor, canisterId, idlFactory} from './../../../../../src/declarations/backend';
 import {Actor, HttpAgent} from "@dfinity/agent";
 
 export async function identify() {
@@ -41,13 +41,12 @@ export const get_actor = async () => {
     // test http://localhost:8000 main https://ic0.app
     const authClient = await AuthClient.create();
     const identity = await authClient.getIdentity();
-    console.log("identity", identity);
-    const backend = createActor(canisterId, {
+    const host = window.location.href;
+    const backend = backendActor(canisterId, {
         agentOptions: {
             identity,
-            host: window.location.href,
+            // host,
         }
-
     });
     return backend
 }

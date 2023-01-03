@@ -24,6 +24,7 @@ use crate::utils::{Status, UpdateResponse};
 pub fn create_file(create_file_data: FileNodeCreate) {
     let user = User::current();
     let mut user_files: UserFiles = s!(UserFiles);
+
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
         let mut parent_adjacency = file_directory
             .files
