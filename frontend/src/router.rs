@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use shared::id::Id;
 use yew_router::prelude::*;
+use crate::pages::Page;
 
 use crate::specific_components::FileData;
 
@@ -8,19 +9,25 @@ use crate::specific_components::FileData;
 pub enum Route {
     #[at("/")]
     Home,
+
+    #[at("/page/:name")]
+    Page { name: String },
+
     #[at("/files/:id")]
     File { id: Id },
+
     #[not_found]
     #[at("/404")]
     NotFound,
 }
 
 pub fn switch(routes: Route) -> Html {
-    let fallback = html!{ <div> {"loading"}</div>};
+    let fallback = html! { <div> {"loading"}</div>};
     match routes {
         // Dashboard
         Route::Home => html! {<span>{"We are at home!"}</span>},
         Route::File { id } => html! { <Suspense {fallback}> <FileData id = { id }/> </Suspense>},
         Route::NotFound => html! { <span>{ "404" }</span> },
+        Route::Page { name } => html! { <Page {name} />},
     }
 }
