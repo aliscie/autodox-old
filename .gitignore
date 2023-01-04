@@ -11,3 +11,5 @@
 .parcel-cache
 *.old.did
 .github
+internet_identity.did
+internet_identity.wasm

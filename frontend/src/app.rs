@@ -1,29 +1,34 @@
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::MouseEvent;
+use web_sys::{window, MouseEvent};
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
 
-// use shared::log;
+
+use shared::log;
 use shared::schema::{FileDirectory, FileNode};
 
 use crate::backend;
 use crate::router::{Route, switch};
 use crate::specific_components::{ButtonsGroup, SearchFiltes};
 use crate::utils::filetree::FileTree;
-use crate::utils::GetTitleBar;
+use crate::utils::{DeviceInfo, GetTitleBar};
 
 #[function_component(App)]
 pub fn app() -> Html {
+    let (device, dispatch) = use_store::<DeviceInfo>();
+    // &dispatch.reduce_mut(|state| state.is_asdie = true);
+    // &dispatch.reduce_mut(|state| state.is_asdie = false);
     spawn_local(async move {
         // log!(&backend::read().await);
         // log!(JsValue::js_typeof(
         //     &backend::read().await
         // ));
     });
-    let aside_bar_toggle = use_state_eq(|| "".to_string());
-    let toggle_aside = aside_bar_toggle.clone();
+    // let aside_bar_toggle = use_state_eq(|| "".to_string());
+    // let toggle_aside = aside_bar_toggle.clone();
     let file_dispatch = Dispatch::<FileDirectory>::new();
     // only do it once
     use_effect_with_deps(
@@ -40,7 +45,7 @@ pub fn app() -> Html {
         //TODO
         // history.push(Route::File { id: market_page });
     });
-
+    // log!( &device.is_aside);
     let handle_create_file: Callback<MouseEvent> =
         file_dispatch.reduce_mut_future_callback(|state| {
             Box::pin(async move {
@@ -60,12 +65,21 @@ pub fn app() -> Html {
                 }
             })
         });
+    let mut asdie_style = "";
+    if device.is_aside {
+        asdie_style = "width:250px";
+    }
+
+    let mut main_style = "";
+    if device.is_aside && window().unwrap_throw().inner_width().unwrap().as_f64().unwrap() > 750 as f64 {
+        main_style = "margin-left:250px";
+    }
     html! {
         <BrowserRouter>
 
             <div id = "app">
-            <GetTitleBar toggle = { toggle_aside }/>
-        <aside style={(*aside_bar_toggle).clone().to_string()}>
+            <GetTitleBar/>
+            <aside style={asdie_style}>
 
             <SearchFiltes/>
 
@@ -81,7 +95,7 @@ pub fn app() -> Html {
 
             </ul>
             </aside>
-            <main style="margin-top: 35px;">
+            <main style={format!("transition: 0.2s;; margin-top: 35px; {}",main_style)}>
                 <Switch<Route> render= {switch} />
             </main>
             //<Editor title = "text" element_tree = { element_tree }/>
