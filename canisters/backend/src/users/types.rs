@@ -40,18 +40,14 @@ impl User {
         }
         None
     }
-    // pub(crate) fn is_registered() -> bool {
-    //     let curr = Self::current();
-    //     if curr.is_none() {
-    //         return false;
-    //     }
-    //
-    //     let mut users = s!(Users);
-    //     for user in users.iter() {
-    //         if &user.address == &curr.unwrap().address { return true; }
-    //     }
-    //     false
-    // }
+    pub(crate) fn is_registered() -> bool {
+        let address = SPrincipal(ic_cdk::caller());
+        let mut users = s!(Users);
+        for user in users.iter() {
+            if &user.address.to_string() == &address.to_string() { return true; }
+        }
+        false
+    }
 
     pub(crate) fn new() -> Option<Self> {
         let address = SPrincipal(ic_cdk::caller());

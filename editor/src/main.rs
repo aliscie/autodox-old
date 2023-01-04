@@ -44,17 +44,18 @@ pub fn App() -> Html {
             HashMap::from([("style".to_string(), "font-weight: bold;".to_string())]),
         ),
     );
+
+
     let id: Id = Uuid::new_v4().into();
     default_element_tree.elements.push_children(
         root,
         id,
-        EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
+        EditorElement::new(id, r#"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
     );
     let element_tree: Rc<RefCell<ElementTree>> =
         Rc::new(RefCell::new(default_element_tree.clone()));
     html! {
         <div>
-        <h1>{"Text editor test"}</h1>
         <Editor
             title = {"untitled".to_string()}
             element_tree={element_tree.clone()}

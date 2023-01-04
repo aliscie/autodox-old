@@ -1,13 +1,26 @@
 import {AuthClient} from "@dfinity/auth-client";
-import {createActor, canisterId, idlFactory} from './../../../../../src/declarations/backend';
+import {createActor as backendActor, canisterId, idlFactory} from './../../../../../src/declarations/backend';
 import {Actor, HttpAgent} from "@dfinity/agent";
+
+console.log(process.env)
+console.log(canisterId)
 
 export async function identify() {
     const authClient = await AuthClient.create();
     if (await authClient.isAuthenticated()) {
         return authClient.getIdentity();
     }
-    return await authClient.login({identityProvider: "https://identity.ic0.app"});
+
+    let identityProvider = "https://identity.ic0.app/#authorize";
+    if (process.env.DFX_NETWORK != "ic") {
+        identityProvider = "http://r7inp-6aaaa-aaaaa-aaabq-cai.localhost:4943/#authorize"
+    }
+    return await authClient.login({
+        identityProvider,
+        onSuccess: () => {
+            window.location.reload()
+        }
+    });
 }
 
 
@@ -33,17 +46,17 @@ export async function is_logged() {
 
 
 export const get_actor = async () => {
-    // test http://localhost:8000 main https://ic0.app
     const authClient = await AuthClient.create();
     const identity = await authClient.getIdentity();
-    console.log("identity", identity);
-    const backend = createActor(canisterId, {
+
+
+    const backend = backendActor(canisterId, {
         agentOptions: {
             identity,
             host: window.location.href,
         }
-
     });
+
     return backend
 }
 
