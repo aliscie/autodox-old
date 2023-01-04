@@ -13,7 +13,7 @@ export async function identify() {
 
     let identityProvider = "https://identity.ic0.app/#authorize";
     if (process.env.DFX_NETWORK != "ic") {
-        identityProvider = "http://127.0.0.1:4943/?canisterId=rkp4c-7iaaa-aaaaa-aaaca-cai&id=r7inp-6aaaa-aaaaa-aaabq-cai"
+        identityProvider = "http://r7inp-6aaaa-aaaaa-aaabq-cai.localhost:4943/#authorize"
     }
     return await authClient.login({
         identityProvider,
@@ -53,7 +53,7 @@ export const get_actor = async () => {
     const backend = backendActor(canisterId, {
         agentOptions: {
             identity,
-            // host,
+            host: window.location.href,
         }
     });
 

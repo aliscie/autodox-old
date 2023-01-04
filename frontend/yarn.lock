@@ -321,13 +321,6 @@
     ts-jest "^28.0.5"
     ts-node "^10.8.2"
 
-"@dfinity/authentication@^0.14.2":
-  version "0.14.2"
-  resolved "https://registry.yarnpkg.com/@dfinity/authentication/-/authentication-0.14.2.tgz#ce8d283693344dfcd444346832b128ef6382e3cb"
-  integrity sha512-kiZrRKUOnbseTQiAh4GDkAo5vCX6dUN1jkqJ5rLBYkIiGuK3jENxbu4G5oJPxq57F/cgnR4Hx/abSVHQfFRkEw==
-  dependencies:
-    "@dfinity/identity" "^0.15.1"
-
 "@dfinity/candid@^0.15.0":
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/@dfinity/candid/-/candid-0.15.0.tgz#293bc2a14f4cf9f80514a1ad4125edc00332c348"
@@ -339,15 +332,6 @@
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/@dfinity/identity/-/identity-0.15.0.tgz#ae396bd9999aa140eb351fc96af2694c4f5ea5d8"
   integrity sha512-9zvCbVlkdDh4yfte/chSCHiMToGnrRCRSmsvWv0PkC5EDcQW9JWMdY4GoTWLuHwVCocs/hGDVhwEtWZi5tRETg==
-  dependencies:
-    borc "^2.1.1"
-    js-sha256 "^0.9.0"
-    tweetnacl "^1.0.1"
-
-"@dfinity/identity@^0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@dfinity/identity/-/identity-0.15.1.tgz#feef54db7a0c2bfb39a0558432221058a5b05b30"
-  integrity sha512-26+hS4u0oHOP6mR6MgquSF2is1aRACccGUPOzYkf8M593N1slG83cxTVXBrzxql9FcUT5O4XIGSNMja0v+BMiA==
   dependencies:
     borc "^2.1.1"
     js-sha256 "^0.9.0"
@@ -5549,7 +5533,7 @@ webpack-sources@^3.2.3:
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.3.tgz#2d4daab8451fd4b240cc27055ff6a0c2ccea0cde"
   integrity sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==
 
-webpack@^5.30.0:
+webpack@^5.75.0:
   version "5.75.0"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.75.0.tgz#1e440468647b2505860e94c9ff3e44d5b582c152"
   integrity sha512-piaIaoVJlqMsPtX/+3KTTO6jfvrSYgauFVdt8cr9LTHKmcq/AMd4mhzsiP7ZF/PGRNPGA8336jldh9l2Kt2ogQ==
