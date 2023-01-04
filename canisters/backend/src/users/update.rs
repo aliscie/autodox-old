@@ -50,7 +50,7 @@ pub struct UpdateProfile {
 pub fn update_profile(data: UpdateProfile) -> UpdateResponse {
     let mut users = s!(Users);
 
-    // for user in profile {
+    // for user in users {
     //     if user.address = caller {
     //         user.update()
     //     }

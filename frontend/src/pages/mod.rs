@@ -1,19 +1,34 @@
+use yew::prelude::*;
+use yew_router::prelude::*;
+
+use crate::router::Route;
+
 mod profile_info;
 mod market;
 
-use yew::prelude::*;
-
-
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub name: String,
+    // pub name: String,
 }
 
-#[function_component]
-pub fn Page(props: &Props) -> Html {
-    match props.name.clone().as_ref() {
-        "profile" => html! { <profile_info::ProfileInfo/> },
-        "market" => html! { <market::Market/> },
-        _ => html! { <span>{"404"}</span> },
+#[derive(Clone, Routable, PartialEq)]
+pub enum PagesRoute {
+    #[at("/page/profile")]
+    Profile,
+    #[at("/page/market")]
+    Market,
+    #[not_found]
+    #[at("/settings/404")]
+    NotFound,
+}
+
+
+pub fn PageSwitch(route: PagesRoute) -> Html {
+    match route {
+        PagesRoute::Profile => html! { <profile_info::ProfileInfo/> },
+        PagesRoute::Market => html! { <market::Market/> },
+        PagesRoute::NotFound => html! {<span>{"xx"}</span>}
+        // PagesRoute::NotFound => html! {<Redirect<MainRoute> to={MainRoute::NotFound}/>}
     }
 }
+
