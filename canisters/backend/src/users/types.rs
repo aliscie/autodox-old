@@ -66,8 +66,11 @@ impl User {
         };
         Some(Self { address, image: None, user_name })
     }
+
+    pub(crate) fn caller() -> SPrincipal {
+        SPrincipal(ic_cdk::caller())
+    }
 }
 
 pub type Users = Vec<User>;
-
 pub type UserFiles = HashMap<User, FileDirectory>;

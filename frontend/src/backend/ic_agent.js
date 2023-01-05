@@ -35,9 +35,10 @@ export async function update_profile(image ) {
 }
 
 export async function get_profile() {
-    const actor = await createActor(canisterId)
+    const actor = await get_actor()
     return await actor.get_profile();
 }
+
 
 export async function is_logged() {
     const authClient = await AuthClient.create();

@@ -24,6 +24,9 @@ pub fn TitleAvatarComponent() -> Html {
                 let register = backend::register("ali".to_string()).await;
                 // let profile: JsValue = backend::get_profile().await;
                 log!(register);
+                let get_profile = backend::get_profile().await;
+                // TODO get js value from `JsValue([Uint8Array])`
+                //  log!(get_profile.to_vec())
             });
         },
         (),
@@ -61,7 +64,7 @@ pub fn TitleAvatarComponent() -> Html {
             let file = input.files().unwrap().get(0).unwrap();
             let image = Image::new(file).await;
             log!(&image.data);
-            let response =  backend::update_profile( image.data).await;
+            let response = backend::update_profile(image.data).await;
             log!(response);
         });
     });
