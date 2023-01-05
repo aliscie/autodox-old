@@ -29,9 +29,9 @@ export async function logout() {
     await authClient.logout()
 }
 
-export async function update_profile(data) {
-    const actor = await createActor(canisterId)
-    return await actor.update_profile(data);
+export async function update_profile(image ) {
+    const actor = await get_actor()
+    return await actor.update_profile({image: image});
 }
 
 export async function get_profile() {

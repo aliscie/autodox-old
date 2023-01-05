@@ -68,8 +68,6 @@ type Status = variant {
 
 
 type User = record {
-    address : vec nat8;
-    user_name: text;
     image: vec nat8;
 };
 

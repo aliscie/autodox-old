@@ -41,8 +41,7 @@ use candid::{CandidType, Deserialize};
 #[derive(Deserialize, Serialize, Debug, CandidType)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct UpdateProfile {
-    pub user_name: Option<String>,
-    pub image: Option<Vec<u8>>,
+    pub image: Vec<u8>,
 }
 
 #[update]

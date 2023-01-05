@@ -29,11 +29,7 @@ export const idlFactory = ({ IDL }) => {
   const FileDirectory = IDL.Opt(
     IDL.Variant({ 'id' : IDL.Vec(IDL.Nat8), 'files' : Tree, 'name' : IDL.Text })
   );
-  const User = IDL.Record({
-    'user_name' : IDL.Text,
-    'address' : IDL.Vec(IDL.Nat8),
-    'image' : IDL.Vec(IDL.Nat8),
-  });
+  const User = IDL.Record({ 'image' : IDL.Vec(IDL.Nat8) });
   return IDL.Service({
     'create_directory' : IDL.Func([], [UpdateRespone], []),
     'create_file' : IDL.Func([CreateFileData], [], []),

@@ -60,8 +60,9 @@ pub fn TitleAvatarComponent() -> Html {
         spawn_local(async move {
             let file = input.files().unwrap().get(0).unwrap();
             let image = Image::new(file).await;
-            log!(image.link());
-            // let response =  backend::update_profile( Some(buffer_bytes), None).await;
+            log!(&image.data);
+            let response =  backend::update_profile( image.data).await;
+            log!(response);
         });
     });
     let navigator: yew_router::navigator::Navigator = use_navigator().unwrap();
