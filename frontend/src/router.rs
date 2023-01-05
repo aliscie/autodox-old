@@ -10,7 +10,7 @@ pub enum Route {
     #[at("/")]
     Home,
 
-    #[at("/page/*")]
+    #[at("/*")]
     Page,
 
     #[at("/files/:id")]

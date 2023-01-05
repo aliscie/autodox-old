@@ -13,14 +13,14 @@ pub struct Props {
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum PagesRoute {
-    #[at("/page/profile")]
+    #[at("/profile")]
     Profile,
-    #[at("/page/settings")]
+    #[at("/settings")]
     Settings,
-    #[at("/page/market")]
+    #[at("/market")]
     Market,
     #[not_found]
-    #[at("/page/404")]
+    #[at("/404")]
     NotFound,
 }
 
