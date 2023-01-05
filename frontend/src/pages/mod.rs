@@ -18,17 +18,16 @@ pub enum PagesRoute {
     #[at("/page/market")]
     Market,
     #[not_found]
-    #[at("/settings/404")]
+    #[at("/page/404")]
     NotFound,
 }
 
 
-pub fn PageSwitch(route: PagesRoute) -> Html {
+pub fn page_switch(route: PagesRoute) -> Html {
     match route {
         PagesRoute::Profile => html! { <profile_info::ProfileInfo/> },
         PagesRoute::Market => html! { <market::Market/> },
-        PagesRoute::NotFound => html! {<span>{"xx"}</span>}
-        // PagesRoute::NotFound => html! {<Redirect<MainRoute> to={MainRoute::NotFound}/>}
+        PagesRoute::NotFound => html! {<Redirect<Route> to={Route::NotFound}/>}
     }
 }
 

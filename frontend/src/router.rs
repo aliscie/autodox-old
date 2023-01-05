@@ -28,6 +28,6 @@ pub fn switch(routes: Route) -> Html {
         Route::Home => html! {<span>{"We are at home!"}</span>},
         Route::File { id } => html! { <Suspense {fallback}> <FileData id = { id }/> </Suspense>},
         Route::NotFound => html! { <span>{ "404" }</span> },
-        Route::Page => html! { <Switch<PagesRoute> render={PageSwitch} />},
+        Route::Page => html! { <Switch<PagesRoute> render={page_switch} />},
     }
 }
