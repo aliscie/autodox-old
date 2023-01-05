@@ -1,10 +1,13 @@
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{HtmlInputElement, window};
+use web_sys::{HtmlInputElement, Navigator, window};
 use yew::prelude::*;
+use yew_router::prelude::use_navigator;
+use yew_router::Routable;
 use crate::backend;
 use crate::components::{Avatar, PopOverMenu};
 use shared::*;
 use yewdux::functional::use_store;
+use crate::pages::PagesRoute;
 use crate::utils::{DeviceInfo, Image};
 
 
@@ -61,12 +64,14 @@ pub fn TitleAvatarComponent() -> Html {
             // let response =  backend::update_profile( Some(buffer_bytes), None).await;
         });
     });
+    let navigator: yew_router::navigator::Navigator = use_navigator().unwrap();
+
 
     let items: Vec<Html> = vec![
-        html! {<a><i class="fa-solid fa-user"></i>{"Profile info"}</a>},
+        html! {<a onclick = {let navigator=navigator.clone();{move |_| {navigator.push(&PagesRoute::Profile)}}} ><i class="fa-solid fa-user"></i>{"Profile info"}</a>},
         html! {<a><input onchange={on_upload} type="file" accept="image/*"/></a>},
         html! {<a><i class="fa-solid fa-eye"></i>{"Who can find me"}</a>},
-        html! {<a><i class="fa-solid fa-gear"></i>{"Settings"}</a>},
+        html! {<a onclick = {let navigator=navigator.clone();{move |_| {navigator.push(&PagesRoute::Settings)}}} ><i class="fa-solid fa-gear"></i>{"Settings"}</a>},
         html! {<a onmousedown={logout} ><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</a>},
     ];
 
