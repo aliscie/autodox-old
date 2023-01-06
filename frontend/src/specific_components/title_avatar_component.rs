@@ -22,9 +22,10 @@ pub fn TitleAvatarComponent() -> Html {
                 log!("before login");
                 &_dispatch.reduce_mut(|state| state.is_authed = auth);
                 let register = backend::register("ali".to_string()).await;
-                // let profile: JsValue = backend::get_profile().await;
                 log!(register);
                 let get_profile = backend::get_profile().await;
+                log!(&get_profile);
+                // log!(Uint8Array::new(&get_profile).to_vec());
                 // TODO get js value from `JsValue([Uint8Array])`
                 //  log!(get_profile.to_vec())
             });

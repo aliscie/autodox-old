@@ -29,7 +29,7 @@ export async function logout() {
     await authClient.logout()
 }
 
-export async function update_profile(image ) {
+export async function update_profile(image) {
     const actor = await get_actor()
     return await actor.update_profile({image: image});
 }

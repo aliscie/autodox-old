@@ -15,7 +15,7 @@ use crate::utils::{Status, UpdateResponse};
 
 #[update]
 #[candid_method(update)]
-pub fn register(user_name: String) -> UpdateResponse {
+pub fn register(username: String) -> UpdateResponse {
     let mut users = s!(Users);
     let caller: Option<User> = User::new();
     if User::is_registered() {
