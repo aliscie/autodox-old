@@ -29,17 +29,6 @@ pub struct User {
     // emails: Option<Vec<String>>,
 }
 
-#[derive(Clone, PartialEq, Deserialize, Debug, Eq, Hash, Readable, Writable, CandidType)]
-pub struct QueryUser {
-    pub image: Option<Vec<u8>>,
-    pub username: Option<String>,
-    // last_name: Option<String>,
-    // first_name: Option<String>,
-    // birthdate: Option<String>,
-    // email: Option<String>,
-    // emails: Option<Vec<String>>,
-}
-
 impl User {
     pub fn get_username(address: SPrincipal, users: &Vec<User>) -> Option<String> {
         for user in users {

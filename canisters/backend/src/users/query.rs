@@ -2,7 +2,8 @@ use ic_stable_memory::s;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 use candid::candid_method;
 use ic_kit::macros::query;
-use crate::users::types::{QueryUser, User, Users};
+use shared::schema::QueryUser;
+use crate::users::types::{User, Users};
 
 
 #[query]
