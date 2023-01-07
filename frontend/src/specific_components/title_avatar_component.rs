@@ -9,6 +9,7 @@ use shared::*;
 use yewdux::functional::use_store;
 use crate::pages::PagesRoute;
 use crate::utils::{DeviceInfo, Image};
+use serde_wasm_bindgen;
 
 
 #[function_component]
@@ -23,8 +24,14 @@ pub fn TitleAvatarComponent() -> Html {
                 &_dispatch.reduce_mut(|state| state.is_authed = auth);
                 let register = backend::register("ali".to_string()).await;
                 log!(register);
-                let get_profile = backend::get_profile().await;
-                log!(&get_profile);
+                #[derive(Clone, PartialEq, Readable, Writable, Deserialize, Debug, Eq, Hash)]
+                pub struct User {
+                    pub image: Option<Vec<u8>>,
+                    pub username: Option<String>,
+                }
+
+                // let get_profile: User = serde_wasm_bindgen::from_value(backend::get_profile().await).unwrap();
+                // log!(&get_profile);
                 // log!(Uint8Array::new(&get_profile).to_vec());
                 // TODO get js value from `JsValue([Uint8Array])`
                 //  log!(get_profile.to_vec())
@@ -94,6 +101,7 @@ pub fn TitleAvatarComponent() -> Html {
         });
     });
     let auth = true; // serde_wasm_bindgen::from_value::<bool>(backend::is_logged().await).unwrap();
+
 
     if device.is_authed {
         return html! { <>
