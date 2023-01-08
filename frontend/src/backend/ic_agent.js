@@ -29,15 +29,24 @@ export async function logout() {
     await authClient.logout()
 }
 
-export async function update_profile(data) {
-    const actor = await createActor(canisterId)
-    return await actor.update_profile(data);
+export async function update_profile(image) {
+    const actor = await get_actor()
+    return await actor.update_profile({image: image});
 }
 
 export async function get_profile() {
-    const actor = await createActor(canisterId)
-    return await actor.get_profile();
+    const actor = await get_actor()
+    let result = await actor.get_profile();
+    result = result[0];
+    if ( typeof(result.username) == "object") {
+        result.username = result.username[0] || "";
+    } 
+    if ( typeof(result.image) == "object") {
+        result.image = result.image[0] || "";
+    } 
+    return result;
 }
+
 
 export async function is_logged() {
     const authClient = await AuthClient.create();
