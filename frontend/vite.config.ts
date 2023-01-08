@@ -21,7 +21,7 @@ export default defineConfig({
     ],
     define: {
         'process.env': {
-            "BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai"
+            "BACKEND_CANISTER_ID": "ryjl3-tyaaa-aaaaa-aaaba-cai"
         }
     },
 });

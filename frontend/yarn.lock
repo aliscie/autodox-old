@@ -298,9 +298,9 @@
     "@jridgewell/trace-mapping" "0.3.9"
 
 "@dfinity/agent@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/@dfinity/agent/-/agent-0.15.0.tgz#83ba5fe6ed321ced311d5437d3efdb292dd32996"
-  integrity sha512-W7g3EVbfngj0rDCK6CJx/ZLN3VDM0+ztTmvN2d8aLR7Dy8PHXFf8zB/C7vsdNkbYxDzog4xcTr7fGNst/e1Bcg==
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@dfinity/agent/-/agent-0.15.1.tgz#59d193d1f0e5c7c6661c7df412b110ec19e36193"
+  integrity sha512-Lu/TXdDj3XJgMNZYVdrECyo+zqlOxDR1I1mA7OuO6lsIciildJNbqDnsMQAit7605S4B8QLnvbnK/Okd8c2K1g==
   dependencies:
     base64-arraybuffer "^0.2.0"
     bignumber.js "^9.0.0"
