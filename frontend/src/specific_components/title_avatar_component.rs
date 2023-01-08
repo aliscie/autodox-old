@@ -1,49 +1,55 @@
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{HtmlInputElement, window};
+use web_sys::{window, HtmlInputElement};
 use yew::prelude::*;
+use yew::suspense::use_future_with_deps;
+use yew::suspense::SuspensionResult;
+use yew::suspense::UseFutureHandle;
 use yew_router::prelude::use_navigator;
 use yewdux::functional::use_store;
 
-use shared::*;
 use shared::schema::QueryUser;
+use shared::*;
+use yewdux::prelude::Dispatch;
 
 use crate::backend;
 use crate::components::{Avatar, PopOverMenu};
 use crate::pages::PagesRoute;
 use crate::utils::{DeviceInfo, Image};
 
+#[hook]
+fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
+    let dispatch = Dispatch::<DeviceInfo>::new();
+    use_future_with_deps(
+        move |_| {
+            async move {
+                let auth = backend::is_logged().await.as_bool().unwrap();
+                log!("before login");
+                &dispatch.reduce_mut(|state| state.is_authed = auth);
+                let register = backend::register("ali".to_string()).await;
+                let get_profile: QueryUser =
+                    serde_wasm_bindgen::from_value(backend::get_profile().await)
+                        .map_err(|e| String::from("serde error"))?;
+                // todo why get_profile.image always none?
+                &dispatch.reduce_mut(|state| state.profile = get_profile);
+                return Ok(());
+            }
+        },
+        (),
+    )
+}
+
 #[function_component]
 pub fn TitleAvatarComponent() -> Html {
     let (device, dispatch) = use_store::<DeviceInfo>();
-    let _dispatch = dispatch.clone();
-    use_effect_with_deps(
-        move |_| {
-            spawn_local(async move {
-                let auth = backend::is_logged().await.as_bool().unwrap();
-                log!("before login");
-                &_dispatch.reduce_mut(|state| state.is_authed = auth);
-                let register = backend::register("ali".to_string()).await;
-                log!(register);
-
-                let get_profile: QueryUser = serde_wasm_bindgen::from_value(backend::get_profile().await).unwrap();
-                // todo why get_profile.image always none?
-                &_dispatch.reduce_mut(|state| state.profile = get_profile);
-            });
-        },
-        (),
-    );
+    use_profile();
 
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
-    let _position = position.clone();
-    let open_popover: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        _position.set(Some(_e));
-    });
-    let mut image: Option<String> = None;
-    // TODO fix this
-    //  if !device.profile.image.is_none() {
-    //      image = Image::to_link(device.profile.image.unwrap());
-    //  }
-
+    let open_popover: Callback<MouseEvent> = {
+        let position = position.clone();
+        Callback::from(move |e: MouseEvent| {
+            position.set(Some(e));
+        })
+    };
 
     let logout = Callback::from(move |e: MouseEvent| {
         spawn_local(async move {
@@ -64,7 +70,6 @@ pub fn TitleAvatarComponent() -> Html {
         });
     });
     let navigator: yew_router::navigator::Navigator = use_navigator().unwrap();
-
 
     let items: Vec<Html> = vec![
         html! {<a onclick = {let navigator=navigator.clone();{move |_| {navigator.push(&PagesRoute::Profile)}}} ><i class="fa-solid fa-user"></i>{"Profile info"}</a>},
@@ -94,7 +99,7 @@ pub fn TitleAvatarComponent() -> Html {
         <PopOverMenu {items} position = {position.clone()}/>
         <span class="right_clickable main_avatar" onclick={open_popover}>
         <Avatar
-            // src={image}
+             src={Image::to_link(device.profile.image.clone())}
             />
         </span>
         </>
