@@ -1,11 +1,11 @@
+use crate::utils::DeviceInfo;
 use wasm_bindgen::prelude::*;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
-use crate::utils::DeviceInfo;
 use yewdux::prelude::*;
 
-use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::components::{CurrDirectory, TitleBar};
+use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::*;
 
 #[derive(Properties, Debug, PartialEq)]
@@ -50,8 +50,9 @@ pub fn get_titlebar(props: &Props) -> Html {
                onclick={handle_light_mod}
                class={format!("btn {}",if _device.is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
                ></i>
-
-           <TitleAvatarComponent/>
+            <Suspense fallback = { html! {<div>{"loading"}</div>} }>
+               <TitleAvatarComponent/>
+            </Suspense>
 
            <PageOptions/>
        </>

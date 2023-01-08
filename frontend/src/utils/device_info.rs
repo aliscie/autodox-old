@@ -1,5 +1,5 @@
-use yewdux::prelude::*;
 use shared::schema::QueryUser;
+use yewdux::prelude::*;
 
 #[derive(Debug, PartialEq, Eq, Clone, Store)]
 pub struct DeviceInfo {
@@ -20,7 +20,10 @@ impl Default for DeviceInfo {
             is_authed: false,
             is_aside: false,
             is_light_mode: false,
-            profile: QueryUser { image: None, username: None },
+            profile: QueryUser {
+                image: None,
+                username: None,
+            },
         }
     }
 }

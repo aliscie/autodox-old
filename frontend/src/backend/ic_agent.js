@@ -36,7 +36,15 @@ export async function update_profile(image) {
 
 export async function get_profile() {
     const actor = await get_actor()
-    return await actor.get_profile();
+    let result = await actor.get_profile();
+    result = result[0];
+    if ( typeof(result.username) == "object") {
+        result.username = result.username[0] || "";
+    } 
+    if ( typeof(result.image) == "object") {
+        result.image = result.image[0] || "";
+    } 
+    return result;
 }
 
 
