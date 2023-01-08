@@ -347,6 +347,7 @@ impl TryFrom<Object> for EditorElement {
     }
 }
 
+#[cfg(not(feature = "backend"))]
 #[cfg(feature = "frontend")]
 impl Store for ElementTree {
     fn new() -> Self {

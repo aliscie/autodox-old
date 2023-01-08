@@ -66,7 +66,10 @@ pub fn Editor(props: &Props) -> Html {
                                         let update = EditorElementUpdate {
                                             id,
                                             text: Some(parent_element.inner_html().clone()),
-                                            ..Default::default()
+                                            // ..Default::default()
+                                            attrs: None,
+                                            parent: None,
+                                            children: None,
                                         };
                                         onchange.emit(EditorChange::Update(update));
                                     }

@@ -78,7 +78,10 @@ pub async fn create_element(data: EditorElementCreate, ctx: State<'_, Context>) 
             let editor_element_update = EditorElementUpdate {
                 children: Some(children),
                 id: parent_id,
-                ..Default::default()
+                // ..Default::default()
+                text: None,
+                attrs: None,
+                parent: None,
             };
             store
                 .exec_update(

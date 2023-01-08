@@ -9,8 +9,10 @@ use std::collections::{BTreeMap, HashMap};
 #[cfg(feature = "tauri")]
 use surrealdb::sql::{Array, Object, Thing, Value};
 use uuid::Uuid;
+
 #[cfg(feature = "frontend")]
-use yewdux::store::Store;
+use yewdux::prelude::*;
+
 
 use super::{EditorElement, ElementTree};
 
@@ -288,6 +290,7 @@ impl Entity for FileNode {
 #[cfg(feature = "tauri")]
 impl Queryable for FileNode {}
 
+// #[cfg_attr( feature = "frontend", derive(Store))]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct FileDirectory {
@@ -373,6 +376,7 @@ impl FileDirectory {
     }
 }
 
+#[cfg(not(feature = "backend"))]
 #[cfg(feature = "frontend")]
 impl Store for FileDirectory {
     fn new() -> Self {
