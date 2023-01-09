@@ -1,9 +1,10 @@
-import {AuthClient} from "@dfinity/auth-client";
-import {createActor as backendActor, canisterId, idlFactory} from './../../../../../src/declarations/backend';
-import {Actor, HttpAgent} from "@dfinity/agent";
+import { AuthClient } from "@dfinity/auth-client";
+import { createActor as backendActor, canisterId, idlFactory } from './../../../../../src/declarations/backend';
+import { Actor, HttpAgent } from "@dfinity/agent";
 
-console.log(process.env)
-console.log(canisterId)
+console.log('env vars: ', process.env)
+console.log('canisterId: ', canisterId)
+console.log('href: ', window.location.href)
 
 export async function identify() {
     const authClient = await AuthClient.create();
@@ -31,7 +32,7 @@ export async function logout() {
 
 export async function update_profile(image) {
     const actor = await get_actor()
-    return await actor.update_profile({image: image});
+    return await actor.update_profile({ image: image });
 }
 
 export async function get_profile() {
@@ -50,11 +51,10 @@ export const get_actor = async () => {
     const authClient = await AuthClient.create();
     const identity = await authClient.getIdentity();
 
-
     const backend = backendActor(canisterId, {
         agentOptions: {
             identity,
-            host: window.location.href,
+            host: 'http://127.0.0.1:4943/',
         }
     });
 
@@ -71,4 +71,3 @@ export async function register(username) {
     const backend = await get_actor()
     return await backend.register(username);
 }
-
