@@ -15,7 +15,7 @@ export async function identify() {
 
 	let identityProvider = "https://identity.ic0.app/#authorize";
 	if (process.env.DFX_NETWORK != "ic") {
-		identityProvider = "http://r7inp-6aaaa-aaaaa-aaabq-cai.localhost:4943/#authorize"
+		identityProvider = "http://r7inp-6aaaa-aaaaa-aaabq-cai.localhost:8510/#authorize"
 	}
 	return await authClient.login({
 		identityProvider,
@@ -31,8 +31,10 @@ export async function logout() {
 }
 
 export async function update_profile(image) {
+	image = Array.from(image)
+	console.log('image: ', image, typeof image)
 	const actor = await get_actor()
-	return await actor.update_profile({ image: image });
+	return await actor.update_profile({ image })
 }
 
 export async function get_profile() {
@@ -47,7 +49,9 @@ export async function is_logged() {
 
 export const get_actor = async () => {
 	if (!backendActor) {
-		if (process.env.DEV_MODE === 'local') {
+		console.log('USE_WALLET: ', process.env.USE_WALLET)
+
+		if (process.env.USE_WALLET) {
 			let publicKey
 
 			try {
@@ -71,7 +75,7 @@ export const get_actor = async () => {
 			backendActor = createActor(canisterId, {
 				agentOptions: {
 					identity,
-					host: 'http://127.0.0.1:4943/',
+					host: window.location.href,
 				}
 			});
 		}

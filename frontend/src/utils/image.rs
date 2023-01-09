@@ -37,8 +37,8 @@ impl Image {
         Self { name, format, data: bytes }
     }
 
-    pub fn to_link(image: Vec<u8>) -> Option<String> {
-        decode_image(&image)
+    pub fn to_link(image: &Vec<u8>) -> Option<String> {
+        decode_image(image)
     }
 
     pub fn link(self: &Self) -> Option<String> {

@@ -24,7 +24,7 @@ export default defineConfig({
             "BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai",
             "FRONTEND_CANISTER_ID": "ryjl3-tyaaa-aaaaa-aaaba-cai",
             "INTERNET_IDENTITY_CANISTER_ID": "r7inp-6aaaa-aaaaa-aaabq-cai",
-            "DEV_MODE": "local", // local => localhost:5173, deploy => localhost:4943
+            "USE_WALLET": true,
         }
     },
 });
