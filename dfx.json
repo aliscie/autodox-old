@@ -36,5 +36,17 @@
       "packtool": ""
     }
   },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8510",
+      "type": "ephemeral"
+    },
+    "ic": {
+      "providers": [
+        "https://mainnet.dfinity.network"
+      ],
+      "type": "persistent"
+    }
+  },
   "version": 1
 }
