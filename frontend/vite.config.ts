@@ -1,6 +1,6 @@
 import {defineConfig} from 'vite';
 import wasmPack from 'vite-plugin-wasm-pack';
-// import EnvironmentPlugin from 'vite-plugin-environment'
+import EnvironmentPlugin from 'vite-plugin-environment'
 
 export default defineConfig({
     publicDir: './public',
@@ -20,6 +20,8 @@ export default defineConfig({
         wasmPack(["../frontend"]),
     ],
     define: {
-        'process.env': {"BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai"}
+        'process.env': {
+            "BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai"
+        }
     },
 });

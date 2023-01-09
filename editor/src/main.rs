@@ -44,6 +44,8 @@ pub fn App() -> Html {
             HashMap::from([("style".to_string(), "font-weight: bold;".to_string())]),
         ),
     );
+
+
     let id: Id = Uuid::new_v4().into();
     default_element_tree.elements.push_children(
         root,

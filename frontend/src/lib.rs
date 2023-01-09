@@ -20,7 +20,7 @@ mod components;
 mod router;
 mod test;
 mod utils;
-
+pub mod pages;
 
 #[wasm_bindgen]
 pub fn run() {

@@ -8,7 +8,7 @@ use editor::EditorChange;
 use shared::id::Id;
 use shared::log;
 use shared::schema::EditorElementDelete;
-use shared::schema::{ EditorElement, ElementTree, FileDirectory};
+use shared::schema::{EditorElement, ElementTree, FileDirectory};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;

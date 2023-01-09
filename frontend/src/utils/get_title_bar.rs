@@ -1,29 +1,27 @@
+use crate::utils::DeviceInfo;
 use wasm_bindgen::prelude::*;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
-use crate::utils::DeviceInfo;
 use yewdux::prelude::*;
 
-use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::components::{CurrDirectory, TitleBar};
+use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::*;
 
 #[derive(Properties, Debug, PartialEq)]
 pub struct Props {
-    pub toggle: UseStateHandle<String>,
+    // pub toggle: UseStateHandle<String>,
 }
 
 #[function_component(GetTitleBar)]
 pub fn get_titlebar(props: &Props) -> Html {
-    let is_light_mode = use_state(|| false);
-    let x = props.toggle.clone();
-
-    let is_expanded = x.chars().count();
+    let (device, dispatch) = use_store::<DeviceInfo>();
     let doc = window().unwrap_throw().document().unwrap_throw();
     let current_directory = html! {<CurrDirectory/>};
 
+    let _device = device.clone();
     let handle_light_mod: Callback<MouseEvent> = {
-        let is_light_mode = is_light_mode.clone();
+        let dispatch = dispatch.clone();
         let doc = doc.clone();
         Callback::from(move |_e: MouseEvent| {
             let _ = doc
@@ -32,52 +30,34 @@ pub fn get_titlebar(props: &Props) -> Html {
                 .unwrap()
                 .class_list()
                 .toggle("light-mod");
-            is_light_mode.set(!(*is_light_mode));
+            &dispatch.reduce_mut(|state| state.is_light_mode = !_device.is_light_mode);
         })
     };
-
+    let _dispatch = dispatch.clone();
+    let _device = device.clone();
     let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        if x.chars().count() > 1 {
-            x.set("".to_string());
-            let _ = &doc
-                .query_selector(".editor_title")
-                .unwrap()
-                .unwrap()
-                .set_attribute("style", "margin-left:0px; width:100%");
-            let _ = &doc
-                .query_selector(".text_editor_container")
-                .unwrap()
-                .unwrap()
-                .set_attribute("style", "margin-left:0px; width:100%");
+        if _device.is_aside {
+            &_dispatch.reduce_mut(|state| state.is_aside = false);
         } else {
-            x.set("width:250px".to_string());
-            let _ = &doc
-                .query_selector(".editor_title")
-                .unwrap()
-                .unwrap()
-                .set_attribute("style", "margin-left:250px; margin-right:2%; width:80%");
-            let _ = &doc
-                .query_selector(".text_editor_container")
-                .unwrap()
-                .unwrap()
-                .set_attribute("style", "margin-left:250px; margin-right:2%; width:80%");
+            &_dispatch.reduce_mut(|state| state.is_aside = true);
         }
     });
-
+    let _device = device.clone();
     let right_content: Html = html! {
        <>
                <Download/>
                <i
                onclick={handle_light_mod}
-               class={format!("btn {}",if *is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
+               class={format!("btn {}",if _device.is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
                ></i>
-
-           <TitleAvatarComponent/>
+            <Suspense fallback = { html! {<div>{"loading"}</div>} }>
+               <TitleAvatarComponent/>
+            </Suspense>
 
            <PageOptions/>
        </>
     };
-    let (device, _) = use_store::<DeviceInfo>();
+
     html! {
         <TitleBar
             style={(if !(device.is_web) {"padding-left: 75px; cursor: grab;"} else {""}).to_string()}
@@ -85,7 +65,7 @@ pub fn get_titlebar(props: &Props) -> Html {
             {right_content}
          >
             <li class="btn" onclick={toggle_asidebar}>
-            {if is_expanded > 1{
+            {if device.is_aside {
                 html!{<i class="fa-solid fa-x"></i>}
             } else{
                 html!{<i class="fa-solid fa-bars"></i>}
