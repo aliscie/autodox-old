@@ -36,6 +36,12 @@ extern "C" {
     #[wasm_bindgen(js_name = test_connect_wasm_bindgen)]
     pub async fn test_wasm() -> JsValue;
 
+    #[wasm_bindgen(js_name = update_profile)]
+    pub async fn update_profile(image: Vec<u8>) -> JsValue;
+
+    #[wasm_bindgen(js_name = get_profile)]
+    pub async fn get_profile() -> JsValue;
+
     // #[wasm_bindgen(js_name = create_directory)]
     // pub async fn create_directory_ic() -> JsValue;
 
@@ -49,4 +55,5 @@ extern "C" {
     // #[wasm_bindgen(js_name = createActor)]
     // pub async fn createActor() -> JsValue;
 }
+
 

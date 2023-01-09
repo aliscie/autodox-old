@@ -68,9 +68,14 @@ type Status = variant {
 
 
 type User = record {
-    address : vec nat8;
-    user_name: text;
     image: vec nat8;
+    //    username: opt text;
+};
+
+
+type QueryUser = opt record {
+    image: opt vec nat8;
+    username: opt text;
 };
 
 service : {
@@ -82,5 +87,6 @@ service : {
     "register": (text) -> (UpdateRespone);
     "test_ic" : () -> (text) query;
     "update_profile" : (User) -> (UpdateRespone);
+    "get_profile" : () -> (QueryUser) query;
 }
 
