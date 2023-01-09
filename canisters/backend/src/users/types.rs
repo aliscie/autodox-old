@@ -1,10 +1,10 @@
 use crate::files::types::Files;
+use ic_kit::Principal;
 use ic_stable_memory::collections::vec::SVec;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 use shared::schema::FileDirectory;
 use speedy::{Readable, Writable};
 use std::collections::HashMap;
-use ic_kit::Principal;
 // use ic_cdk::export::candid::CandidType;
 use ic_stable_memory::s;
 use shared::Error;
@@ -15,7 +15,8 @@ use shared::Error;
 //     pub address: SPrincipal,
 // }
 
-use candid::{CandidType, Deserialize};
+use candid::CandidType;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, PartialEq, Readable, Writable, Deserialize, Debug, Eq, Hash)]
 pub struct User {
@@ -29,7 +30,9 @@ pub struct User {
     // emails: Option<Vec<String>>,
 }
 
-#[derive(Clone, PartialEq, Deserialize, Debug, Eq, Hash, Readable, Writable, CandidType)]
+#[derive(
+    Clone, PartialEq, Serialize, Deserialize, Debug, Eq, Hash, Readable, Writable, CandidType,
+)]
 pub struct QueryUser {
     pub image: Option<Vec<u8>>,
     pub username: Option<String>,
@@ -53,7 +56,9 @@ impl User {
         let address = SPrincipal(ic_cdk::caller());
         let mut users = s!(Users);
         for user in users.iter() {
-            if &user.address.to_string() == &address.to_string() { return true; }
+            if &user.address.to_string() == &address.to_string() {
+                return true;
+            }
         }
         false
     }
@@ -63,7 +68,11 @@ impl User {
         if Principal::anonymous().to_string() == address.to_string() {
             return None;
         }
-        Some(Self { address, image: None, username: None })
+        Some(Self {
+            address,
+            image: None,
+            username: None,
+        })
     }
 
     pub(crate) fn current() -> Option<Self> {
@@ -73,7 +82,11 @@ impl User {
             None => return None, // User does not exists
             Some(username) => Some(username),
         };
-        Some(Self { address, image: None, username })
+        Some(Self {
+            address,
+            image: None,
+            username,
+        })
     }
 
     pub(crate) fn caller() -> SPrincipal {

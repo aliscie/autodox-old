@@ -7,10 +7,12 @@ use wasm_bindgen::prelude::*;
 pub use files::*;
 pub use main::*;
 pub use element::*;
+pub use users::QueryUser;
 
 mod files;
 mod main;
 mod element;
+mod users;
 
 
 #[wasm_bindgen(module = "/src/backend/ic_agent.js")]

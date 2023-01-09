@@ -1,4 +1,5 @@
 use crate::backend;
+use crate::backend::QueryUser;
 use crate::components::{Avatar, PopOverMenu};
 use crate::pages::PagesRoute;
 use crate::utils::{DeviceInfo, Image};
@@ -46,9 +47,12 @@ pub fn TitleAvatarComponent() -> Html {
                 log!(register);
                 let get_profile = backend::get_profile().await;
                 log!(&get_profile);
+                // log!(get_profile.into_serde::<QueryUser>());
+                let s = js_sys::JSON::stringify(&get_profile).map(String::from).unwrap();
+                // log!(s);
+                // log!(serde_json::from_str::<'a, QueryUser>(&s));
                 // log!(Uint8Array::new(&get_profile).to_vec());
-                // TODO get js value from `JsValue([Uint8Array])`
-                //  log!(get_profile.to_vec())
+                // _image_opt_vec.set(get_profile)
             });
         },
         (),
