@@ -26,10 +26,7 @@ fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
                 log!("before login");
                 &dispatch.reduce_mut(|state| state.is_authed = auth);
                 let register = backend::register("ali".to_string()).await;
-                let get_profile: QueryUser =
-                    serde_wasm_bindgen::from_value(backend::get_profile().await)
-                        .map_err(|e| String::from("serde error"))?;
-                // todo why get_profile.image always none?
+                let get_profile: QueryUser = serde_wasm_bindgen::from_value(backend::get_profile().await).map_err(|e| String::from("serde error"))?;
                 &dispatch.reduce_mut(|state| state.profile = get_profile);
                 return Ok(());
             }
@@ -98,9 +95,7 @@ pub fn TitleAvatarComponent() -> Html {
 
         <PopOverMenu {items} position = {position.clone()}/>
         <span class="right_clickable main_avatar" onclick={open_popover}>
-        <Avatar
-             src={Image::to_link(device.profile.image.clone())}
-            />
+        <Avatar src={Image::to_link(device.profile.image.clone())} />
         </span>
         </>
         };

@@ -13,7 +13,7 @@ export async function identify() {
 
     let identityProvider = "https://identity.ic0.app/#authorize";
     if (process.env.DFX_NETWORK != "ic") {
-        identityProvider = "http://r7inp-6aaaa-aaaaa-aaabq-cai.localhost:4943/#authorize"
+        identityProvider = `http://${process.env.IDENTITY_PROVIDER_ID}.localhost:4943/#authorize`
     }
     return await authClient.login({
         identityProvider,
