@@ -21,9 +21,9 @@ export default defineConfig({
     ],
     define: {
         // "global": {},
-        'process.env': {
-            "BACKEND_CANISTER_ID": "ryjl3-tyaaa-aaaaa-aaaba-cai",
-            "IDENTITY_PROVIDER_ID": "rkp4c-7iaaa-aaaaa-aaaca-cai",
+        "process.env": {
+            "BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai",
+            "IDENTITY_PROVIDER_ID": "r7inp-6aaaa-aaaaa-aaabq-cai",
         }
     },
 });

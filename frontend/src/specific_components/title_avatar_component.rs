@@ -26,6 +26,7 @@ fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
                 log!("before login");
                 &dispatch.reduce_mut(|state| state.is_authed = auth);
                 let register = backend::register("ali".to_string()).await;
+                log!(register);
                 let get_profile: QueryUser = serde_wasm_bindgen::from_value(backend::get_profile().await).map_err(|e| String::from("serde error"))?;
                 &dispatch.reduce_mut(|state| state.profile = get_profile);
                 return Ok(());

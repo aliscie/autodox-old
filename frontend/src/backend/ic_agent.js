@@ -3,7 +3,7 @@ import {createActor as backendActor, canisterId, idlFactory} from './../../../..
 import {Actor, HttpAgent} from "@dfinity/agent";
 
 console.log(process.env)
-console.log(canisterId)
+console.log("canisterId",canisterId)
 
 export async function identify() {
     const authClient = await AuthClient.create();
@@ -12,6 +12,7 @@ export async function identify() {
     }
 
     let identityProvider = "https://identity.ic0.app/#authorize";
+    console.log("DFX_NETWORK",process.env.DFX_NETWORK);
     if (process.env.DFX_NETWORK != "ic") {
         identityProvider = `http://${process.env.IDENTITY_PROVIDER_ID}.localhost:4943/#authorize`
     }
@@ -74,6 +75,22 @@ export async function test_connect_wasm_bindgen() {
     let actor = await get_actor()
     return await actor.test_ic();
 }
+
+export async function create_directory() {
+    let actor = await get_actor()
+    return await actor.create_directory();
+}
+
+export async function get_directories() {
+    let actor = await get_actor()
+    return await actor.get_directories();
+}
+
+
+// export async function create_file() {
+//     let actor = await get_actor()
+//     return await actor.create_file();
+// }
 
 export async function register(username) {
     const backend = await get_actor()

@@ -64,12 +64,13 @@ impl User {
 
     pub(crate) fn current() -> Option<Self> {
         let address = SPrincipal(ic_cdk::caller());
-        let users = s!(Users);
-        let username = match Self::get_username(address, &users) {
-            None => return None, // User does not exists
-            Some(username) => Some(username),
-        };
-        Some(Self { address, image: None, username })
+        let mut users = s!(Users);
+        for user in users.iter() {
+            if &user.address.to_string() == &address.to_string() {
+                return Some(Self { address, image: None, username: None });
+            }
+        }
+        None
     }
 
     pub(crate) fn caller() -> SPrincipal {
