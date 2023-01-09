@@ -46,6 +46,13 @@ impl User {
         }
         false
     }
+    pub(crate) fn is_anonymous() -> bool {
+        let address = SPrincipal(ic_cdk::caller());
+        if Principal::anonymous().to_string() == address.to_string() {
+            return true;
+        }
+        false
+    }
 
     pub(crate) fn new() -> Option<Self> {
         let address = SPrincipal(ic_cdk::caller());

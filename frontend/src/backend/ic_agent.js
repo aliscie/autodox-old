@@ -62,7 +62,7 @@ export const get_actor = async () => {
     const backend = backendActor(canisterId, {
         agentOptions: {
             identity,
-            host: window.location.href,
+            host: "http://127.0.0.1:4943", //This is the canister host // My frontend rus on http://localhost:5173/
         }
     });
 
