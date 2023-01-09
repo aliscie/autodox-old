@@ -50,7 +50,7 @@ pub fn TitleAvatarComponent() -> Html {
                 // log!(get_profile.into_serde::<QueryUser>());
                 let s = js_sys::JSON::stringify(&get_profile).map(String::from).unwrap();
                 // log!(s);
-                // log!(serde_json::from_str::<'a, QueryUser>(&s));
+                // log!(serde_json::from_str::<QueryUser>(&s));
                 // log!(Uint8Array::new(&get_profile).to_vec());
                 // _image_opt_vec.set(get_profile)
             });
