@@ -20,6 +20,8 @@ export default defineConfig({
         wasmPack(["../frontend"]),
     ],
     define: {
+        // "global": {},
+        // 'process.env': process.env,
         'process.env': {
             "BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai",
             "FRONTEND_CANISTER_ID": "ryjl3-tyaaa-aaaaa-aaaba-cai",
