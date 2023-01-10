@@ -7,7 +7,6 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::console::log_1;
 use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
@@ -52,8 +51,8 @@ pub fn Editor(props: &Props) -> Html {
         Closure::wrap(Box::new(
             move |mutation_event: Vec<MutationRecord>, _observer: MutationObserver| {
                 for mutation_type in mutation_event {
-                    log_1(&format!("{:?}", mutation_type.type_()).into());
-                    log_1(&format!("{:?}", mutation_type.target()).into());
+                    // log!(&format!("{:?}", mutation_type.type_()).into());
+                    // log!(&format!("{:?}", mutation_type.target()).into());
                     if let Some(current_element) = mutation_type.target() {
                         match mutation_type.type_().as_ref() {
                             "characterData" => {
@@ -61,8 +60,8 @@ pub fn Editor(props: &Props) -> Html {
                                     if let Ok(id) =
                                         Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
                                     {
-                                        log_1(&format!("{:?}", parent_element.inner_html()).into());
-                                        log_1(&format!("{:?}", id).into());
+                                        // log!(&format!("{:?}", parent_element.inner_html()).into());
+                                        // log!(&format!("{:?}", id).into());
                                         let update = EditorElementUpdate {
                                             id,
                                             text: Some(parent_element.inner_html().clone()),
@@ -159,6 +158,10 @@ pub fn Editor(props: &Props) -> Html {
             // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline specific_components
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
+            plugins::insert_components(
+                &editor_ref.cast::<Element>().unwrap(),
+                "/".into(),
+            );
             move || {
                 drop(oninput_event);
                 mutation_observer.disconnect();
@@ -203,5 +206,6 @@ pub fn Editor(props: &Props) -> Html {
 }
 
 use shared::schema::*;
+use crate::plugins;
 
 
