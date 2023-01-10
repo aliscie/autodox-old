@@ -1,9 +1,15 @@
 export const idlFactory = ({ IDL }) => {
+  const ArchiveConfig = IDL.Record({
+    'polling_interval_ns' : IDL.Nat64,
+    'entries_buffer_limit' : IDL.Nat64,
+    'module_hash' : IDL.Vec(IDL.Nat8),
+    'entries_fetch_limit' : IDL.Nat16,
+  });
   const InternetIdentityInit = IDL.Record({
-    'archive_module_hash' : IDL.Opt(IDL.Vec(IDL.Nat8)),
+    'upgrade_persistent_state' : IDL.Opt(IDL.Bool),
     'assigned_user_number_range' : IDL.Opt(IDL.Tuple(IDL.Nat64, IDL.Nat64)),
+    'archive_config' : IDL.Opt(ArchiveConfig),
     'canister_creation_cycles_cost' : IDL.Opt(IDL.Nat64),
-    'layout_migration_batch_size' : IDL.Opt(IDL.Nat32),
   });
   const UserNumber = IDL.Nat64;
   const DeviceProtection = IDL.Variant({
@@ -111,22 +117,13 @@ export const idlFactory = ({ IDL }) => {
     'canister_full' : IDL.Null,
     'registered' : IDL.Record({ 'user_number' : UserNumber }),
   });
-  const LayoutMigrationState = IDL.Variant({
-    'started' : IDL.Record({
-      'batch_size' : IDL.Nat64,
-      'anchors_left' : IDL.Nat64,
-    }),
-    'finished' : IDL.Null,
-    'not_started' : IDL.Null,
-  });
   const ArchiveInfo = IDL.Record({
-    'expected_wasm_hash' : IDL.Opt(IDL.Vec(IDL.Nat8)),
+    'archive_config' : IDL.Opt(ArchiveConfig),
     'archive_canister' : IDL.Opt(IDL.Principal),
   });
   const InternetIdentityStats = IDL.Record({
     'storage_layout_version' : IDL.Nat8,
     'users_registered' : IDL.Nat64,
-    'layout_migration_state' : IDL.Opt(LayoutMigrationState),
     'assigned_user_number_range' : IDL.Tuple(IDL.Nat64, IDL.Nat64),
     'archive_info' : ArchiveInfo,
     'canister_creation_cycles_cost' : IDL.Nat64,
@@ -183,11 +180,17 @@ export const idlFactory = ({ IDL }) => {
   });
 };
 export const init = ({ IDL }) => {
+  const ArchiveConfig = IDL.Record({
+    'polling_interval_ns' : IDL.Nat64,
+    'entries_buffer_limit' : IDL.Nat64,
+    'module_hash' : IDL.Vec(IDL.Nat8),
+    'entries_fetch_limit' : IDL.Nat16,
+  });
   const InternetIdentityInit = IDL.Record({
-    'archive_module_hash' : IDL.Opt(IDL.Vec(IDL.Nat8)),
+    'upgrade_persistent_state' : IDL.Opt(IDL.Bool),
     'assigned_user_number_range' : IDL.Opt(IDL.Tuple(IDL.Nat64, IDL.Nat64)),
+    'archive_config' : IDL.Opt(ArchiveConfig),
     'canister_creation_cycles_cost' : IDL.Opt(IDL.Nat64),
-    'layout_migration_batch_size' : IDL.Opt(IDL.Nat32),
   });
   return [IDL.Opt(InternetIdentityInit)];
 };

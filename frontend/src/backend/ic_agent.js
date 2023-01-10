@@ -103,8 +103,10 @@ export async function create_directory() {
 }
 
 export async function get_directories() {
-	let actor = await get_actor()
-	return await actor.get_directories();
+	let actor = await get_actor();
+    let result = await actor.get_directories();
+    console.log(result);
+    return result;
 }
 
 

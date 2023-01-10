@@ -167,7 +167,7 @@ impl From<FileNodeCreate> for Object {
             ("id".into(), val.id.into()),
             ("children".into(), children.into()),
         ])
-            .into()
+        .into()
     }
 }
 
@@ -209,7 +209,7 @@ impl From<FileNodeUpdate> for Object {
                         })
                         .collect(),
                 )
-                    .into(),
+                .into(),
             );
         }
         if let Some(name) = value.name {
@@ -226,45 +226,45 @@ impl From<FileNodeUpdate> for Object {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable))]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct FileNode {
     pub id: Id,
     pub name: String,
     pub element_tree: Option<Id>,
 }
 
-#[cfg(feature = "backend")]
-impl candid::types::CandidType for FileNode {
-    fn _ty() -> ::candid::types::Type {
-        candid::types::Type::Record(<[_]>::into_vec(Box::new([
-            candid::types::Field {
-                id: candid::types::Label::Named("id".to_string()),
-                ty: <Id as candid::types::CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("name".to_string()),
-                ty: <String as candid::types::CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("element_tree".to_string()),
-                ty: <Option<Id> as ::candid::types::CandidType>::ty(),
-            },
-        ])))
-    }
-    fn id() -> candid::types::TypeId {
-        candid::types::TypeId::of::<FileNode>()
-    }
-    fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
-        where
-            __S: candid::types::Serializer,
-    {
-        let mut ser = __serializer.serialize_struct()?;
-        candid::types::Compound::serialize_element(&mut ser, &self.id)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.name)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.element_tree)?;
-        Ok(())
-    }
-}
+//#[cfg(feature = "backend")]
+//impl candid::types::CandidType for FileNode {
+//    fn _ty() -> ::candid::types::Type {
+//        candid::types::Type::Record(<[_]>::into_vec(Box::new([
+//            candid::types::Field {
+//                id: candid::types::Label::Named("id".to_string()),
+//                ty: <Id as candid::types::CandidType>::ty(),
+//            },
+//            candid::types::Field {
+//                id: candid::types::Label::Named("name".to_string()),
+//                ty: <String as candid::types::CandidType>::ty(),
+//            },
+//            candid::types::Field {
+//                id: candid::types::Label::Named("element_tree".to_string()),
+//                ty: <Option<Id> as ::candid::types::CandidType>::ty(),
+//            },
+//        ])))
+//    }
+//    fn id() -> candid::types::TypeId {
+//        candid::types::TypeId::of::<FileNode>()
+//    }
+//    fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
+//        where
+//            __S: candid::types::Serializer,
+//    {
+//        let mut ser = __serializer.serialize_struct()?;
+//        candid::types::Compound::serialize_element(&mut ser, &self.id)?;
+//        candid::types::Compound::serialize_element(&mut ser, &self.name)?;
+//        candid::types::Compound::serialize_element(&mut ser, &self.element_tree)?;
+//        Ok(())
+//    }
+//}
 
 #[cfg(not(feature = "backend"))]
 impl Default for FileNode {
@@ -391,7 +391,7 @@ impl From<FileDirectory> for Object {
             ("name".into(), val.name.into()),
             ("files".into(), Value::Object(val.files.into())),
         ])
-            .into()
+        .into()
     }
 }
 
@@ -408,7 +408,7 @@ impl From<FileNode> for Object {
                 }),
             ),
         ])
-            .into()
+        .into()
     }
 }
 

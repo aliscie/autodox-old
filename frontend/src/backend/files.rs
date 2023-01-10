@@ -5,12 +5,12 @@ use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
 
-use crate::utils::DeviceInfo;
+use crate::backend::{self, create_directory_ic};
+use crate::{backend::get_directories_ic, utils::DeviceInfo};
 use shared::{
     id::Id,
     schema::{FileDirectory, FileNodeCreate},
 };
-use crate::backend;
 
 pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -50,7 +50,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -60,14 +60,14 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
 pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        log!(create_directory_ic().await);
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -77,14 +77,14 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
 pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        log!(get_directories_ic().await);
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -100,6 +100,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
             // log!("before get dirs");
             // let get_profile: Option<FileDirectory> = serde_wasm_bindgen::from_value(backend::create_directories_ic().await).map_err(|e| String::from("serde error"))?;
             // log!(&get_profile);
+            log!(get_directories_ic().await);
         });
     }
     if !info.get().is_web {
@@ -107,7 +108,7 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-            .await;
+        .await;
         log!(&x);
         return x;
     } else {
