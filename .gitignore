@@ -14,4 +14,4 @@
 internet_identity.wasm
 internet_identity.did
 canisters/internet_identity/**
-frontend/src/declarations
+frontend/src/declarations/**
