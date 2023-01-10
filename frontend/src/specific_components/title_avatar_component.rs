@@ -4,6 +4,7 @@ use crate::components::{Avatar, PopOverMenu};
 use crate::pages::PagesRoute;
 use crate::utils::{DeviceInfo, Image};
 use shared::*;
+use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, HtmlInputElement, Navigator};
 use yew::prelude::*;
@@ -47,10 +48,11 @@ pub fn TitleAvatarComponent() -> Html {
                 log!(register);
                 let get_profile = backend::get_profile().await;
                 log!(&get_profile);
-                // log!(get_profile.into_serde::<QueryUser>());
-                let s = js_sys::JSON::stringify(&get_profile).map(String::from).unwrap();
-                // log!(s);
+                // let s = js_sys::JSON::stringify(&get_profile)
+                //     .map(String::from)
+                //     .unwrap();
                 // log!(serde_json::from_str::<QueryUser>(&s));
+                log!(serde_wasm_bindgen::from_value::<QueryUser>(get_profile));
                 // log!(Uint8Array::new(&get_profile).to_vec());
                 // _image_opt_vec.set(get_profile)
             });
@@ -78,7 +80,7 @@ pub fn TitleAvatarComponent() -> Html {
             let file = input.files().unwrap().get(0).unwrap();
             let image = Image::new(file).await;
             log!(&image.data);
-            let response = backend::update_profile(image.data).await;
+            let response = backend::update_profile("account1".to_string(), image.data).await;
             log!(response);
         });
     });

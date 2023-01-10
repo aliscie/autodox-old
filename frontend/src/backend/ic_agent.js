@@ -30,11 +30,11 @@ export async function logout() {
 	await authClient.logout()
 }
 
-export async function update_profile(image) {
+export async function update_profile(username, image) {
 	image = Array.from(image)
 	console.log('image: ', image, typeof image)
 	const actor = await get_actor()
-	return await actor.update_profile({ image })
+	return await actor.update_profile({ username, image })
 }
 
 export async function get_profile() {

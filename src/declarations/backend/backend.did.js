@@ -35,7 +35,10 @@ export const idlFactory = ({ IDL }) => {
       'image' : IDL.Opt(IDL.Vec(IDL.Nat8)),
     })
   );
-  const User = IDL.Record({ 'image' : IDL.Vec(IDL.Nat8) });
+  const User = IDL.Record({
+    'username' : IDL.Text,
+    'image' : IDL.Vec(IDL.Nat8),
+  });
   return IDL.Service({
     'create_directory' : IDL.Func([], [UpdateRespone], []),
     'create_file' : IDL.Func([CreateFileData], [], []),

@@ -37,7 +37,7 @@ export interface Tree {
   'adjacency' : Array<[Uint8Array, Array<Uint8Array>]>,
 }
 export interface UpdateRespone { 'status' : Status, 'message' : string }
-export interface User { 'image' : Uint8Array }
+export interface User { 'username' : string, 'image' : Uint8Array }
 export interface _SERVICE {
   'create_directory' : ActorMethod<[], UpdateRespone>,
   'create_file' : ActorMethod<[CreateFileData], undefined>,

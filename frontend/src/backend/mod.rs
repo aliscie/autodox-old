@@ -39,7 +39,7 @@ extern "C" {
     pub async fn test_wasm() -> JsValue;
 
     #[wasm_bindgen(js_name = update_profile)]
-    pub async fn update_profile(image: Vec<u8>) -> JsValue;
+    pub async fn update_profile(username: String, image: Vec<u8>) -> JsValue;
 
     #[wasm_bindgen(js_name = get_profile)]
     pub async fn get_profile() -> JsValue;
