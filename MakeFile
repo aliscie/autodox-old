@@ -43,3 +43,9 @@ deploy:
 	#dfx deploy registrar --with-cycles 10000000000000
 	#def start --backend
 	dfx deploy
+
+watch_fe:
+	cargo watch -w "./frontend" -s "cd frontend; yarn wasm ; yarn run build ; cd ../;  dfx deploy"
+
+watch_be:
+	cargo watch -w "./canisters" -s "dfx deploy"

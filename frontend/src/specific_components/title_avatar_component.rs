@@ -1,3 +1,9 @@
+use crate::backend;
+use crate::components::{Avatar, PopOverMenu};
+use crate::pages::PagesRoute;
+use crate::utils::{DeviceInfo, Image};
+use shared::schema::QueryUser;
+use shared::*;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, HtmlInputElement};
 use yew::prelude::*;
@@ -6,33 +12,23 @@ use yew::suspense::SuspensionResult;
 use yew::suspense::UseFutureHandle;
 use yew_router::prelude::use_navigator;
 use yewdux::functional::use_store;
-
-use shared::schema::QueryUser;
-use shared::*;
 use yewdux::prelude::Dispatch;
-
-use crate::backend;
-use crate::components::{Avatar, PopOverMenu};
-use crate::pages::PagesRoute;
-use crate::utils::{DeviceInfo, Image};
 
 #[hook]
 fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
     let dispatch = Dispatch::<DeviceInfo>::new();
     use_future_with_deps(
-        move |_| {
-            async move {
-                let auth = backend::is_logged().await.as_bool().unwrap();
-                log!("before login");
-                &dispatch.reduce_mut(|state| state.is_authed = auth);
-                let register = backend::register("ali".to_string()).await;
-                let get_profile: QueryUser =
-                    serde_wasm_bindgen::from_value(backend::get_profile().await)
-                        .map_err(|e| String::from("serde error"))?;
-                // todo why get_profile.image always none?
-                &dispatch.reduce_mut(|state| state.profile = get_profile);
-                return Ok(());
-            }
+        move |_| async move {
+            let auth = backend::is_logged().await.as_bool().unwrap();
+            log!("before login");
+            &dispatch.reduce_mut(|state| state.is_authed = auth);
+            let register = backend::register("ali".to_string()).await;
+            log!(register);
+            let get_profile: QueryUser =
+                serde_wasm_bindgen::from_value(backend::get_profile().await)
+                    .map_err(|e| String::from("serde error"))?;
+            &dispatch.reduce_mut(|state| state.profile = get_profile);
+            return Ok(());
         },
         (),
     )
@@ -65,7 +61,7 @@ pub fn TitleAvatarComponent() -> Html {
             let file = input.files().unwrap().get(0).unwrap();
             let image = Image::new(file).await;
             log!(&image.data);
-            let response = backend::update_profile(image.data).await;
+            let response = backend::update_profile("account1".to_string(), image.data).await;
             log!(response);
         });
     });
@@ -98,9 +94,7 @@ pub fn TitleAvatarComponent() -> Html {
 
         <PopOverMenu {items} position = {position.clone()}/>
         <span class="right_clickable main_avatar" onclick={open_popover}>
-        <Avatar
-             src={Image::to_link(device.profile.image.clone())}
-            />
+        <Avatar src={Image::to_link(device.profile.image.clone())} />
         </span>
         </>
         };

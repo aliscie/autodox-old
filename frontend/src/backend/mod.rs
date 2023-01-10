@@ -7,10 +7,12 @@ use wasm_bindgen::prelude::*;
 pub use files::*;
 pub use main::*;
 pub use element::*;
+pub use users::QueryUser;
 
 mod files;
 mod main;
 mod element;
+mod users;
 
 
 #[wasm_bindgen(module = "/src/backend/ic_agent.js")]
@@ -27,9 +29,6 @@ extern "C" {
     #[wasm_bindgen(js_name = register)]
     pub async fn register(username: String) -> JsValue;
 
-    // #[wasm_bindgen(js_name = register)]
-    // pub async fn register(username: String) -> JsValue;
-    //
     // #[wasm_bindgen(js_name = test_ic)]
     // pub async fn test_ic() -> JsValue;
 
@@ -37,14 +36,19 @@ extern "C" {
     pub async fn test_wasm() -> JsValue;
 
     #[wasm_bindgen(js_name = update_profile)]
-    pub async fn update_profile(image: Vec<u8>) -> JsValue;
+    pub async fn update_profile(username: String, image: Vec<u8>) -> JsValue;
 
     #[wasm_bindgen(js_name = get_profile)]
     pub async fn get_profile() -> JsValue;
 
-    // #[wasm_bindgen(js_name = create_directory)]
-    // pub async fn create_directory_ic() -> JsValue;
+    #[wasm_bindgen(js_name = create_directory)]
+    pub async fn create_directory_ic() -> JsValue;
 
+    #[wasm_bindgen(js_name = get_directories)]
+    pub async fn create_directories_ic() -> JsValue;
+
+    // #[wasm_bindgen(js_name = create_file)]
+    // pub async fn create_file_ic() -> JsValue;
 
     // #[wasm_bindgen(js_name = create_file)]
     // pub async fn create_file_ic(text: String) -> JsValue;

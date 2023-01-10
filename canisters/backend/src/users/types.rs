@@ -1,10 +1,10 @@
 use crate::files::types::Files;
+use ic_kit::Principal;
 use ic_stable_memory::collections::vec::SVec;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 use shared::schema::FileDirectory;
 use speedy::{Readable, Writable};
 use std::collections::HashMap;
-use ic_kit::Principal;
 // use ic_cdk::export::candid::CandidType;
 use ic_stable_memory::s;
 use shared::Error;
@@ -15,7 +15,8 @@ use shared::Error;
 //     pub address: SPrincipal,
 // }
 
-use candid::{CandidType, Deserialize};
+use candid::CandidType;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, PartialEq, Readable, Writable, Deserialize, Debug, Eq, Hash)]
 pub struct User {
@@ -42,7 +43,16 @@ impl User {
         let address = SPrincipal(ic_cdk::caller());
         let mut users = s!(Users);
         for user in users.iter() {
-            if &user.address.to_string() == &address.to_string() { return true; }
+            if &user.address.to_string() == &address.to_string() {
+                return true;
+            }
+        }
+        false
+    }
+    pub(crate) fn is_anonymous() -> bool {
+        let address = SPrincipal(ic_cdk::caller());
+        if Principal::anonymous().to_string() == address.to_string() {
+            return true;
         }
         false
     }
@@ -52,17 +62,22 @@ impl User {
         if Principal::anonymous().to_string() == address.to_string() {
             return None;
         }
-        Some(Self { address, image: None, username: None })
+        Some(Self {
+            address,
+            image: None,
+            username: None,
+        })
     }
 
     pub(crate) fn current() -> Option<Self> {
         let address = SPrincipal(ic_cdk::caller());
-        let users = s!(Users);
-        let username = match Self::get_username(address, &users) {
-            None => return None, // User does not exists
-            Some(username) => Some(username),
-        };
-        Some(Self { address, image: None, username })
+        let mut users = s!(Users);
+        for user in users.iter() {
+            if &user.address.to_string() == &address.to_string() {
+                return Some(Self { address, image: None, username: None });
+            }
+        }
+        None
     }
 
     pub(crate) fn caller() -> SPrincipal {

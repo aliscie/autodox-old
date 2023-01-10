@@ -1,3 +1,4 @@
+use futures::future::err;
 use shared::{log, schema::FileNodeDelete};
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
@@ -9,6 +10,7 @@ use shared::{
     id::Id,
     schema::{FileDirectory, FileNodeCreate},
 };
+use crate::backend;
 
 pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -22,7 +24,11 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         children: None,
     };
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        // spawn_local(async move {
+        //     log!("before create file");
+        //     let res = backend::create_file_ic().await;
+        //     log!(res);
+        // });
     }
     if !info.get().is_web {
         log!("Desktop");
@@ -88,7 +94,13 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
 pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        // TODO backend::call_ic("create_directory"); make this dynamic
+        spawn_local(async move {
+            // TODO return Vec<FileDirectory>
+            // log!("before get dirs");
+            // let get_profile: Option<FileDirectory> = serde_wasm_bindgen::from_value(backend::create_directories_ic().await).map_err(|e| String::from("serde error"))?;
+            // log!(&get_profile);
+        });
     }
     if !info.get().is_web {
         let x = crate::backend::call_surreal::<Vec<FileDirectory>, String>(
