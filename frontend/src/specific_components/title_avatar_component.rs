@@ -1,10 +1,9 @@
 use crate::backend;
-use crate::backend::QueryUser;
 use crate::components::{Avatar, PopOverMenu};
 use crate::pages::PagesRoute;
 use crate::utils::{DeviceInfo, Image};
+use shared::schema::QueryUser;
 use shared::*;
-use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, HtmlInputElement};
 use yew::prelude::*;
@@ -13,15 +12,7 @@ use yew::suspense::SuspensionResult;
 use yew::suspense::UseFutureHandle;
 use yew_router::prelude::use_navigator;
 use yewdux::functional::use_store;
-
-use shared::schema::QueryUser;
-use shared::*;
 use yewdux::prelude::Dispatch;
-
-use crate::backend;
-use crate::components::{Avatar, PopOverMenu};
-use crate::pages::PagesRoute;
-use crate::utils::{DeviceInfo, Image};
 
 #[hook]
 fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
@@ -63,10 +54,6 @@ pub fn TitleAvatarComponent() -> Html {
         })
     });
 
-    let open_popover: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        _position.set(Some(_e));
-    });
-
     let on_upload: Callback<Event> = Callback::from(move |_e: Event| {
         let input: HtmlInputElement = _e.target_unchecked_into();
 
@@ -102,25 +89,15 @@ pub fn TitleAvatarComponent() -> Html {
         });
     });
 
-    let items: Vec<Html> = vec![
-        html! {<a onclick = {let navigator=navigator.clone();{move |_| {navigator.push(&PagesRoute::Profile)}}} ><i class="fa-solid fa-user"></i>{"Profile info"}</a>},
-        html! {<a><input onchange={on_upload} type="file" accept="image/*"/></a>},
-        html! {<a><i class="fa-solid fa-eye"></i>{"Who can find me"}</a>},
-        html! {<a onclick = {let navigator=navigator.clone();{move |_| {navigator.push(&PagesRoute::Settings)}}} ><i class="fa-solid fa-gear"></i>{"Settings"}</a>},
-        html! {<a onmousedown={logout} ><i class="fa-solid fa-right-from-bracket"></i>{"logout"}</a>},
-    ];
-
     if device.is_authed {
-        return html! {
-            <>
-                <PopOverMenu {items} position = {position.clone()}/>
-                <span class="right_clickable main_avatar" onclick={open_popover}>
-                <Avatar src={x} />
-                </span>
-            </>
+        return html! { <>
+
+        <PopOverMenu {items} position = {position.clone()}/>
+        <span class="right_clickable main_avatar" onclick={open_popover}>
+        <Avatar src={Image::to_link(device.profile.image.clone())} />
+        </span>
+        </>
         };
     };
-    return html! {
-        < span onclick={on_login} class = "btn" > < i class = "fa-solid fa-right-to-bracket" >< / i >{"login"}< / span >
-    };
+    return html! {< span onclick={on_login} class = "btn" > < i class = "fa-solid fa-right-to-bracket" >< / i >{"login"}< / span >};
 }

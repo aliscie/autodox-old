@@ -38,16 +38,16 @@ export async function update_profile(username, image) {
 }
 
 export async function get_profile() {
-    const actor = await get_actor()
-    let result = await actor.get_profile();
-    result = result[0];
-    if ( typeof(result.username) == "object") {
-        result.username = result.username[0] || "";
-    } 
-    if ( typeof(result.image) == "object") {
-        result.image = result.image[0] || "";
-    } 
-    return result;
+	const actor = await get_actor()
+	let result = await actor.get_profile();
+	result = result[0];
+	if (typeof (result.username) == "object") {
+		result.username = result.username[0] || "";
+	}
+	if (typeof (result.image) == "object") {
+		result.image = result.image[0] || "";
+	}
+	return result;
 }
 
 export async function is_logged() {
@@ -98,13 +98,13 @@ export async function test_connect_wasm_bindgen() {
 }
 
 export async function create_directory() {
-    let actor = await get_actor()
-    return await actor.create_directory();
+	let actor = await get_actor()
+	return await actor.create_directory();
 }
 
 export async function get_directories() {
-    let actor = await get_actor()
-    return await actor.get_directories();
+	let actor = await get_actor()
+	return await actor.get_directories();
 }
 
 
