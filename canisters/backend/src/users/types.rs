@@ -30,19 +30,6 @@ pub struct User {
     // emails: Option<Vec<String>>,
 }
 
-#[derive(
-    Clone, PartialEq, Serialize, Deserialize, Debug, Eq, Hash, Readable, Writable, CandidType,
-)]
-pub struct QueryUser {
-    pub image: Option<Vec<u8>>,
-    pub username: Option<String>,
-    // last_name: Option<String>,
-    // first_name: Option<String>,
-    // birthdate: Option<String>,
-    // email: Option<String>,
-    // emails: Option<Vec<String>>,
-}
-
 impl User {
     pub fn get_username(address: SPrincipal, users: &Vec<User>) -> Option<String> {
         for user in users {
@@ -62,6 +49,13 @@ impl User {
         }
         false
     }
+    pub(crate) fn is_anonymous() -> bool {
+        let address = SPrincipal(ic_cdk::caller());
+        if Principal::anonymous().to_string() == address.to_string() {
+            return true;
+        }
+        false
+    }
 
     pub(crate) fn new() -> Option<Self> {
         let address = SPrincipal(ic_cdk::caller());
@@ -77,16 +71,13 @@ impl User {
 
     pub(crate) fn current() -> Option<Self> {
         let address = SPrincipal(ic_cdk::caller());
-        let users = s!(Users);
-        let username = match Self::get_username(address, &users) {
-            None => return None, // User does not exists
-            Some(username) => Some(username),
-        };
-        Some(Self {
-            address,
-            image: None,
-            username,
-        })
+        let mut users = s!(Users);
+        for user in users.iter() {
+            if &user.address.to_string() == &address.to_string() {
+                return Some(Self { address, image: None, username: None });
+            }
+        }
+        None
     }
 
     pub(crate) fn caller() -> SPrincipal {

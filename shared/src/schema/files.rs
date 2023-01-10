@@ -167,7 +167,7 @@ impl From<FileNodeCreate> for Object {
             ("id".into(), val.id.into()),
             ("children".into(), children.into()),
         ])
-        .into()
+            .into()
     }
 }
 
@@ -209,7 +209,7 @@ impl From<FileNodeUpdate> for Object {
                         })
                         .collect(),
                 )
-                .into(),
+                    .into(),
             );
         }
         if let Some(name) = value.name {
@@ -255,8 +255,8 @@ impl candid::types::CandidType for FileNode {
         candid::types::TypeId::of::<FileNode>()
     }
     fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
-    where
-        __S: candid::types::Serializer,
+        where
+            __S: candid::types::Serializer,
     {
         let mut ser = __serializer.serialize_struct()?;
         candid::types::Compound::serialize_element(&mut ser, &self.id)?;
@@ -367,7 +367,7 @@ impl FileDirectory {
     pub fn new(id: Id, name: String) -> Self {
         Self {
             files: Tree::new(),
-            id: id.into(),
+            id,
             name,
         }
     }
@@ -391,7 +391,7 @@ impl From<FileDirectory> for Object {
             ("name".into(), val.name.into()),
             ("files".into(), Value::Object(val.files.into())),
         ])
-        .into()
+            .into()
     }
 }
 
@@ -408,7 +408,7 @@ impl From<FileNode> for Object {
                 }),
             ),
         ])
-        .into()
+            .into()
     }
 }
 

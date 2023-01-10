@@ -15,7 +15,7 @@ export async function identify() {
 
 	let identityProvider = "https://identity.ic0.app/#authorize";
 	if (process.env.DFX_NETWORK != "ic") {
-		identityProvider = "http://r7inp-6aaaa-aaaaa-aaabq-cai.localhost:8510/#authorize"
+		identityProvider = `http://${process.env.IDENTITY_PROVIDER_ID}.localhost:8510/#authorize`
 	}
 	return await authClient.login({
 		identityProvider,
@@ -38,8 +38,16 @@ export async function update_profile(username, image) {
 }
 
 export async function get_profile() {
-	const actor = await get_actor()
-	return await actor.get_profile();
+    const actor = await get_actor()
+    let result = await actor.get_profile();
+    result = result[0];
+    if ( typeof(result.username) == "object") {
+        result.username = result.username[0] || "";
+    } 
+    if ( typeof(result.image) == "object") {
+        result.image = result.image[0] || "";
+    } 
+    return result;
 }
 
 export async function is_logged() {
@@ -88,6 +96,22 @@ export async function test_connect_wasm_bindgen() {
 	let actor = await get_actor()
 	return await actor.test_ic();
 }
+
+export async function create_directory() {
+    let actor = await get_actor()
+    return await actor.create_directory();
+}
+
+export async function get_directories() {
+    let actor = await get_actor()
+    return await actor.get_directories();
+}
+
+
+// export async function create_file() {
+//     let actor = await get_actor()
+//     return await actor.create_file();
+// }
 
 export async function register(username) {
 	const backend = await get_actor()

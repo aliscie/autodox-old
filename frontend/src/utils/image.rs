@@ -1,6 +1,6 @@
 use js_sys::{Promise, Uint8Array};
+use web_sys::Blob;
 use web_sys::{BlobPropertyBag, File, Url};
-use web_sys::{Blob};
 
 pub struct Image {
     pub name: String,
@@ -16,9 +16,10 @@ fn decode_image(image: &Vec<u8>) -> Option<String> {
         &array,
         // web_sys::BlobPropertyBag::new().type_("application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
         web_sys::BlobPropertyBag::new().type_("image/png"),
-    ).unwrap();
+    )
+    .ok()?;
 
-    let url: String = Url::create_object_url_with_blob(&blob).unwrap();
+    let url: String = Url::create_object_url_with_blob(&blob).ok()?;
     Some(url)
 }
 
@@ -28,17 +29,23 @@ impl Image {
         let name = name.as_str();
         let v: Vec<&str> = name.split('.').collect();
         let name = v.get(0).unwrap().to_string();
-        ;
         let format = v.get(1).unwrap().to_string();
 
         let buffer: Promise = file.array_buffer();
         let result = wasm_bindgen_futures::JsFuture::from(buffer).await;
         let bytes: Vec<u8> = Uint8Array::new(&result.unwrap()).to_vec();
-        Self { name, format, data: bytes }
+        Self {
+            name,
+            format,
+            data: bytes,
+        }
     }
 
-    pub fn to_link(image: &Vec<u8>) -> Option<String> {
-        decode_image(image)
+    pub fn to_link(image: Option<Vec<u8>>) -> Option<String> {
+        match image {
+            Some(image) => decode_image(&image),
+            None => None,
+        }
     }
 
     pub fn link(self: &Self) -> Option<String> {

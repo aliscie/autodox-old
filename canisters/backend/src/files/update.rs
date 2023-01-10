@@ -46,9 +46,26 @@ pub fn create_file(create_file_data: FileNodeCreate) {
 #[update]
 #[candid_method(update)]
 pub async fn create_directory() -> UpdateResponse {
-    let id: Id = Id::ic_new().await;
     let current_user = User::current();
+
+    if current_user.is_none() {
+        return UpdateResponse {
+            status: Status::UnAuthorized,
+            message: "Anonymous users cannot create directories".to_string(),
+        };
+    }
+
+    // for (key, dir) in user_files.iter() {
+    //     // TODO if directory is already created return already exists
+    //     if key == current_user.unwrap().address {
+    //         return UpdateResponse { status: Status::InvalidInput, message: "Directory already exists.".to_string() };
+    //     }
+    // };
+
+    let id: Id = Id::ic_new().await;
+
     let mut user_files: UserFiles = s!(UserFiles);
+
     let mut file_directory = FileDirectory::new(id, "default".to_string());
     let id: Id = Id::ic_new().await;
     file_directory.files.push_vertex(
