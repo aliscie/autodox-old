@@ -39,7 +39,7 @@ type Tree = record {
 };
 
 
-type FileDirectory = record {
+type FileDirectory = opt record {
     id : vec nat8;
     name: text;
     files: Tree;
@@ -78,7 +78,7 @@ service : {
     "create_directory": (
         //    create_file_data : FileDirectoryUpdate
     ) -> (UpdateRespone);
-    "get_directories": () ->(opt FileDirectory) query;
+    "get_directories": () ->(FileDirectory) query;
     "register": (text) -> (UpdateRespone);
     "test_ic" : () -> (text) query;
     "update_profile" : (User) -> (UpdateRespone);
