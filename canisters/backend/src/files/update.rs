@@ -48,12 +48,19 @@ pub fn create_file(create_file_data: FileNodeCreate) {
 pub async fn create_directory() -> UpdateResponse {
     let current_user = User::current();
 
-    if current_user.is_none() {
+    if current_user.clone().is_none() {
         return UpdateResponse {
             status: Status::UnAuthorized,
             message: "Anonymous users cannot create directories".to_string(),
         };
-    }
+    };
+
+    let id: Id = Id::ic_new().await;
+
+    let mut user_files: UserFiles = s!(UserFiles);
+    if !user_files.get(&current_user.clone().unwrap()).is_none() {
+        return UpdateResponse { status: Status::InvalidInput, message: "User already have directory.".to_string() };
+    };
 
     // for (key, dir) in user_files.iter() {
     //     // TODO if directory is already created return already exists
@@ -62,9 +69,6 @@ pub async fn create_directory() -> UpdateResponse {
     //     }
     // };
 
-    let id: Id = Id::ic_new().await;
-
-    let mut user_files: UserFiles = s!(UserFiles);
 
     let mut file_directory = FileDirectory::new(id, "default".to_string());
     let id: Id = Id::ic_new().await;
@@ -84,7 +88,7 @@ pub async fn create_directory() -> UpdateResponse {
     user_files.insert(current_user.unwrap(), file_directory.clone());
     s! { UserFiles = user_files}
     ;
-    return UpdateResponse { status: Status::Success, message: "New directory is created.".to_string() };
+    UpdateResponse { status: Status::Success, message: "New directory is created.".to_string() }
 }
 
 
