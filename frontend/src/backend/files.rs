@@ -1,16 +1,17 @@
 use futures::future::err;
-use shared::{log, schema::FileNodeDelete};
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
 
-use crate::utils::DeviceInfo;
+use shared::{log, schema::FileNodeDelete};
 use shared::{
     id::Id,
     schema::{FileDirectory, FileNodeCreate},
 };
+
 use crate::backend;
+use crate::utils::DeviceInfo;
 
 pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -60,7 +61,8 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
 pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        let response = backend::create_directory_ic().await;
+        log!(response);
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
@@ -95,12 +97,12 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         // TODO backend::call_ic("create_directory"); make this dynamic
-        spawn_local(async move {
-            // TODO return Vec<FileDirectory>
-            // log!("before get dirs");
-            // let get_profile: Option<FileDirectory> = serde_wasm_bindgen::from_value(backend::create_directories_ic().await).map_err(|e| String::from("serde error"))?;
-            // log!(&get_profile);
-        });
+        log!("before get dirs");
+        let response = backend::get_directories_ic().await;
+        log!(&response); // this works just fine
+        let get_profile: Option<FileDirectory> = serde_wasm_bindgen::from_value(response).map_err(|e| String::from("serde error"))?;
+        log!("________ after get dir"); // this never executed
+        log!(&get_profile);
     }
     if !info.get().is_web {
         let x = crate::backend::call_surreal::<Vec<FileDirectory>, String>(

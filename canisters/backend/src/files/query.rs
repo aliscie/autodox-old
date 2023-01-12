@@ -33,7 +33,6 @@ use shared::{id::Id, schema::*};
 
 #[query]
 #[candid_method(query)]
-// pub fn get_directories() -> Option<Vec<FileDirectory>> {
 pub fn get_directories() -> Option<FileDirectory> {
     let user = User::current();
     let mut user_files: UserFiles = s!(UserFiles);
