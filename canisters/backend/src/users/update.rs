@@ -2,13 +2,11 @@ use candid::candid_method;
 use ic_cdk::export::Principal;
 // use ic_cdk_macros::update;
 use crate::custom_traits::*;
-use ic_stable_memory::s;
-use ic_stable_memory::utils::ic_types::SPrincipal;
-
-use ic_kit::macros::update;
-
 use crate::users::types::{User, Users};
 use crate::utils::{Status, UpdateResponse};
+use ic_kit::macros::update;
+use ic_stable_memory::s;
+use ic_stable_memory::utils::ic_types::SPrincipal;
 
 #[update]
 #[candid_method(update)]
@@ -16,7 +14,8 @@ pub fn register(username: String) -> UpdateResponse {
     let mut users = s!(Users);
     let caller: Option<User> = User::new();
 
-    if User::is_anonymous() { // TODO why this not working?
+    if User::is_anonymous() {
+        // TODO why this not working?
         return UpdateResponse {
             status: Status::UnAuthorized,
             message: "Anonymous user.".to_string(),

@@ -121,3 +121,8 @@ export async function register(username) {
 	const backend = await get_actor()
 	return await backend.register(username);
 }
+
+export async function get_current_user() {
+	const actor = await get_actor()
+	return await actor.get_current_user();
+}

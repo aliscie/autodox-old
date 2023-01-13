@@ -1,9 +1,9 @@
-use ic_kit::candid::{candid_method};
+use ic_kit::candid::candid_method;
 use ic_kit::macros::query;
 
-use ic_stable_memory::{s, utils::ic_types::SPrincipal};
-use crate::users::types::{User, UserFiles};
 use crate::users::types::Users;
+use crate::users::types::{User, UserFiles};
+use ic_stable_memory::{s, utils::ic_types::SPrincipal};
 use shared::{id::Id, schema::*};
 
 // #[query]
@@ -35,13 +35,13 @@ use shared::{id::Id, schema::*};
 #[candid_method(query)]
 pub fn get_directories() -> Option<FileDirectory> {
     let user = User::current();
+    println!("user: {:#?}", user);
     if user.clone().is_none() {
         return None;
     }
     let mut user_files: UserFiles = s!(UserFiles);
     user_files.get(&user.unwrap()).map(|s| s.clone())
 }
-
 
 #[query]
 #[candid_method(query)]

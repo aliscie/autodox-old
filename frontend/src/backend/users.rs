@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::*;
 
 // #[wasm_bindgen]
 #[derive(Deserialize, Debug)]
-pub struct QueryUser {
+pub struct UserQuery {
     // #[wasm_bindgen(skip)]
     pub image: Option<Vec<u8>>,
 
