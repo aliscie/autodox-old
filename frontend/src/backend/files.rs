@@ -99,11 +99,11 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
         // TODO backend::call_ic("create_directory"); make this dynamic
         log!("before get dirs");
         let response = backend::get_directories_ic().await;
-        log!(&response); // this works just fine
-        let get_profile: Option<FileDirectory> = serde_wasm_bindgen::from_value(response).map_err(|e| String::from("serde error"))?;
-        log!("________ after get dir"); // this never executed
-        log!(&get_profile);
-    }
+        log!(&response);
+        // let dir: Result<Option<FileDirectory>, _> = serde_wasm_bindgen::from_value(response);
+        // log!("________ after get dir");
+        // log!(&dir);
+    };
     if !info.get().is_web {
         let x = crate::backend::call_surreal::<Vec<FileDirectory>, String>(
             "get_directories".to_string(),

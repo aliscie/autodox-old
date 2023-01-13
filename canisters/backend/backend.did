@@ -44,7 +44,7 @@ type Tree = record {
 };
 
 
-type FileDirectory = opt variant {
+type FileDirectory = opt record {
     id : vec nat8;
     name: text;
     files: Tree;

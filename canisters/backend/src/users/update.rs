@@ -18,7 +18,7 @@ pub fn register(username: String) -> UpdateResponse {
 
     if User::is_anonymous() { // TODO why this not working?
         return UpdateResponse {
-            status: Status::Unauthorized,
+            status: Status::UnAuthorized,
             message: "Anonymous user.".to_string(),
         };
     };

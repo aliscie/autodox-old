@@ -20,7 +20,7 @@ fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
     use_future_with_deps(
         move |_| async move {
             let auth = backend::is_logged().await.as_bool().unwrap();
-            log!("before login");
+            log!("1 before login");
             &dispatch.reduce_mut(|state| state.is_authed = auth);
             let register = backend::register("ali".to_string()).await;
             log!(register);
