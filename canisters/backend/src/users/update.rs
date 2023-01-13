@@ -15,6 +15,14 @@ use crate::utils::{Status, UpdateResponse};
 pub fn register(username: String) -> UpdateResponse {
     let mut users = s!(Users);
     let caller: Option<User> = User::new();
+
+    if User::is_anonymous() { // TODO why this not working?
+        return UpdateResponse {
+            status: Status::Unauthorized,
+            message: "Anonymous user.".to_string(),
+        };
+    };
+
     if User::is_registered() {
         return UpdateResponse {
             status: Status::InvalidInput,
