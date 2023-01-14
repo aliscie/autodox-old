@@ -22,7 +22,7 @@ pub struct UserQuery {
 #[derive(Deserialize, Serialize, Clone, PartialEq, Debug, Eq, Hash)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct TestQuery {
-    // #[serde(default)]
+    #[serde(default)]
     pub username: Option<String>,
     pub image: Option<String>,
 }

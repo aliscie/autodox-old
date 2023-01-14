@@ -22,8 +22,10 @@ fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
             let auth = backend::is_logged().await.as_bool().unwrap();
             log!("1 before login");
             &dispatch.reduce_mut(|state| state.is_authed = auth);
+            log!(auth);
+            log!("test");
             let register = backend::register("ali".to_string()).await;
-            // log!(register);
+            log!(register);
             // let get_profile: UserQuery =
             //     serde_wasm_bindgen::from_value(backend::get_profile().await)
             //         .map_err(|e| String::from("serde error"))?;
@@ -34,8 +36,8 @@ fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
             //     .map_err(|e| String::from("serde error"))?;
             // log!(user);
 
-            let test = backend::get_test().await;
-            log!(test);
+            let get_test = backend::get_test().await;
+            log!(get_test);
 
             return Ok(());
         },

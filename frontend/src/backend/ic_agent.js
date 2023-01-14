@@ -1,15 +1,15 @@
 import { AuthClient } from "@dfinity/auth-client";
 import { createActor, canisterId, idlFactory } from './../../../../../src/declarations/backend';
-import { Actor, HttpAgent } from "@dfinity/agent";
 
 const { ic } = window;
 const { plug } = ic;
 
-let backendActor
+let backendActor, loading = false
 
 export async function identify() {
 	const authClient = await AuthClient.create();
 	if (await authClient.isAuthenticated()) {
+		console.log('isAuthenticated')
 		return authClient.getIdentity();
 	}
 
@@ -56,27 +56,27 @@ export async function is_logged() {
 }
 
 export const get_actor = async () => {
-	if (!backendActor) {
-		console.log('USE_WALLET: ', process.env.USE_WALLET)
+	await new Promise(resolve => !loading && resolve());
+	loading = true
 
+	if (!backendActor) {
 		if (process.env.USE_WALLET) {
 			let publicKey
 
 			try {
-				const isConnected = await plug.isConnected();
-
-				if (!isConnected) {
-					publicKey = await plug.requestConnect({
-						whitelist: [process.env.BACKEND_CANISTER_ID],
-						host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
-						timeout: 50000,
-						onConnectionUpdate: () => {
-							console.log('sessionData: ', plug.sessionManager.sessionData)
-						},
-					});
-				}
+				// const isConnected = await plug.isConnected();
+				// if (!isConnected) {
+				publicKey = await plug.requestConnect({
+					whitelist: [process.env.BACKEND_CANISTER_ID],
+					host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
+					timeout: 50000,
+					onConnectionUpdate: () => {
+						console.log('sessionData: ', plug.sessionManager.sessionData)
+					},
+				});
+				// }
 			} catch (e) {
-				console.error(e)
+				console.log(e)
 				return
 			}
 
@@ -93,6 +93,7 @@ export const get_actor = async () => {
 		}
 	}
 
+	loading = false
 	return backendActor;
 }
 
