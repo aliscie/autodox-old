@@ -40,6 +40,7 @@ export async function update_profile(username, image) {
 export async function get_profile() {
 	const actor = await get_actor()
 	let result = await actor.get_profile();
+	console.log('get_profile#result: ', result)
 	result = result[0];
 	if (typeof (result.username) == "object") {
 		result.username = result.username[0] || "";

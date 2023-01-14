@@ -17,28 +17,19 @@ use yewdux::prelude::Dispatch;
 #[hook]
 fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
     let dispatch = Dispatch::<DeviceInfo>::new();
+
     use_future_with_deps(
         move |_| async move {
             let auth = backend::is_logged().await.as_bool().unwrap();
-            log!("1 before login");
-            &dispatch.reduce_mut(|state| state.is_authed = auth);
             log!(auth);
-            log!("test");
+            &dispatch.reduce_mut(|state| state.is_authed = auth);
             let register = backend::register("ali".to_string()).await;
             log!(register);
-            // let get_profile: UserQuery =
-            //     serde_wasm_bindgen::from_value(backend::get_profile().await)
-            //         .map_err(|e| String::from("serde error"))?;
-            // &dispatch.reduce_mut(|state| state.profile = get_profile);
-
-            // let user = backend::get_current_user().await;
-            // let user: UserQuery = serde_wasm_bindgen::from_value(backend::get_current_user().await)
-            //     .map_err(|e| String::from("serde error"))?;
-            // log!(user);
-
-            let get_test = backend::get_test().await;
-            log!(get_test);
-
+            let profile_res = backend::get_profile().await;
+            log!(&profile_res);
+            let profile_obj: UserQuery = serde_wasm_bindgen::from_value(profile_res)
+                .map_err(|e| String::from("serde error"))?;
+            &dispatch.reduce_mut(|state| state.profile = profile_obj);
             return Ok(());
         },
         (),
@@ -102,11 +93,10 @@ pub fn TitleAvatarComponent() -> Html {
 
     if device.is_authed {
         return html! { <>
-
-        <PopOverMenu {items} position = {position.clone()}/>
-        <span class="right_clickable main_avatar" onclick={open_popover}>
-        <Avatar src={Image::to_link(device.profile.image.clone())} />
-        </span>
+            <PopOverMenu {items} position = {position.clone()}/>
+            <span class="right_clickable main_avatar" onclick={open_popover}>
+                <Avatar src={Image::to_link(device.profile.image.clone())} />
+            </span>
         </>
         };
     };
