@@ -26,6 +26,9 @@ export interface ResponseQuery { 'status' : Status, 'message' : string }
 export type Status = { 'InvalidInput' : null } |
   { 'Success' : null } |
   { 'UnAuthorized' : null };
+export type TestQuery = [] | [
+  { 'username' : [] | [string], 'image' : [] | [string] }
+];
 export interface Tree {
   'vertices' : Array<[Uint8Array, FileNode]>,
   'adjacency' : Array<[Uint8Array, Array<Uint8Array>]>,
@@ -40,6 +43,7 @@ export interface _SERVICE {
   'get_current_user' : ActorMethod<[], UserQuery>,
   'get_directories' : ActorMethod<[], FileDirectory>,
   'get_profile' : ActorMethod<[], UserQuery>,
+  'get_test' : ActorMethod<[], TestQuery>,
   'register' : ActorMethod<[string], ResponseQuery>,
   'test_ic' : ActorMethod<[], string>,
   'update_profile' : ActorMethod<[UserUpdate], ResponseQuery>,

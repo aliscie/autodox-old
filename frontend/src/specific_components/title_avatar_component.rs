@@ -29,10 +29,13 @@ fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
             //         .map_err(|e| String::from("serde error"))?;
             // &dispatch.reduce_mut(|state| state.profile = get_profile);
 
-            let user = backend::get_current_user().await;
+            // let user = backend::get_current_user().await;
             // let user: UserQuery = serde_wasm_bindgen::from_value(backend::get_current_user().await)
             //     .map_err(|e| String::from("serde error"))?;
-            log!(user);
+            // log!(user);
+
+            let test = backend::get_test().await;
+            log!(test);
 
             return Ok(());
         },

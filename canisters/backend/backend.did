@@ -68,6 +68,11 @@ type UserQuery = opt record {
     username: opt text;
 };
 
+type TestQuery = opt record {
+    image: opt text;
+    username: opt text;
+};
+
 service : {
     "create_file": (create_file_data : CreateFileData) -> ();
     "create_directory": () -> (ResponseQuery);
@@ -77,4 +82,5 @@ service : {
     "update_profile" : (UserUpdate) -> (ResponseQuery);
     "get_profile" : () -> (UserQuery) query;
     "get_current_user" : () -> (UserQuery) query;
+    "get_test" : () -> (TestQuery) query;
 }

@@ -35,6 +35,9 @@ export const idlFactory = ({ IDL }) => {
   const FileDirectory = IDL.Opt(
     IDL.Record({ 'id' : IDL.Vec(IDL.Nat8), 'files' : Tree, 'name' : IDL.Text })
   );
+  const TestQuery = IDL.Opt(
+    IDL.Record({ 'username' : IDL.Opt(IDL.Text), 'image' : IDL.Opt(IDL.Text) })
+  );
   const UserUpdate = IDL.Record({
     'username' : IDL.Text,
     'image' : IDL.Vec(IDL.Nat8),
@@ -45,6 +48,7 @@ export const idlFactory = ({ IDL }) => {
     'get_current_user' : IDL.Func([], [UserQuery], ['query']),
     'get_directories' : IDL.Func([], [FileDirectory], ['query']),
     'get_profile' : IDL.Func([], [UserQuery], ['query']),
+    'get_test' : IDL.Func([], [TestQuery], ['query']),
     'register' : IDL.Func([IDL.Text], [ResponseQuery], []),
     'test_ic' : IDL.Func([], [IDL.Text], ['query']),
     'update_profile' : IDL.Func([UserUpdate], [ResponseQuery], []),

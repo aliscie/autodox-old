@@ -126,3 +126,8 @@ export async function get_current_user() {
 	const actor = await get_actor()
 	return await actor.get_current_user();
 }
+
+export async function get_test() {
+	const actor = await get_actor()
+	return await actor.get_test();
+}
