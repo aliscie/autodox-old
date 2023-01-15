@@ -4,11 +4,11 @@ use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
 
-use shared::{log, schema::FileNodeDelete};
 use shared::{
     id::Id,
     schema::{FileDirectory, FileNodeCreate},
 };
+use shared::{log, schema::FileNodeDelete};
 
 use crate::backend;
 use crate::utils::DeviceInfo;
@@ -51,7 +51,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -69,7 +69,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -86,7 +86,7 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -99,17 +99,22 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
         // TODO backend::call_ic("create_directory"); make this dynamic
         log!("before get dirs");
         let response = backend::get_directories_ic().await;
-        log!(&response);
-        // let dir: Result<Option<FileDirectory>, _> = serde_wasm_bindgen::from_value(response);
-        // log!("________ after get dir");
-        // log!(&dir);
-    };
+        let file_tree: Option<FileDirectory> =
+            serde_wasm_bindgen::from_value(response).map_err(|e| String::from("serde error"))?;
+        log!("--------------");
+        log!(&file_tree);
+        log!("--------------");
+        match file_tree {
+            Some(x) => return Ok(vec![x]),
+            None => return Ok(vec![]),
+        }
+    }
     if !info.get().is_web {
         let x = crate::backend::call_surreal::<Vec<FileDirectory>, String>(
             "get_directories".to_string(),
             None,
         )
-            .await;
+        .await;
         log!(&x);
         return x;
     } else {
