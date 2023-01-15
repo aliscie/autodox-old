@@ -99,10 +99,11 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
         // TODO backend::call_ic("create_directory"); make this dynamic
         log!("before get dirs");
         let response = backend::get_directories_ic().await;
-        let file_tree: Option<FileDirectory> =
-            serde_wasm_bindgen::from_value(response).map_err(|e| String::from("serde error"))?;
+        log!(&response);
+        let file_tree: Result<Option<FileDirectory>, serde_wasm_bindgen::Error> =
+            serde_wasm_bindgen::from_value(response);
         log!(&file_tree);
-        match file_tree {
+        match file_tree.map_err(|e| "serde error".to_string())? {
             Some(x) => return Ok(vec![x]),
             None => return Ok(vec![]),
         }

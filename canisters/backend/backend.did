@@ -33,7 +33,7 @@ type Tree = record {
     };
     adjacency : vec record {
         text;
-        vec vec nat8;
+        vec text;
     };
 };
 
