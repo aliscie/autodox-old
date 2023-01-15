@@ -103,12 +103,16 @@ export async function test_connect_wasm_bindgen() {
 
 export async function create_directory() {
 	let actor = await get_actor()
-	return await actor.create_directory();
+	let result = await actor.create_directory();
+    console.log(result);
+    return result;
 }
 
 export async function get_directories() {
 	let actor = await get_actor()
-	return await actor.get_directories();
+	let result = await actor.get_directories();
+	result = result[0];
+    return result;
 }
 
 
