@@ -24,9 +24,14 @@ pub struct Id(pub Uuid);
 
 impl Id {
     pub async fn ic_new() -> Self {
-        let call_result: Result<(Vec<u8>, ), _> = ic_cdk::api::call::call(ic_cdk::export::Principal::management_canister(), "raw_rand", ()).await;
+        let call_result: Result<(Vec<u8>,), _> = ic_cdk::api::call::call(
+            ic_cdk::export::Principal::management_canister(),
+            "raw_rand",
+            (),
+        )
+        .await;
         let id = match call_result {
-            Ok((id, )) => id,
+            Ok((id,)) => id,
             Err(e) => {
                 ic_cdk::trap(&format!("Failed to get id: {:#?}", e));
             }
@@ -51,7 +56,6 @@ impl From<[u8; 16]> for Id {
         Id(Uuid::from_bytes(value))
     }
 }
-
 
 impl From<Vec<u8>> for Id {
     fn from(value: Vec<u8>) -> Self {
@@ -118,13 +122,13 @@ impl FromStr for Id {
 #[cfg(feature = "backend")]
 impl CandidType for Id {
     fn _ty() -> Type {
-        Type::Vec(Box::new(Type::Nat8))
+        Type::Text
     }
     fn idl_serialize<S>(&self, serializer: S) -> Result<(), S::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
-        serializer.serialize_blob(&self.0.to_bytes_le())
+        serializer.serialize_text(&self.0.to_string())
     }
 }
 
