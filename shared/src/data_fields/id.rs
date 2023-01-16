@@ -23,6 +23,7 @@ use uuid::Uuid;
 pub struct Id(pub Uuid);
 
 impl Id {
+    #[cfg(feature = "backend")]
     pub async fn ic_new() -> Self {
         let call_result: Result<(Vec<u8>,), _> = ic_cdk::api::call::call(
             ic_cdk::export::Principal::management_canister(),
@@ -39,7 +40,7 @@ impl Id {
         id.into()
     }
 
-    #[cfg(not(feature = "backend"))]
+    #[cfg(any(feature = "frontend", feature = "tauri"))]
     pub fn new() -> Self {
         Self(Uuid::new_v4())
     }
