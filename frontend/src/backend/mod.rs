@@ -7,8 +7,7 @@ use wasm_bindgen::JsValue;
 pub use element::*;
 pub use files::*;
 pub use main::*;
-pub use users::UserQuery;
-
+pub use users::QueryUser;
 mod element;
 mod files;
 mod main;

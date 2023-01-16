@@ -4,50 +4,45 @@ type FileMode = variant {
     Restricted
 };
 
-type ElementId = variant {
-    Some : vec nat8;
-    None;
-};
-
 type FileNode = record {
-    // id : vec nat8;
+    id : text;
     name: text;
-    element_tree: ElementId;
+    element_tree: opt text;
 };
 
 type CreateFileData = record {
-    id : vec nat8;
+    id : text;
     name: text;
-    directory_id : vec nat8;
-    parent_id : vec nat8;
+    directory_id : text;
+    parent_id : text;
     children: opt vec text;
 };
 
 type CreateDirectoryData = record {
-    id : vec nat8;
+    id : text;
     name: text;
     files: Tree;
 };
 
 type Tree = record {
-    // root : opt vec nat8;
+    root : opt text;
     vertices : vec record {
-        vec nat8;
+        text;
         FileNode
     };
     adjacency : vec record {
-        vec nat8;
-        vec vec nat8;
+        text;
+        vec text;
     };
 };
 
-type FileDirectory = opt record {
-    id : vec nat8;
+type FileDirectory = record {
+    id : text;
     name: text;
     files: Tree;
 };
 
-type ResponseQuery = record {
+type UpdateResponse = record {
     status : Status;
     message: text;
 };
@@ -75,11 +70,11 @@ type TestQuery = opt record {
 
 service : {
     "create_file": (create_file_data : CreateFileData) -> ();
-    "create_directory": () -> (ResponseQuery);
-    "get_directories": () ->(FileDirectory) query;
-    "register": (text) -> (ResponseQuery);
+    "create_directory": () -> (UpdateResponse);
+    "get_directories": () ->(opt FileDirectory) query;
+    "register": (text) -> (UpdateResponse);
     "test_ic" : () -> (text) query;
-    "update_profile" : (UserUpdate) -> (ResponseQuery);
+    "update_profile" : (UserUpdate) -> (UpdateResponse);
     "get_profile" : () -> (UserQuery) query;
     "get_current_user" : () -> (UserQuery) query;
     "get_test" : () -> (TestQuery) query;
