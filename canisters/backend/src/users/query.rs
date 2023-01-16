@@ -12,10 +12,10 @@ pub fn get_profile() -> Option<UserQuery> {
     let caller = User::caller();
     for user in users {
         if &user.address == &caller {
-            Some(UserQuery {
+            return Some(UserQuery {
                 image: user.image,
                 username: user.username,
-            })
+            });
         }
     }
     None
