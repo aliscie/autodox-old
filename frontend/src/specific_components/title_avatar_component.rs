@@ -26,12 +26,14 @@ fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
             log!(auth);
             &dispatch.reduce_mut(|state| state.is_authed = auth);
             let register = backend::register("ali".to_string()).await;
-            log!(register);
+            // log!(register);
             let profile_res = backend::get_profile().await;
             // log!(&profile_res);
             let profile_obj: UserQuery = serde_wasm_bindgen::from_value(profile_res)
                 .map_err(|e| String::from("serde error"))?;
+            // log!(&profile_obj);
             &dispatch.reduce_mut(|state| state.profile = profile_obj);
+            crate::hooks::init_files().await;
             return Ok(());
         },
         (),

@@ -54,7 +54,7 @@ export async function is_logged() {
 
 export const get_actor = async () => {
     await new Promise(resolve => !loading && resolve());
-    console.log('after loading')
+    console.log('get_actor')
     loading = true
 
     if (!backendActor) {

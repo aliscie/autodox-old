@@ -27,16 +27,6 @@ pub fn app() -> Html {
     // let aside_bar_toggle = use_state_eq(|| "".to_string());
     // let toggle_aside = aside_bar_toggle.clone();
     let file_dispatch = Dispatch::<FileDirectory>::new();
-    // only do it once
-    use_effect_with_deps(
-        move |_| {
-            spawn_local(async move {
-                let _ = crate::hooks::init_files().await;
-            });
-            || {}
-        },
-        (),
-    );
 
     let onclick_market_place: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         //TODO
