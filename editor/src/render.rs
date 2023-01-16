@@ -17,8 +17,8 @@ pub(crate) fn render(tree: &ElementTree, start: Id) -> Html {
         let html_node = html! {
             <>
                 <EditorComponent
-                key = { id.to_string() }
-                node={node.clone()}/>
+                    key = { id.to_string() }
+                    node={node.clone()}/>
                 if has_children {{
                     tree.elements.adjacency.get(id)
                         .unwrap()

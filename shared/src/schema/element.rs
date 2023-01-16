@@ -46,7 +46,7 @@ pub struct EditorElement {
 //     Src,
 // }
 
-#[cfg(not(feature = "backend"))]
+#[cfg(any(feature = "frontend", feature = "tauri"))]
 impl Default for ElementTree {
     fn default() -> Self {
         let mut tree = Tree::new();
@@ -60,7 +60,7 @@ impl Default for ElementTree {
     }
 }
 
-#[cfg(not(feature = "backend"))]
+#[cfg(any(feature = "frontend", feature = "tauri"))]
 impl Default for EditorElement {
     fn default() -> Self {
         // this creates a root element
@@ -76,8 +76,8 @@ impl Default for EditorElement {
 impl EditorElement {
     #[inline]
     pub fn new<T>(id: T, text: String, attrs: HashMap<String, String>) -> Self
-        where
-            T: Into<Id>,
+    where
+        T: Into<Id>,
     {
         Self {
             id: id.into(),
@@ -128,7 +128,7 @@ pub struct EditorElementUpdate {
     pub children: Option<IndexSet<Id>>,
 }
 
-#[cfg(not(feature = "backend"))]
+#[cfg(any(feature = "frontend", feature = "tauri"))]
 impl Default for EditorElementUpdate {
     fn default() -> Self {
         Self {
@@ -269,7 +269,7 @@ impl From<EditorElementCreate> for Object {
             ("text".into(), value.text.into()),
             ("children".into(), Array(children).into()),
         ])
-            .into();
+        .into();
         attrs_to_object(value.attrs, &mut x);
         x.into()
     }
@@ -294,7 +294,7 @@ impl From<ElementTree> for Object {
             ("id".into(), value.id.into()),
             ("elements".into(), Value::Object(value.elements.into())),
         ])
-            .into()
+        .into()
     }
 }
 
@@ -354,6 +354,33 @@ impl Store for ElementTree {
     }
     fn should_notify(&self, old: &Self) -> bool {
         old != self
+    }
+}
+
+impl ElementTree {
+    #[cfg(feature = "frontend")]
+    pub fn break_element(&mut self, parent_id: Id, from: usize, till: usize) -> Option<(Id, Id)> {
+        let element = self.elements.vertices.get_mut(&parent_id)?;
+        let (first_part, second_part) = element.text.split_at(from);
+        let (second_part, third_part) = second_part.split_at(till);
+        let element_1 = EditorElement::new(Id::new(), second_part.to_string(), HashMap::new());
+        let element_2 = EditorElement::new(Id::new(), third_part.to_string(), HashMap::new());
+        element.text = String::from(first_part);
+        match self.elements.adjacency.get_mut(&parent_id) {
+            Some(mut children) => {
+                children.insert(0, element_1.id);
+                children.insert(1, element_2.id);
+            }
+            None => {
+                let children = vec![element_1.id, element_2.id];
+                self.elements.adjacency.insert(parent_id, children);
+            }
+        }
+        let first_id = element_1.id;
+        let second_id = element_2.id;
+        self.elements.push_vertex(element_1.id, element_1);
+        self.elements.push_vertex(element_2.id, element_2);
+        Some((first_id, second_id))
     }
 }
 
