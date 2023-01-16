@@ -45,12 +45,6 @@ extern "C" {
     #[wasm_bindgen(js_name = get_directories)]
     pub async fn get_directories_ic() -> JsValue;
 
-    #[wasm_bindgen(js_name = get_current_user)]
-    pub async fn get_current_user() -> JsValue;
-
-    #[wasm_bindgen(js_name = get_test)]
-    pub async fn get_test() -> JsValue;
-
     // #[wasm_bindgen(js_name = create_file)]
     // pub async fn create_file_ic() -> JsValue;
 

@@ -3,7 +3,7 @@ use candid::candid_method;
 use ic_kit::macros::query;
 use ic_stable_memory::s;
 use ic_stable_memory::utils::ic_types::SPrincipal;
-use shared::schema::{UserQuery, TestQuery};
+use shared::schema::UserQuery;
 
 #[query]
 #[candid_method(query)]
@@ -19,23 +19,4 @@ pub fn get_profile() -> Option<UserQuery> {
         }
     }
     None
-}
-
-#[query]
-#[candid_method(query)]
-pub fn get_current_user() -> Option<UserQuery> {
-    let user = User::current().unwrap();
-    Some(UserQuery {
-        image: user.image,
-        username: user.username,
-    })
-}
-
-#[query]
-#[candid_method(query)]
-pub fn get_test() -> Option<TestQuery> {
-    Some(TestQuery {
-        image: Some("image".to_string()),
-        username: Some("username".to_string()),
-    })
 }

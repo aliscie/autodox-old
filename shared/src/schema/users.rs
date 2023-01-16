@@ -18,11 +18,3 @@ pub struct UserQuery {
     // email: Option<String>,
     // emails: Option<Vec<String>>,
 }
-
-#[derive(Deserialize, Serialize, Clone, PartialEq, Debug, Eq, Hash)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
-pub struct TestQuery {
-    #[serde(default)]
-    pub username: Option<String>,
-    pub image: Option<String>,
-}
