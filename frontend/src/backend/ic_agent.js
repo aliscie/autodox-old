@@ -54,6 +54,7 @@ export async function is_logged() {
 
 export const get_actor = async () => {
     await new Promise(resolve => !loading && resolve());
+    console.log('after loading')
     loading = true
 
     if (!backendActor) {
@@ -61,17 +62,17 @@ export const get_actor = async () => {
             let publicKey
 
             try {
-                const isConnected = await plug.isConnected();
-                if (!isConnected) {
-                    publicKey = await plug.requestConnect({
-                        whitelist: [process.env.BACKEND_CANISTER_ID],
-                        host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
-                        timeout: 50000,
-                        onConnectionUpdate: () => {
-                            console.log('sessionData: ', plug.sessionManager.sessionData)
-                        },
-                    });
-                }
+                // const isConnected = await plug.isConnected();
+                // if (!isConnected) {
+                publicKey = await plug.requestConnect({
+                    whitelist: [process.env.BACKEND_CANISTER_ID],
+                    host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
+                    timeout: 50000,
+                    onConnectionUpdate: () => {
+                        console.log('sessionData: ', plug.sessionManager.sessionData)
+                    },
+                });
+                // }
             } catch (e) {
                 console.log(e)
                 return

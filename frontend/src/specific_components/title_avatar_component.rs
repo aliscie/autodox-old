@@ -73,7 +73,7 @@ pub fn TitleAvatarComponent() -> Html {
             let image = Image::new(file).await;
             let profile_obj = &mut *profile_arc_clone.lock().unwrap();
             profile_obj.image = Some(image.data.clone());
-            log!(&profile_obj);
+            // log!(&profile_obj);
             let response = backend::update_profile(
                 (*(profile_obj.username.as_ref().unwrap())).to_string(),
                 image.data,
