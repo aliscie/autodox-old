@@ -67,20 +67,18 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
 }
 
 #[tauri::command]
-pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirectory>> {
+pub async fn get_directories(ctx: State<'_, Context>) -> Result<Option<FileDirectory>> {
     let store = ctx.get_store();
-    let res: Vec<FileDirectory> = store
+    let res: Option<Object> = store
         .exec_get::<FileDirectory>(None, Some("files.vertices.*.*"))
         .await?
         .into_iter()
-        .map(|f| FileDirectory::try_from(f))
-        .filter_map(|f| {
-            println!("{:?}", f);
-            f.ok()
-        })
-        .collect();
-    println!("{:?}", res);
-    Ok(res)
+        .next();
+    let res = res
+        .map(FileDirectory::try_from)
+        .transpose()
+        .map_err(Error::from);
+    res
 }
 
 #[tauri::command]
