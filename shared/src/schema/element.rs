@@ -363,9 +363,9 @@ impl ElementTree {
         let element = self.elements.vertices.get_mut(&parent_id)?;
         let (first_part, second_part) = element.text.split_at(from);
         let (second_part, third_part) = second_part.split_at(till);
-        element.text = String::from(first_part);
         let element_1 = EditorElement::new(Id::new(), second_part.to_string(), HashMap::new());
         let element_2 = EditorElement::new(Id::new(), third_part.to_string(), HashMap::new());
+        element.text = String::from(first_part);
         match self.elements.adjacency.get_mut(&parent_id) {
             Some(mut children) => {
                 children.insert(0, element_1.id);
