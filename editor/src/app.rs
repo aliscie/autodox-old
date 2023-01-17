@@ -1,5 +1,6 @@
 use crate::render::render;
 use shared::id::Id;
+use shared::log;
 use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
 use shared::*;
 use std::cell::RefCell;
@@ -12,7 +13,7 @@ use yew::prelude::*;
 use yew::{function_component, html};
 use yewdux::dispatch::Dispatch;
 
-use crate::plugins::{EditorToolbar};
+use crate::plugins::{EditorToolbar, ToolbarAction};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -73,8 +74,7 @@ pub fn Editor(props: &Props) -> Html {
                             }
                             "attributes" => {
                                 if let Some(parent_element) = current_element.parent_element() {
-                                    unimplemented!();
-                                    // crate::shared::log!(format!("Got create: {:?}", parent_element.inner_html()));
+                                    log!(format!("Got create: {:?}", parent_element.inner_html()));
                                 }
                             }
                             "childList" => {
@@ -89,10 +89,9 @@ pub fn Editor(props: &Props) -> Html {
                                         .map(|id| onchange.emit(EditorChange::Delete(id.into())));
                                 }
                                 if removed_nodes.length() > 0 {
-                                    unimplemented!();
                                     // move to next mutation record!
-                                    // crate::shared::log!("got element delete!");
-                                    // crate::shared::log!(mutation_type.removed_nodes());
+                                    // log!("got element delete!");
+                                    // log!(mutation_type.removed_nodes());
                                     continue;
                                 }
                                 let element = current_element.unchecked_into::<Element>();
@@ -103,8 +102,7 @@ pub fn Editor(props: &Props) -> Html {
                                 let mut prev_element_id: Option<Id> = None;
                                 if let Some(prev_node) = element.previous_sibling() {
                                     let prev_element = prev_node.unchecked_into::<Element>();
-                                    unimplemented!();
-                                    // crate::shared::log!(format!("previous element id : {:?}", prev_element.id()));
+                                    log!(format!("previous element id : {:?}", prev_element.id()));
                                     prev_element_id = Uuid::parse_str(prev_element.id().as_str())
                                         .map(Id::from)
                                         .ok();
@@ -126,7 +124,7 @@ pub fn Editor(props: &Props) -> Html {
                                 onchange.emit(EditorChange::Create(element_create));
                                 element.set_id(&new_id.to_string());
                             }
-                            anything_else => unimplemented!(), //crate::shared::log!(anything_else),
+                            anything_else => unimplemented!(), //log!(anything_else),
                         }
                     }
                 }
@@ -158,10 +156,7 @@ pub fn Editor(props: &Props) -> Html {
             // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline specific_components
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
-            plugins::insert_components(
-                &editor_ref.cast::<Element>().unwrap(),
-                "/".into(),
-            );
+            plugins::insert_components(&editor_ref.cast::<Element>().unwrap(), "/".into());
             move || {
                 drop(oninput_event);
                 mutation_observer.disconnect();
@@ -172,10 +167,8 @@ pub fn Editor(props: &Props) -> Html {
 
     let element_tree = props.element_tree.clone();
 
-    let action: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-        let input: HtmlInputElement = e.target_unchecked_into();
-        log!(input.inner_text());
-
+    let action: Callback<ToolbarAction> = Callback::from(move |e: ToolbarAction| {
+        log!(e);
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
         //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
         //     text_format: Some(format),
@@ -188,24 +181,22 @@ pub fn Editor(props: &Props) -> Html {
             class={css_file_macro!("main.css")}
         >
             <h2 contenteditable="true" class={"editor_title heading"}>
-            {props.title.clone()}
-        </h2>
+                {props.title.clone()}
+            </h2>
             <span
-            class = "text_editor_container"
-            id = "text_editor_container"
-            >
+                class = "text_editor_container"
+                id = "text_editor_container"
+                >
 
-            <EditorToolbar  action={action} />
+                <EditorToolbar  action={action} />
 
-            <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
-            { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
-        </div>
+                <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
+                    { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
+                </div>
             </span>
             </span>
     }
 }
 
-use shared::schema::*;
 use crate::plugins;
-
-
+use shared::schema::*;
