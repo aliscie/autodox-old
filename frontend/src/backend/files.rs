@@ -93,7 +93,7 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
     }
 }
 
-pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
+pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         // TODO backend::call_ic("create_directory"); make this dynamic
@@ -103,13 +103,10 @@ pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
         let file_tree: Result<Option<FileDirectory>, serde_wasm_bindgen::Error> =
             serde_wasm_bindgen::from_value(response);
         log!(&file_tree);
-        match file_tree.map_err(|e| "serde error".to_string())? {
-            Some(x) => return Ok(vec![x]),
-            None => return Ok(vec![]),
-        }
+        return file_tree.map_err(|e| "serde error".to_string());
     }
     if !info.get().is_web {
-        let x = crate::backend::call_surreal::<Vec<FileDirectory>, String>(
+        let x = crate::backend::call_surreal::<Option<FileDirectory>, String>(
             "get_directories".to_string(),
             None,
         )

@@ -1,8 +1,9 @@
+use crate::files::types::MyStrings;
+use crate::users::types::{UserFiles, Users};
 use ic_cdk_macros::*;
-use ic_stable_memory::{s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade};
-use crate::files::types::{MyStrings};
-use crate::users::types::{Users, UserFiles};
-
+use ic_stable_memory::{
+    s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade,
+};
 
 #[init]
 fn init() {
