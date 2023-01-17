@@ -10,9 +10,8 @@ use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
-use yewdux::dispatch::Dispatch;
 
-use crate::plugins::{EditorToolbar};
+use crate::plugins::{EditorToolbar,EditorInsert};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -158,10 +157,6 @@ pub fn Editor(props: &Props) -> Html {
             // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline specific_components
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
-            plugins::insert_components(
-                &editor_ref.cast::<Element>().unwrap(),
-                "/".into(),
-            );
             move || {
                 drop(oninput_event);
                 mutation_observer.disconnect();
@@ -196,6 +191,7 @@ pub fn Editor(props: &Props) -> Html {
             >
 
             <EditorToolbar  action={action} />
+            <EditorInsert  trigger={"/".to_string()} />
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }

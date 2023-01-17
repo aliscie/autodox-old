@@ -1,4 +1,4 @@
-// editor/src/main.rs
+// editor/src/insertion_component
 extern crate web_sys;
 
 mod editor_components;

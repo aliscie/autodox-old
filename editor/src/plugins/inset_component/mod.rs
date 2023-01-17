@@ -1,3 +1,3 @@
-mod main;
+mod insertion_component;
 
-pub use main::*;
+pub use insertion_component::*;
