@@ -28,10 +28,9 @@ export async function logout() {
     await authClient.logout()
 }
 
-export async function update_profile(username, image) {
-    image = Array.from(image)
+export async function update_profile(data) {
     const actor = await get_actor()
-    return await actor.update_profile({ username, image })
+    return await actor.update_profile(data)
 }
 
 export async function get_profile() {
@@ -121,10 +120,10 @@ export async function get_directories() {
     return result;
 }
 
-// export async function create_file() {
-//     let actor = await get_actor()
-//     return await actor.create_file();
-// }
+export async function create_file(data) {
+    let actor = await get_actor()
+    return await actor.create_file(data);
+}
 
 export async function register(username) {
     const backend = await get_actor()

@@ -76,11 +76,9 @@ pub fn TitleAvatarComponent() -> Html {
             let profile_obj = &mut *profile_arc_clone.lock().unwrap();
             profile_obj.image = Some(image.data.clone());
             // log!(&profile_obj);
-            let response = backend::update_profile(
-                (*(profile_obj.username.as_ref().unwrap())).to_string(),
-                image.data,
-            )
-            .await;
+            let profile_json = serde_json::json!(profile_obj);
+            let response = backend::update_profile(profile_json.to_string()).await;
+            log!(&response);
         });
 
         Timeout::new(1000, move || {

@@ -64,11 +64,11 @@ type UserQuery = opt record {
 };
 
 service : {
-    "create_file": (create_file_data : CreateFileData) -> ();
-    "create_directory": () -> (UpdateResponse);
+    "create_file": (text) -> (text);
+    "create_directory": () -> (text);
     "get_directories": () ->(opt FileDirectory) query;
-    "register": (text) -> (UpdateResponse);
+    "register": (text) -> (text);
     "test_ic" : () -> (text) query;
-    "update_profile" : (UserUpdate) -> (UpdateResponse);
+    "update_profile" : (text) -> (text);
     "get_profile" : () -> (UserQuery) query;
 }
