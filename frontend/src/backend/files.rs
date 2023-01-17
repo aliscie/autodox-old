@@ -61,8 +61,10 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
 pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let response = backend::create_directory_ic().await;
-        log!(response);
+        spawn_local(async move {
+            let response = backend::create_directory_ic().await;
+            log!(response);
+        })
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
