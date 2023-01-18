@@ -31,11 +31,12 @@ pub fn EditorInsert(props: &Props) -> Html {
     let doc = window().unwrap_throw().document().unwrap_throw();
     let text_editor = doc.query_selector(".text_editor").unwrap().unwrap();
     let trigger = props.trigger.clone();
+    let _trigger = trigger.clone();
     let _position = position.clone();
 
     use_effect_with_deps(
         move |editor_ref| {
-            insert_components(&text_editor, trigger, _position, _input_text);
+            insert_components(&text_editor, _trigger, _position, _input_text);
         },
         (),
     );
@@ -47,7 +48,14 @@ pub fn EditorInsert(props: &Props) -> Html {
     };
     };
     let p = (&*_position).as_ref().unwrap();
-    let items = vec!["table", "quote", "heading"];
+    let mut items = vec!["table", "quote", "heading"];
+    // let x: &&str = &(&*input_text).clone().as_str();
+    // items
+    //     .sort_by(|a: &&str, b: &&str| {
+    //         a.partial_cmp(x).unwrap()
+    //     });
+
+
     html! {
         <span class={css_file_macro!("dropdown.css")} >
 
@@ -56,20 +64,19 @@ pub fn EditorInsert(props: &Props) -> Html {
                 {
                 items
                 .iter()
-                .filter(|&element| element.contains(&*input_text))
+                .filter(|&element| element.contains(&*input_text.replace(" ","").replace("/","")))
                 .cloned()
                 .into_iter().map(|name| {
                     html!{<a key={name}>{ format!("{}",name) }</a>}
-                }).collect::<Html>()
-            }
+                }).collect::< Html > ()
+        }
 
-            </span>
+        </span>
         </span>
     }
 }
 
 pub fn insert_components(editor: &Element, trigger: String, position: UseStateHandle<Option<Position>>, input_text: UseStateHandle<String>) {
-    let mut text_value: String = "".to_string();
     let mut track: bool = false;
     let mut range = window().unwrap_throw().document().unwrap_throw().create_range().unwrap();
 
@@ -83,6 +90,7 @@ pub fn insert_components(editor: &Element, trigger: String, position: UseStateHa
             range.delete_contents();
             position.set(None);
             track = false;
+            e.prevent_default();
         }
 
         if e.key() == trigger {
@@ -103,6 +111,6 @@ pub fn insert_components(editor: &Element, trigger: String, position: UseStateHa
     }) as Box<dyn FnMut(_)>);
 
 
-    &editor.add_event_listener_with_callback("keyup", &handle_keydown.as_ref().unchecked_ref());
+    &editor.add_event_listener_with_callback("keydown", &handle_keydown.as_ref().unchecked_ref());
     &handle_keydown.forget();
 }
