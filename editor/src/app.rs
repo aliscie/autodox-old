@@ -11,7 +11,7 @@ use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit,
 use yew::prelude::*;
 use yew::{function_component, html};
 
-use crate::plugins::{EditorToolbar,EditorInsert};
+use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -178,6 +178,48 @@ pub fn Editor(props: &Props) -> Html {
         // }));
     });
 
+    let mut components_items: CommandItems = vec![
+        DropDownItem {
+            value: html! {"table"},
+            insertion: html! {<table>{"table"}</table>},
+        },
+        DropDownItem {
+            value: html! {"quote"},
+            insertion: html! {<q>{"quote"}</q>},
+        },
+    ];
+
+    let mut mention_items: CommandItems = vec![
+        DropDownItem {
+            value: html! {"ali"},
+            insertion: html! {<span>{"ali"}</span>},
+        },
+        DropDownItem {
+            value: html! {"Aman"},
+            insertion: html! {<span>{"aman"}</span>},
+        },
+        DropDownItem {
+            value: html! {"Young"},
+            insertion: html! {<span>{"Young"}</span>},
+        },
+    ];
+
+
+    let mut emoji_items: CommandItems = vec![
+        DropDownItem {
+            value: html! {"😂"},
+            insertion: html! {<span>{"ali"}</span>},
+        },
+        DropDownItem {
+            value: html! {"😍"},
+            insertion: html! {<span>{"aman"}</span>},
+        },
+        DropDownItem {
+            value: html! {"😎"},
+            insertion: html! {<span>{"Young"}</span>},
+        },
+    ];
+
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -191,7 +233,9 @@ pub fn Editor(props: &Props) -> Html {
             >
 
             <EditorToolbar  action={action} />
-            <EditorInsert  trigger={"/".to_string()} />
+            <EditorInsert items={components_items}  trigger={"/".to_string()} />
+            <EditorInsert items={mention_items}  trigger={"@".to_string()} />
+            <EditorInsert items={emoji_items}  trigger={":".to_string()} />
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
