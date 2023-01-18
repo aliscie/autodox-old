@@ -1,18 +1,16 @@
 import { AuthClient } from "@dfinity/auth-client";
 import { createActor, canisterId, idlFactory } from './../../../../../src/declarations/backend';
-import { Actor, HttpAgent } from "@dfinity/agent";
 
 const { ic } = window;
 const { plug } = ic;
 
-let backendActor
+let backendActor, loading = false
 
 export async function identify() {
     const authClient = await AuthClient.create();
     if (await authClient.isAuthenticated()) {
         return authClient.getIdentity();
     }
-
     let identityProvider = "https://identity.ic0.app/#authorize";
     if (process.env.DFX_NETWORK != "ic") {
         identityProvider = `http://${process.env.IDENTITY_PROVIDER_ID}.localhost:8510/#authorize`
@@ -30,11 +28,9 @@ export async function logout() {
     await authClient.logout()
 }
 
-export async function update_profile(username, image) {
-    image = Array.from(image)
-    console.log('image: ', image, typeof image)
+export async function update_profile(data) {
     const actor = await get_actor()
-    return await actor.update_profile({ username, image })
+    return await actor.update_profile(data)
 }
 
 export async function get_profile() {
@@ -56,27 +52,28 @@ export async function is_logged() {
 }
 
 export const get_actor = async () => {
-    if (!backendActor) {
-        console.log('USE_WALLET: ', process.env.USE_WALLET)
+    await new Promise(resolve => !loading && resolve());
+    console.log('get_actor')
+    loading = true
 
+    if (!backendActor) {
         if (process.env.USE_WALLET) {
             let publicKey
 
             try {
-                const isConnected = await plug.isConnected();
-
-                if (!isConnected) {
-                    publicKey = await plug.requestConnect({
-                        whitelist: [process.env.BACKEND_CANISTER_ID],
-                        host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
-                        timeout: 50000,
-                        onConnectionUpdate: () => {
-                            console.log('sessionData: ', plug.sessionManager.sessionData)
-                        },
-                    });
-                }
+                // const isConnected = await plug.isConnected();
+                // if (!isConnected) {
+                publicKey = await plug.requestConnect({
+                    whitelist: [process.env.BACKEND_CANISTER_ID],
+                    host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
+                    timeout: 50000,
+                    onConnectionUpdate: () => {
+                        console.log('sessionData: ', plug.sessionManager.sessionData)
+                    },
+                });
+                // }
             } catch (e) {
-                console.error(e)
+                console.log(e)
                 return
             }
 
@@ -93,6 +90,7 @@ export const get_actor = async () => {
         }
     }
 
+    loading = false
     return backendActor;
 }
 
@@ -122,11 +120,10 @@ export async function get_directories() {
     return result;
 }
 
-
-// export async function create_file() {
-//     let actor = await get_actor()
-//     return await actor.create_file();
-// }
+export async function create_file(data) {
+    let actor = await get_actor()
+    return await actor.create_file(data);
+}
 
 export async function register(username) {
     const backend = await get_actor()

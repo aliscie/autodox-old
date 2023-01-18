@@ -4,7 +4,7 @@ use web_sys::{window, MouseEvent};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::{CurrDirectory, TitleBar};
+use crate::components::{CurDirectory, TitleBar};
 use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::*;
 
@@ -14,10 +14,10 @@ pub struct Props {
 }
 
 #[function_component(GetTitleBar)]
-pub fn get_titlebar(props: &Props) -> Html {
+pub fn get_title_bar(props: &Props) -> Html {
     let (device, dispatch) = use_store::<DeviceInfo>();
     let doc = window().unwrap_throw().document().unwrap_throw();
-    let current_directory = html! {<CurrDirectory/>};
+    let current_directory = html! {<CurDirectory/>};
 
     let _device = device.clone();
     let handle_light_mod: Callback<MouseEvent> = {
@@ -35,7 +35,7 @@ pub fn get_titlebar(props: &Props) -> Html {
     };
     let _dispatch = dispatch.clone();
     let _device = device.clone();
-    let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+    let toggle_aside_bar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if _device.is_aside {
             &_dispatch.reduce_mut(|state| state.is_aside = false);
         } else {
@@ -45,15 +45,14 @@ pub fn get_titlebar(props: &Props) -> Html {
     let _device = device.clone();
     let right_content: Html = html! {
        <>
-               <Download/>
+            <Download/>
                <i
-               onclick={handle_light_mod}
-               class={format!("btn {}",if _device.is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
+                onclick={handle_light_mod}
+                class={format!("btn {}",if _device.is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
                ></i>
             <Suspense fallback = { html! {<div>{"loading"}</div>} }>
                <TitleAvatarComponent/>
             </Suspense>
-
            <PageOptions/>
        </>
     };
@@ -64,7 +63,7 @@ pub fn get_titlebar(props: &Props) -> Html {
             title={current_directory}
             {right_content}
          >
-            <li class="btn" onclick={toggle_asidebar}>
+            <li class="btn" onclick={toggle_aside_bar}>
             {if device.is_aside {
                 html!{<i class="fa-solid fa-x"></i>}
             } else{

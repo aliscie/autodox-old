@@ -7,8 +7,6 @@ use wasm_bindgen::JsValue;
 pub use element::*;
 pub use files::*;
 pub use main::*;
-pub use users::QueryUser;
-
 mod element;
 mod files;
 mod main;
@@ -35,7 +33,7 @@ extern "C" {
     pub async fn test_wasm() -> JsValue;
 
     #[wasm_bindgen(js_name = update_profile)]
-    pub async fn update_profile(username: String, image: Vec<u8>) -> JsValue;
+    pub async fn update_profile(data: String) -> JsValue;
 
     #[wasm_bindgen(js_name = get_profile)]
     pub async fn get_profile() -> JsValue;
@@ -46,8 +44,8 @@ extern "C" {
     #[wasm_bindgen(js_name = get_directories)]
     pub async fn get_directories_ic() -> JsValue;
 
-    // #[wasm_bindgen(js_name = create_file)]
-    // pub async fn create_file_ic() -> JsValue;
+    #[wasm_bindgen(js_name = create_file)]
+    pub async fn create_file_ic(data: String) -> JsValue;
 
     // #[wasm_bindgen(js_name = create_file)]
     // pub async fn create_file_ic(text: String) -> JsValue;
