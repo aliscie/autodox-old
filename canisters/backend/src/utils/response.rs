@@ -1,16 +1,14 @@
-use serde::{Serialize, Deserialize};
+use candid::CandidType;
+use serde::{Deserialize, Serialize};
+use speedy::{Readable, Writable};
 
-// #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq, CandidType)]
-// #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
-#[derive(CandidType)]
+#[derive(Debug, Serialize, Deserialize, Readable, Writable, CandidType)]
 pub struct UpdateResponse {
-    pub(crate) status: Status,
-    pub(crate) message: String,
+    status: Status,
+    message: String,
 }
 
-use candid::CandidType;
-
-#[derive(CandidType)]
+#[derive(Debug, Serialize, Deserialize, Readable, Writable, CandidType)]
 pub enum Status {
     Success,
     UnAuthorized,

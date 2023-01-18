@@ -24,14 +24,14 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         id: id.into(),
         children: None,
     };
+    // log!(&data);
     if info.get().is_web || info.get().is_online {
-        // spawn_local(async move {
-        //     log!("before create file");
-        //     let res = backend::create_file_ic().await;
-        //     log!(res);
-        // });
-    }
-    if !info.get().is_web {
+        let file_json = serde_json::json!(data);
+        log!(&file_json);
+        let res = backend::create_file_ic(file_json.to_string()).await;
+        log!(&res);
+        return Ok(());
+    } else if !info.get().is_web {
         log!("Desktop");
         let new_file = serde_json::json!({ "data": data });
         return crate::backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
@@ -61,8 +61,10 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
 pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let response = backend::create_directory_ic().await;
-        log!(response);
+        spawn_local(async move {
+            let response = backend::create_directory_ic().await;
+            log!(response);
+        })
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(

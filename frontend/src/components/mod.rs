@@ -2,7 +2,7 @@
 // Don't import anything this folder from outside.
 
 pub use avatar::Avatar;
-pub use directory::CurrDirectory;
+pub use directory::CurDirectory;
 
 pub use menu::PopOverMenu;
 pub use title_bar::TitleBar;

@@ -12,9 +12,8 @@ use shared::{
 };
 pub type Files = HashMap<Id, Tree<Id, FileNode>>;
 
-#[derive(Debug, Serialize)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable))]
-#[derive(CandidType, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct CreateFileData {
     pub parent_id: String,
     pub name: String,
