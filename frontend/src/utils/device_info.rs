@@ -16,7 +16,7 @@ impl Default for DeviceInfo {
     fn default() -> Self {
         Self {
             is_online: false,
-            is_web: cfg!(feature = "web"), // TODO reduce_mut(|state| state.web = invoke("is_tauri"))
+            is_web: cfg!(feature = "web"),
             is_authed: false,
             is_aside: false,
             is_light_mode: false,

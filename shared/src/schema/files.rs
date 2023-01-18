@@ -177,7 +177,6 @@ impl From<FileNodeCreate> for Object {
 pub struct FileNodeUpdate {
     pub id: Id,
     pub children: Option<Vec<Id>>,
-    // TODO : cannot update this using this method think of something else
     pub parent_id: Option<Id>,
     pub name: Option<String>,
     pub element_tree: Option<Id>,

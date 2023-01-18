@@ -74,7 +74,7 @@ impl User {
         let mut users = s!(Users);
         for user in users.iter() {
             // if &user.address.to_string() == &address.to_string() {
-                return Some(Self { address, image: None, username: None });
+            return Some(Self { address, image: None, username: None });
             // }
         }
         None

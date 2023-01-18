@@ -63,12 +63,6 @@ pub async fn create_directory() -> String {
         return "User already have directory.".to_string();
     };
 
-    // for (key, dir) in user_files.iter() {
-    //     // TODO if directory is already created return already exists
-    //     if key == current_user.unwrap().address {
-    //         return UpdateResponse { status: Status::InvalidInput, message: "Directory already exists.".to_string() };
-    //     }
-    // };
 
     let mut file_directory = FileDirectory::new(id, "default".to_string());
     let id: Id = Id::ic_new().await;

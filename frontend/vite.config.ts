@@ -7,7 +7,7 @@ export default defineConfig({
     server: {
         watch: {
             usePolling: true,
-            // path: "./src",  TODO use rollup because vite does not reload on changes.
+            // path: "./src",
         }
     },
     build: {
