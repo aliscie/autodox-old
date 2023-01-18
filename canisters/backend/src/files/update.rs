@@ -24,6 +24,9 @@ use crate::utils::{Status, UpdateResponse};
 pub fn create_file(data: String) -> String {
     let create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();
     let user = User::current();
+    if user.is_none() {
+        return "Anonymous user.".to_string()
+    }
     let mut user_files: UserFiles = s!(UserFiles);
 
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {

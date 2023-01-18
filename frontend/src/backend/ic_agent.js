@@ -61,8 +61,8 @@ export const get_actor = async () => {
             let publicKey
 
             try {
-                // const isConnected = await plug.isConnected();
-                // if (!isConnected) {
+                const isConnected = await plug.isConnected();
+                if (!isConnected) {
                 publicKey = await plug.requestConnect({
                     whitelist: [process.env.BACKEND_CANISTER_ID],
                     host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
@@ -71,7 +71,7 @@ export const get_actor = async () => {
                         console.log('sessionData: ', plug.sessionManager.sessionData)
                     },
                 });
-                // }
+                }
             } catch (e) {
                 console.log(e)
                 return
