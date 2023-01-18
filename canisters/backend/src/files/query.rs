@@ -35,6 +35,9 @@ use shared::{id::Id, schema::*};
 #[candid_method(query)]
 pub fn get_directories() -> Option<FileDirectory> {
     let user = User::current()?;
+    if user.is_none() {
+        return None;
+    }
     let mut user_files: UserFiles = s!(UserFiles);
     user_files.get(&user).map(|s| s.clone())
 }

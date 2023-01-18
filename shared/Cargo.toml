@@ -33,7 +33,6 @@ default = []
 frontend = ["dep:yewdux", "dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys", "dep:yew", "dep:stylist", "uuid/js", "uuid/fast-rng", "uuid/macro-diagnostics"]
 tauri = ["dep:surrealdb", "uuid/fast-rng", "uuid/macro-diagnostics"]
 backend = ["dep:candid", "dep:speedy","dep:ic-kit"]
-full = ["frontend", "backend", "tauri"]
 
 
 [dependencies.web-sys]

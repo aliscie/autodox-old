@@ -355,12 +355,13 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 name = "backend"
 version = "0.1.0"
 dependencies = [
- "candid 0.7.18",
+ "candid 0.8.4",
  "ic-cdk 0.6.8",
  "ic-cdk-macros",
  "ic-kit",
  "ic-stable-memory",
  "serde",
+ "serde_json",
  "shared",
  "speedy",
 ]

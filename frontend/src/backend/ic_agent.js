@@ -1,127 +1,131 @@
 import { AuthClient } from "@dfinity/auth-client";
 import { createActor, canisterId, idlFactory } from './../../../../../src/declarations/backend';
-import { Actor, HttpAgent } from "@dfinity/agent";
 
 const { ic } = window;
 const { plug } = ic;
 
-let backendActor
+let backendActor, loading = false
 
 export async function identify() {
-	const authClient = await AuthClient.create();
-	if (await authClient.isAuthenticated()) {
-		return authClient.getIdentity();
-	}
-
-	let identityProvider = "https://identity.ic0.app/#authorize";
-	if (process.env.DFX_NETWORK != "ic") {
-		identityProvider = `http://${process.env.IDENTITY_PROVIDER_ID}.localhost:8510/#authorize`
-	}
-	return await authClient.login({
-		identityProvider,
-		onSuccess: () => {
-			window.location.reload()
-		}
-	});
+    const authClient = await AuthClient.create();
+    if (await authClient.isAuthenticated()) {
+        return authClient.getIdentity();
+    }
+    let identityProvider = "https://identity.ic0.app/#authorize";
+    if (process.env.DFX_NETWORK != "ic") {
+        identityProvider = `http://${process.env.IDENTITY_PROVIDER_ID}.localhost:8510/#authorize`
+    }
+    return await authClient.login({
+        identityProvider,
+        onSuccess: () => {
+            window.location.reload()
+        }
+    });
 }
 
 export async function logout() {
-	const authClient = await AuthClient.create();
-	await authClient.logout()
+    const authClient = await AuthClient.create();
+    await authClient.logout()
 }
 
-export async function update_profile(username, image) {
-	image = Array.from(image)
-	console.log('image: ', image, typeof image)
-	const actor = await get_actor()
-	return await actor.update_profile({ username, image })
+export async function update_profile(data) {
+    const actor = await get_actor()
+    return await actor.update_profile(data)
 }
 
 export async function get_profile() {
-	const actor = await get_actor()
-	let result = await actor.get_profile();
-	result = result[0];
-	if (typeof (result.username) == "object") {
-		result.username = result.username[0] || "";
-	}
-	if (typeof (result.image) == "object") {
-		result.image = result.image[0] || "";
-	}
-	return result;
+    const actor = await get_actor()
+    let result = await actor.get_profile();
+    result = result[0];
+    if (typeof (result.username) == "object") {
+        result.username = result.username[0] || "";
+    }
+    if (typeof (result.image) == "object") {
+        result.image = result.image[0] || "";
+    }
+    return result;
 }
 
 export async function is_logged() {
-	const authClient = await AuthClient.create();
-	return await authClient.isAuthenticated()
+    const authClient = await AuthClient.create();
+    return await authClient.isAuthenticated()
 }
 
 export const get_actor = async () => {
-	if (!backendActor) {
-		console.log('USE_WALLET: ', process.env.USE_WALLET)
+    await new Promise(resolve => !loading && resolve());
+    console.log('get_actor')
+    loading = true
 
-		if (process.env.USE_WALLET) {
-			let publicKey
+    if (!backendActor) {
+        if (process.env.USE_WALLET) {
+            let publicKey
 
-			try {
-				const isConnected = await plug.isConnected();
+            try {
+                const isConnected = await plug.isConnected();
+                if (!isConnected) {
+                publicKey = await plug.requestConnect({
+                    whitelist: [process.env.BACKEND_CANISTER_ID],
+                    host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
+                    timeout: 50000,
+                    onConnectionUpdate: () => {
+                        console.log('sessionData: ', plug.sessionManager.sessionData)
+                    },
+                });
+                }
+            } catch (e) {
+                console.log(e)
+                return
+            }
 
-				if (!isConnected) {
-					publicKey = await plug.requestConnect({
-						whitelist: [process.env.BACKEND_CANISTER_ID],
-						host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
-						timeout: 50000,
-						onConnectionUpdate: () => {
-							console.log('sessionData: ', plug.sessionManager.sessionData)
-						},
-					});
-				}
-			} catch (e) {
-				console.error(e)
-				return
-			}
+            backendActor = await plug.createActor({ canisterId, interfaceFactory: idlFactory, agent: plug.agent });
+        } else {
+            const authClient = await AuthClient.create();
+            const identity = await authClient.getIdentity();
+            backendActor = createActor(canisterId, {
+                agentOptions: {
+                    identity,
+                    host: window.location.href,
+                }
+            });
+        }
+    }
 
-			backendActor = await plug.createActor({ canisterId, interfaceFactory: idlFactory, agent: plug.agent });
-		} else {
-			const authClient = await AuthClient.create();
-			const identity = await authClient.getIdentity();
-			backendActor = createActor(canisterId, {
-				agentOptions: {
-					identity,
-					host: window.location.href,
-				}
-			});
-		}
-	}
-
-	return backendActor;
+    loading = false
+    return backendActor;
 }
 
 export async function test_connect_wasm_bindgen() {
-	let actor = await get_actor()
-	return await actor.test_ic();
+    let actor = await get_actor()
+    return await actor.test_ic();
 }
 
 export async function create_directory() {
-	let actor = await get_actor()
-	let result = await actor.create_directory();
+    let actor = await get_actor()
+    let result = await actor.create_directory();
     console.log(result);
     return result;
 }
 
 export async function get_directories() {
-	let actor = await get_actor()
-	let result = await actor.get_directories();
-	result = result[0];
+    let actor = await get_actor()
+    let result = await actor.get_directories();
+    result = result[0];
+    if (result) {
+        for (let i = 0; i < result.files.vertices.length; i++) {
+            result.files.vertices[i][1].element_tree = result.files.vertices[i][1].element_tree[0];
+        }
+        result.files.root = result.files.root[0];
+    }
+    console.log(result);
     return result;
 }
 
-
-// export async function create_file() {
-//     let actor = await get_actor()
-//     return await actor.create_file();
-// }
+export async function create_file(data) {
+    let actor = await get_actor()
+    return await actor.create_file(data);
+}
 
 export async function register(username) {
-	const backend = await get_actor()
-	return await backend.register(username);
+    const backend = await get_actor()
+    return await backend.register(username);
 }

@@ -2,8 +2,10 @@ use crate::backend;
 use crate::components::{Avatar, PopOverMenu};
 use crate::pages::PagesRoute;
 use crate::utils::{DeviceInfo, Image};
-use shared::schema::QueryUser;
+use gloo::timers::callback::Timeout;
+use shared::schema::UserQuery;
 use shared::*;
+use std::sync::{Arc, Mutex};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, HtmlInputElement};
 use yew::prelude::*;
@@ -17,17 +19,21 @@ use yewdux::prelude::Dispatch;
 #[hook]
 fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
     let dispatch = Dispatch::<DeviceInfo>::new();
+
     use_future_with_deps(
         move |_| async move {
             let auth = backend::is_logged().await.as_bool().unwrap();
-            log!("1 before login");
+            log!(auth);
             &dispatch.reduce_mut(|state| state.is_authed = auth);
             let register = backend::register("ali".to_string()).await;
-            log!(register);
-            let get_profile: QueryUser =
-                serde_wasm_bindgen::from_value(backend::get_profile().await)
-                    .map_err(|e| String::from("serde error"))?;
-            &dispatch.reduce_mut(|state| state.profile = get_profile);
+            // log!(register);
+            let profile_res = backend::get_profile().await;
+            // log!(&profile_res);
+            let profile_obj: UserQuery = serde_wasm_bindgen::from_value(profile_res)
+                .map_err(|e| String::from("serde error"))?;
+            // log!(&profile_obj);
+            &dispatch.reduce_mut(|state| state.profile = profile_obj);
+            crate::hooks::init_files().await;
             return Ok(());
         },
         (),
@@ -40,6 +46,8 @@ pub fn TitleAvatarComponent() -> Html {
     use_profile();
 
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
+    let navigator: yew_router::navigator::Navigator = use_navigator().unwrap();
+
     let open_popover: Callback<MouseEvent> = {
         let position = position.clone();
         Callback::from(move |e: MouseEvent| {
@@ -56,16 +64,28 @@ pub fn TitleAvatarComponent() -> Html {
 
     let on_upload: Callback<Event> = Callback::from(move |_e: Event| {
         let input: HtmlInputElement = _e.target_unchecked_into();
+        let mut profile_arc = Arc::new(Mutex::new(UserQuery {
+            username: Some("account1".to_string()),
+            image: None,
+        }));
+        let profile_arc_clone = Arc::clone(&profile_arc);
 
         spawn_local(async move {
             let file = input.files().unwrap().get(0).unwrap();
             let image = Image::new(file).await;
-            log!(&image.data);
-            let response = backend::update_profile("account1".to_string(), image.data).await;
-            log!(response);
+            let profile_obj = &mut *profile_arc_clone.lock().unwrap();
+            profile_obj.image = Some(image.data.clone());
+            // log!(&profile_obj);
+            let profile_json = serde_json::json!(profile_obj);
+            let response = backend::update_profile(profile_json.to_string()).await;
+            log!(&response);
         });
+
+        Timeout::new(1000, move || {
+            // let profile_obj = profile_arc.lock().unwrap().clone();
+        })
+        .forget();
     });
-    let navigator: yew_router::navigator::Navigator = use_navigator().unwrap();
 
     let items: Vec<Html> = vec![
         html! {<a onclick = {let navigator=navigator.clone();{move |_| {navigator.push(&PagesRoute::Profile)}}} ><i class="fa-solid fa-user"></i>{"Profile info"}</a>},
@@ -91,11 +111,10 @@ pub fn TitleAvatarComponent() -> Html {
 
     if device.is_authed {
         return html! { <>
-
-        <PopOverMenu {items} position = {position.clone()}/>
-        <span class="right_clickable main_avatar" onclick={open_popover}>
-        <Avatar src={Image::to_link(device.profile.image.clone())} />
-        </span>
+            <PopOverMenu {items} position = {position.clone()}/>
+            <span class="right_clickable main_avatar" onclick={open_popover}>
+                <Avatar src={Image::to_link(device.profile.image.clone())} />
+            </span>
         </>
         };
     };

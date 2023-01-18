@@ -10,7 +10,6 @@ type FileNode = record {
     element_tree: opt text;
 };
 
-
 type CreateFileData = record {
     id : text;
     name: text;
@@ -33,10 +32,9 @@ type Tree = record {
     };
     adjacency : vec record {
         text;
-        vec vec nat8;
+        vec text;
     };
 };
-
 
 type FileDirectory = record {
     id : text;
@@ -44,14 +42,9 @@ type FileDirectory = record {
     files: Tree;
 };
 
-type UpdateRespone = record {
+type UpdateResponse = record {
     status : Status;
     message: text;
-};
-
-type FileDirectoryUpdate = variant {
-    name: text;
-    files: Tree;
 };
 
 type Status = variant {
@@ -60,27 +53,22 @@ type Status = variant {
     InvalidInput;
 };
 
-
-type User = record {
+type UserUpdate = record {
     image: vec nat8;
     username: text;
 };
 
-
-type QueryUser = opt record {
+type UserQuery = opt record {
     image: opt vec nat8;
     username: opt text;
 };
 
 service : {
-    "create_file": (create_file_data : CreateFileData) -> ();
-    "create_directory": (
-        //    create_file_data : FileDirectoryUpdate
-    ) -> (UpdateRespone);
+    "create_file": (text) -> (text);
+    "create_directory": () -> (text);
     "get_directories": () ->(opt FileDirectory) query;
-    "register": (text) -> (UpdateRespone);
+    "register": (text) -> (text);
     "test_ic" : () -> (text) query;
-    "update_profile" : (User) -> (UpdateRespone);
-    "get_profile" : () -> (QueryUser) query;
+    "update_profile" : (text) -> (text);
+    "get_profile" : () -> (UserQuery) query;
 }
-

@@ -8,7 +8,7 @@ use yew::prelude::*;
 use yew_router::prelude::use_route;
 use yewdux::prelude::use_store;
 
-#[function_component(CurrDirectory)]
+#[function_component(CurDirectory)]
 pub fn curr_directory() -> Html {
     let display = use_state(|| "display: none;".to_string());
     let (file_tree, _) = use_store::<FileDirectory>();

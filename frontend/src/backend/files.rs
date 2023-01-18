@@ -24,14 +24,14 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         id: id.into(),
         children: None,
     };
+    // log!(&data);
     if info.get().is_web || info.get().is_online {
-        // spawn_local(async move {
-        //     log!("before create file");
-        //     let res = backend::create_file_ic().await;
-        //     log!(res);
-        // });
-    }
-    if !info.get().is_web {
+        let file_json = serde_json::json!(data);
+        log!(&file_json);
+        let res = backend::create_file_ic(file_json.to_string()).await;
+        log!(&res);
+        return Ok(());
+    } else if !info.get().is_web {
         log!("Desktop");
         let new_file = serde_json::json!({ "data": data });
         return crate::backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
@@ -61,8 +61,10 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
 pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let response = backend::create_directory_ic().await;
-        log!(response);
+        spawn_local(async move {
+            let response = backend::create_directory_ic().await;
+            log!(response);
+        })
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
@@ -93,24 +95,20 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
     }
 }
 
-pub async fn get_directories() -> Result<Vec<FileDirectory>, String> {
+pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         // TODO backend::call_ic("create_directory"); make this dynamic
         log!("before get dirs");
         let response = backend::get_directories_ic().await;
-        let file_tree: Option<FileDirectory> =
-            serde_wasm_bindgen::from_value(response).map_err(|e| String::from("serde error"))?;
-        log!("--------------");
+        log!(&response);
+        let file_tree: Result<Option<FileDirectory>, serde_wasm_bindgen::Error> =
+            serde_wasm_bindgen::from_value(response);
         log!(&file_tree);
-        log!("--------------");
-        match file_tree {
-            Some(x) => return Ok(vec![x]),
-            None => return Ok(vec![]),
-        }
+        return file_tree.map_err(|e| "serde error".to_string());
     }
     if !info.get().is_web {
-        let x = crate::backend::call_surreal::<Vec<FileDirectory>, String>(
+        let x = crate::backend::call_surreal::<Option<FileDirectory>, String>(
             "get_directories".to_string(),
             None,
         )
