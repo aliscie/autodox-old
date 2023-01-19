@@ -10,7 +10,6 @@ use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
-
 use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
 
 /// this captures all the changes in a editor element
@@ -22,7 +21,7 @@ pub enum EditorChange {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct Props {
+pub struct EditorProps {
     pub title: String,
     pub element_tree: Rc<RefCell<ElementTree>>,
     pub onchange: Callback<EditorChange>,
@@ -31,7 +30,8 @@ pub struct Props {
 // this is used for the work space
 
 #[function_component]
-pub fn Editor(props: &Props) -> Html {
+pub fn Editor(props: &EditorProps) -> Html {
+
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
@@ -164,6 +164,15 @@ pub fn Editor(props: &Props) -> Html {
         },
         editor_ref.clone(),
     );
+    let slash_clouser: fn(DropDownItem) = (|event| {
+        log!(event.value);
+    });
+    let emoji_clouser: fn(DropDownItem) = (|event| {
+        log!(event.value);
+    });
+    let mention_clouser: fn(DropDownItem) = (|event| {
+        log!(event.value);
+    });
 
     let element_tree = props.element_tree.clone();
 
@@ -178,48 +187,6 @@ pub fn Editor(props: &Props) -> Html {
         // }));
     });
 
-    let mut components_items: CommandItems = vec![
-        DropDownItem {
-            value: html! {"table"},
-            insertion: html! {<table>{"table"}</table>},
-        },
-        DropDownItem {
-            value: html! {"quote"},
-            insertion: html! {<q>{"quote"}</q>},
-        },
-    ];
-
-    let mut mention_items: CommandItems = vec![
-        DropDownItem {
-            value: html! {"ali"},
-            insertion: html! {<span>{"ali"}</span>},
-        },
-        DropDownItem {
-            value: html! {"Aman"},
-            insertion: html! {<span>{"aman"}</span>},
-        },
-        DropDownItem {
-            value: html! {"Young"},
-            insertion: html! {<span>{"Young"}</span>},
-        },
-    ];
-
-
-    let mut emoji_items: CommandItems = vec![
-        DropDownItem {
-            value: html! {"😂"},
-            insertion: html! {<span>{"ali"}</span>},
-        },
-        DropDownItem {
-            value: html! {"😍"},
-            insertion: html! {<span>{"aman"}</span>},
-        },
-        DropDownItem {
-            value: html! {"😎"},
-            insertion: html! {<span>{"Young"}</span>},
-        },
-    ];
-
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -233,9 +200,9 @@ pub fn Editor(props: &Props) -> Html {
             >
 
             <EditorToolbar  action={action} />
-            <EditorInsert items={components_items}  trigger={"/".to_string()} />
-            <EditorInsert items={mention_items}  trigger={"@".to_string()} />
-            <EditorInsert items={emoji_items}  trigger={":".to_string()} />
+            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser} />
+            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser} />
+            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
@@ -246,6 +213,4 @@ pub fn Editor(props: &Props) -> Html {
 }
 
 use shared::schema::*;
-use crate::plugins;
-
-
+use crate::{insertion_closures, plugins};

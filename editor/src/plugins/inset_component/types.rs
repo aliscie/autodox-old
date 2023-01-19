@@ -1,9 +1,12 @@
+use std::collections::HashMap;
 use yew::Html;
 
 #[derive(Clone, PartialEq)]
 pub struct DropDownItem {
     pub(crate) value: Html,
-    pub(crate) insertion: Html,
+    pub(crate) text: String,
+    pub(crate) tag: Option<String>,
+    pub(crate) attrs: HashMap<String, String>,
 }
 
 pub type CommandItems = Vec<DropDownItem>;

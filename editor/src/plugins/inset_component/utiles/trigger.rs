@@ -5,6 +5,7 @@ use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use crate::plugins;
 use crate::plugins::inset_component::types::Position;
 use shared::*;
+use crate::plugins::DropDownItem;
 
 pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHandle<Option<Position>>, input_text: UseStateHandle<String>) {
     let mut track: bool = false;

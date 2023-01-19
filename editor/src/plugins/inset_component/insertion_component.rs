@@ -5,6 +5,7 @@ use web_sys::{Element, KeyboardEvent, MouseEvent, Node, window};
 use yew::prelude::*;
 
 use shared::*;
+
 use crate::plugins::inset_component::types::{CommandItems, DropDownItem, Position};
 use crate::plugins::inset_component::utiles;
 
@@ -19,6 +20,7 @@ extern "C" {
 pub struct Props {
     pub trigger: String,
     pub items: CommandItems,
+    pub command: fn(DropDownItem),
 }
 
 
@@ -31,12 +33,14 @@ pub fn EditorInsert(props: &Props) -> Html {
     let text_editor = doc.query_selector(".text_editor").unwrap().unwrap();
     let trigger = props.trigger.clone();
     let items = props.items.clone();
+    let command = props.command.clone();
     let _trigger = trigger.clone();
     let _position = position.clone();
-
     use_effect_with_deps(
         move |editor_ref| {
             utiles::trigger_popover(&text_editor, _trigger, _position, _input_text);
+            // TODO on hit Enter ot Tab
+            //  command(current_item)
         },
         (),
     );
@@ -49,7 +53,6 @@ pub fn EditorInsert(props: &Props) -> Html {
     };
     let p = (&*_position).as_ref().unwrap();
 
-
     html! {
             < span class ={css_file_macro ! ("dropdown.css")} >
 
@@ -61,7 +64,10 @@ pub fn EditorInsert(props: &Props) -> Html {
             // .sort_by( | a,&element | element.contains( & * input_text.replace(" ", "").replace("/", "")))
             // .cloned()
             .into_iter().map( | item | {
-            html !{<a>{item.value}< / a >}
+                let _item = item.clone();
+                html !{<a onclick={Callback::from(move |e: MouseEvent| {
+                    command(_item.clone())
+                })}>{item.value}< / a >}
             }).collect::< Html > ()
             }
 
