@@ -4,7 +4,7 @@
 // use tokio::sync::{mpsc, RwLock};
 // use warp::{ws::Message, Filter, Rejection};
 //
-// mod handler;coket_server/src/main.rs:60:6
+// mod handler;coket_server/src/insertion_component:60:6
 // mod ws;
 //
 // type Result<T> = std::result::Result<T, Rejection>;

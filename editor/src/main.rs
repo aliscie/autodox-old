@@ -1,4 +1,4 @@
-// editor/src/main.rs
+// editor/src/insertion_component
 extern crate web_sys;
 
 mod editor_components;
@@ -13,7 +13,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
 use web_sys::Element;
-
+mod insertion_closures;
 mod app;
 mod backend;
 pub(crate) mod components;

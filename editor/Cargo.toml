@@ -59,6 +59,7 @@ features = [
     "MutationObserver",
     "MutationObserverInit",
     "MutationRecord",
+    "DomRectList",
 ]
 
 #[dev-dependencies]
