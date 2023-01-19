@@ -328,6 +328,20 @@ pub struct FileDirectory {
 //    }
 //}
 
+// TODO Something like this
+//     trait FileAction {
+//         fn get_file_by_id(&self, id: Id) -> Option<FileNode>;
+//     }
+//     impl FileAction for FileDirectory {
+//         fn get_file_by_id((&self, id: Id) -> Option<FileNode> {
+//             for file in &self.files {
+//                 if file.id == id {
+//                     return Some(file.clone());
+//                 }
+//             }
+//         }
+//     }
+
 #[cfg(feature = "tauri")]
 impl Entity for FileDirectory {
     type DatabaseType = Object;

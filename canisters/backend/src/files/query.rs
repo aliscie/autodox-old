@@ -35,11 +35,21 @@ use shared::{id::Id, schema::*};
 #[candid_method(query)]
 pub fn get_directories() -> Option<FileDirectory> {
     let user = User::current()?;
-    if user.is_none() {
-        return None;
-    }
     let mut user_files: UserFiles = s!(UserFiles);
     user_files.get(&user).map(|s| s.clone())
+}
+
+
+#[query]
+#[candid_method(query)]
+pub fn get_file(file_id: String) -> Option<FileDirectory> {
+    let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
+    let user = User::current()?;
+    let mut user_files: UserFiles = s!(UserFiles);
+    let files = user_files.get(&user).map(|s| s.clone());
+    let file_id = Id::from(file_id);
+    // TODO files.get_file_by_id(file_id)
+    None
 }
 
 #[query]

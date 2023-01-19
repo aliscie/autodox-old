@@ -44,8 +44,12 @@ deploy:
 	#def start --backendyes
 	dfx deploy
 
+
+deploy_internet:
+	dfx deploy internet_identity
+
 watch_fe:
-	cargo watch -w "./frontend" -s "cd frontend; yarn wasm ; yarn run build ; cd ../;  dfx deploy"
+	cargo watch -w "./frontend" -s "cd frontend; yarn wasm ; yarn run build ; cd ../;  dfx deploy backend "
 
 watch_be:
 	cargo watch -w "./canisters" -s "dfx deploy"

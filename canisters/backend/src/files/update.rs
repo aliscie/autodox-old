@@ -47,6 +47,31 @@ pub fn create_file(data: String) -> String {
     "New file is created.".to_string()
 }
 
+
+#[update]
+#[candid_method(update)]
+pub fn delete_file(file_id: String) -> Option<FileDirectory> {
+    let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
+    let user = User::current()?;
+    let mut user_files: UserFiles = s!(UserFiles);
+    let files = user_files.get(&user).map(|s| s.clone());
+    let file_id = Id::from(file_id);
+    // TODO files.remove(file_id)
+    None
+}
+
+#[update]
+#[candid_method(update)]
+pub fn rename_file(file_id: String) -> Option<FileDirectory> {
+    let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
+    let user = User::current()?;
+    let mut user_files: UserFiles = s!(UserFiles);
+    let files = user_files.get(&user).map(|s| s.clone());
+    let file_id = Id::from(file_id);
+    // TODO let file = files.get_file_by_id(file_id)
+    None
+}
+
 #[update]
 #[candid_method(update)]
 pub async fn create_directory() -> String {
