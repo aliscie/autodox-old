@@ -1,26 +1,33 @@
+use crate::backend;
+use crate::router::{switch, Route};
+use crate::specific_components::{ButtonsGroup, SearchFilters};
+use crate::utils::filetree::FileTree;
+use crate::utils::{DeviceInfo, GetTitleBar};
+use shared::log;
+use shared::schema::{FileDirectory, FileNode};
 use wasm_bindgen::JsValue;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
-
-
-use shared::log;
-use shared::schema::{FileDirectory, FileNode};
-
-use crate::backend;
-use crate::router::{Route, switch};
-use crate::specific_components::{ButtonsGroup, SearchFiltes};
-use crate::utils::filetree::FileTree;
-use crate::utils::{DeviceInfo, GetTitleBar};
 
 #[function_component(App)]
 pub fn app() -> Html {
+    // use_effect_with_deps(
+    //     move |_| {
+    //         spawn_local(async move {
+    //             let _ = crate::hooks::init_files().await;
+    //         });
+    //         || {}
+    //     },
+    //     (),
+    // );
+
     let (device, dispatch) = use_store::<DeviceInfo>();
-    // &dispatch.reduce_mut(|state| state.is_asdie = true);
-    // &dispatch.reduce_mut(|state| state.is_asdie = false);
+    // &dispatch.reduce_mut(|state| state.is_aside = true);
+    // &dispatch.reduce_mut(|state| state.is_aside = false);
     spawn_local(async move {
         // log!(&backend::read().await);
         // log!(JsValue::js_typeof(
@@ -30,16 +37,6 @@ pub fn app() -> Html {
     // let aside_bar_toggle = use_state_eq(|| "".to_string());
     // let toggle_aside = aside_bar_toggle.clone();
     let file_dispatch = Dispatch::<FileDirectory>::new();
-    // only do it once
-    use_effect_with_deps(
-        move |_| {
-            spawn_local(async move {
-                let _ = crate::hooks::init_files().await;
-            });
-            || {}
-        },
-        (),
-    );
 
     let onclick_market_place: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         //TODO
@@ -65,13 +62,21 @@ pub fn app() -> Html {
                 }
             })
         });
-    let mut asdie_style = "";
+    let mut aside_style = "";
     if device.is_aside {
-        asdie_style = "width:250px";
+        aside_style = "width:250px";
     }
 
     let mut main_style = "";
-    if device.is_aside && window().unwrap_throw().inner_width().unwrap().as_f64().unwrap() > 750 as f64 {
+    if device.is_aside
+        && window()
+        .unwrap_throw()
+        .inner_width()
+        .unwrap()
+        .as_f64()
+        .unwrap()
+        > 750 as f64
+    {
         main_style = "margin-left:250px";
     }
     html! {
@@ -79,9 +84,9 @@ pub fn app() -> Html {
 
             <div id = "app">
             <GetTitleBar/>
-            <aside style={asdie_style}>
+            <aside style={aside_style}>
 
-            <SearchFiltes/>
+            <SearchFilters/>
 
             <ButtonsGroup/>
 

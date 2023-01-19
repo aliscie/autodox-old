@@ -73,9 +73,9 @@ impl User {
         let address = SPrincipal(ic_cdk::caller());
         let mut users = s!(Users);
         for user in users.iter() {
-            if &user.address.to_string() == &address.to_string() {
-                return Some(Self { address, image: None, username: None });
-            }
+            // if &user.address.to_string() == &address.to_string() {
+            return Some(Self { address, image: None, username: None });
+            // }
         }
         None
     }

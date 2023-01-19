@@ -4,11 +4,11 @@ use candid::{CandidType, Deserialize};
 use ic_cdk;
 use ic_kit::candid::candid_method;
 use ic_kit::macros::update;
+use ic_stable_memory::collections::vec::SVec;
+use ic_stable_memory::utils::ic_types::SPrincipal;
 use ic_stable_memory::{
     s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade,
 };
-use ic_stable_memory::collections::vec::SVec;
-use ic_stable_memory::utils::ic_types::SPrincipal;
 use serde::Serialize;
 
 use shared::id::Id;
@@ -21,8 +21,12 @@ use crate::utils::{Status, UpdateResponse};
 
 #[update]
 #[candid_method(update)]
-pub fn create_file(create_file_data: FileNodeCreate) {
+pub fn create_file(data: String) -> String {
+    let create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();
     let user = User::current();
+    if user.is_none() {
+        return "user not found".to_string();
+    };
     let mut user_files: UserFiles = s!(UserFiles);
 
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
@@ -40,34 +44,24 @@ pub fn create_file(create_file_data: FileNodeCreate) {
     // let _= create::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
     s! { UserFiles = user_files}
     ;
+    "New file is created.".to_string()
 }
-
 
 #[update]
 #[candid_method(update)]
-pub async fn create_directory() -> UpdateResponse {
+pub async fn create_directory() -> String {
     let current_user = User::current();
 
     if current_user.clone().is_none() {
-        return UpdateResponse {
-            status: Status::UnAuthorized,
-            message: "Anonymous users cannot create directories".to_string(),
-        };
+        return "Anonymous users cannot create directories".to_string();
     };
 
     let id: Id = Id::ic_new().await;
 
     let mut user_files: UserFiles = s!(UserFiles);
     if !user_files.get(&current_user.clone().unwrap()).is_none() {
-        return UpdateResponse { status: Status::InvalidInput, message: "User already have directory.".to_string() };
+        return "User already have directory.".to_string();
     };
-
-    // for (key, dir) in user_files.iter() {
-    //     // TODO if directory is already created return already exists
-    //     if key == current_user.unwrap().address {
-    //         return UpdateResponse { status: Status::InvalidInput, message: "Directory already exists.".to_string() };
-    //     }
-    // };
 
 
     let mut file_directory = FileDirectory::new(id, "default".to_string());
@@ -88,7 +82,5 @@ pub async fn create_directory() -> UpdateResponse {
     user_files.insert(current_user.unwrap(), file_directory.clone());
     s! { UserFiles = user_files}
     ;
-    UpdateResponse { status: Status::Success, message: "New directory is created.".to_string() }
+    "New directory is created.".to_string()
 }
-
-

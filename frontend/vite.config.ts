@@ -7,7 +7,7 @@ export default defineConfig({
     server: {
         watch: {
             usePolling: true,
-            // path: "./src",  TODO use rollup because vite does not reload on changes.
+            // path: "./src",
         }
     },
     build: {
@@ -20,8 +20,6 @@ export default defineConfig({
         wasmPack(["../frontend"]),
     ],
     define: {
-        // "global": {},
-        // 'process.env': process.env,
         'process.env': {
             "BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai",
             "FRONTEND_CANISTER_ID": "ryjl3-tyaaa-aaaaa-aaaba-cai",
