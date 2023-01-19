@@ -15,6 +15,16 @@ use yewdux::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
+    // use_effect_with_deps(
+    //     move |_| {
+    //         spawn_local(async move {
+    //             let _ = crate::hooks::init_files().await;
+    //         });
+    //         || {}
+    //     },
+    //     (),
+    // );
+
     let (device, dispatch) = use_store::<DeviceInfo>();
     // &dispatch.reduce_mut(|state| state.is_aside = true);
     // &dispatch.reduce_mut(|state| state.is_aside = false);
@@ -43,7 +53,7 @@ pub fn app() -> Html {
                     "untitled".to_string(),
                     file.id,
                 )
-                .await;
+                    .await;
                 // console::log_1(&format!("create_file response : {:?}", x).into());
                 if x.is_ok() {
                     state
@@ -60,12 +70,12 @@ pub fn app() -> Html {
     let mut main_style = "";
     if device.is_aside
         && window()
-            .unwrap_throw()
-            .inner_width()
-            .unwrap()
-            .as_f64()
-            .unwrap()
-            > 750 as f64
+        .unwrap_throw()
+        .inner_width()
+        .unwrap()
+        .as_f64()
+        .unwrap()
+        > 750 as f64
     {
         main_style = "margin-left:250px";
     }

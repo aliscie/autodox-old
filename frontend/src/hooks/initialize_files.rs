@@ -1,7 +1,8 @@
 use shared::schema::FileDirectory;
 use yewdux::prelude::Dispatch;
-
+use shared::*;
 pub async fn init_files() -> Result<(), String> {
+
     let mut directories = crate::backend::get_directories()
         .await
         .map_err(|e| e)

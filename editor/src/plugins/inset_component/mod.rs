@@ -1,3 +1,8 @@
-mod main;
+pub use insertion_component::*;
+pub use types::*;
+pub use utiles::*;
 
-pub use main::*;
+mod insertion_component;
+mod utiles;
+mod types;
+

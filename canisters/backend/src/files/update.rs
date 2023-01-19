@@ -25,8 +25,8 @@ pub fn create_file(data: String) -> String {
     let create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();
     let user = User::current();
     if user.is_none() {
-        return "Anonymous user.".to_string()
-    }
+        return "user not found".to_string();
+    };
     let mut user_files: UserFiles = s!(UserFiles);
 
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
@@ -42,7 +42,8 @@ pub fn create_file(data: String) -> String {
             .insert(create_file_data.id, create_file_data.into());
     }
     // let _= create::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
     "New file is created.".to_string()
 }
 
@@ -62,12 +63,6 @@ pub async fn create_directory() -> String {
         return "User already have directory.".to_string();
     };
 
-    // for (key, dir) in user_files.iter() {
-    //     // TODO if directory is already created return already exists
-    //     if key == current_user.unwrap().address {
-    //         return UpdateResponse { status: Status::InvalidInput, message: "Directory already exists.".to_string() };
-    //     }
-    // };
 
     let mut file_directory = FileDirectory::new(id, "default".to_string());
     let id: Id = Id::ic_new().await;
@@ -85,6 +80,7 @@ pub async fn create_directory() -> String {
         .insert(id.clone().into(), Vec::new());
     file_directory.files.root = Some(id.into());
     user_files.insert(current_user.unwrap(), file_directory.clone());
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
     "New directory is created.".to_string()
 }

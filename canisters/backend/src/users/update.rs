@@ -15,7 +15,6 @@ pub fn register(username: String) -> String {
     let caller: Option<User> = User::new();
 
     if User::is_anonymous() {
-        // TODO why this not working?
         // return UpdateResponse {
         //     status: Status::UnAuthorized,
         //     message: "Anonymous user.".to_string(),
@@ -65,6 +64,8 @@ pub struct UpdateProfile {
 #[update]
 #[candid_method(update)]
 pub fn update_profile(data: String) -> String {
+// TODO pub fn update_profile(data: User) -> String {
+
     let profile_data = serde_json::from_str::<UpdateProfile>(&data).unwrap();
     let mut users = s!(Users);
     let caller = User::caller();
@@ -72,7 +73,8 @@ pub fn update_profile(data: String) -> String {
         if &user.address == &caller {
             user.image = Some(profile_data.image.clone());
             user.username = Some(profile_data.username.clone());
-            s! { Users = users};
+            s! { Users = users}
+            ;
             // return UpdateResponse {
             //     status: Status::Success,
             //     message: "Your profile has been s updated.".to_string(),

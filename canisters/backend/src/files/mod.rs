@@ -6,3 +6,4 @@ pub mod types;
 mod update;
 
 pub(crate) mod utils;
+mod tests;
