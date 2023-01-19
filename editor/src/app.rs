@@ -10,7 +10,7 @@ use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
-use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
+use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem, ToolbarAction};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -176,10 +176,8 @@ pub fn Editor(props: &EditorProps) -> Html {
 
     let element_tree = props.element_tree.clone();
 
-    let action: Callback<MouseEvent> = Callback::from(move |e: MouseEvent| {
-        let input: HtmlInputElement = e.target_unchecked_into();
-        log!(input.inner_text());
-
+    let action: Callback<ToolbarAction> = Callback::from(move |e: ToolbarAction| {
+        log!(e);
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
         //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
         //     text_format: Some(format),
