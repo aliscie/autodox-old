@@ -41,4 +41,7 @@ extern "C" {
 
     #[wasm_bindgen(js_name = create_file)]
     pub async fn create_file_ic(data: String) -> JsValue;
+
+    #[wasm_bindgen(js_name = rename_file)]
+    pub async fn rename_file_ic(id: String, new_name: String) -> JsValue;
 }

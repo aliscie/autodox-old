@@ -11,6 +11,16 @@ use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
 
+pub async fn rename_file(id: String, new_name: String) {
+    let info = Dispatch::<DeviceInfo>::new();
+    if info.get().is_web || info.get().is_online {
+        let res = backend::rename_file_ic(id.to_string(), "new_name".to_string()).await;
+        log!(res);
+    } else {
+        log!("rename on desktop");
+    }
+}
+
 pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     let data = FileNodeCreate {
@@ -49,7 +59,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());

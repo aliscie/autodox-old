@@ -39,12 +39,12 @@
     height: 1.5rem;
     display: flex;
     align-items: center;
-    position: fixed;
+    /*position: fixed;*/
     top: 0;
     left: 0;
 
     background: rgba(var(--primary-background), 0.4) !important;
-    backdrop-filter: blur(15px);
+    /*backdrop-filter: blur(15px);*/
 
     width: 100%;
     padding: 0 0.5rem;

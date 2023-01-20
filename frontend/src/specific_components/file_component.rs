@@ -11,7 +11,7 @@ use shared::{
     schema::{FileDirectory, FileNodeDelete},
 };
 
-use crate::{components::PopOverMenu, router::Route};
+use crate::{backend, components::PopOverMenu, router::Route};
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -129,6 +129,12 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
         let _dragged = e.data_transfer().unwrap().get_data("dragged_item");
     });
+
+    let _id = id.clone();
+    let rename_file: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+        backend::rename_file(_id.to_string(), "new_name".to_string());
+    });
+
     let ondelete = {
         let id = id.clone();
         let _dispatch_file = Dispatch::<FileDirectory>::new();
@@ -236,7 +242,10 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             click_on={Some(true)}
            position = {position.clone()}
            items={vec![
-           html! {<a><input  autofocus=true placeholder="rename.."/></a>},
+           html! {<a><input
+                onclick={rename_file}
+                // TODO fix this later not matter now
+                autofocus=true placeholder="rename.."/></a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
