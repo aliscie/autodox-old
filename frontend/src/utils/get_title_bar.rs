@@ -21,7 +21,7 @@ pub fn get_title_bar() -> Html {
                 .unwrap()
                 .unwrap()
                 .class_list()
-                .toggle("light-mod");
+                .toggle("light-mode");
             let _ = &_dispatch_device_info
                 .reduce_mut(|state| state.is_light_mode = !_rc_device_info.is_light_mode);
         })
