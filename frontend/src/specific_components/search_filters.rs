@@ -1,6 +1,5 @@
-use yew::prelude::*;
-
 use crate::components::{Avatar, PopOverMenu};
+use yew::prelude::*;
 
 #[function_component(SearchFilters)]
 pub fn search_filters() -> Html {
@@ -8,12 +7,12 @@ pub fn search_filters() -> Html {
     let replace: UseStateHandle<bool> = use_state(|| false);
 
     let _event = event.clone();
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+    let on_mouse_up: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         _event.set(Some(_e));
     });
 
     let _replace = replace.clone();
-    let onmousedown: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+    let on_mouse_down: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         if *_replace == false {
             _replace.set(true);
         } else {
@@ -27,34 +26,27 @@ pub fn search_filters() -> Html {
         html! {<a>{"Filter by category"}</a>},
         html! {<a>{"Filter by tag"}</a>},
         html! {<a>{"Filter by permission"}</a>},
-        html! {<a {onmousedown} >{"Replace"}</a>},
+        html! {<a onmousedown={on_mouse_down}>{"Replace"}</a>},
     ];
 
-    html! { <>
-    <div class="search_button">
-       <div class="search">
-          <input type="text" class="searchTerm" placeholder="Search..."/>
-          <input
-          style={format!("{}", if (*replace).clone() { "display: block"} else {"display: none"})}
-          type="text" class="searchTerm" placeholder="Replace..."/>
-
-
-          <span class="searchButton btn">
-            {"*"}
-         </span>
-
-         <span class="searchButton btn">
-            {"A"}
-         </span>
-
-          <span {onmouseup} class="right_clickable btn searchButton">
-            <i class="fa fa-search"></i>
-         </span>
-
-
-
-       </div>
-    </div>
-
-    </>}
+    html! {
+        <div class="search_button">
+            <div class="search">
+                <input type="text" class="searchTerm" placeholder="Search..."/>
+                <input
+                    style={format!("{}", if (*replace).clone() { "display: block"} else {"display: none"})}
+                    type="text" class="searchTerm" placeholder="Replace..."
+                />
+                <span class="searchButton btn">
+                    {"*"}
+                </span>
+                <span class="searchButton btn">
+                    {"A"}
+                </span>
+                <span onmousedown={on_mouse_up} class="right_clickable btn searchButton">
+                    <i class="fa fa-search"></i>
+                </span>
+            </div>
+        </div>
+    }
 }

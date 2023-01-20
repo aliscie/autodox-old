@@ -49,7 +49,7 @@ pub fn EditorComponent(props: &Props) -> Html {
         "table" => html! { <Table/>},
         "form" => html! { <FromComponent/>},
         _ => {
-            html! {<ConstructElement tag={tag} attrs={node.clone().attrs} text={node.clone().text} />}
+            html! {<ConstructElement tag={tag} attrs={node.clone().attrs} text={node.clone().text}/>}
         }
     };
 
@@ -75,7 +75,7 @@ pub fn EditorComponent(props: &Props) -> Html {
     //         let left = rec.left();
     //         let bottom = rec.bottom();
     //         let y = _e.client_y() as f64;
-    //         if y >= top && y <= bottom {
+    //         if y>= top && y <= bottom {
     //             _position.set(format!(
     //                 "display:inline-block; left:{}px",
     //                 left - (25 as f64)
@@ -92,7 +92,7 @@ pub fn EditorComponent(props: &Props) -> Html {
     // handle_hovering.forget();
 
     html! {
-    //<span ref={node_ref}  >
+    //<span ref={node_ref} >
              //<Drag position={format!("{}",*(position.clone()))}/>
         <>
         {response}

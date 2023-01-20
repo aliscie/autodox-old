@@ -1,7 +1,7 @@
 use crate::backend::call_surreal;
 use crate::utils::DeviceInfo;
 use shared::id::Id;
-use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree, EditorElementDelete};
+use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
 use yewdux::prelude::Dispatch;
 
 pub async fn update_element(data: EditorElementUpdate) -> Result<(), String> {
@@ -21,7 +21,7 @@ pub async fn update_element(data: EditorElementUpdate) -> Result<(), String> {
     }
 }
 
-pub async fn delete_element(data : EditorElementDelete) -> Result<(), String> {
+pub async fn delete_element(data: EditorElementDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         unimplemented!();

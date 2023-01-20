@@ -3,12 +3,10 @@ name = "frontend"
 version = "0.1.0"
 edition = "2021"
 
-
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [package.metadata.wasm-pack.profile.dev]
 wasm-opt = false
 
@@ -28,7 +26,7 @@ serde_json = "1.0.91"
 serde_derive = "1.0.152"
 indexmap = { version = "1.9.2", features = ["serde"] }
 reqwest = { version = "0.11.13", features = ["json"] }
-graphql_client = "0.11.0"
+graphql_client = "0.12.0"
 anyhow = "1.0.68"
 cfg-if = "1.0.0"
 yewdux = "0.9.0"
@@ -49,10 +47,8 @@ dotenv = "0.15.0"
 gloo = "0.8.0"
 blob = "0.3.0"
 
-
 [dependencies.web-sys]
 version = "0.3.60"
-
 features = [
     'Document',
     'Element',
@@ -73,7 +69,7 @@ features = [
     "Selection",
     "Range",
     "console",
-    "DomTokenList",        #for class_list
+    "DomTokenList",
     "UiEvent",
     "HtmlTextAreaElement",
     "NamedNodeMap",
@@ -88,7 +84,5 @@ features = [
 
 [features]
 web = []
-
-
-#[dev-dependencies]
-#colored = "2.0.0"
+# [dev-dependencies]
+# colored = "2.0.0"

@@ -10,16 +10,11 @@ pub use markdown_button::Markdown;
 pub use page_option_component::PageOptions;
 pub use search_filters::SearchFilters;
 pub use title_avatar_component::TitleAvatarComponent;
-
-mod file_component;
-
-mod title_avatar_component;
-
-mod page_option_component;
-
 mod download_component;
-mod search_filters;
+mod file_component;
+mod file_data;
 mod files_category;
 mod markdown_button;
-
-mod file_data;
+mod page_option_component;
+mod search_filters;
+mod title_avatar_component;

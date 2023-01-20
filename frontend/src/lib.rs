@@ -3,24 +3,17 @@ extern crate shared;
 extern crate wasm_bindgen_futures;
 extern crate yew;
 
-use std::env;
-
-pub mod hooks;
-
-// use hooks::*;
-use lazy_static::lazy_static;
-use wasm_bindgen::prelude::*;
-
-use app::App;
-
 mod app;
-mod specific_components;
 mod backend;
 mod components;
-mod router;
-mod test;
-mod utils;
+pub mod hooks;
 pub mod pages;
+mod router;
+mod specific_components;
+mod utils;
+
+use app::App;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub fn run() {
