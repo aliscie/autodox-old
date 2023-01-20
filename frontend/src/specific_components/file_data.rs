@@ -106,7 +106,7 @@ pub fn file_data(props: &Props) -> HtmlResult {
                 title = { file_node.name.clone() }
                 element_tree = { element_tree.clone() }
                 onchange = { onchange_element_tree(element_tree.clone())}
-                />
+               />
             }
         }
         Err(ref failure) => {

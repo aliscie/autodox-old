@@ -57,7 +57,7 @@ pub fn EditorToolbar(props: &Props) -> Html {
                     let action = action.clone();
                     move |_| action.emit(button)
                 }
-            ><i class={format!("fa-{}",button)}></i>{button.to_string().chars().nth(0).unwrap()}</button>
+           ><i class={format!("fa-{}",button)}></i>{button.to_string().chars().nth(0).unwrap()}</button>
         }).collect::<Html>()}
         </div>
     }

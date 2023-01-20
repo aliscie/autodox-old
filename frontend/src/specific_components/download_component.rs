@@ -43,7 +43,7 @@ pub fn download(props: &DownloadProps) -> Html {
         res = html! {
         <>
             <PopOverMenu items = {items} position = {position.clone()}/>
-            <span  {onclick} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
+            <span  {onclick} class="btn"><i class="fa-solid fa-download"></i>{"Download"}</span>
         </>
     };
     }

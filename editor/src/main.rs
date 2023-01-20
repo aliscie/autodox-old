@@ -69,7 +69,7 @@ pub fn App() -> Html {
            title = {"untitled".to_string()}
            element_tree={element_tree.clone()}
            onchange = { onchange(element_tree.clone())}
-       />
+      />
        </div>
    }
 }

@@ -22,7 +22,7 @@ export function editor_toolbar() {
                 const toolbar_height = 44;
 
                 if (document.activeElement !== toolbar) {
-                    if (x + 120 > window.innerWidth) {
+                    if (x + 120> window.innerWidth) {
                         toolbar.style.left = `${x - toolbar_width}px`;
                     } else {
                         toolbar.style.left = `${x}px`;

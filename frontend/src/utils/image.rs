@@ -41,14 +41,14 @@ impl Image {
         }
     }
 
-    pub fn to_link(image: Option<Vec<u8>>) -> Option<String> {
+    pub fn get_opt_link(image: Option<Vec<u8>>) -> Option<String> {
         match image {
             Some(image) => decode_image(&image),
             None => None,
         }
     }
 
-    pub fn link(self: &Self) -> Option<String> {
+    pub fn get_link(self: &Self) -> Option<String> {
         decode_image(&self.data)
     }
 }

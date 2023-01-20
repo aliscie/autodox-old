@@ -6,6 +6,48 @@ const { plug } = ic;
 
 let backendActor, loading = false
 
+export const get_actor = async () => {
+    await new Promise(resolve => !loading && resolve());
+    loading = true
+
+    if (!backendActor) {
+        if (process.env.USE_WALLET) {
+            let publicKey
+
+            try {
+                const isConnected = await plug.isConnected();
+                if (!isConnected) {
+                    publicKey = await plug.requestConnect({
+                        whitelist: [process.env.BACKEND_CANISTER_ID],
+                        host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
+                        timeout: 50000,
+                        onConnectionUpdate: () => {
+                            console.log('sessionData: ', plug.sessionManager.sessionData)
+                        },
+                    });
+                }
+            } catch (e) {
+                console.log(e)
+                return
+            }
+
+            backendActor = await plug.createActor({ canisterId, interfaceFactory: idlFactory, agent: plug.agent });
+        } else {
+            const authClient = await AuthClient.create();
+            const identity = await authClient.getIdentity();
+            backendActor = createActor(canisterId, {
+                agentOptions: {
+                    identity,
+                    host: window.location.href,
+                }
+            });
+        }
+    }
+
+    loading = false
+    return backendActor;
+}
+
 export async function identify() {
     const authClient = await AuthClient.create();
     if (await authClient.isAuthenticated()) {
@@ -21,6 +63,11 @@ export async function identify() {
             window.location.reload()
         }
     });
+}
+
+export async function is_logged() {
+    const authClient = await AuthClient.create();
+    return await authClient.isAuthenticated()
 }
 
 export async function logout() {
@@ -46,63 +93,9 @@ export async function get_profile() {
     return result;
 }
 
-export async function is_logged() {
-    const authClient = await AuthClient.create();
-    return await authClient.isAuthenticated()
-}
-
-export const get_actor = async () => {
-    await new Promise(resolve => !loading && resolve());
-    console.log('get_actor')
-    loading = true
-
-    if (!backendActor) {
-        if (process.env.USE_WALLET) {
-            let publicKey
-
-            try {
-                const isConnected = await plug.isConnected();
-                if (!isConnected) {
-                publicKey = await plug.requestConnect({
-                    whitelist: [process.env.BACKEND_CANISTER_ID],
-                    host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
-                    timeout: 50000,
-                    onConnectionUpdate: () => {
-                        console.log('sessionData: ', plug.sessionManager.sessionData)
-                    },
-                });
-                }
-            } catch (e) {
-                console.log(e)
-                return
-            }
-
-            backendActor = await plug.createActor({ canisterId, interfaceFactory: idlFactory, agent: plug.agent });
-        } else {
-            const authClient = await AuthClient.create();
-            const identity = await authClient.getIdentity();
-            backendActor = createActor(canisterId, {
-                agentOptions: {
-                    identity,
-                    host: window.location.href,
-                }
-            });
-        }
-    }
-
-    loading = false
-    return backendActor;
-}
-
-export async function test_connect_wasm_bindgen() {
-    let actor = await get_actor()
-    return await actor.test_ic();
-}
-
 export async function create_directory() {
     let actor = await get_actor()
     let result = await actor.create_directory();
-    console.log(result);
     return result;
 }
 
@@ -116,7 +109,6 @@ export async function get_directories() {
         }
         result.files.root = result.files.root[0];
     }
-    console.log(result);
     return result;
 }
 

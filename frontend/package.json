@@ -1,41 +1,41 @@
 {
-  "scripts": {
-    "prestart": "npm run copy:types",
-    "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --exclude='*.most' --delete src/declarations",
-    "start": "webpack -w",
-    "server": "ws -d dist",
-    "clean": "rimraf dist pkg target",
-    "wasm": "wasm-pack build . --target web --dev -- --features \"web\"",
-    "wasm:watch": "cargo watch -i .gitignore -i \"pkg/*\" -i \"dist/*\" -s 'wasm-pack build . --target web --dev -- --features \"web\"'",
-    "dev": "yarn wasm && vite",
-    "dev:watch": "concurrently \"yarn wasm:watch\" \"vite\"",
-    "build": "vite build"
-  },
-  "devDependencies": {
-    "@wasm-tool/wasm-pack-plugin": "1.6.0",
-    "copy-webpack-plugin": "^11.0.0",
-    "crypto-browserify": "^3.12.0",
-    "html-webpack-plugin": "^5.3.1",
-    "local-web-server": "^2.6.0",
-    "rimraf": "^2.6.2",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^4.6.0",
-    "webpack-dev-server": "^4.11.1"
-  },
-  "dependencies": {
-    "@dfinity/agent": "^0.15.0",
-    "@dfinity/auth-client": "^0.15.0",
-    "@dfinity/candid": "^0.15.0",
-    "@dfinity/identity": "^0.15.0",
-    "@dfinity/principal": "^0.15.0",
-    "big-integer": "^1.6.51",
-    "concurrently": "^7.6.0",
-    "cross-env": "^7.0.3",
-    "dotenv": "^16.0.3",
-    "path": "^0.12.7",
-    "vite": "^3.2.4",
-    "vite-plugin-environment": "^1.1.3",
-    "vite-plugin-wasm-pack": "^0.1.12",
-    "vite-rust-plugin": "^1.0.5"
-  }
+    "scripts": {
+        "prestart": "npm run copy:types",
+        "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --exclude='*.most' --delete src/declarations",
+        "start": "webpack -w",
+        "server": "ws -d dist",
+        "clean": "rimraf dist pkg target",
+        "wasm": "wasm-pack build . --target web --dev -- --features \"web\"",
+        "wasm:watch": "cargo watch -i .gitignore -i \"pkg/*\" -i \"dist/*\" -s 'wasm-pack build . --target web --dev -- --features \"web\"'",
+        "dev": "yarn wasm && vite",
+        "dev:watch": "concurrently \"yarn wasm:watch\" \"vite\"",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@wasm-tool/wasm-pack-plugin": "1.6.0",
+        "copy-webpack-plugin": "^11.0.0",
+        "crypto-browserify": "^3.12.0",
+        "html-webpack-plugin": "^5.3.1",
+        "local-web-server": "^2.6.0",
+        "rimraf": "^2.6.2",
+        "webpack": "^5.75.0",
+        "webpack-cli": "^4.6.0",
+        "webpack-dev-server": "^4.11.1"
+    },
+    "dependencies": {
+        "@dfinity/agent": "^0.15.0",
+        "@dfinity/auth-client": "^0.15.0",
+        "@dfinity/candid": "^0.15.0",
+        "@dfinity/identity": "^0.15.0",
+        "@dfinity/principal": "^0.15.0",
+        "big-integer": "^1.6.51",
+        "concurrently": "^7.6.0",
+        "cross-env": "^7.0.3",
+        "dotenv": "^16.0.3",
+        "path": "^0.12.7",
+        "vite": "^3.2.4",
+        "vite-plugin-environment": "^1.1.3",
+        "vite-plugin-wasm-pack": "^0.1.12",
+        "vite-rust-plugin": "^1.0.5"
+    }
 }

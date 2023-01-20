@@ -31,5 +31,5 @@ COPY . .
 # installing frontend files
 RUN cd ./frontend && yarn install && wasm-pack build . --target=web --dev
 RUN cargo tauri build --debug && mv /usr/src/myapp/target/debug/tauri /usr/bin/autodox && rm -rf /usr/src/myapp
-RUN  dbus-uuidgen > /etc/machine-id
+RUN  dbus-uuidgen> /etc/machine-id
 CMD ["/usr/bin/autodox"]

@@ -1,11 +1,9 @@
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
-pub struct Props {
-    // pub id: u64,
-}
+pub struct Props {}
 
 #[function_component(ProfileInfo)]
 pub fn profile_info(props: &Props) -> Html {
-    html! { <h1>{"ProfileInfo"}</h1> }
+    html! {<h1>{"ProfileInfo"}</h1>}
 }

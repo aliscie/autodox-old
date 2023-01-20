@@ -170,7 +170,7 @@ impl CandidType for Id {
 //             <Uuid as speedy::Readable<
 //                 'a_,
 //                 C_,
-//             >>::speedy_flip_endianness(&raw mut (*itself).0);
+//            >>::speedy_flip_endianness(&raw mut (*itself).0);
 //         }
 //     }
 //     #[inline(always)]

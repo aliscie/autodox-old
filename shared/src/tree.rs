@@ -67,7 +67,7 @@ where
     pub fn len_from_start(&self, id: &ID) -> usize {
         let mut stack = VecDeque::from([id]);
         let mut visited_nodes = HashSet::from([id]);
-        while stack.len() > 0 {
+        while stack.len()> 0 {
             let id = stack.pop_front().unwrap();
             if let Some(children) = self.adjacency.get(id) {
                 for i in children {
@@ -83,7 +83,7 @@ where
 
     pub fn remove(&mut self, id: &ID) -> ID {
         let mut remove_stack = VecDeque::from([id.clone()]);
-        while remove_stack.len() > 0 {
+        while remove_stack.len()> 0 {
             let r = remove_stack.pop_front().unwrap();
             self.vertices.remove(&r);
             if let Some(children_id) = self.adjacency.remove(&r) {
@@ -113,7 +113,7 @@ where
         stack.push_front(start.clone());
         let mut other_stack = VecDeque::new();
         let mut visited_nodes = HashSet::new();
-        while visited_nodes.len() < len {
+        while visited_nodes.len() <len {
             let data = stack.pop_front().unwrap();
             if let Some(children) = self.adjacency.get(&data) {
                 for i in children {
