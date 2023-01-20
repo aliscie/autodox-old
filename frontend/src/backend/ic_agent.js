@@ -116,8 +116,13 @@ export async function create_file(data) {
     let actor = await get_actor()
     return await actor.create_file(data);
 }
+export async function rename_file(id, new_name) {
+    let actor = await get_actor()
+    return await actor.rename_file(id, new_name);
+}
 
 export async function register(username) {
     const backend = await get_actor()
     return await backend.register(username);
 }
+

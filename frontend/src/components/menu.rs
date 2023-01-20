@@ -38,7 +38,7 @@ pub fn menu(props: &MenuProps) -> Html {
             x -= popover_width;
         }
         format!(
-            "display : block; top:{}px; left:{}px; z-index: 10000;",
+            "display : block; top:{}px; left:{}px;",
             &p.page_y(),
             &x
         )
