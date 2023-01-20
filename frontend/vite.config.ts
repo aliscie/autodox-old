@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import wasmPack from 'vite-plugin-wasm-pack';
-import EnvironmentPlugin from 'vite-plugin-environment'
 
 export default defineConfig({
     publicDir: './public',

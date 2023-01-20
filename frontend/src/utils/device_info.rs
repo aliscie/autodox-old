@@ -9,7 +9,6 @@ pub struct DeviceInfo {
     pub is_aside: bool,
     pub is_light_mode: bool,
     pub profile: UserQuery,
-    // could add some other fields here!
 }
 
 impl Default for DeviceInfo {

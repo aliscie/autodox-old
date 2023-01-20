@@ -133,7 +133,7 @@ pub async fn delete_element(data: EditorElementDelete, ctx: State<'_, Context>) 
     let store = ctx.get_store();
     let mut stack = vec![data.id];
     let mut current_index = 0;
-    while current_index < stack.len() {
+    while current_index <stack.len() {
         let children: Vec<Value> = store
             .exec_delete::<EditorElement>(stack[current_index].to_string())
             .await?

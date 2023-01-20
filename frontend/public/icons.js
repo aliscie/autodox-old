@@ -49,7 +49,7 @@ window.FontAwesomeKitConfig = {
     }
 
     function o(t) {
-        for (var o = 1; o < arguments.length; o++) {
+        for (var o = 1; o <arguments.length; o++) {
             var r = null != arguments[o] ? arguments[o] : {};
             o % 2 ? n(Object(r), !0).forEach((function (n) {
                 e(t, n, r[n])
@@ -91,8 +91,8 @@ window.FontAwesomeKitConfig = {
     }
 
     function i(t, e) {
-        (null == e || e > t.length) && (e = t.length);
-        for (var n = 0, o = new Array(e); n < e; n++) o[n] = t[n];
+        (null == e || e> t.length) && (e = t.length);
+        for (var n = 0, o = new Array(e); n <e; n++) o[n] = t[n];
         return o
     }
 
@@ -128,7 +128,7 @@ window.FontAwesomeKitConfig = {
         h = [];
 
     function m() {
-        for (var t = 0; t < h.length; t++) h[t][0](h[t][1]);
+        for (var t = 0; t <h.length; t++) h[t][0](h[t][1]);
         h = [], f = !1
     }
 
@@ -242,13 +242,13 @@ window.FontAwesomeKitConfig = {
                 }
             }
 
-            for (var c, a = 0; a < t.length; a++) (c = t[a]) && "function" == typeof c.then ? c.then(i(a), n) : o[a] = c;
+            for (var c, a = 0; a <t.length; a++) (c = t[a]) && "function" == typeof c.then ? c.then(i(a), n) : o[a] = c;
             r || e(o)
         }))
     }, E.race = function (t) {
         if (!Array.isArray(t)) throw new TypeError("You must pass an array to Promise.race().");
         return new E((function (e, n) {
-            for (var o, r = 0; r < t.length; r++) (o = t[r]) && "function" == typeof o.then ? o.then(e, n) : e(o)
+            for (var o, r = 0; r <t.length; r++) (o = t[r]) && "function" == typeof o.then ? o.then(e, n) : e(o)
         }))
     }, E.resolve = function (e) {
         return e && "object" === t(e) && e.constructor === E ? e : new E((function (t) {
@@ -303,10 +303,10 @@ window.FontAwesomeKitConfig = {
     }
 
     function C(t, e) {
-        var n = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : function () {
+        var n = arguments.length> 2 && void 0 !== arguments[2] ? arguments[2] : function () {
             }, r = e.document || r,
             i = u.bind(u, r, ["fa", "fab", "fas", "far", "fal", "fad", "fak"]),
-            f = Object.keys(t.iconUploads || {}).length > 0;
+            f = Object.keys(t.iconUploads || {}).length> 0;
         t.autoA11y.enabled && n(i);
         var s = [{id: "fa-main", addOn: void 0}];
         t.v4shim && t.v4shim.enabled && s.push({
@@ -404,8 +404,8 @@ window.FontAwesomeKitConfig = {
                 }, D = document.currentScript,
                 N = D ? D.parentElement : document.head;
             (function () {
-                var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
-                    e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
+                var t = arguments.length> 0 && void 0 !== arguments[0] ? arguments[0] : {},
+                    e = arguments.length> 1 && void 0 !== arguments[1] ? arguments[1] : {};
                 return "js" === t.method ? k(t, e) : "css" === t.method ? C(t, e, (function (t) {
                     L(t), T(t)
                 })) : void 0

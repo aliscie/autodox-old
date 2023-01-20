@@ -87,7 +87,7 @@ pub fn Editor(props: &EditorProps) -> Html {
                                         })
                                         .map(|id| onchange.emit(EditorChange::Delete(id.into())));
                                 }
-                                if removed_nodes.length() > 0 {
+                                if removed_nodes.length()> 0 {
                                     unimplemented!();
                                     // move to next mutation record!
                                     // crate::shared::log!("got element delete!");
@@ -188,18 +188,18 @@ pub fn Editor(props: &EditorProps) -> Html {
     html! {
         <span
             class={css_file_macro!("main.css")}
-        >
+       >
             <h2 contenteditable="true" class={"editor_title heading"}>
             {props.title.clone()}
         </h2>
             <span
             class = "text_editor_container"
             id = "text_editor_container"
-            >
+           >
 
-            <EditorToolbar  action={action} />
-            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser} />
-            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser} />
+            <EditorToolbar  action={action}/>
+            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
+            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
             <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
