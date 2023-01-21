@@ -17,7 +17,6 @@ use std::{
     str::FromStr,
 };
 use uuid::Uuid;
-
 #[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord, Hash, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct Id(pub Uuid);
@@ -25,14 +24,14 @@ pub struct Id(pub Uuid);
 impl Id {
     #[cfg(feature = "backend")]
     pub async fn ic_new() -> Self {
-        let call_result: Result<(Vec<u8>,), _> = ic_cdk::api::call::call(
+        let call_result: Result<(Vec<u8>, ), _> = ic_cdk::api::call::call(
             ic_cdk::export::Principal::management_canister(),
             "raw_rand",
             (),
         )
-        .await;
+            .await;
         let id = match call_result {
-            Ok((id,)) => id,
+            Ok((id, )) => id,
             Err(e) => {
                 ic_cdk::trap(&format!("Failed to get id: {:#?}", e));
             }
@@ -63,6 +62,13 @@ impl From<Vec<u8>> for Id {
         let value: &[_] = value.get(..16).unwrap();
         let value: [u8; 16] = value.try_into().unwrap();
         Id(Uuid::from_bytes(value.into()))
+    }
+}
+
+impl From<String> for Id {
+    fn from(value: String) -> Self {
+        let id: Vec<u8> = ic_cdk::export::Principal::from_text(&value).expect(&*format!("Invalid Principal string {}", &value)).as_slice().into();
+        id.into()
     }
 }
 
@@ -126,8 +132,8 @@ impl CandidType for Id {
         Type::Text
     }
     fn idl_serialize<S>(&self, serializer: S) -> Result<(), S::Error>
-    where
-        S: Serializer,
+        where
+            S: Serializer,
     {
         serializer.serialize_text(&self.0.to_string())
     }
