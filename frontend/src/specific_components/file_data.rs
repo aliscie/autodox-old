@@ -93,6 +93,7 @@ pub fn file_data(props: &Props) -> HtmlResult {
     let res = use_element_tree(props.id)?;
     let result_html = match *res {
         Ok(ref tree) => {
+            log!(&tree);
             let file_node = Dispatch::<FileDirectory>::new()
                 .get()
                 .files
@@ -119,10 +120,10 @@ pub fn file_data(props: &Props) -> HtmlResult {
 
 #[hook]
 fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<ElementTree, String>>> {
-    let dispatch = Dispatch::<FileDirectory>::new();
+    let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     use_future_with_deps(
         |file_id| async move {
-            match dispatch.get().files.vertices.get(&file_id) {
+            match dispatch_file_directory.get().files.vertices.get(&file_id) {
                 Some(current_file_data) => {
                     match current_file_data.element_tree {
                         Some(tree_id) => {
@@ -131,10 +132,10 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                         None => {
                             // create new element_tree
                             let mut default_element_tree = ElementTree::default();
-                            let root = default_element_tree.elements.root.unwrap();
+                            let root_id = default_element_tree.elements.root.unwrap();
                             let id: Id = Uuid::new_v4().into();
                             default_element_tree.elements.push_children(
-                                root,
+                                root_id,
                                 id.clone(),
                                 EditorElement::new(
                                     id,
@@ -147,7 +148,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                             );
                             let id: Id = Uuid::new_v4().into();
                             default_element_tree.elements.push_children(
-                                root,
+                                root_id,
                                 id,
                                 EditorElement::new(
                                     id,
@@ -155,9 +156,9 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                                     HashMap::new(),
                                 ),
                             );
-                            let _ = create_element_tree(&default_element_tree, *file_id).await?;
+                            // let _ = create_element_tree(&default_element_tree, *file_id).await?;
                             let tree_id = default_element_tree.id;
-                            dispatch.reduce_mut(|f| {
+                            dispatch_file_directory.reduce_mut(|f| {
                                 let file_node = f.files.vertices.get_mut(&file_id).unwrap();
                                 file_node.id = tree_id;
                             });

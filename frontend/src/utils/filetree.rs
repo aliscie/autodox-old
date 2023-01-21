@@ -1,10 +1,12 @@
 use crate::router::Route;
 use crate::specific_components::FileComponent;
+use gloo::console::log;
 use indexmap::IndexSet;
 use shared::id::Id;
 use shared::schema::{FileDirectory, FileNode};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::fmt::Display;
 use std::rc::Rc;
 use uuid::Uuid;
 use web_sys::{Element, MouseEvent};
@@ -79,6 +81,7 @@ fn render_file_element(props: &RenderFileElementProps) -> Html {
     let on_toggle = {
         let display = display.clone();
         Callback::from(move |e: MouseEvent| {
+            log!("toggle plus".to_string());
             display.toggle();
         })
     };

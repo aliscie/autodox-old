@@ -376,7 +376,7 @@ impl Default for FileDirectory {
 }
 
 impl FileDirectory {
-    #[inline]
+    //#[inline]
     pub fn new(id: Id, name: String) -> Self {
         Self {
             files: Tree::new(),

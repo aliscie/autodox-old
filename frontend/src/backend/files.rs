@@ -148,7 +148,7 @@ async fn local_change_directory(
     old_parent_id: String,
 ) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
-    let _dispatch_file = Dispatch::<FileDirectory>::new();
+    let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
     if info.get().is_web || info.get().is_online {
         unimplemented!();
     }
@@ -159,7 +159,7 @@ async fn local_change_directory(
         )
             .await
             .map(|e| {
-                _dispatch_file.reduce_mut(|f| {
+                _dispatch_file_directory.reduce_mut(|f| {
                     let child_id = Uuid::parse_str(&child_id).map(Id::from).unwrap();
                     for i in f.files.adjacency.values_mut() {
                         i.iter()

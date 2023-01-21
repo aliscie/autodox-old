@@ -328,7 +328,7 @@ where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
 {
-    #[inline]
+    //#[inline]
     fn read_from<R_: speedy::Reader<'a_, C_>>(
         _reader_: &mut R_,
     ) -> std::result::Result<Self, C_::Error> {
@@ -355,7 +355,7 @@ where
             root,
         })
     }
-    #[inline]
+    //#[inline]
     fn minimum_bytes_needed() -> usize {
         {
             let mut out = 0;
@@ -378,7 +378,7 @@ where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
 {
-    #[inline]
+    //#[inline]
     fn write_to<T_: ?Sized + speedy::Writer<C_>>(
         &self,
         _writer_: &mut T_,

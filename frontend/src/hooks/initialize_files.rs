@@ -7,16 +7,16 @@ pub async fn init_files() -> Result<(), String> {
         .await
         .map_err(|e| e)
         .unwrap_or_default();
-    let file_tree = Dispatch::<FileDirectory>::new();
+    let dispatch_file_directory = Dispatch::<FileDirectory>::new();
 
     match directories {
         Some(x) => {
-            file_tree.set(x);
+            dispatch_file_directory.set(x);
         }
         None => {
             let file_directory = FileDirectory::default();
             let x = crate::backend::create_directory(&file_directory).await;
-            file_tree.set(file_directory);
+            dispatch_file_directory.set(file_directory);
         }
     }
 

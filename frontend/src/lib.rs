@@ -2,7 +2,6 @@ extern crate futures;
 extern crate shared;
 extern crate wasm_bindgen_futures;
 extern crate yew;
-
 mod app;
 mod backend;
 mod components;
@@ -11,7 +10,6 @@ pub mod pages;
 mod router;
 mod specific_components;
 mod utils;
-
 use app::App;
 use wasm_bindgen::prelude::*;
 

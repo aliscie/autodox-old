@@ -135,14 +135,14 @@ impl CandidType for Id {
 
 // #[cfg(feature = "backend")]
 // impl<'a_, C_: speedy::Context> speedy::Readable<'a_, C_> for Id {
-//     #[inline]
+//     //#[inline]
 //     fn read_from<R_: speedy::Reader<'a_, C_>>(
 //         _reader_: &mut R_,
 //     ) -> std::result::Result<Self, C_::Error> {
 //         let t0: Uuid = _reader_.read_value()?;
 //         Ok(Id(t0))
 //     }
-//     #[inline]
+//     //#[inline]
 //     fn minimum_bytes_needed() -> usize {
 //         {
 //             let mut out = 0;
@@ -155,7 +155,7 @@ impl CandidType for Id {
 //         <Uuid as speedy::Readable<'a_, C_>>::speedy_is_primitive()
 //             && (std::mem::size_of::<Uuid>()) == std::mem::size_of::<Self>()
 //     }
-//     #[inline]
+//     //#[inline]
 //     unsafe fn speedy_slice_from_bytes(slice: &[u8]) -> &[Self] {
 //         unsafe {
 //             std::slice::from_raw_parts(
@@ -188,7 +188,7 @@ impl CandidType for Id {
 
 // #[cfg(feature = "backend")]
 // impl<C_: speedy::Context> speedy::Writable<C_> for Id {
-//     #[inline]
+//     //#[inline]
 //     fn write_to<T_: ?Sized + speedy::Writer<C_>>(
 //         &self,
 //         _writer_: &mut T_,

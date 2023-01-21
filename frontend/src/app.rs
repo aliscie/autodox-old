@@ -1,26 +1,56 @@
+use crate::backend;
 use crate::router::{switch, Route};
 use crate::specific_components::{ButtonsGroup, SearchFilters};
 use crate::utils::filetree::FileTree;
 use crate::utils::{DeviceInfo, GetTitleBar};
+use shared::schema::UserQuery;
 use shared::schema::{FileDirectory, FileNode};
+use shared::*;
 use wasm_bindgen::UnwrapThrowExt;
-use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
+use yew::suspense::*;
 use yew_router::prelude::*;
+use yewdux::functional::use_store;
 use yewdux::prelude::*;
+
+#[hook]
+fn use_load_data() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
+    let dispatch_device_info = Dispatch::<DeviceInfo>::new();
+
+    use_future_with_deps(
+        move |_| async move {
+            let auth = backend::is_logged().await.as_bool().unwrap();
+            log!(auth);
+            let _ = &dispatch_device_info.reduce_mut(|state| state.is_authed = auth);
+            let register = backend::register("ali".to_string()).await;
+            log!(register);
+            let profile_res = backend::get_profile().await;
+            // log!(&profile_res);
+            let profile_obj: UserQuery = serde_wasm_bindgen::from_value(profile_res)
+                .map_err(|e| String::from("serde error"))?;
+            // log!(&profile_obj);
+            let _ = &dispatch_device_info.reduce_mut(|state| state.profile = profile_obj);
+            let _ = crate::hooks::init_files().await;
+            return Ok(());
+        },
+        (),
+    )
+}
 
 #[function_component(App)]
 pub fn app() -> Html {
+    let _ = use_load_data();
+
     let (rc_device_info, _) = use_store::<DeviceInfo>();
-    let dispatch_file = Dispatch::<FileDirectory>::new();
+    let dispatch_file_directory = Dispatch::<FileDirectory>::new();
 
     let on_market_place: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         // TODO
         // history.push(Route::File { id: market_page });
     });
 
-    let on_create_file: Callback<MouseEvent> = dispatch_file.reduce_mut_future_callback(|state| {
+    let on_create_file: Callback<MouseEvent> = dispatch_file_directory.reduce_mut_future_callback(|state| {
         Box::pin(async move {
             let file = FileNode::default();
             let x = crate::backend::create_file(
