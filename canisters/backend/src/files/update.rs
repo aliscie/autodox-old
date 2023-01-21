@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use candid::{CandidType, Deserialize};
+use candid::{CandidType, Deserialize, Principal};
 use ic_cdk;
 use ic_kit::candid::candid_method;
 use ic_kit::macros::update;
@@ -103,13 +103,13 @@ pub async fn create_directory() -> String {
 #[update]
 #[candid_method(update)]
 pub fn rename_file(file_id: String, new_name: String) -> Option<String> {
-    let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
+
     let user = User::current()?;
     let mut user_files: UserFiles = s!(UserFiles);
     let files = user_files.get(&user).map(|s| s.clone());
-    let file_id = Id::from(file_id);
-    for mut file in files{
-        if file.id == file_id{
+    let file_id: Id = Id::from(file_id);
+    for mut file in files {
+        if file.id == file_id {
             file.name = new_name;
             return Some("File is renamed.".to_string());
         }
