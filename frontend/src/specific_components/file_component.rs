@@ -1,4 +1,5 @@
 use uuid::Uuid;
+use wasm_bindgen_futures::spawn_local;
 use web_sys::{Element, MouseEvent};
 use yew::prelude::*;
 use yew_hooks::use_toggle;
@@ -131,8 +132,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _id = id.clone();
+    log!(id.to_string());
     let rename_file: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        backend::rename_file(_id.to_string(), "new_name".to_string());
+        spawn_local(async move {
+            backend::rename_file(_id.to_string(), "new_name".to_string()).await;
+        });
     });
 
     let ondelete = {

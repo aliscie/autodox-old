@@ -12,9 +12,12 @@ use web_sys::console;
 use yewdux::prelude::Dispatch;
 
 pub async fn rename_file(id: String, new_name: String) {
+
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
+        log!("before rename");
         let res = backend::rename_file_ic(id.to_string(), "new_name".to_string()).await;
+        log!("after rename");
         log!(res);
     } else {
         log!("rename on desktop");
