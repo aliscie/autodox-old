@@ -40,7 +40,9 @@ export function editor_toolbar() {
 
     function documentMouseDown(event) {
         if (event.target.id !== "selection-popper" && getComputedStyle(toolbar).display === "block") {
-            toolbar.style.display = "none";
+            if (event.srcElement.nodeName !="INPUT") {
+                toolbar.style.display = "none"
+            };
             toolbar.classList.remove("btnEntrance");
             window.getSelection().empty();
         }
