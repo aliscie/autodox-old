@@ -8,16 +8,14 @@ let backendActor, loading = false
 
 export const get_actor = async () => {
     await new Promise(resolve => !loading && resolve());
+    console.log('get_actor')
     loading = true
 
     if (!backendActor) {
         if (process.env.USE_WALLET) {
-            let publicKey
-
             try {
-                const isConnected = await plug.isConnected();
-                if (!isConnected) {
-                    publicKey = await plug.requestConnect({
+                if (!(await is_logged())) {
+                    await plug.requestConnect({
                         whitelist: [process.env.BACKEND_CANISTER_ID],
                         host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
                         timeout: 50000,
@@ -125,4 +123,3 @@ export async function register(username) {
     const backend = await get_actor()
     return await backend.register(username);
 }
-

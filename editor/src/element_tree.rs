@@ -31,7 +31,7 @@ pub struct EditorElement {
 // }
 
 impl ElementTree {
-    #[inline]
+    //#[inline]
     pub(crate) fn new() -> Self {
         Self {
             elements: Tree::new(),
@@ -72,7 +72,7 @@ impl ElementTree {
 }
 
 impl EditorElement {
-    #[inline]
+    //#[inline]
     pub fn new(id: u64, text: String, attrs: HashMap<Attrs, String>) -> Self {
         Self { id, text, attrs }
     }

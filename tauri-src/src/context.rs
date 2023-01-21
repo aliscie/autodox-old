@@ -7,13 +7,13 @@ pub struct Context {
 }
 
 impl Context {
-    #[inline]
+    //#[inline]
     pub fn new(store: Store) -> Self {
         Self {
             store: Arc::new(store),
         }
     }
-    #[inline]
+    //#[inline]
     pub fn get_store(&self) -> Arc<Store> {
         self.store.clone()
     }

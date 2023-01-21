@@ -90,7 +90,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let _is_drag_under = is_drag_under.clone();
     let ondrop: Callback<DragEvent> = {
         let id = id.clone();
-        let _dispatch_file = Dispatch::<FileDirectory>::new();
+        let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
         Callback::from(move |e: DragEvent| {
             e.prevent_default();
             let curr: Element = e.target_unchecked_into();
@@ -99,7 +99,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             let id = id.clone();
             let mut old_parent_id: Id = Uuid::new_v4().into();
             let dragged_uuid = Uuid::parse_str(dragged.as_str()).map(Id::from).unwrap();
-            for (i, value) in &_dispatch_file.get().files.adjacency {
+            for (i, value) in &_dispatch_file_directory.get().files.adjacency {
                 if value.contains(&dragged_uuid) {
                     old_parent_id = *i;
                     break;
@@ -141,9 +141,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
     let ondelete = {
         let id = id.clone();
-        let _dispatch_file = Dispatch::<FileDirectory>::new();
+        let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
         let mut parent_id = Id::default();
-        for (parent, child_id) in &_dispatch_file.get().files.adjacency {
+        for (parent, child_id) in &_dispatch_file_directory.get().files.adjacency {
             if child_id.contains(&id) {
                 parent_id = *parent;
             }
@@ -151,10 +151,10 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         let delete_file_node = FileNodeDelete {
             id,
             parent_id,
-            tree_id: _dispatch_file.get().id,
+            tree_id: _dispatch_file_directory.get().id,
         };
         let file_id = id.clone();
-        _dispatch_file.reduce_mut_future_callback(move |state| {
+        _dispatch_file_directory.reduce_mut_future_callback(move |state| {
             match route {
                 // the current file is in use navigate to home!
                 Route::File { id } => {
@@ -234,13 +234,13 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            <i style="height:100%" class="btn create_file fa-solid fa-plus"></i>
         </div>
 
-            <div
-            ondragover={ondragover.clone()}
-            style={format!("{}",(*is_drag_under).clone())}
-            ondrop={ondrop_under}
-            ondragenter={ondragenter_under}
-            ondragleave={ondragleave_under}
-            class="drag_under"/>
+            // <div
+            // ondragover={ondragover.clone()}
+            // style={format!("{}",(*is_drag_under).clone())}
+            // ondrop={ondrop_under}
+            // ondragenter={ondragenter_under}
+            // ondragleave={ondragleave_under}
+            // class="drag_under"/>
 
            <PopOverMenu
             click_on={Some(true)}

@@ -74,7 +74,7 @@ impl Default for EditorElement {
 }
 
 impl EditorElement {
-    #[inline]
+    //#[inline]
     pub fn new<T>(id: T, text: String, attrs: HashMap<String, String>) -> Self
     where
         T: Into<Id>,

@@ -9,41 +9,12 @@ use std::sync::{Arc, Mutex};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, HtmlInputElement};
 use yew::prelude::*;
-use yew::suspense::use_future_with_deps;
-use yew::suspense::SuspensionResult;
-use yew::suspense::UseFutureHandle;
 use yew_router::prelude::use_navigator;
 use yewdux::functional::use_store;
-use yewdux::prelude::Dispatch;
-
-#[hook]
-fn use_profile() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
-    let dispatch_device_info = Dispatch::<DeviceInfo>::new();
-
-    use_future_with_deps(
-        move |_| async move {
-            let auth = backend::is_logged().await.as_bool().unwrap();
-            log!(auth);
-            &dispatch_device_info.reduce_mut(|state| state.is_authed = auth);
-            let register = backend::register("ali".to_string()).await;
-            log!(register);
-            let profile_res = backend::get_profile().await;
-            // log!(&profile_res);
-            let profile_obj: UserQuery = serde_wasm_bindgen::from_value(profile_res)
-                .map_err(|e| String::from("serde error"))?;
-            // log!(&profile_obj);
-            &dispatch_device_info.reduce_mut(|state| state.profile = profile_obj);
-            crate::hooks::init_files().await;
-            return Ok(());
-        },
-        (),
-    )
-}
+use yewdux::prelude::*;
 
 #[function_component]
 pub fn TitleAvatarComponent() -> Html {
-    use_profile();
-
     let (rc_device_info, _) = use_store::<DeviceInfo>();
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let navigator: yew_router::navigator::Navigator = use_navigator().unwrap();
