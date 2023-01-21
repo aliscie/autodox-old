@@ -54,9 +54,9 @@ pub fn EditorInsert(props: &Props) -> Html {
     let p = (&*_position).as_ref().unwrap();
 
     html! {
-            < span class ={css_file_macro ! ("dropdown.css")} >
+            <span class ={css_file_macro ! ("dropdown.css")}>
 
-            < span id = "editor_dropdown" style ={format ! (" top:{}px; left:{}px", p.y, p.x)}>
+            <span id = "editor_dropdown" style ={format ! (" top:{}px; left:{}px", p.y, p.x)}>
 
             {
             items
@@ -67,11 +67,11 @@ pub fn EditorInsert(props: &Props) -> Html {
                 let _item = item.clone();
                 html !{<a onclick={Callback::from(move |e: MouseEvent| {
                     command(_item.clone())
-                })}>{item.value}< / a >}
-            }).collect::< Html > ()
+                })}>{item.value}</ a>}
+            }).collect::<Html> ()
             }
 
-            < / span >
-            < / span >
+            </ span>
+            </ span>
             }
 }

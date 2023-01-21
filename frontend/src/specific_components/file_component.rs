@@ -11,7 +11,7 @@ use shared::{
     schema::{FileDirectory, FileNodeDelete},
 };
 
-use crate::{components::PopOverMenu, router::Route};
+use crate::{backend, components::PopOverMenu, router::Route};
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -89,7 +89,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let _is_drag_under = is_drag_under.clone();
     let ondrop: Callback<DragEvent> = {
         let id = id.clone();
-        let file_dispatch = Dispatch::<FileDirectory>::new();
+        let _dispatch_file = Dispatch::<FileDirectory>::new();
         Callback::from(move |e: DragEvent| {
             e.prevent_default();
             let curr: Element = e.target_unchecked_into();
@@ -98,7 +98,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             let id = id.clone();
             let mut old_parent_id: Id = Uuid::new_v4().into();
             let dragged_uuid = Uuid::parse_str(dragged.as_str()).map(Id::from).unwrap();
-            for (i, value) in &file_dispatch.get().files.adjacency {
+            for (i, value) in &_dispatch_file.get().files.adjacency {
                 if value.contains(&dragged_uuid) {
                     old_parent_id = *i;
                     break;
@@ -129,11 +129,17 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
         let _dragged = e.data_transfer().unwrap().get_data("dragged_item");
     });
+
+    let _id = id.clone();
+    let rename_file: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+        backend::rename_file(_id.to_string(), "new_name".to_string());
+    });
+
     let ondelete = {
         let id = id.clone();
-        let file_dispatch = Dispatch::<FileDirectory>::new();
+        let _dispatch_file = Dispatch::<FileDirectory>::new();
         let mut parent_id = Id::default();
-        for (parent, child_id) in &file_dispatch.get().files.adjacency {
+        for (parent, child_id) in &_dispatch_file.get().files.adjacency {
             if child_id.contains(&id) {
                 parent_id = *parent;
             }
@@ -141,10 +147,10 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         let delete_file_node = FileNodeDelete {
             id,
             parent_id,
-            tree_id: file_dispatch.get().id,
+            tree_id: _dispatch_file.get().id,
         };
         let file_id = id.clone();
-        file_dispatch.reduce_mut_future_callback(move |state| {
+        _dispatch_file.reduce_mut_future_callback(move |state| {
             match route {
                 // the current file is in use navigate to home!
                 Route::File { id } => {
@@ -196,7 +202,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         //            ondrop={ondrop_above}
         //            ondragenter={ondragenter_above}
         //            ondragleave={ondragleave_above}
-        //            class="drag_under" />
+        //            class="drag_under"/>
         //         }
         //  }}
 
@@ -204,7 +210,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            if props.class.contains("caret"){
                <button class={format!("{} crate_button",(*caret))}
                onmouseup={toggle_caret}
-               onclick = { props.onclick.clone() } ><i class="fa-solid fa-caret-right"></i></button>
+               onclick = { props.onclick.clone() }><i class="fa-solid fa-caret-right"></i></button>
            }
            <li
            ondragover={ondragover.clone()}
@@ -218,7 +224,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            draggable="true"
            class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(),(*is_enter).clone(), "")}
            style="margin-left: 30px; min-width: 0px; align-items: center; height: 100%; display: block;"
-           >
+          >
            {props.name.clone()}
            </li>
            <i style="height:100%" class="btn create_file fa-solid fa-plus"></i>
@@ -230,19 +236,22 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             ondrop={ondrop_under}
             ondragenter={ondragenter_under}
             ondragleave={ondragleave_under}
-            class="drag_under" />
+            class="drag_under"/>
 
            <PopOverMenu
             click_on={Some(true)}
            position = {position.clone()}
            items={vec![
-           html! {<a><input  autofocus=true placeholder="rename.."/></a>},
+           html! {<a><input
+                onclick={rename_file}
+                // TODO fix this later not matter now
+                autofocus=true placeholder="rename.."/></a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
            ]}
-           />
+          />
 
         </div>
 

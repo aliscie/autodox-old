@@ -39,6 +39,25 @@ pub fn get_directories() -> Option<FileDirectory> {
     user_files.get(&user).map(|s| s.clone())
 }
 
+
+#[query]
+#[candid_method(query)]
+pub fn get_file(file_id: String) -> Option<FileDirectory> {
+    let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
+    let user = User::current()?;
+    let mut user_files: UserFiles = s!(UserFiles);
+    let files = user_files.get(&user).map(|s| s.clone());
+    let file_id = Id::from(file_id);
+    for file in files{
+        if file.id == file_id{
+            return Some(file);
+        }
+    }
+    None
+}
+
+
+
 #[query]
 #[candid_method(query)]
 pub async fn test_ic() -> String {

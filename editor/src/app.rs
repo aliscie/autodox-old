@@ -10,7 +10,7 @@ use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
 use yew::prelude::*;
 use yew::{function_component, html};
-use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem, ToolbarAction};
+use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -55,6 +55,7 @@ pub fn Editor(props: &EditorProps) -> Html {
                     if let Some(current_element) = mutation_type.target() {
                         match mutation_type.type_().as_ref() {
                             "characterData" => {
+                                log!("xxxx");
                                 if let Some(parent_element) = current_element.parent_element() {
                                     if let Ok(id) =
                                         Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
@@ -176,8 +177,16 @@ pub fn Editor(props: &EditorProps) -> Html {
 
     let element_tree = props.element_tree.clone();
 
-    let action: Callback<ToolbarAction> = Callback::from(move |e: ToolbarAction| {
-        log!(e);
+    let action: Callback<String> = Callback::from(move |e: String| {
+        log!(e.clone());
+        let command = e.to_lowercase();
+        let window = web_sys::window().unwrap();
+        let document = window.document().unwrap();
+        let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+        let x = html_document.exec_command_with_show_ui_and_value(&command, false, "").unwrap();
+        // let x = html_document.exec_command_with_show_ui_and_value("foreColor", false, "rgba(0,0,0,0.5)").unwrap();
+
+
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
         //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
         //     text_format: Some(format),
@@ -188,18 +197,18 @@ pub fn Editor(props: &EditorProps) -> Html {
     html! {
         <span
             class={css_file_macro!("main.css")}
-        >
+       >
             <h2 contenteditable="true" class={"editor_title heading"}>
             {props.title.clone()}
         </h2>
             <span
             class = "text_editor_container"
             id = "text_editor_container"
-            >
+           >
 
-            <EditorToolbar  action={action} />
-            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser} />
-            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser} />
+            <EditorToolbar  action={action}/>
+            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
+            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
             <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">

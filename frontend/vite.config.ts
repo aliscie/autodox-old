@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import wasmPack from 'vite-plugin-wasm-pack';
-import EnvironmentPlugin from 'vite-plugin-environment'
 
 export default defineConfig({
     publicDir: './public',
@@ -23,8 +22,8 @@ export default defineConfig({
         'process.env': {
             "BACKEND_CANISTER_ID": "rrkah-fqaaa-aaaaa-aaaaq-cai",
             "FRONTEND_CANISTER_ID": "ryjl3-tyaaa-aaaaa-aaaba-cai",
-            "INTERNET_IDENTITY_CANISTER_ID": "r7inp-6aaaa-aaaaa-aaabq-cai",
-            "IDENTITY_PROVIDER_ID": "r7inp-6aaaa-aaaaa-aaabq-cai",
+            "INTERNET_IDENTITY_CANISTER_ID": "rkp4c-7iaaa-aaaaa-aaaca-cai",
+            "IDENTITY_PROVIDER_ID": "rkp4c-7iaaa-aaaaa-aaaca-cai",
             "USE_WALLET": true,
         }
     },

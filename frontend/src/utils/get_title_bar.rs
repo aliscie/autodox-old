@@ -1,74 +1,68 @@
+use crate::components::{CurDirectory, TitleBar};
+use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::utils::DeviceInfo;
+use crate::*;
 use wasm_bindgen::prelude::*;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::{CurDirectory, TitleBar};
-use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
-use crate::*;
-
-#[derive(Properties, Debug, PartialEq)]
-pub struct Props {
-    // pub toggle: UseStateHandle<String>,
-}
-
 #[function_component(GetTitleBar)]
-pub fn get_title_bar(props: &Props) -> Html {
-    let (device, dispatch) = use_store::<DeviceInfo>();
-    let doc = window().unwrap_throw().document().unwrap_throw();
-    let current_directory = html! {<CurDirectory/>};
+pub fn get_title_bar() -> Html {
+    let (rc_device_info, dispatch_device_info) = use_store::<DeviceInfo>();
+    let document = window().unwrap_throw().document().unwrap_throw();
 
-    let _device = device.clone();
-    let handle_light_mod: Callback<MouseEvent> = {
-        let dispatch = dispatch.clone();
-        let doc = doc.clone();
+    let _rc_device_info = rc_device_info.clone();
+    let _dispatch_device_info = dispatch_device_info.clone();
+    let on_light_mode: Callback<MouseEvent> = {
         Callback::from(move |_e: MouseEvent| {
-            let _ = doc
+            let _ = document
                 .query_selector("html")
                 .unwrap()
                 .unwrap()
                 .class_list()
                 .toggle("light-mod");
-            &dispatch.reduce_mut(|state| state.is_light_mode = !_device.is_light_mode);
+            let _ = &_dispatch_device_info
+                .reduce_mut(|state| state.is_light_mode = !_rc_device_info.is_light_mode);
         })
     };
-    let _dispatch = dispatch.clone();
-    let _device = device.clone();
-    let toggle_aside_bar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        if _device.is_aside {
-            &_dispatch.reduce_mut(|state| state.is_aside = false);
+
+    let _dispatch_device_info = dispatch_device_info.clone();
+    let _rc_device_info = rc_device_info.clone();
+    let on_aside_bar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+        if _rc_device_info.is_aside {
+            let _ = &_dispatch_device_info.reduce_mut(|state| state.is_aside = false);
         } else {
-            &_dispatch.reduce_mut(|state| state.is_aside = true);
+            let _ = &_dispatch_device_info.reduce_mut(|state| state.is_aside = true);
         }
     });
-    let _device = device.clone();
+
     let right_content: Html = html! {
-       <>
+        <>
             <Download/>
-               <i
-                onclick={handle_light_mod}
-                class={format!("btn {}",if _device.is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
-               ></i>
-            <Suspense fallback = { html! {<div>{"loading"}</div>} }>
-               <TitleAvatarComponent/>
+            <i
+                onclick={on_light_mode}
+                class={format!("btn {}",if rc_device_info.is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
+            ></i>
+            <Suspense fallback = {html! {<div>{"loading"}</div>}}>
+                <TitleAvatarComponent/>
             </Suspense>
-           <PageOptions/>
-       </>
+            <PageOptions/>
+        </>
     };
 
     html! {
         <TitleBar
-            style={(if !(device.is_web) {"padding-left: 75px; cursor: grab;"} else {""}).to_string()}
-            title={current_directory}
+            style={(if !(rc_device_info.is_web) {"padding-left: 75px; cursor: grab;"} else {""}).to_string()}
+            title={html! {<CurDirectory/>}}
             {right_content}
          >
-            <li class="btn" onclick={toggle_aside_bar}>
-            {if device.is_aside {
-                html!{<i class="fa-solid fa-x"></i>}
-            } else{
-                html!{<i class="fa-solid fa-bars"></i>}
-            }}
+            <li class="btn" onclick={on_aside_bar}>
+                {if rc_device_info.is_aside {
+                    html!{<i class="fa-solid fa-x"></i>}
+                } else{
+                    html!{<i class="fa-solid fa-bars"></i>}
+                }}
             </li>
             <Markdown/>
         </TitleBar >

@@ -19,7 +19,7 @@ pub fn Drag(props: &Props) -> Html {
     // <Menu
     //     event={position.clone()}
     //      {items}
-    //   />
+    //  />
     <div  style={format!("transition: 0.2s; position: absolute; {};",p)}>
             <i contenteditable="false" id="drag-icon" style="display: inline-block;">{"+"}</i>
             <i contenteditable="false" id="drag-icon" style="display: inline-block;">{"::"}</i>

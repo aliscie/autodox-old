@@ -2,19 +2,32 @@
 #selection-popper {
     justify-content: space-evenly;
     font-size: 1.25rem;
-    background-color: #707070;
-    cursor: pointer;
     border-radius: 3%;
     position: absolute;
     z-index: 10;
     display: none;
 }
 
+
 #selection-popper button {
     height: 100%;
     position: relative;
+    outline: none;
+    border: none;
+    background-color: rgb(140, 140, 140);
+    font-size: 17px;
 }
 
+#selection-popper :first-child {
+    border-top-left-radius: 50px 50px;
+    border-bottom-left-radius: 50px 50px;
+}
+
+
+#selection-popper :last-child {
+    border-top-right-radius: 50px 50px;
+    border-bottom-right-radius: 50px 50px;
+}
 
 #selection-popper button:hover {
     background-color: #56b8f5;

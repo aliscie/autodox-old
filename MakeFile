@@ -41,11 +41,15 @@ deploy:
 	# make sure to run dfx start in order to start the simulated blockchain locally
 	# make sure to have Cargo.lock files so the dfx can install from it because dfx does not install from Cargo.toml
 	#dfx deploy registrar --with-cycles 10000000000000
-	#def start --backend
+	#def start --backendyes
 	dfx deploy
 
+
+deploy_internet:
+	dfx deploy internet_identity
+
 watch_fe:
-	cargo watch -w "./frontend" -s "cd frontend; yarn wasm ; yarn run build ; cd ../;  dfx deploy"
+	cargo watch -w "./frontend" -s "cd frontend; yarn wasm ; yarn run build ; cd ../;  dfx deploy backend "
 
 watch_be:
 	cargo watch -w "./canisters" -s "dfx deploy"

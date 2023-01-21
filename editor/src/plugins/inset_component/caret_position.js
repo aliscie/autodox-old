@@ -5,7 +5,7 @@ export function getCaretPosition() {
     var rangeCount = 0;
     var childNodes = selectedObj.anchorNode.parentNode.childNodes;
 
-    for (var i = 0; i < childNodes.length; i++) {
+    for (var i = 0; i <childNodes.length; i++) {
       if (childNodes[i] == selectedObj.anchorNode) {
         break;
       }

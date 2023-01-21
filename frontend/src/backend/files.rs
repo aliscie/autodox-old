@@ -1,17 +1,25 @@
+use crate::backend;
+use crate::utils::DeviceInfo;
 use futures::future::err;
-use uuid::Uuid;
-use wasm_bindgen_futures::spawn_local;
-use web_sys::console;
-use yewdux::prelude::Dispatch;
-
 use shared::{
     id::Id,
     schema::{FileDirectory, FileNodeCreate},
 };
 use shared::{log, schema::FileNodeDelete};
+use uuid::Uuid;
+use wasm_bindgen_futures::spawn_local;
+use web_sys::console;
+use yewdux::prelude::Dispatch;
 
-use crate::backend;
-use crate::utils::DeviceInfo;
+pub async fn rename_file(id: String, new_name: String) {
+    let info = Dispatch::<DeviceInfo>::new();
+    if info.get().is_web || info.get().is_online {
+        let res = backend::rename_file_ic(id.to_string(), "new_name".to_string()).await;
+        log!(res);
+    } else {
+        log!("rename on desktop");
+    }
+}
 
 pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -51,7 +59,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -127,15 +135,11 @@ enum FileLocation {
     SYNCED,
 }
 
-pub fn change_directory(parent_id: String, child_id: String, old_parent_id: String)
-// -> Result<(), String>
-{
-    // let mut response: Option<Result<(), String>> = None;
+pub fn change_directory(parent_id: String, child_id: String, old_parent_id: String) {
     spawn_local(async move {
         let x = self::local_change_directory(parent_id, child_id, old_parent_id).await;
         console::log_1(&format!("change_directory returned : {:?}", x).into())
     });
-    // return response.unwrap();
 }
 
 async fn local_change_directory(
@@ -144,7 +148,7 @@ async fn local_change_directory(
     old_parent_id: String,
 ) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
-    let file_dispatch = Dispatch::<FileDirectory>::new();
+    let _dispatch_file = Dispatch::<FileDirectory>::new();
     if info.get().is_web || info.get().is_online {
         unimplemented!();
     }
@@ -155,7 +159,7 @@ async fn local_change_directory(
         )
             .await
             .map(|e| {
-                file_dispatch.reduce_mut(|f| {
+                _dispatch_file.reduce_mut(|f| {
                     let child_id = Uuid::parse_str(&child_id).map(Id::from).unwrap();
                     for i in f.files.adjacency.values_mut() {
                         i.iter()
