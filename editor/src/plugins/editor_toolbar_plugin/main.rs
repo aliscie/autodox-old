@@ -1,35 +1,18 @@
 use std::fmt::Display;
-
+use wasm_bindgen::UnwrapThrowExt;
+use web_sys::{Element, HtmlDocument};
 use crate::plugins::editor_toolbar;
 use shared::log;
-use web_sys::HtmlInputElement;
+use web_sys::{HtmlInputElement, window};
 use yew::prelude::*;
+
+use wasm_bindgen::JsCast;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub action: Callback<ToolbarAction>,
+    pub action: Callback<String>,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum ToolbarAction {
-    Bold,
-    Italic,
-    Underscore,
-    Comment,
-    Droplet,
-}
-
-impl Display for ToolbarAction {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Bold => write!(f, "Bold"),
-            Self::Italic => write!(f, "Italic"),
-            Self::Underscore => write!(f, "Underscore"),
-            Self::Comment => write!(f, "Comment"),
-            Self::Droplet => write!(f, "Droplet"),
-        }
-    }
-}
 
 #[function_component]
 pub fn EditorToolbar(props: &Props) -> Html {
@@ -40,24 +23,45 @@ pub fn EditorToolbar(props: &Props) -> Html {
         (),
     );
 
-    let buttons: [ToolbarAction; 5] = [
-        ToolbarAction::Bold,
-        ToolbarAction::Italic,
-        ToolbarAction::Underscore,
-        ToolbarAction::Comment,
-        ToolbarAction::Droplet,
+    let buttons = [
+        "Bold",
+        "Italic",
+        "Underline",
+        "Comment",
+        "Droplet",
+        "Color",
     ];
+
     let action = props.action.clone();
+    let _action = props.action.clone();
+    let oninput: Callback<InputEvent> = Callback::from(move |_e: InputEvent| {
+        log!(_e.data());
+        if let Some(data) = _e.data() {
+            // TODO why thi is not working? (not this is a compensatory task)
+            _action.emit(data)
+        }
+    });
+
     html! {
     <div contenteditable="false" id="selection-popper" class="buttons_group_class">
 
-        {buttons.into_iter().map(|button| html! {
-            <button
-                onclick = {
-                    let action = action.clone();
-                    move |_| action.emit(button)
+        {buttons.into_iter().map(|button|{
+            let icon = format!("{}",button).to_string().to_lowercase();
+            if icon == "color"{
+                return html!{<input oninput={oninput.clone()} type="color" value="#f6f82" id="colorPicker"/>}
+            } else {
+                html! {
+                <button
+                    onmousedown = {
+                        let action = action.clone();
+                        move |_| action.clone().emit(button.to_string())
+                    }
+                    class={format!("fa-solid fa-{}",icon)}
+                ></button>
                 }
-           ><i class={format!("fa-{}",button)}></i>{button.to_string().chars().nth(0).unwrap()}</button>
+            }
+
+
         }).collect::<Html>()}
         </div>
     }

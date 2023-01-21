@@ -60,6 +60,8 @@ features = [
     "MutationObserverInit",
     "MutationRecord",
     "DomRectList",
+    "HtmlDocument",
+    "InputEvent",
 ]
 
 #[dev-dependencies]
