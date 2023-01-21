@@ -44,4 +44,15 @@ extern "C" {
 
     #[wasm_bindgen(js_name = rename_file)]
     pub async fn rename_file_ic(id: String, new_name: String) -> JsValue;
+
+    #[wasm_bindgen(js_name = call_ic)]
+    pub async fn call_ic(method: String,
+                            // args: T
+    ) -> JsValue;
+    // where
+    // T is (C)
+    // C is (A, B)
+    // C is (A, B D E)
+    // A is (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z)
+    // w
 }

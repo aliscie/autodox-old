@@ -16,7 +16,12 @@ pub async fn rename_file(id: String, new_name: String) {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         log!("before rename");
-        let res = backend::rename_file_ic(id.to_string(), "new_name".to_string()).await;
+        // let res = backend::rename_file_ic(id.to_string(), "new_name".to_string()).await;
+
+        let res = backend::call_ic("rename_file".to_string(),
+        // (id.to_string(), "new_name".to_string())
+        ).await;
+
         log!("after rename");
         log!(res);
     } else {
@@ -82,7 +87,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -99,7 +104,7 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -123,7 +128,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-        .await;
+            .await;
         log!(&x);
         return x;
     } else {
