@@ -1,5 +1,5 @@
 use crate::components::{CurDirectory, TitleBar};
-use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
+use crate::specific_components::{SaveButton, Download, Markdown, PageOptions, TitleAvatarComponent};
 use crate::utils::DeviceInfo;
 use crate::*;
 use wasm_bindgen::prelude::*;
@@ -39,6 +39,7 @@ pub fn get_title_bar() -> Html {
 
     let right_content: Html = html! {
         <>
+            <SaveButton/>
             <Download/>
             <i
                 onclick={on_light_mode}

@@ -8,8 +8,10 @@ pub use file_data::FileData;
 pub use files_category::ButtonsGroup;
 pub use markdown_button::Markdown;
 pub use page_option_component::PageOptions;
+pub use save_button::*;
 pub use search_filters::SearchFilters;
 pub use title_avatar_component::TitleAvatarComponent;
+
 mod download_component;
 mod file_component;
 mod file_data;
@@ -18,3 +20,4 @@ mod markdown_button;
 mod page_option_component;
 mod search_filters;
 mod title_avatar_component;
+mod save_button;
