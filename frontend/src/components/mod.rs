@@ -3,9 +3,13 @@
 
 pub use avatar::Avatar;
 pub use directory::CurDirectory;
+pub use loading::*;
 pub use menu::PopOverMenu;
 pub use title_bar::TitleBar;
+
 mod avatar;
 mod directory;
 mod menu;
 pub mod title_bar;
+mod loading;
+

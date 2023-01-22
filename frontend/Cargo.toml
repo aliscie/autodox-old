@@ -14,6 +14,7 @@ wasm-opt = false
 wasm-opt = false
 
 [dependencies]
+stylist = { version = "0.10.0", features = ["yew"] }
 yew = { version = "0.20.0", features = ["csr"] }
 yew-hooks = "0.2.0"
 yew-router = "0.17.0"
