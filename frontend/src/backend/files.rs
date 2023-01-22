@@ -16,11 +16,11 @@ pub async fn rename_file(id: String, new_name: String) {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         log!("before rename");
-        // let res = backend::rename_file_ic(id.to_string(), "new_name".to_string()).await;
+        let res = backend::rename_file_ic(id, "new_name".to_string()).await;
 
-        let res = backend::call_ic("rename_file".to_string(),
-        // (id.to_string(), "new_name".to_string())
-        ).await;
+        // let res = backend::call_ic("rename_file".to_string(),
+        // // (id.to_string(), "new_name".to_string())
+        // ).await;
 
         log!("after rename");
         log!(res);
