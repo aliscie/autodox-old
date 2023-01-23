@@ -15,6 +15,7 @@ pub fn get_profile() -> Option<UserQuery> {
             return Some(UserQuery {
                 image: user.image,
                 username: user.username,
+                ..UserQuery::default()
             });
         }
     }

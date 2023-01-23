@@ -108,7 +108,7 @@ pub fn rename_file(file_id: String, new_name: String) -> Option<String> {
     let mut user_files: UserFiles = s!(UserFiles);
     if let Some(file_directory) = user_files.get_mut(&user) {
         file_directory.files.vertices.get_mut(&file_id).unwrap().name = new_name.clone();
-        return Some("file is renamed".to_string());
+        return Some(format!("File is renamed to {}", &new_name).to_string());
     };
     s! { UserFiles = user_files}
     ;

@@ -12,9 +12,24 @@ pub struct UserQuery {
     #[serde(default)]
     pub username: Option<String>,
     pub image: Option<Vec<u8>>,
-    // last_name: Option<String>,
-    // first_name: Option<String>,
-    // birthdate: Option<String>,
-    // email: Option<String>,
-    // emails: Option<Vec<String>>,
+    pub last_name: Option<String>,
+    pub first_name: Option<String>,
+    pub birthdate: Option<String>,
+    pub email: Option<String>,
+    pub emails: Option<Vec<String>>,
+}
+
+
+impl UserQuery {
+    pub fn default() -> Self {
+        Self {
+            username: None,
+            image: None,
+            last_name: None,
+            first_name: None,
+            birthdate: None,
+            email: None,
+            emails: None,
+        }
+    }
 }

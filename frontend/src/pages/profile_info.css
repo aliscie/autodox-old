@@ -3,7 +3,7 @@ table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     align-self: center;
-    width: 88%;
+    width: 100%;
     max-width: 300px;
 }
 
@@ -11,6 +11,10 @@ td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+}
+
+h2 {
+    width: 50%
 }
 
 /*tr:nth-child(even) {*/

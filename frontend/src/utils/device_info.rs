@@ -22,10 +22,7 @@ impl Default for DeviceInfo {
             is_authed: false,
             is_aside: false,
             is_light_mode: false,
-            profile: UserQuery {
-                image: None,
-                username: None,
-            },
+            profile: UserQuery::default() ,
             is_saved: false,
             // updates: Vec::new(),
         }

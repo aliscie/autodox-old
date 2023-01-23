@@ -37,7 +37,7 @@ pub fn TitleAvatarComponent() -> Html {
         let input: HtmlInputElement = _e.target_unchecked_into();
         let mut profile_arc = Arc::new(Mutex::new(UserQuery {
             username: Some("account1".to_string()),
-            image: None,
+            ..UserQuery::default()
         }));
         let profile_arc_clone = Arc::clone(&profile_arc);
 
@@ -55,7 +55,7 @@ pub fn TitleAvatarComponent() -> Html {
         Timeout::new(1000, move || {
             // let profile_obj = profile_arc.lock().unwrap().clone();
         })
-        .forget();
+            .forget();
     });
 
     let items: Vec<Html> = vec![
