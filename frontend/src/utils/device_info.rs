@@ -1,4 +1,4 @@
-use shared::schema::UserQuery;
+use shared::schema::{EditorElementUpdate, UserQuery};
 use yewdux::prelude::*;
 
 #[derive(Debug, PartialEq, Eq, Clone, Store)]
@@ -9,6 +9,9 @@ pub struct DeviceInfo {
     pub is_aside: bool,
     pub is_light_mode: bool,
     pub profile: UserQuery,
+    pub is_saved: bool,
+    // pub updates: Vec<EditorElementUpdate>
+
 }
 
 impl Default for DeviceInfo {
@@ -23,6 +26,8 @@ impl Default for DeviceInfo {
                 image: None,
                 username: None,
             },
+            is_saved: false,
+            // updates: Vec::new(),
         }
     }
 }

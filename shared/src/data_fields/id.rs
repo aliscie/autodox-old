@@ -65,13 +65,6 @@ impl From<Vec<u8>> for Id {
     }
 }
 
-impl From<String> for Id {
-    fn from(value: String) -> Self {
-        let id: Vec<u8> = ic_cdk::export::Principal::from_text(&value).expect(&*format!("Invalid Principal string {}", &value)).as_slice().into();
-        id.into()
-    }
-}
-
 impl Debug for Id {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)

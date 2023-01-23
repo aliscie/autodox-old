@@ -1,8 +1,8 @@
-import { AuthClient } from "@dfinity/auth-client";
-import { createActor, canisterId, idlFactory } from './../../../../../src/declarations/backend';
+import {AuthClient} from "@dfinity/auth-client";
+import {createActor, canisterId, idlFactory} from './../../../../../src/declarations/backend';
 
-const { ic } = window;
-const { plug } = ic;
+const {ic} = window;
+const {plug} = ic;
 
 let backendActor, loading = false
 
@@ -29,7 +29,7 @@ export const get_actor = async () => {
                 return
             }
 
-            backendActor = await plug.createActor({ canisterId, interfaceFactory: idlFactory, agent: plug.agent });
+            backendActor = await plug.createActor({canisterId, interfaceFactory: idlFactory, agent: plug.agent});
         } else {
             const authClient = await AuthClient.create();
             const identity = await authClient.getIdentity();
@@ -114,9 +114,15 @@ export async function create_file(data) {
     let actor = await get_actor()
     return await actor.create_file(data);
 }
+
 export async function rename_file(id, new_name) {
     let actor = await get_actor()
     return await actor.rename_file(id, new_name);
+}
+
+export async function call_ic(method, args) {
+    let actor = await get_actor();
+    return await actor[method]("id", "newname");
 }
 
 export async function register(username) {

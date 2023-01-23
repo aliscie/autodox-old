@@ -20,8 +20,8 @@ pub struct DownloadProps {
     // pub id: u64,
 }
 
-#[function_component(Download)]
-pub fn download(props: &DownloadProps) -> Html {
+#[function_component]
+pub fn Download(props: &DownloadProps) -> Html {
     let (device, _) = use_store::<DeviceInfo>();
 
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);

@@ -17,12 +17,17 @@ use yew::{html, Html};
 use yew_hooks::{use_bool_toggle, use_toggle};
 use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
+use crate::components::Loading;
 
 #[function_component(FileTree)]
 pub fn to_html() -> Html {
     let (tree, _) = use_store::<FileDirectory>();
     let start = tree.clone().files.root.unwrap().clone();
     let map: Rc<RefCell<HashMap<Id, VNode>>> = Rc::new(RefCell::new(HashMap::new()));
+
+    if format!("{:#?}", &tree.clone().files).len()< 355 {
+        return html!{<Loading/>}
+    }
 
     for (id, file_node) in tree.clone().files.into_iter(start) {
         let mut class_name = "";

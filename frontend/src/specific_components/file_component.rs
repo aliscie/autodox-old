@@ -135,7 +135,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     log!(id.to_string());
     let rename_file: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
         spawn_local(async move {
-            backend::rename_file(_id.to_string(), "new_name".to_string()).await;
+            backend::rename_file(serde_json::json!(_id).to_string(), "new_name".to_string()).await;
         });
     });
 

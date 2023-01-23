@@ -1532,6 +1532,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "shared",
+ "stylist 0.10.1",
  "uuid 1.2.2",
  "wasm-bindgen",
  "wasm-bindgen-futures",
