@@ -50,7 +50,7 @@ pub fn create_file(data: String) -> String {
 
 #[update]
 #[candid_method(update)]
-pub fn delete_file(file_id: String) -> Option<FileDirectory> {
+pub fn delete_file(file_id: String) -> Option<String> {
     let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
     let user = User::current()?;
     let mut user_files: UserFiles = s!(UserFiles);

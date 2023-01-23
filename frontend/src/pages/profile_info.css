@@ -1,0 +1,18 @@
+table {
+    background: rgba(140, 140, 140, 0.3);
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    align-self: center;
+    width: 88%;
+    max-width: 300px;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+/*tr:nth-child(even) {*/
+/*  background-color: #dddddd;*/
+/*}*/
