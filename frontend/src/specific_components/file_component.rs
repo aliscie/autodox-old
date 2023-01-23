@@ -33,6 +33,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     // }
     //let drop_data = use_state(|| "".to_string());
     //let is_drag_over = use_state(|| "".to_string());
+    let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     let is_drag_under = use_state(|| "".to_string());
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let is_dragged = use_state(|| "".to_string());
@@ -132,12 +133,33 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _id = id.clone();
-    log!(id.to_string());
-    let rename_file: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        spawn_local(async move {
-            backend::rename_file(serde_json::json!(_id).to_string(), "new_name".to_string()).await;
+    // log!(id.to_string());
+    // let rename_file: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+    //     spawn_local(async move {
+    //         let id = serde_json::json!(_id).to_string();
+    //         log!(&id);
+    //         backend::rename_file(id, "new_name".to_string()).await;
+    //     });
+    // });
+
+    let rename_file: Callback<MouseEvent> =
+        dispatch_file_directory.reduce_mut_future_callback(move |state| {
+            Box::pin(async move {
+                let clone_id = _id.clone();
+                let id = serde_json::json!(_id).to_string();
+                log!(&clone_id);
+                let x = backend::rename_file(id, "new_name".to_string()).await;
+                if x.is_ok() {
+                    log!("success".to_string());
+                    state
+                        .files
+                        .vertices
+                        .get_mut(&clone_id)
+                        .unwrap()
+                        .name = "new_name".to_string();
+                }
+            })
         });
-    });
 
     let ondelete = {
         let id = id.clone();

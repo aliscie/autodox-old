@@ -11,21 +11,15 @@ use wasm_bindgen_futures::spawn_local;
 use web_sys::console;
 use yewdux::prelude::Dispatch;
 
-pub async fn rename_file(id: String, new_name: String) {
-
+pub async fn rename_file(id: String, new_name: String) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        log!("before rename");
         let res = backend::rename_file_ic(id, "new_name".to_string()).await;
-
-        // let res = backend::call_ic("rename_file".to_string(),
-        // // (id.to_string(), "new_name".to_string())
-        // ).await;
-
-        log!("after rename");
         log!(res);
+        return Ok(());
     } else {
         log!("rename on desktop");
+        return Err("user is offline".to_string());
     }
 }
 
@@ -67,7 +61,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -87,7 +81,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -104,7 +98,7 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -117,7 +111,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
         // TODO backend::call_ic("create_directory"); make this dynamic
         log!("before get dirs");
         let response = backend::get_directories_ic().await;
-        log!(&response);
+        // log!(&response);
         let file_tree: Result<Option<FileDirectory>, serde_wasm_bindgen::Error> =
             serde_wasm_bindgen::from_value(response);
         log!(&file_tree);
@@ -128,7 +122,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-            .await;
+        .await;
         log!(&x);
         return x;
     } else {
