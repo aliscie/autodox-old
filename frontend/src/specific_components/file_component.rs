@@ -1,6 +1,8 @@
+use gloo::utils::document;
 use uuid::Uuid;
+use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{Element, MouseEvent};
+use web_sys::{Element, HtmlInputElement, MouseEvent, window};
 use yew::prelude::*;
 use yew_hooks::use_toggle;
 use yew_router::prelude::{use_navigator, use_route};
@@ -141,22 +143,25 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     //         backend::rename_file(id, "new_name".to_string()).await;
     //     });
     // });
+    let current_name = props.name.clone();
+    let rename_file: Callback<KeyboardEvent> =
+        dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+            let input: HtmlInputElement = _e.target_unchecked_into();
+            let value: String = input.value();
 
-    let rename_file: Callback<MouseEvent> =
-        dispatch_file_directory.reduce_mut_future_callback(move |state| {
+
             Box::pin(async move {
                 let clone_id = _id.clone();
-                let id = serde_json::json!(_id).to_string();
-                log!(&clone_id);
-                let x = backend::rename_file(id, "new_name".to_string()).await;
-                if x.is_ok() {
-                    log!("success".to_string());
-                    state
-                        .files
-                        .vertices
-                        .get_mut(&clone_id)
-                        .unwrap()
-                        .name = "new_name".to_string();
+
+                if _e.key() == "Enter"
+                // && value.clone() != current_name.clone()
+                {
+
+                    let x = backend::rename_file(id, value.clone()).await;
+                    if x.is_ok() {
+                        state.files.vertices.get_mut(&clone_id).unwrap().name = value;
+
+                    }
                 }
             })
         });
@@ -187,7 +192,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 _ => {}
             }
             Box::pin(async move {
+
                 let result = crate::backend::delete_file(delete_file_node).await;
+
                 log!(result);
                 state.files.remove(&file_id);
             })
@@ -269,8 +276,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            position = {position.clone()}
            items={vec![
            html! {<a><input
-                onclick={rename_file}
-                // TODO fix this later not matter now
+                onkeydown={rename_file}
+                value={current_name}
                 autofocus=true placeholder="rename.."/></a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
