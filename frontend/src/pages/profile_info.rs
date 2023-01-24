@@ -3,7 +3,6 @@ use yewdux::dispatch::Dispatch;
 use yewdux::functional::use_store;
 use crate::shared::*;
 use crate::utils::{DeviceInfo, Image};
-use crate::components::Loading;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {}
@@ -16,7 +15,7 @@ pub fn profile_info(props: &Props) -> Html {
     let profile = device.profile.clone();
     let profile_object = serde_json::json!(device.profile);
     if device.profile.username.is_none() {
-        return html! {<Loading/>};
+        return html! {<div class="loader"/>};
     }
     let profile_object = profile_object.as_object().unwrap().iter().filter(|(k, v)| { !["image", "username"].contains(&&***k) });
     let onsubmit: Callback<SubmitEvent> = Callback::from(|e:SubmitEvent| {

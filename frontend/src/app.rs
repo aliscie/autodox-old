@@ -7,7 +7,7 @@ use shared::schema::UserQuery;
 use shared::schema::{FileDirectory, FileNode};
 use shared::*;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, MouseEvent};
+use web_sys::{window, MouseEvent, HtmlInputElement};
 use yew::prelude::*;
 use yew::suspense::*;
 use yew_router::prelude::*;
@@ -50,21 +50,27 @@ pub fn app() -> Html {
         // history.push(Route::File { id: market_page });
     });
 
-    let on_create_file: Callback<MouseEvent> = dispatch_file_directory.reduce_mut_future_callback(|state| {
+    let on_create_file: Callback<KeyboardEvent> = dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+        let input: HtmlInputElement = _e.target_unchecked_into();
+        let value: String = input.value();
+
         Box::pin(async move {
-            let file = FileNode::default();
-            let x = crate::backend::create_file(
-                state.id,
-                state.files.root.unwrap(),
-                "untitled".to_string(),
-                file.id,
-            )
-            .await;
-            if x.is_ok() {
-                state
-                    .files
-                    .push_children(state.files.root.unwrap(), file.id, file);
-            }
+            if _e.key() == "Enter" {
+                let mut file = FileNode::default();
+                file.name = value.clone();
+                let _ = input.class_list().toggle("loader");
+                let x = crate::backend::create_file(
+                    state.id,
+                    state.files.root.unwrap(),
+                    value,
+                    file.id,
+                )
+                    .await;
+                if x.is_ok() {
+                    state.files.push_children(state.files.root.unwrap(), file.id, file);
+                    let _ = input.class_list().toggle("loader");
+                }
+            };
         })
     });
 
@@ -96,8 +102,8 @@ pub fn app() -> Html {
                     <ul id="myUL">
                         <FileTree/>
                         <bottom_buttons>
-                            <button onclick={on_create_file}><i class="fa-solid fa-plus"></i>{"Add file"}</button>
-                            <span><input placeholder="Add from test"/></span>
+                            <input value="Add new file." onkeydown={on_create_file}/>
+                            // <span><input placeholder="Add from test"/></span>
                             <button onclick={on_market_place}><i class="fa-solid fa-globe"></i>{"Market place"}</button>
                         </bottom_buttons>
                     </ul>
