@@ -123,8 +123,15 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
     let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     use_future_with_deps(
         |file_id| async move {
-            match dispatch_file_directory.get().files.vertices.get(&file_id) {
+            match dispatch_file_directory
+                .get()
+                .files
+                .vertices
+                .get(&file_id)
+                .to_owned()
+            {
                 Some(current_file_data) => {
+                    log!(current_file_data);
                     match current_file_data.element_tree {
                         Some(tree_id) => {
                             return get_element_tree(&tree_id).await;
@@ -158,9 +165,9 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                             );
                             // let _ = create_element_tree(&default_element_tree, *file_id).await?;
                             let tree_id = default_element_tree.id;
-                            dispatch_file_directory.reduce_mut(|f| {
+                            dispatch_file_directory.clone().reduce_mut(|f| {
                                 let file_node = f.files.vertices.get_mut(&file_id).unwrap();
-                                file_node.id = tree_id;
+                                // file_node.element_tree = Some(Uuid::new_v4().into());
                             });
                             return Ok(default_element_tree);
                         }

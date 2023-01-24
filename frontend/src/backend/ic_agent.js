@@ -115,6 +115,11 @@ export async function create_file(data) {
     return await actor.create_file(data);
 }
 
+export async function delete_file(data) {
+    let actor = await get_actor()
+    return await actor.delete_file(data);
+}
+
 export async function rename_file(id, new_name) {
     let actor = await get_actor()
     return await actor.rename_file(id, new_name);

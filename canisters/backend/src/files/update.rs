@@ -12,7 +12,7 @@ use ic_stable_memory::{
 use serde::Serialize;
 
 use shared::id::Id;
-use shared::schema::{FileDirectory, FileNode, FileNodeCreate};
+use shared::schema::{FileDirectory, FileNode, FileNodeCreate, FileNodeDelete};
 use shared::Tree;
 
 use crate::files::types::*;
@@ -42,24 +42,30 @@ pub fn create_file(data: String) -> String {
             .insert(create_file_data.id, create_file_data.into());
     }
     // let _= create::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
-    s! { UserFiles = user_files}
-    ;
+    s! { UserFiles = user_files};
     "New file is created.".to_string()
 }
 
-
 #[update]
 #[candid_method(update)]
-pub fn delete_file(file_id: String) -> Option<String> {
-    let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
-    let user = User::current()?;
+pub fn delete_file(json_data: String) -> String {
+    let data = serde_json::from_str::<FileNodeDelete>(&json_data).unwrap();
+    let user = User::current();
+    if user.is_none() {
+        return "user not found".to_string();
+    };
     let mut user_files: UserFiles = s!(UserFiles);
-    let files = user_files.get(&user).map(|s| s.clone());
-    let file_id = Id::from(file_id);
-    // TODO files.remove(file_id)
-    None
+    if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
+        let adjacency = file_directory.files.adjacency.get_mut(&data.parent_id).unwrap();
+        if adjacency.len() > 0 {
+            let index = adjacency.iter().position(|x| *x == data.id).unwrap();
+            adjacency.remove(index);
+        }
+        file_directory.files.vertices.remove(&data.id);
+    }
+    s! {UserFiles = user_files};
+    "File is deleted.".to_string()
 }
-
 
 #[update]
 #[candid_method(update)]
@@ -77,7 +83,6 @@ pub async fn create_directory() -> String {
         return "User already have directory.".to_string();
     };
 
-
     let mut file_directory = FileDirectory::new(id, "default".to_string());
     let id: Id = Id::ic_new().await;
     file_directory.files.push_vertex(
@@ -94,23 +99,25 @@ pub async fn create_directory() -> String {
         .insert(id.clone().into(), Vec::new());
     file_directory.files.root = Some(id.into());
     user_files.insert(current_user.unwrap(), file_directory.clone());
-    s! { UserFiles = user_files}
-    ;
+    s! { UserFiles = user_files};
     "New directory is created.".to_string()
 }
 
-
 #[update]
 #[candid_method(update)]
-pub fn rename_file(file_id: String, new_name: String) -> Option<String> {
+pub async fn rename_file(file_id: String, new_name: String) -> Option<String> {
     let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
     let user = User::current()?;
-    let mut user_files: UserFiles = s!(UserFiles);
+    let mut user_files = s!(UserFiles);
     if let Some(file_directory) = user_files.get_mut(&user) {
-        file_directory.files.vertices.get_mut(&file_id).unwrap().name = new_name.clone();
-        return Some(format!("File is renamed to {}", &new_name).to_string());
+        file_directory
+            .files
+            .vertices
+            .get_mut(&file_id)
+            .unwrap()
+            .name = new_name.clone();
+        s! { UserFiles = user_files};
+        return Some("file is renamed".to_string());
     };
-    s! { UserFiles = user_files}
-    ;
     None
 }

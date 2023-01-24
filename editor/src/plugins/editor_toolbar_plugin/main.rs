@@ -16,12 +16,16 @@ pub struct Props {
 
 #[function_component]
 pub fn EditorToolbar(props: &Props) -> Html {
-    use_effect_with_deps(
-        move |editor_ref| {
-            let _toolbar_action = editor_toolbar();
-        },
-        (),
-    );
+    let window = web_sys::window().unwrap();
+    let document = window.document().unwrap();
+    let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+
+    // use_effect_with_deps(
+    //     move |editor_ref| {
+    //         let _toolbar_action = editor_toolbar();
+    //     },
+    //     (),
+    // );
 
     let buttons = [
         "Bold",
@@ -34,10 +38,13 @@ pub fn EditorToolbar(props: &Props) -> Html {
 
     let action = props.action.clone();
     let _action = props.action.clone();
+    let _html_document = html_document.clone();
     let oninput: Callback<InputEvent> = Callback::from(move |_e: InputEvent| {
-        log!(_e.data());
+        _e.prevent_default();
+        let x = _html_document.exec_command_with_show_ui_and_value("foreColor", false, "rgba(0,0,0,0.5)").unwrap();
         if let Some(data) = _e.data() {
             // TODO why thi is not working? (not this is a compensatory task)
+            // let x = html_document.exec_command_with_show_ui_and_value("foreColor", false, data).unwrap();
             _action.emit(data)
         }
     });
@@ -48,14 +55,19 @@ pub fn EditorToolbar(props: &Props) -> Html {
         {buttons.into_iter().map(|button|{
             let icon = format!("{}",button).to_string().to_lowercase();
             if icon == "color"{
-                return html!{<input oninput={oninput.clone()} type="color" value="#f6f82" id="colorPicker"/>}
+                return html!{<input  oninput={oninput.clone()} type="color" value="#f6f82" id="colorPicker"/>}
             } else {
                 html! {
                 <button
                     onmousedown = {
                         let action = action.clone();
-                        move |_| action.clone().emit(button.to_string())
-                    }
+                        let html_document = html_document.clone();
+                        let icon = icon.clone();
+                        move |_| {
+                            let x = html_document.exec_command(&icon).unwrap();
+                            action.clone().emit(button.to_string())
+                        }
+                        }
                     class={format!("fa-solid fa-{}",icon)}
                 ></button>
                 }

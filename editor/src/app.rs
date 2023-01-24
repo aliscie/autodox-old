@@ -179,14 +179,6 @@ pub fn Editor(props: &EditorProps) -> Html {
 
     let action: Callback<String> = Callback::from(move |e: String| {
         log!(e.clone());
-        let command = e.to_lowercase();
-        let window = web_sys::window().unwrap();
-        let document = window.document().unwrap();
-        let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
-        let x = html_document.exec_command_with_show_ui_and_value(&command, false, "").unwrap();
-        // let x = html_document.exec_command_with_show_ui_and_value("foreColor", false, "rgba(0,0,0,0.5)").unwrap();
-
-
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
         //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
         //     text_format: Some(format),
@@ -207,9 +199,9 @@ pub fn Editor(props: &EditorProps) -> Html {
            >
 
             <EditorToolbar  action={action}/>
-            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
-            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
-            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
+            // <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
+            // <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
+            // <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
