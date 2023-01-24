@@ -12,7 +12,7 @@ use ic_stable_memory::{
 use serde::Serialize;
 
 use shared::id::Id;
-use shared::schema::{FileDirectory, FileNode, FileNodeCreate};
+use shared::schema::{FileDirectory, FileNode, FileNodeCreate, FileNodeDelete};
 use shared::Tree;
 
 use crate::files::types::*;
@@ -48,14 +48,23 @@ pub fn create_file(data: String) -> String {
 
 #[update]
 #[candid_method(update)]
-pub fn delete_file(file_id: String) -> Option<String> {
-    let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
-    let user = User::current()?;
+pub fn delete_file(json_data: String) -> String {
+    let data = serde_json::from_str::<FileNodeDelete>(&json_data).unwrap();
+    let user = User::current();
+    if user.is_none() {
+        return "user not found".to_string();
+    };
     let mut user_files: UserFiles = s!(UserFiles);
-    let files = user_files.get(&user).map(|s| s.clone());
-    let file_id = Id::from(file_id);
-    // TODO files.remove(file_id)
-    None
+    if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
+        let adjacency = file_directory.files.adjacency.get_mut(&data.parent_id).unwrap();
+        if adjacency.len() > 0 {
+            let index = adjacency.iter().position(|x| *x == data.id).unwrap();
+            adjacency.remove(index);
+        }
+        file_directory.files.vertices.remove(&data.id);
+    }
+    s! {UserFiles = user_files};
+    "File is deleted.".to_string()
 }
 
 #[update]
@@ -102,7 +111,12 @@ pub async fn rename_file(file_id: String, new_name: String) -> Option<String> {
     let mut user_files = s!(UserFiles);
     if let Some(file_directory) = user_files.get_mut(&user) {
         let id: Id = Id::ic_new().await;
-        file_directory.files.vertices.get_mut(&file_id).unwrap().name = new_name.clone();
+        file_directory
+            .files
+            .vertices
+            .get_mut(&file_id)
+            .unwrap()
+            .name = new_name.clone();
         s! { UserFiles = user_files};
         return Some("file is renamed".to_string());
     };

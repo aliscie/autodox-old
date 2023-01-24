@@ -54,7 +54,10 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
 pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        let data_json = serde_json::json!(data);
+        log!(&data_json);
+        let res = backend::delete_file_ic(data_json.to_string()).await;
+        log!(&res);
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
