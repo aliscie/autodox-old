@@ -20,12 +20,12 @@ pub fn EditorToolbar(props: &Props) -> Html {
     let document = window.document().unwrap();
     let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
 
-    use_effect_with_deps(
-        move |editor_ref| {
-            let _toolbar_action = editor_toolbar();
-        },
-        (),
-    );
+    // use_effect_with_deps(
+    //     move |editor_ref| {
+    //         let _toolbar_action = editor_toolbar();
+    //     },
+    //     (),
+    // );
 
     let buttons = [
         "Bold",

@@ -199,9 +199,9 @@ pub fn Editor(props: &EditorProps) -> Html {
            >
 
             <EditorToolbar  action={action}/>
-            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
-            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
-            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
+            // <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
+            // <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
+            // <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }

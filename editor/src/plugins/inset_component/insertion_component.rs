@@ -36,14 +36,14 @@ pub fn EditorInsert(props: &Props) -> Html {
     let command = props.command.clone();
     let _trigger = trigger.clone();
     let _position = position.clone();
-    use_effect_with_deps(
-        move |editor_ref| {
-            utiles::trigger_popover(&text_editor, _trigger, _position, _input_text);
-            // TODO on hit Enter ot Tab
-            //  command(current_item)
-        },
-        (),
-    );
+    // use_effect_with_deps(
+    //     move |editor_ref| {
+    //         utiles::trigger_popover(&text_editor, _trigger, _position, _input_text);
+    //         // TODO on hit Enter ot Tab
+    //         //  command(current_item)
+    //     },
+    //     (),
+    // );
     let _position = position.clone();
 
     if (*position.clone()).is_none() {
