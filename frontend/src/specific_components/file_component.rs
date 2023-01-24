@@ -1,18 +1,17 @@
-use uuid::Uuid;
-use wasm_bindgen_futures::spawn_local;
-use web_sys::{Element, MouseEvent};
-use yew::prelude::*;
-use yew_hooks::use_toggle;
-use yew_router::prelude::{use_navigator, use_route};
-use yewdux::prelude::*;
-
+use crate::{backend, components::PopOverMenu, router::Route};
 use shared::{
     id::Id,
     log,
     schema::{FileDirectory, FileNodeDelete},
 };
-
-use crate::{backend, components::PopOverMenu, router::Route};
+use uuid::Uuid;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use wasm_bindgen_futures::spawn_local;
+use web_sys::{Element, HtmlInputElement, KeyboardEvent, MouseEvent};
+use yew::prelude::*;
+use yew_hooks::use_toggle;
+use yew_router::prelude::{use_navigator, use_route};
+use yewdux::prelude::*;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -133,33 +132,23 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _id = id.clone();
-    // log!(id.to_string());
-    // let rename_file: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-    //     spawn_local(async move {
-    //         let id = serde_json::json!(_id).to_string();
-    //         log!(&id);
-    //         backend::rename_file(id, "new_name".to_string()).await;
-    //     });
-    // });
-
-    let rename_file: Callback<MouseEvent> =
-        dispatch_file_directory.reduce_mut_future_callback(move |state| {
-            Box::pin(async move {
-                let clone_id = _id.clone();
-                let id = serde_json::json!(_id).to_string();
-                log!(&clone_id);
-                let x = backend::rename_file(id, "new_name".to_string()).await;
-                if x.is_ok() {
-                    log!("success".to_string());
-                    state
-                        .files
-                        .vertices
-                        .get_mut(&clone_id)
-                        .unwrap()
-                        .name = "new_name".to_string();
-                }
-            })
-        });
+    let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
+        if _e.key() == "Enter" {
+            let event: Event = _e.dyn_into().unwrap_throw();
+            let input_elem: HtmlInputElement =
+                event.target().unwrap_throw().dyn_into().unwrap_throw();
+            let value = input_elem.value();
+            log!(value.clone());
+            let spawn_id = serde_json::json!(_id.clone()).to_string();
+            let spawn_value = value.clone();
+            spawn_local(async move {
+                backend::rename_file(spawn_id, spawn_value.clone()).await;
+            });
+            dispatch_file_directory.reduce_mut(|state| {
+                state.files.vertices.get_mut(&_id).unwrap().name = value;
+            });
+        }
+    });
 
     let ondelete = {
         let id = id.clone();
@@ -268,14 +257,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             click_on={Some(true)}
            position = {position.clone()}
            items={vec![
-           html! {<a><input
-                onclick={rename_file}
-                // TODO fix this later not matter now
-                autofocus=true placeholder="rename.."/></a>},
-           html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
-           html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
-           html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
-           html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
+            html! {<a><input {onkeydown} autofocus=true placeholder="rename.."/></a>},
+            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
+            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
+            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
+            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
            ]}
           />
 

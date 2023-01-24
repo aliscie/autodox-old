@@ -14,7 +14,7 @@ use yewdux::prelude::Dispatch;
 pub async fn rename_file(id: String, new_name: String) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let res = backend::rename_file_ic(id, "new_name".to_string()).await;
+        let res = backend::rename_file_ic(id, new_name).await;
         log!(res);
         return Ok(());
     } else {
