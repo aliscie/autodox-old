@@ -8,10 +8,10 @@ use crate::components::{ToolTip, Loading};
 #[derive(Properties, PartialEq)]
 pub struct Props {}
 
-use crate::components::{Avatar, PopOverMenu};
+use crate::components::{Avatar};
 
-#[function_component(ProfileInfo)]
-pub fn profile_info(props: &Props) -> Html {
+#[function_component]
+pub fn ProfileInfo(props: &Props) -> Html {
     let show: UseStateHandle<bool> = use_state(|| false);
 
     let (device, _) = use_store::<DeviceInfo>();
