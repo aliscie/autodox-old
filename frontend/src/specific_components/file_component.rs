@@ -132,23 +132,42 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _id = id.clone();
-    let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
-        if _e.key() == "Enter" {
-            let event: Event = _e.dyn_into().unwrap_throw();
-            let input_elem: HtmlInputElement =
-                event.target().unwrap_throw().dyn_into().unwrap_throw();
-            let value = input_elem.value();
-            log!(value.clone());
-            let spawn_id = serde_json::json!(_id.clone()).to_string();
-            let spawn_value = value.clone();
-            spawn_local(async move {
-                backend::rename_file(spawn_id, spawn_value.clone()).await;
-            });
-            dispatch_file_directory.reduce_mut(|state| {
-                state.files.vertices.get_mut(&_id).unwrap().name = value;
-            });
-        }
-    });
+    let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
+        .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+            let input: HtmlInputElement = _e.target_unchecked_into();
+            let value: String = input.value();
+            Box::pin(async move {
+                let clone_id = _id.clone();
+                if _e.key() == "Enter" {
+                    let res = backend::rename_file(_id.clone(), value.clone()).await;
+                    if (res.is_ok()) {
+                        state.files.vertices.get_mut(&_id).unwrap().name = value;
+                    }
+                }
+            })
+        });
+
+    // let current_name = props.name.clone();
+    // let rename_file: Callback<KeyboardEvent> =
+    //     dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+    //         let input: HtmlInputElement = _e.target_unchecked_into();
+    //         let value: String = input.value();
+
+    //         Box::pin(async move {
+    //             let clone_id = _id.clone();
+
+    //             if _e.key() == "Enter"
+    //             // && value.clone() != current_name.clone()
+    //             {
+
+    //                 let x = backend::rename_file(id, value.clone()).await;
+    //                 if x.is_ok() {
+    //                     state.files.vertices.get_mut(&clone_id).unwrap().name = value;
+
+    //                 }
+    //             }
+    //         })
+    //     });
 
     let ondelete = {
         let id = id.clone();
@@ -177,6 +196,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             }
             Box::pin(async move {
                 let result = crate::backend::delete_file(delete_file_node).await;
+
                 log!(result);
                 state.files.remove(&file_id);
             })
@@ -257,11 +277,14 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             click_on={Some(true)}
            position = {position.clone()}
            items={vec![
-            html! {<a><input {onkeydown} autofocus=true placeholder="rename.."/></a>},
-            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
-            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
-            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
-            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
+           html! {<a><input
+                {onkeydown}
+                value={props.name.clone()}
+                autofocus=true placeholder="rename.."/></a>},
+           html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
+           html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
+           html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
+           html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
            ]}
           />
 

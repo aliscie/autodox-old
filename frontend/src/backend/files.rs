@@ -7,18 +7,27 @@ use shared::{
 };
 use shared::{log, schema::FileNodeDelete};
 use uuid::Uuid;
+use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::console;
+use web_sys::{console, window};
 use yewdux::prelude::Dispatch;
 
-pub async fn rename_file(id: String, new_name: String) -> Result<(), String> {
+pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
+    let curr = window()
+        .unwrap_throw()
+        .document()
+        .unwrap_throw()
+        .get_element_by_id(&id.to_string())
+        .unwrap();
+    let _ = curr.class_list().toggle("loader");
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let res = backend::rename_file_ic(id, new_name).await;
-        log!(res);
+        let _ = backend::rename_file_ic(serde_json::json!(id).to_string(), new_name).await;
+        let _ = curr.class_list().toggle("loader");
         return Ok(());
     } else {
         log!("rename on desktop");
+        let _ = curr.class_list().toggle("loader");
         return Err("user is offline".to_string());
     }
 }
@@ -55,8 +64,17 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let data_json = serde_json::json!(data);
+        let id = data_json.to_string();
+        let curr = window()
+            .unwrap_throw()
+            .document()
+            .unwrap_throw()
+            .get_element_by_id(&data.id.to_string())
+            .unwrap();
+        let _ = curr.class_list().toggle("loader");
         log!(&data_json);
-        let res = backend::delete_file_ic(data_json.to_string()).await;
+        let res = backend::delete_file_ic(id).await;
+        let _ = curr.class_list().toggle("loader");
         log!(&res);
     }
     if !info.get().is_web {

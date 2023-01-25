@@ -3,7 +3,6 @@
 
 pub use avatar::Avatar;
 pub use directory::CurDirectory;
-pub use loading::*;
 pub use menu::PopOverMenu;
 pub use title_bar::TitleBar;
 pub use tooltip::*;
@@ -12,6 +11,5 @@ mod avatar;
 mod directory;
 mod menu;
 pub mod title_bar;
-mod loading;
 mod tooltip;
 
