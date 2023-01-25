@@ -73,11 +73,6 @@ export async function logout() {
     await authClient.logout()
 }
 
-export async function update_profile(data) {
-    const actor = await get_actor()
-    return await actor.update_profile(data)
-}
-
 export async function get_profile() {
     const actor = await get_actor()
     let result = await actor.get_profile();
@@ -88,12 +83,6 @@ export async function get_profile() {
     if (typeof (result.image) == "object") {
         result.image = result.image[0] || "";
     }
-    return result;
-}
-
-export async function create_directory() {
-    let actor = await get_actor()
-    let result = await actor.create_directory();
     return result;
 }
 
@@ -108,16 +97,6 @@ export async function get_directories() {
         result.files.root = result.files.root[0];
     }
     return result;
-}
-
-export async function delete_file(data) {
-    let actor = await get_actor()
-    return await actor.delete_file(data);
-}
-
-export async function rename_file(id, new_name) {
-    let actor = await get_actor()
-    return await actor.rename_file(id, new_name);
 }
 
 export async function call_ic(method, stringify) {

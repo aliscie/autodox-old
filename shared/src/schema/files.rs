@@ -502,3 +502,10 @@ pub struct FileNodeDelete {
     pub tree_id: Id,
     pub parent_id: Id,
 }
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct FileNodeMove {
+    pub id: Id,
+    pub old_parent_id: Id,
+    pub new_parent_id: Id,
+}

@@ -12,7 +12,9 @@ use ic_stable_memory::{
 use serde::Serialize;
 
 use shared::id::Id;
-use shared::schema::{FileDirectory, FileNode, FileNodeCreate, FileNodeDelete, FileNodeUpdate};
+use shared::schema::{
+    FileDirectory, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate,
+};
 use shared::Tree;
 
 use crate::files::types::*;
@@ -56,7 +58,11 @@ pub fn delete_file(json_data: String) -> String {
     };
     let mut user_files: UserFiles = s!(UserFiles);
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
-        let adjacency = file_directory.files.adjacency.get_mut(&data.parent_id).unwrap();
+        let adjacency = file_directory
+            .files
+            .adjacency
+            .get_mut(&data.parent_id)
+            .unwrap();
         if adjacency.len() > 0 {
             let index = adjacency.iter().position(|x| *x == data.id).unwrap();
             adjacency.remove(index);
@@ -105,9 +111,9 @@ pub async fn create_directory() -> String {
 
 #[update]
 #[candid_method(update)]
-pub async fn rename_file(data: String) -> Option<String> {
+pub async fn rename_file(data: String) -> String {
     let json_data = serde_json::from_str::<FileNodeUpdate>(&data).unwrap();
-    let user = User::current()?;
+    let user = User::current().unwrap();
     let mut user_files = s!(UserFiles);
     if let Some(file_directory) = user_files.get_mut(&user) {
         file_directory
@@ -117,7 +123,38 @@ pub async fn rename_file(data: String) -> Option<String> {
             .unwrap()
             .name = json_data.name.unwrap().clone();
         s! { UserFiles = user_files};
-        return Some("file is renamed".to_string());
     };
-    None
+    return "File is renamed".to_string();
+}
+
+#[update]
+#[candid_method(update)]
+pub async fn change_directory(data: String) -> String {
+    let json_data = serde_json::from_str::<FileNodeMove>(&data).unwrap();
+    let user = User::current().unwrap();
+    let mut user_files = s!(UserFiles);
+    if let Some(file_directory) = user_files.get_mut(&user) {
+        let old_adjacency = file_directory
+            .files
+            .adjacency
+            .get_mut(&json_data.old_parent_id)
+            .unwrap();
+        if old_adjacency.len() > 0 {
+            let file_index = old_adjacency
+                .iter()
+                .position(|x| *x == json_data.id)
+                .unwrap();
+            if (file_index >= 0) {
+                old_adjacency.remove(file_index);
+            }
+        }
+        let mut new_adjacency = file_directory
+            .files
+            .adjacency
+            .entry(json_data.new_parent_id)
+            .or_default();
+        new_adjacency.push(json_data.id);
+        s! {UserFiles = user_files};
+    };
+    return "File is moved".to_string();
 }

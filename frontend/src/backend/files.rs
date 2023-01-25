@@ -1,10 +1,12 @@
+use std::str::FromStr;
+
 use crate::backend;
 use crate::utils::DeviceInfo;
 use futures::future::err;
 use shared::{
     id::Id,
     log,
-    schema::{FileDirectory, FileNodeCreate, FileNodeDelete, FileNodeUpdate},
+    schema::{FileDirectory, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate},
 };
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
@@ -29,7 +31,11 @@ pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
     let _ = curr.class_list().toggle("loader");
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let _ = backend::call_ic("rename_file".to_string(), serde_json::json!(data).to_string()).await;
+        let _ = backend::call_ic(
+            "rename_file".to_string(),
+            serde_json::json!(data).to_string(),
+        )
+        .await;
         let _ = curr.class_list().toggle("loader");
         return Ok(());
     } else {
@@ -174,10 +180,17 @@ async fn local_change_directory(
     child_id: String,
     old_parent_id: String,
 ) -> Result<(), String> {
+    let file_node_move = FileNodeMove {
+        id: Id::from_str(&child_id).unwrap(),
+        old_parent_id: Id::from_str(&old_parent_id).unwrap(),
+        new_parent_id: Id::from_str(&parent_id).unwrap(),
+    };
     let info = Dispatch::<DeviceInfo>::new();
     let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        let json_file_node_move = serde_json::json!(file_node_move).to_string();
+        let res = backend::call_ic("change_directory".to_string(), json_file_node_move).await;
+        return Ok(());
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
