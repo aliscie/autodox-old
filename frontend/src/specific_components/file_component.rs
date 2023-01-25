@@ -2,7 +2,7 @@ use crate::{backend, components::PopOverMenu, router::Route};
 use shared::{
     id::Id,
     log,
-    schema::{FileDirectory, FileNodeDelete},
+    schema::{FileDirectory, FileNodeDelete, FileNode},
 };
 use uuid::Uuid;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
@@ -132,6 +132,21 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _id = id.clone();
+    let on_create_file: Callback<MouseEvent> = dispatch_file_directory
+        .reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
+            Box::pin(async move {
+                let mut file = FileNode::default();
+                let file_name = "new file".to_string();
+                file.name = file_name.clone();
+                let x =
+                    crate::backend::create_file(state.id, _id.clone(), file_name, file.id).await;
+                if x.is_ok() {
+                    state.files.push_children(_id.clone(), file.id, file);
+                }
+            })
+        });
+
+    let _id = id.clone();
     let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
             let input: HtmlInputElement = _e.target_unchecked_into();
@@ -239,7 +254,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
           >
            {props.name.clone()}
            </li>
-           <i style="height:100%" class="btn create-file fa-solid fa-plus"></i>
+           <i style="height:100%" class="btn create-file fa-solid fa-plus"
+           onclick={on_create_file}
+           ></i>
         </div>
 
             // <div
