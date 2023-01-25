@@ -110,11 +110,6 @@ export async function get_directories() {
     return result;
 }
 
-export async function create_file(data) {
-    let actor = await get_actor()
-    return await actor.create_file(data);
-}
-
 export async function delete_file(data) {
     let actor = await get_actor()
     return await actor.delete_file(data);
@@ -128,6 +123,11 @@ export async function rename_file(id, new_name) {
 export async function call_ic(method, stringify) {
     let actor = await get_actor();
     return await actor[method](stringify);
+}
+
+export async function call_ic_np(method) { // np: no parameter
+    let actor = await get_actor();
+    return await actor[method]();
 }
 
 export async function register(username) {

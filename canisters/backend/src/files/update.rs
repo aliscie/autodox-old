@@ -12,7 +12,7 @@ use ic_stable_memory::{
 use serde::Serialize;
 
 use shared::id::Id;
-use shared::schema::{FileDirectory, FileNode, FileNodeCreate, FileNodeDelete};
+use shared::schema::{FileDirectory, FileNode, FileNodeCreate, FileNodeDelete, FileNodeUpdate};
 use shared::Tree;
 
 use crate::files::types::*;
@@ -105,17 +105,17 @@ pub async fn create_directory() -> String {
 
 #[update]
 #[candid_method(update)]
-pub async fn rename_file(file_id: String, new_name: String) -> Option<String> {
-    let file_id = serde_json::from_str::<Id>(&file_id).unwrap();
+pub async fn rename_file(data: String) -> Option<String> {
+    let json_data = serde_json::from_str::<FileNodeUpdate>(&data).unwrap();
     let user = User::current()?;
     let mut user_files = s!(UserFiles);
     if let Some(file_directory) = user_files.get_mut(&user) {
         file_directory
             .files
             .vertices
-            .get_mut(&file_id)
+            .get_mut(&json_data.id)
             .unwrap()
-            .name = new_name.clone();
+            .name = json_data.name.unwrap().clone();
         s! { UserFiles = user_files};
         return Some("file is renamed".to_string());
     };

@@ -64,7 +64,7 @@ type UserQuery = opt record {
 };
 
 service : {
-    "rename_file": (text, text) -> (opt text);
+    "rename_file": (text) -> (opt text);
     "create_file": (text) -> (text);
     "delete_file": (text) -> (text);
     "create_directory": () -> (text);

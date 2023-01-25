@@ -137,7 +137,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             let input: HtmlInputElement = _e.target_unchecked_into();
             let value: String = input.value();
             Box::pin(async move {
-                let clone_id = _id.clone();
                 if _e.key() == "Enter" {
                     let res = backend::rename_file(_id.clone(), value.clone()).await;
                     if (res.is_ok()) {
@@ -146,28 +145,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 }
             })
         });
-
-    // let current_name = props.name.clone();
-    // let rename_file: Callback<KeyboardEvent> =
-    //     dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
-    //         let input: HtmlInputElement = _e.target_unchecked_into();
-    //         let value: String = input.value();
-
-    //         Box::pin(async move {
-    //             let clone_id = _id.clone();
-
-    //             if _e.key() == "Enter"
-    //             // && value.clone() != current_name.clone()
-    //             {
-
-    //                 let x = backend::rename_file(id, value.clone()).await;
-    //                 if x.is_ok() {
-    //                     state.files.vertices.get_mut(&clone_id).unwrap().name = value;
-
-    //                 }
-    //             }
-    //         })
-    //     });
 
     let ondelete = {
         let id = id.clone();
@@ -262,7 +239,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
           >
            {props.name.clone()}
            </li>
-           <i style="height:100%" class="btn create_file fa-solid fa-plus"></i>
+           <i style="height:100%" class="btn create-file fa-solid fa-plus"></i>
         </div>
 
             // <div
