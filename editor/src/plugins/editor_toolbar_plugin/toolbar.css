@@ -1,0 +1,18 @@
+#selection-popper  .btn {
+    color: rgb(var(--text-color));
+    background: rgb(var(--primary-background));
+    width: 25px;
+}
+
+#selection-popper :last-child {
+    border-top-right-radius: 50px 50px;
+    border-bottom-right-radius: 50px 50px;
+}
+
+#selection-popper .btn:hover {
+    background-color: #56b8f5;
+}
+
+#selection-popper i {
+    pointer-events: none;
+}
