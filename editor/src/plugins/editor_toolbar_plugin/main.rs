@@ -2,11 +2,12 @@ use std::fmt::Display;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{Element, HtmlDocument};
 use crate::plugins::editor_toolbar;
-use shared::log;
+use shared::*;
 use web_sys::{HtmlInputElement, window};
 use yew::prelude::*;
 
 use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::Closure;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -16,15 +17,29 @@ pub struct Props {
 
 #[function_component]
 pub fn EditorToolbar(props: &Props) -> Html {
+    let init: UseStateHandle<bool> = use_state(|| false);
+
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
     let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+    let editor = window.document().unwrap().query_selector(".text_editor").unwrap();
+    let _editor = editor.clone();
+
+    let _init = init.clone();
+    let handle_click = Closure::wrap(Box::new(move |e: MouseEvent| {
+        if !(*_init) { _init.set(true) }
+    }) as Box<dyn FnMut(_)>);
+
+    &html_document.add_event_listener_with_callback("click", &handle_click.as_ref().unchecked_ref());
+    &handle_click.forget();
 
     use_effect_with_deps(
         move |editor_ref| {
-            // let _toolbar_action = editor_toolbar();
+            if let Some(text_editor) = _editor {
+                let _toolbar_action = editor_toolbar();
+            }
         },
-        (),
+        init.clone(),
     );
 
     let buttons = [
@@ -50,31 +65,32 @@ pub fn EditorToolbar(props: &Props) -> Html {
     });
 
     html! {
-    <div contenteditable="false" id="selection-popper" class="buttons_group_class">
-
-        {buttons.into_iter().map(|button|{
-            let icon = format!("{}",button).to_string().to_lowercase();
-            if icon == "color"{
-                return html!{<input  oninput={oninput.clone()} type="color" value="#f6f82" id="colorPicker"/>}
-            } else {
-                html! {
-                <button
-                    onmousedown = {
-                        let action = action.clone();
-                        let html_document = html_document.clone();
-                        let icon = icon.clone();
-                        move |_| {
-                            let x = html_document.exec_command(&icon).unwrap();
-                            action.clone().emit(button.to_string())
-                        }
-                        }
-                    class={format!("fa-solid fa-{}",icon)}
-                ></button>
+        <span class={css_file_macro!("toolbar.css")}>
+            <div
+            contenteditable="false" id="selection-popper" class="buttons_group_class">
+            {buttons.into_iter().map(|button|{
+                let icon = format!("{}",button).to_string().to_lowercase();
+                if icon == "color"{
+                    return html!{<input  oninput={oninput.clone()} type="color" value="#f6f82" id="colorPicker"/>}
+                } else {
+                    html! {
+                    <span
+                        onmousedown = {
+                            let action = action.clone();
+                            let html_document = html_document.clone();
+                            let icon = icon.clone();
+                            move |_| {
+                                let x = html_document.exec_command(&icon).unwrap();
+                                action.clone().emit(button.to_string())
+                            }
+                            }
+                        class={format!("btn fa-solid fa-{}",icon)}
+                    ></span>
+                    }
                 }
-            }
+            }).collect::<Html>()}
+            </div>
+        </span>
 
-
-        }).collect::<Html>()}
-        </div>
     }
 }

@@ -21,7 +21,7 @@ pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHand
 
     &window().unwrap_throw().add_event_listener_with_callback("click", &handle_click.as_ref().unchecked_ref());
     &handle_click.forget();
-
+    log!("trigger_popover");
     let handle_keydown = Closure::wrap(Box::new(move |e: KeyboardEvent| {
         let selection = window().unwrap_throw().get_selection().unwrap().unwrap();
         let curr_focus: Node = selection.focus_node().unwrap();

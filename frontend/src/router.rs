@@ -18,7 +18,7 @@ pub enum Route {
 }
 
 pub fn switch(routes: Route) -> Html {
-    let fallback = html! { <div> {"loading"}</div>};
+    let fallback = html! { <div class="loader"/>};
     match routes {
         // Dashboard
         Route::Home => html! {<span>{"We are at home!"}</span>},

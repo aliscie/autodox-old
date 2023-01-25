@@ -37,19 +37,22 @@ pub fn EditorInsert(props: &Props) -> Html {
     let command = props.command.clone();
     let _trigger = trigger.clone();
     let _position = position.clone();
+    let doc = window().unwrap_throw().document().unwrap_throw();
+    let editor = doc.query_selector(".text_editor");
+    let _editor = editor.clone();
     use_effect_with_deps(
         move |editor_ref| {
-            let doc = window().unwrap_throw().document().unwrap_throw();
-            if let Ok(text_editor) = doc.query_selector(".text_editor") {
+            if let Ok(text_editor) = _editor {
                 if let Some(text_editor) = text_editor {
                     utiles::trigger_popover(&text_editor, _trigger, _position, _input_text);
                 };
-            }
+            };
             // TODO on hit Enter ot Tab
             //  command(current_item)
         },
-        (),
+        editor.clone(),
     );
+
     let mut sorted_items = (&*items).clone();
     let _items = items.clone();
     let _input_text = input_text.clone();

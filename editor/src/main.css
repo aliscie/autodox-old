@@ -24,18 +24,6 @@
 }
 
 
-#selection-popper :last-child {
-    border-top-right-radius: 50px 50px;
-    border-bottom-right-radius: 50px 50px;
-}
-
-#selection-popper button:hover {
-    background-color: #56b8f5;
-}
-
-#selection-popper i {
-    pointer-events: none;
-}
 
 .btnEntrance {
     animation-duration: 0.2s;
