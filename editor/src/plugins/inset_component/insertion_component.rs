@@ -26,7 +26,6 @@ pub struct Props {
 
 #[function_component]
 pub fn EditorInsert(props: &Props) -> Html {
-
     let position: UseStateHandle<Option<Position>> = use_state(|| None);
 
     let input_text: UseStateHandle<String> = use_state(|| "".to_string());
@@ -80,28 +79,28 @@ pub fn EditorInsert(props: &Props) -> Html {
 
     let _position = position.clone();
 
-    // if (*position.clone()).is_none() {
+    if (*position.clone()).is_none() {
         return html! {
         <></>
     };
-    // };
-    // let p = (&*_position).as_ref().unwrap();
-    // let items = items.clone();
-    // html! {
-    //         <span class ={css_file_macro ! ("dropdown.css")}>
-    //
-    //         <select size="5" id = "editor_dropdown" style ={format ! (" top:{}px; left:{}px", p.y, p.x)}>
-    //         {
-    //         (&*items).clone()
-    //         .into_iter().map( | item | {
-    //             let _item = item.clone();
-    //             html !{<option onclick={Callback::from(move |e: MouseEvent| {
-    //                 command(_item.clone())
-    //             })}>{item.value}</ option>}
-    //         }).collect::<Html> ()
-    //         }
-    //
-    //         </ select>
-    //         </ span>
-    //         }
+    };
+    let p = (&*_position).as_ref().unwrap();
+    let items = items.clone();
+    html! {
+            <span class ={css_file_macro ! ("dropdown.css")}>
+
+            <select size="5" id = "editor_dropdown" style ={format ! (" top:{}px; left:{}px", p.y, p.x)}>
+            {
+            (&*items).clone()
+            .into_iter().map( | item | {
+                let _item = item.clone();
+                html !{<option onclick={Callback::from(move |e: MouseEvent| {
+                    command(_item.clone())
+                })}>{item.value}</ option>}
+            }).collect::<Html> ()
+            }
+
+            </ select>
+            </ span>
+            }
 }
