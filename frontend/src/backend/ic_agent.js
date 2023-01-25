@@ -125,9 +125,9 @@ export async function rename_file(id, new_name) {
     return await actor.rename_file(id, new_name);
 }
 
-export async function call_ic(method, args) {
+export async function call_ic(method, stringify) {
     let actor = await get_actor();
-    return await actor[method]("id", "newname");
+    return await actor[method](stringify);
 }
 
 export async function register(username) {

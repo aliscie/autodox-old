@@ -1,20 +1,17 @@
-use gloo::utils::document;
-use uuid::Uuid;
-use wasm_bindgen::UnwrapThrowExt;
-use wasm_bindgen_futures::spawn_local;
-use web_sys::{Element, HtmlInputElement, MouseEvent, window};
-use yew::prelude::*;
-use yew_hooks::use_toggle;
-use yew_router::prelude::{use_navigator, use_route};
-use yewdux::prelude::*;
-
+use crate::{backend, components::PopOverMenu, router::Route};
 use shared::{
     id::Id,
     log,
     schema::{FileDirectory, FileNodeDelete},
 };
-
-use crate::{backend, components::PopOverMenu, router::Route};
+use uuid::Uuid;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use wasm_bindgen_futures::spawn_local;
+use web_sys::{Element, HtmlInputElement, KeyboardEvent, MouseEvent};
+use yew::prelude::*;
+use yew_hooks::use_toggle;
+use yew_router::prelude::{use_navigator, use_route};
+use yewdux::prelude::*;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -135,36 +132,42 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _id = id.clone();
-    // log!(id.to_string());
-    // let rename_file: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-    //     spawn_local(async move {
-    //         let id = serde_json::json!(_id).to_string();
-    //         log!(&id);
-    //         backend::rename_file(id, "new_name".to_string()).await;
-    //     });
-    // });
-    let current_name = props.name.clone();
-    let rename_file: Callback<KeyboardEvent> =
-        dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+    let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
+        .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
             let input: HtmlInputElement = _e.target_unchecked_into();
             let value: String = input.value();
-
-
             Box::pin(async move {
                 let clone_id = _id.clone();
-
-                if _e.key() == "Enter"
-                // && value.clone() != current_name.clone()
-                {
-
-                    let x = backend::rename_file(id, value.clone()).await;
-                    if x.is_ok() {
-                        state.files.vertices.get_mut(&clone_id).unwrap().name = value;
-
+                if _e.key() == "Enter" {
+                    let res = backend::rename_file(_id.clone(), value.clone()).await;
+                    if (res.is_ok()) {
+                        state.files.vertices.get_mut(&_id).unwrap().name = value;
                     }
                 }
             })
         });
+
+    // let current_name = props.name.clone();
+    // let rename_file: Callback<KeyboardEvent> =
+    //     dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+    //         let input: HtmlInputElement = _e.target_unchecked_into();
+    //         let value: String = input.value();
+
+    //         Box::pin(async move {
+    //             let clone_id = _id.clone();
+
+    //             if _e.key() == "Enter"
+    //             // && value.clone() != current_name.clone()
+    //             {
+
+    //                 let x = backend::rename_file(id, value.clone()).await;
+    //                 if x.is_ok() {
+    //                     state.files.vertices.get_mut(&clone_id).unwrap().name = value;
+
+    //                 }
+    //             }
+    //         })
+    //     });
 
     let ondelete = {
         let id = id.clone();
@@ -192,7 +195,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 _ => {}
             }
             Box::pin(async move {
-
                 let result = crate::backend::delete_file(delete_file_node).await;
 
                 log!(result);
@@ -276,8 +278,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            position = {position.clone()}
            items={vec![
            html! {<a><input
-                onkeydown={rename_file}
-                value={current_name}
+                {onkeydown}
+                value={props.name.clone()}
                 autofocus=true placeholder="rename.."/></a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},

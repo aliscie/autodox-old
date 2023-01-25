@@ -13,16 +13,21 @@ use web_sys::{console, window};
 use yewdux::prelude::Dispatch;
 
 pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
+    let curr = window()
+        .unwrap_throw()
+        .document()
+        .unwrap_throw()
+        .get_element_by_id(&id.to_string())
+        .unwrap();
+    let _ = curr.class_list().toggle("loader");
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let curr = window().unwrap_throw().document().unwrap_throw().get_element_by_id(&id.to_string()).unwrap();
+        let _ = backend::rename_file_ic(serde_json::json!(id).to_string(), new_name).await;
         let _ = curr.class_list().toggle("loader");
-        let res = backend::rename_file_ic(serde_json::json!(id).to_string(), "new_name".to_string()).await;
-        let _ = curr.class_list().toggle("loader");
-
         return Ok(());
     } else {
         log!("rename on desktop");
+        let _ = curr.class_list().toggle("loader");
         return Err("user is offline".to_string());
     }
 }
@@ -60,7 +65,12 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
     if info.get().is_web || info.get().is_online {
         let data_json = serde_json::json!(data);
         let id = data_json.to_string();
-        let curr = window().unwrap_throw().document().unwrap_throw().get_element_by_id(&data.id.to_string()).unwrap();
+        let curr = window()
+            .unwrap_throw()
+            .document()
+            .unwrap_throw()
+            .get_element_by_id(&data.id.to_string())
+            .unwrap();
         let _ = curr.class_list().toggle("loader");
         log!(&data_json);
         let res = backend::delete_file_ic(id).await;
@@ -72,7 +82,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -92,7 +102,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -109,7 +119,7 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -133,7 +143,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-            .await;
+        .await;
         log!(&x);
         return x;
     } else {

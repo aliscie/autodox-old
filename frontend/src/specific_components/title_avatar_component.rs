@@ -48,14 +48,15 @@ pub fn TitleAvatarComponent() -> Html {
             profile_obj.image = Some(image.data.clone());
             // log!(&profile_obj);
             let profile_json = serde_json::json!(profile_obj);
-            let response = backend::update_profile(profile_json.to_string()).await;
+            let response =
+                backend::call_ic("update_profile".to_string(), profile_json.to_string()).await;
             log!(&response);
         });
 
         Timeout::new(1000, move || {
             // let profile_obj = profile_arc.lock().unwrap().clone();
         })
-            .forget();
+        .forget();
     });
 
     let items: Vec<Html> = vec![
