@@ -88,8 +88,8 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
     })
 }
 
-#[function_component(FileData)]
-pub fn file_data(props: &Props) -> HtmlResult {
+#[function_component]
+pub fn FileData(props: &Props) -> HtmlResult {
     let res = use_element_tree(props.id)?;
     let result_html = match *res {
         Ok(ref tree) => {
@@ -115,7 +115,7 @@ pub fn file_data(props: &Props) -> HtmlResult {
             failure.to_string().into()
         }
     };
-    Ok(result_html)
+    Ok(result_html) // TODO after loading the data this should rerender
 }
 
 #[hook]
