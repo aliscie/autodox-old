@@ -24,14 +24,14 @@ pub struct Id(pub Uuid);
 impl Id {
     #[cfg(feature = "backend")]
     pub async fn ic_new() -> Self {
-        let call_result: Result<(Vec<u8>, ), _> = ic_cdk::api::call::call(
+        let call_result: Result<(Vec<u8>,), _> = ic_cdk::api::call::call(
             ic_cdk::export::Principal::management_canister(),
             "raw_rand",
             (),
         )
-            .await;
+        .await;
         let id = match call_result {
-            Ok((id, )) => id,
+            Ok((id,)) => id,
             Err(e) => {
                 ic_cdk::trap(&format!("Failed to get id: {:#?}", e));
             }
@@ -75,6 +75,13 @@ impl TryFrom<&str> for Id {
     type Error = uuid::Error;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Ok(Self(Uuid::parse_str(value)?))
+    }
+}
+
+impl TryFrom<String> for Id {
+    type Error = uuid::Error;
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Ok(Self(Uuid::parse_str(value.as_str())?))
     }
 }
 
@@ -125,8 +132,8 @@ impl CandidType for Id {
         Type::Text
     }
     fn idl_serialize<S>(&self, serializer: S) -> Result<(), S::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
         serializer.serialize_text(&self.0.to_string())
     }
