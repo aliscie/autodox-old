@@ -50,4 +50,7 @@ extern "C" {
 
     #[wasm_bindgen(js_name = call_ic)]
     pub async fn call_ic(method: String, stringify: String) -> JsValue;
+
+    #[wasm_bindgen(js_name = call_ic_np)] // np: no parameter
+    pub async fn call_ic_np(method: String) -> JsValue;
 }
