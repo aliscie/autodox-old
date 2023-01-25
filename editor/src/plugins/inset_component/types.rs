@@ -11,7 +11,7 @@ pub struct DropDownItem {
 
 pub type CommandItems = Vec<DropDownItem>;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Position {
     pub x: f64,
     pub y: f64,

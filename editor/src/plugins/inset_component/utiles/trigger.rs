@@ -43,8 +43,11 @@ pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHand
             };
         }
 
+        log!(&*position); // TODO why this is always None?
+
+
         if is_track && &e.key() != "Enter" && e.key() != "Tab" {
-            log!("range");
+
             input_text.set(format!("{}", range.to_string()).to_string());
             if let Some(p) = range.get_client_rects() {
                 let p = p.get(0).unwrap();
