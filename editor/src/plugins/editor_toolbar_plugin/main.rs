@@ -22,7 +22,7 @@ pub fn EditorToolbar(props: &Props) -> Html {
 
     use_effect_with_deps(
         move |editor_ref| {
-            let _toolbar_action = editor_toolbar();
+            // let _toolbar_action = editor_toolbar();
         },
         (),
     );
