@@ -30,8 +30,7 @@ pub fn EditorInsert(props: &Props) -> Html {
 
     let input_text: UseStateHandle<String> = use_state(|| "".to_string());
     let _input_text = input_text.clone();
-    let doc = window().unwrap_throw().document().unwrap_throw();
-    let text_editor = doc.query_selector(".text_editor").unwrap().unwrap();
+
     let trigger = props.trigger.clone();
     let items = props.items.clone();
     let items: UseStateHandle<Vec<DropDownItem>> = use_state(|| items);
@@ -40,7 +39,12 @@ pub fn EditorInsert(props: &Props) -> Html {
     let _position = position.clone();
     use_effect_with_deps(
         move |editor_ref| {
-            utiles::trigger_popover(&text_editor, _trigger, _position, _input_text);
+            let doc = window().unwrap_throw().document().unwrap_throw();
+            if let Ok(text_editor) = doc.query_selector(".text_editor") {
+                if let Some(text_editor) = text_editor {
+                    utiles::trigger_popover(&text_editor, _trigger, _position, _input_text);
+                };
+            }
             // TODO on hit Enter ot Tab
             //  command(current_item)
         },
