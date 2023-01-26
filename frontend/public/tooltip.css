@@ -87,6 +87,8 @@ pre {
 
 /*== speech bubble ==*/
 .tool::after {
+    position: absolute;
+    z-index: 555;
     outline: none;
     background: #faa507;
     border-radius: .25em;

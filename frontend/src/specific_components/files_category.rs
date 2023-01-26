@@ -27,16 +27,11 @@ pub fn FilesCategory() -> Html {
         html! {<option>{"Home"}</option>},
         html! {<option>{"Trash"}</option>},
         html! {<option>{"School"}</option>},
-        // html! {<a {on_mouse_down}>
-        //     <span style={format!("{}",&*style.clone())}><input placeholder="rename.."/></span>
-        //     <i style="display:inline-block" class="fa-solid fa-plus"></i>
-        //     {"add category"}
-        // </option>},
         html! {<option>{"Add a category +"}</option>},
     ];
 
     html! {
-        <select onmouseup={on_mouse_up} style="width:100%; outline: None;">
+        <select style="width:100%"  onmouseup={on_mouse_up} >
             {items}
         </select>
     }
