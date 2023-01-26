@@ -67,16 +67,15 @@ pre {
 }
 
 
-/*== pointer tip ==*/
 .tool::before {
     border-style: solid;
     border-width: 0.75em 0.5em 0 0.5em;
-    border-color: #faa507 transparent transparent transparent;
+    border-color: rgb(var(--item-color)) transparent transparent transparent;
     bottom: 100%;
     content: "";
-    margin-left: -0.5em;
     transition: all .35s cubic-bezier(.84,-0.18,.31,1.26), opacity .35s .5s;
     transform:  scale(.6) translateY(-90%);
+    left: inherit;
 }
 
 .tool:hover::before,
@@ -87,25 +86,25 @@ pre {
 
 /*== speech bubble ==*/
 .tool::after {
-    position: absolute;
     z-index: 555;
     outline: none;
-    background: #faa507;
+    background: rgb(var(--item-color));
     border-radius: .25em;
     bottom: 180%;
-    color: #EDEFF0;
+    color: rgb(var(--text-color));
     content: attr(data-tip);
     margin-left: -8.75em;
     transition: all .35s cubic-bezier(.84,-0.18,.31,1.26) .2s;
     transform:  scale(.6) translateY(50%);
-    width: 17.5em;
-    font-size: 20px;
+    max-width: 12em;
+    font-size: 15px;
+    left: inherit;
 }
 
-.tool:hover::after,
-.tool:focus::after  {
-    transition: all .35s cubic-bezier(.84,-0.18,.31,1.26);
-}
+/*.tool:hover::after,*/
+/*.tool:focus::after  {*/
+/*    transition: all .35s cubic-bezier(.84,-0.18,.31,1.26);*/
+/*}*/
 
 @media (max-width: 760px) {
   .tool::after {
