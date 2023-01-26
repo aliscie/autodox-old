@@ -5,8 +5,8 @@
         "start": "webpack -w",
         "server": "ws -d dist",
         "clean": "rimraf dist pkg target",
-        "wasm": "wasm-pack build . --target web --dev -- --features \"web\"",
-        "wasm:watch": "cargo watch -i .gitignore -i \"pkg/*\" -i \"dist/*\" -s 'wasm-pack build . --target web --dev -- --features \"web\"'",
+        "wasm": "RUSTFLAGS=\"$RUSTFLAGS -A unused\" wasm-pack build . --target web --dev -- --features \"web\"",
+        "wasm:watch": "RUSTFLAGS=\"$RUSTFLAGS -A unused\" cargo watch -i .gitignore -i \"pkg/*\" -i \"dist/*\" -s 'wasm-pack build . --target web --dev -- --features \"web\"'",
         "dev": "yarn wasm && vite",
         "dev:watch": "concurrently \"yarn wasm:watch\" \"vite\"",
         "build": "vite build"

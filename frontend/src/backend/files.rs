@@ -1,11 +1,13 @@
+use std::str::FromStr;
+
 use crate::backend;
 use crate::utils::DeviceInfo;
 use futures::future::err;
 use shared::{
     id::Id,
-    schema::{FileDirectory, FileNodeCreate},
+    log,
+    schema::{FileDirectory, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate},
 };
-use shared::{log, schema::FileNodeDelete};
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
@@ -13,6 +15,13 @@ use web_sys::{console, window};
 use yewdux::prelude::Dispatch;
 
 pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
+    let data = FileNodeUpdate {
+        id: id.into(),
+        name: Some(new_name),
+        children: None,
+        parent_id: None,
+        element_tree: None,
+    };
     let curr = window()
         .unwrap_throw()
         .document()
@@ -22,7 +31,11 @@ pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
     let _ = curr.class_list().toggle("loader");
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let _ = backend::rename_file_ic(serde_json::json!(id).to_string(), new_name).await;
+        let _ = backend::call_ic(
+            "rename_file".to_string(),
+            serde_json::json!(data).to_string(),
+        )
+        .await;
         let _ = curr.class_list().toggle("loader");
         return Ok(());
     } else {
@@ -38,8 +51,6 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         directory_id: tree_id.into(),
         parent_id: parent_id.into(),
         name,
-        // using this for right now
-        // mode: shared::schema::FileMode::Public,
         id: id.into(),
         children: None,
     };
@@ -47,7 +58,7 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
     if info.get().is_web || info.get().is_online {
         let file_json = serde_json::json!(data);
         log!(&file_json);
-        let res = backend::create_file_ic(file_json.to_string()).await;
+        let res = backend::call_ic("create_file".to_string(), file_json.to_string()).await;
         log!(&res);
         return Ok(());
     } else if !info.get().is_web {
@@ -63,8 +74,7 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
 pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let data_json = serde_json::json!(data);
-        let id = data_json.to_string();
+        let data_json = serde_json::json!(data).to_string();
         let curr = window()
             .unwrap_throw()
             .document()
@@ -73,7 +83,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             .unwrap();
         let _ = curr.class_list().toggle("loader");
         log!(&data_json);
-        let res = backend::delete_file_ic(id).await;
+        let res = backend::call_ic("delete_file".to_string(), data_json).await;
         let _ = curr.class_list().toggle("loader");
         log!(&res);
     }
@@ -93,7 +103,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         spawn_local(async move {
-            let response = backend::create_directory_ic().await;
+            let response = backend::call_ic_np("create_directory".to_string()).await;
             log!(response);
         })
     }
@@ -170,10 +180,17 @@ async fn local_change_directory(
     child_id: String,
     old_parent_id: String,
 ) -> Result<(), String> {
+    let file_node_move = FileNodeMove {
+        id: Id::from_str(&child_id).unwrap(),
+        old_parent_id: Id::from_str(&old_parent_id).unwrap(),
+        new_parent_id: Id::from_str(&parent_id).unwrap(),
+    };
     let info = Dispatch::<DeviceInfo>::new();
     let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        let json_file_node_move = serde_json::json!(file_node_move).to_string();
+        let res = backend::call_ic("change_directory".to_string(), json_file_node_move).await;
+        return Ok(());
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
