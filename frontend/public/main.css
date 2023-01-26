@@ -161,13 +161,6 @@ h3 {
     font-size: 20px;
 }
 
-bottom_buttons {
-    width: 100%;
-}
-
-bottom_buttons button {
-    display: block;
-}
 
 /*article {*/
 /*    overflow: hidden;*/
@@ -377,6 +370,11 @@ button:hover {
 }
 
 .btn {
+    border-radius: 3px;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+
     text-align: center;
     position: relative;
     border: none;

@@ -65,7 +65,7 @@ pub fn app() -> Html {
             if _e.key() == "Enter" {
                 _e.prevent_default();
             };
-            if _e.key() != "Enter"  {
+            if _e.key() != "Enter" {
                 input.class_list().remove_1("tool").unwrap();
             };
 
@@ -88,8 +88,6 @@ pub fn app() -> Html {
                     let _ = input.class_list().remove_1("loader");
                 }
             };
-
-
         })
     });
 
@@ -119,14 +117,12 @@ pub fn app() -> Html {
                     <ul id="aside-content">
                         <SearchFilters/>
                         <FilesCategory/>
-                        <span class="files-tree">
+                        <div class="files-tree">
                             <FileTree/>
-                        </span>
-                        <bottom_buttons>
+                        </div>
                             <span onkeydown={on_create_file} contenteditable="true" class="btn" data-tip="File must have at least 1 character." style="width:100%" > {"Add new file."}</span>
                             // <span><input placeholder="Add from test"/></span>
                             <button style="width:100%" onclick={on_market_place}><i class=" fa-solid fa-globe"></i>{"Market place"}</button>
-                        </bottom_buttons>
                     </ul>
                 </aside>
                 <main style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
