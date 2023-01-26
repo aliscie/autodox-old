@@ -1,5 +1,6 @@
 use candid::candid_method;
 use ic_cdk::export::Principal;
+use shared::schema::UserQuery;
 // use ic_cdk_macros::update;
 use crate::custom_traits::*;
 use crate::users::types::{User, Users};
@@ -47,34 +48,19 @@ pub fn register(username: String) -> String {
     return "ok".to_string();
 }
 
-use candid::{CandidType, Deserialize};
-use serde::Serialize;
-
-#[derive(Deserialize, Serialize, Debug, CandidType)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
-pub struct UpdateProfile {
-    pub username: String,
-    pub image: Vec<u8>,
-}
-
-// ic_stable struct
-// https://docs.rs/ic-stable-structures/latest/ic_stable_structures/
-// BTreeMap
-
 #[update]
 #[candid_method(update)]
 pub fn update_profile(data: String) -> String {
-// TODO pub fn update_profile(data: User) -> String {
+    // TODO pub fn update_profile(data: User) -> String {
 
-    let profile_data = serde_json::from_str::<UpdateProfile>(&data).unwrap();
+    let profile_data = serde_json::from_str::<UserQuery>(&data).unwrap();
     let mut users = s!(Users);
     let caller = User::caller();
     for mut user in &mut users {
         if &user.address == &caller {
-            user.image = Some(profile_data.image.clone());
-            user.username = Some(profile_data.username.clone());
-            s! { Users = users}
-            ;
+            user.image = profile_data.image;
+            user.username = profile_data.username;
+            s! { Users = users};
             // return UpdateResponse {
             //     status: Status::Success,
             //     message: "Your profile has been s updated.".to_string(),

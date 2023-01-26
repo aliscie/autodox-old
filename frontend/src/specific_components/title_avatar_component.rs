@@ -15,7 +15,7 @@ use yewdux::prelude::*;
 
 #[function_component]
 pub fn TitleAvatarComponent() -> Html {
-    let (rc_device_info, _) = use_store::<DeviceInfo>();
+    let (rc_device_info, dispatch_device_info) = use_store::<DeviceInfo>();
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let navigator: yew_router::navigator::Navigator = use_navigator().unwrap();
 
@@ -33,31 +33,22 @@ pub fn TitleAvatarComponent() -> Html {
         })
     });
 
-    let on_upload: Callback<Event> = Callback::from(move |_e: Event| {
-        let input: HtmlInputElement = _e.target_unchecked_into();
-        let mut profile_arc = Arc::new(Mutex::new(UserQuery {
-            username: Some("account1".to_string()),
-            ..UserQuery::default()
-        }));
-        let profile_arc_clone = Arc::clone(&profile_arc);
-
-        spawn_local(async move {
+    let on_upload: Callback<Event> =
+        dispatch_device_info.reduce_mut_future_callback_with(move |state, _e: Event| {
+            let input: HtmlInputElement = _e.target_unchecked_into();
             let file = input.files().unwrap().get(0).unwrap();
-            let image = Image::new(file).await;
-            let profile_obj = &mut *profile_arc_clone.lock().unwrap();
-            profile_obj.image = Some(image.data.clone());
-            // log!(&profile_obj);
-            let profile_json = serde_json::json!(profile_obj);
-            let response =
-                backend::call_ic("update_profile".to_string(), profile_json.to_string()).await;
-            log!(&response);
+            Box::pin(async move {
+                let mut profile = UserQuery::default();
+                let image = Image::new(file).await;
+                profile.image = Some(image.data.clone());
+                let profile_json = serde_json::json!(profile);
+                // log!(&profile_json);
+                let res =
+                    backend::call_ic("update_profile".to_string(), profile_json.to_string()).await;
+                // log!(&res);
+                state.profile = profile;
+            })
         });
-
-        Timeout::new(1000, move || {
-            // let profile_obj = profile_arc.lock().unwrap().clone();
-        })
-        .forget();
-    });
 
     let items: Vec<Html> = vec![
         html! {<a onclick = {let navigator=navigator.clone();{move |_| {navigator.push(&PagesRoute::Profile)}}}><i class="fa-solid fa-user"></i>{"Profile info"}</a>},

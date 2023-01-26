@@ -2,8 +2,9 @@ use crate::{backend, components::PopOverMenu, router::Route};
 use shared::{
     id::Id,
     log,
-    schema::{FileDirectory, FileNodeDelete},
+    schema::{FileDirectory, FileNode, FileNodeDelete},
 };
+use std::str::FromStr;
 use uuid::Uuid;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use wasm_bindgen_futures::spawn_local;
@@ -85,29 +86,66 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         _is_enter.set("".to_string());
     });
 
-    let _is_enter = is_enter.clone();
-    let _is_dragged = is_dragged.clone();
-    let _is_drag_under = is_drag_under.clone();
-    let ondrop: Callback<DragEvent> = {
-        let id = id.clone();
-        let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
-        Callback::from(move |e: DragEvent| {
-            e.prevent_default();
-            let curr: Element = e.target_unchecked_into();
-            let _ = curr.class_list().toggle("dragging_over");
-            let dragged = e.data_transfer().unwrap().get_data("dragged_item").unwrap();
-            let id = id.clone();
-            let mut old_parent_id: Id = Uuid::new_v4().into();
-            let dragged_uuid = Uuid::parse_str(dragged.as_str()).map(Id::from).unwrap();
-            for (i, value) in &_dispatch_file_directory.get().files.adjacency {
-                if value.contains(&dragged_uuid) {
-                    old_parent_id = *i;
-                    break;
+    // let ondrop: Callback<DragEvent> = {
+    //     let id = id.clone();
+    //     let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
+    //     Callback::from(move |e: DragEvent| {
+    //         e.prevent_default();
+    //         let curr: Element = e.target_unchecked_into();
+    //         let _ = curr.class_list().toggle("dragging_over");
+    //         let dragged = e.data_transfer().unwrap().get_data("dragged_item").unwrap();
+    //         let id = id.clone();
+    //         let mut old_parent_id: Id = Uuid::new_v4().into();
+    //         let dragged_uuid = Uuid::parse_str(dragged.as_str()).map(Id::from).unwrap();
+    //         for (i, value) in &_dispatch_file_directory.get().files.adjacency {
+    //             if value.contains(&dragged_uuid) {
+    //                 old_parent_id = *i;
+    //                 break;
+    //             }
+    //         }
+    //         crate::backend::change_directory(id.to_string(), dragged, old_parent_id.to_string());
+    //     })
+    // };
+
+    let _id = id.clone();
+    let ondrop: Callback<DragEvent> =
+        dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: DragEvent| {
+            _e.prevent_default();
+            let curr: Element = _e.target_unchecked_into();
+            curr.class_list().toggle("dragging_over");
+            let dragged = _e
+                .data_transfer()
+                .unwrap()
+                .get_data("dragged_item")
+                .unwrap();
+            Box::pin(async move {
+                let mut old_parent_id: Id = Uuid::new_v4().into();
+                let dragged_uuid = Uuid::parse_str(dragged.as_str()).map(Id::from).unwrap();
+                for (i, value) in &state.files.adjacency {
+                    if value.contains(&dragged_uuid) {
+                        old_parent_id = *i;
+                        break;
+                    }
                 }
-            }
-            crate::backend::change_directory(id.to_string(), dragged, old_parent_id.to_string());
-        })
-    };
+                crate::backend::change_directory(
+                    _id.clone().to_string(),
+                    dragged.clone(),
+                    old_parent_id.clone().to_string(),
+                );
+                // Update file directory in the frontend
+                let child_id = Id::from_str(&dragged.clone()).unwrap();
+                let old_adjacency = state.files.adjacency.get_mut(&old_parent_id).unwrap();
+                if old_adjacency.len() > 0 {
+                    let file_index = old_adjacency
+                        .iter()
+                        .position(|x| *x == child_id.clone())
+                        .unwrap();
+                    old_adjacency.remove(file_index);
+                }
+                let mut new_adjacency = state.files.adjacency.entry(_id.clone()).or_default();
+                new_adjacency.push(child_id.clone());
+            })
+        });
 
     let _is_drag_under = is_drag_under.clone();
     let _is_dragged = is_dragged.clone();
@@ -132,12 +170,26 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _id = id.clone();
+    let on_create_file: Callback<MouseEvent> = dispatch_file_directory
+        .reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
+            Box::pin(async move {
+                let mut file = FileNode::default();
+                let file_name = "new file".to_string();
+                file.name = file_name.clone();
+                let x =
+                    crate::backend::create_file(state.id, _id.clone(), file_name, file.id).await;
+                if x.is_ok() {
+                    state.files.push_children(_id.clone(), file.id, file);
+                }
+            })
+        });
+
+    let _id = id.clone();
     let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
             let input: HtmlInputElement = _e.target_unchecked_into();
             let value: String = input.value();
             Box::pin(async move {
-                let clone_id = _id.clone();
                 if _e.key() == "Enter" {
                     let res = backend::rename_file(_id.clone(), value.clone()).await;
                     if (res.is_ok()) {
@@ -146,28 +198,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 }
             })
         });
-
-    // let current_name = props.name.clone();
-    // let rename_file: Callback<KeyboardEvent> =
-    //     dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
-    //         let input: HtmlInputElement = _e.target_unchecked_into();
-    //         let value: String = input.value();
-
-    //         Box::pin(async move {
-    //             let clone_id = _id.clone();
-
-    //             if _e.key() == "Enter"
-    //             // && value.clone() != current_name.clone()
-    //             {
-
-    //                 let x = backend::rename_file(id, value.clone()).await;
-    //                 if x.is_ok() {
-    //                     state.files.vertices.get_mut(&clone_id).unwrap().name = value;
-
-    //                 }
-    //             }
-    //         })
-    //     });
 
     let ondelete = {
         let id = id.clone();
@@ -262,7 +292,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
           >
            {props.name.clone()}
            </li>
-           <i style="height:100%" class="btn create_file fa-solid fa-plus"></i>
+           <i style="height:100%" class="btn create-file fa-solid fa-plus"
+           onclick={on_create_file}
+           ></i>
         </div>
 
             // <div
