@@ -18,8 +18,8 @@ use yew_hooks::{use_bool_toggle, use_toggle};
 use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
 
-#[function_component(FileTree)]
-pub fn to_html() -> Html {
+#[function_component]
+pub fn FileTree() -> Html {
     let (tree, _) = use_store::<FileDirectory>();
     let start = tree.clone().files.root.unwrap().clone();
     let map: Rc<RefCell<HashMap<Id, VNode>>> = Rc::new(RefCell::new(HashMap::new()));

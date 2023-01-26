@@ -43,7 +43,7 @@
     top: 0;
     left: 0;
 
-    background: rgba(var(--primary-background), 0.4) !important;
+    background: rgba(var(--primary-background)) !important;
     /*backdrop-filter: blur(15px);*/
 
     width: 100%;

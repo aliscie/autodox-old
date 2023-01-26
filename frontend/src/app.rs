@@ -1,6 +1,6 @@
 use crate::backend;
 use crate::router::{switch, Route};
-use crate::specific_components::{ButtonsGroup, SearchFilters};
+use crate::specific_components::{FilesCategory, SearchFilters};
 use crate::utils::filetree::FileTree;
 use crate::utils::{DeviceInfo, GetTitleBar};
 use shared::schema::UserQuery;
@@ -50,15 +50,32 @@ pub fn app() -> Html {
         // history.push(Route::File { id: market_page });
     });
 
-    let on_create_file: Callback<KeyboardEvent> = dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
-        let input: HtmlInputElement = _e.target_unchecked_into();
-        let value: String = input.value();
+    // let on_create_file: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
+    //     let input: HtmlInputElement = _e.target_unchecked_into();
+    //     let value: String = input.value();
+    //
+    //     input.class_list().toggle("tool").unwrap();
+    // });
 
+
+    let on_create_file: Callback<KeyboardEvent> = dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
         Box::pin(async move {
+            let input: HtmlInputElement = _e.target_unchecked_into();
+            let value: String = input.inner_text();
             if _e.key() == "Enter" {
+                _e.prevent_default();
+            };
+            if _e.key() != "Enter" {
+                input.class_list().remove_1("tool").unwrap();
+            };
+
+            if value.len() == 0 && _e.key() == "Enter" {
+                input.class_list().add_1("tool").unwrap();
+            } else if _e.key() == "Enter" {
                 let mut file = FileNode::default();
                 file.name = value.clone();
-                let _ = input.class_list().toggle("loader");
+
+                let _ = input.class_list().add_1("loader");
                 let x = crate::backend::create_file(
                     state.id,
                     state.files.root.unwrap(),
@@ -68,7 +85,7 @@ pub fn app() -> Html {
                     .await;
                 if x.is_ok() {
                     state.files.push_children(state.files.root.unwrap(), file.id, file);
-                    let _ = input.class_list().toggle("loader");
+                    let _ = input.class_list().remove_1("loader");
                 }
             };
         })
@@ -82,12 +99,12 @@ pub fn app() -> Html {
     let mut main_style = "";
     if rc_device_info.is_aside
         && window()
-            .unwrap_throw()
-            .inner_width()
-            .unwrap()
-            .as_f64()
-            .unwrap()
-            > 750 as f64
+        .unwrap_throw()
+        .inner_width()
+        .unwrap()
+        .as_f64()
+        .unwrap()
+        > 750 as f64
     {
         main_style = "margin-left:250px";
     }
@@ -97,15 +114,15 @@ pub fn app() -> Html {
             <div id = "app">
                 <GetTitleBar/>
                 <aside style={aside_style}>
-                    <SearchFilters/>
-                    <ButtonsGroup/>
-                    <ul id="myUL">
-                        <FileTree/>
-                        <bottom_buttons>
-                            <input value="Add new file." onkeydown={on_create_file}/>
+                    <ul id="aside-content">
+                        <SearchFilters/>
+                        <FilesCategory/>
+                        <div class="files-tree">
+                            <FileTree/>
+                        </div>
+                            <span onkeydown={on_create_file} contenteditable="true" class="btn" data-tip="File must have at least 1 character." style="width:100%" > {"Add new file."}</span>
                             // <span><input placeholder="Add from test"/></span>
-                            <button onclick={on_market_place}><i class="fa-solid fa-globe"></i>{"Market place"}</button>
-                        </bottom_buttons>
+                            <button style="width:100%" onclick={on_market_place}><i class=" fa-solid fa-globe"></i>{"Market place"}</button>
                     </ul>
                 </aside>
                 <main style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>

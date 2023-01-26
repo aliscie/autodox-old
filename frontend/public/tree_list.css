@@ -1,8 +1,14 @@
 
-#myUL {
+#aside-content {
     margin: 10px;
     padding: 0;
     transition: 0.3s;
+}
+
+/* add solid think white line bottom under each child of #aside-content */
+#aside-content > * {
+    border-top: 1px solid var(--main-color);
+    margin-top: 10px;
 }
 
 
@@ -52,7 +58,7 @@
     transition: 0.3s;
     -ms-transform: rotate(90deg); /* IE 9 */
     -webkit-transform: translateY(-50%) rotate(90deg); /* Safari */
-     transform: rotate(90 deg);
+    transform: rotate(90deg);
 }
 
 .dragging_over {
@@ -64,7 +70,7 @@
 }
 
 .drag_under {
-    width:100%;
+    width: 100%;
     transition: 0.3s;
     height: 3px;
     background: lightblue;

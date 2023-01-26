@@ -26,12 +26,11 @@ pub fn ProfileInfo(props: &Props) -> Html {
 
     let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
         let curr: HtmlInputElement = _e.target_unchecked_into();
-
         if _e.key() == " " {
-            curr.class_list().toggle("tool").unwrap();
             _e.prevent_default();
+            curr.class_list().add_1("tool").unwrap();
         } else if curr.class_list().contains("tool") {
-            curr.class_list().toggle("tool").unwrap();
+            curr.class_list().remove_1("tool").unwrap();
         }
     });
     html! {<form
@@ -41,7 +40,6 @@ pub fn ProfileInfo(props: &Props) -> Html {
         <Avatar size={Some(150)} src={Image::get_opt_link(profile.image.clone())}/>
         <h2 data-tip="Spaces are not allowed." tabindex="1"
         {onkeydown} contenteditable="true" name="username" >{profile.username.unwrap()}</h2>
-
             <table>
               {
                 profile_object.map(|(k,v)| {

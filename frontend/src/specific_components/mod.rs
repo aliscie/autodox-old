@@ -5,7 +5,7 @@
 pub use download_component::Download;
 pub use file_component::FileComponent;
 pub use file_data::FileData;
-pub use files_category::ButtonsGroup;
+pub use files_category::FilesCategory;
 pub use markdown_button::Markdown;
 pub use page_option_component::PageOptions;
 pub use save_button::*;

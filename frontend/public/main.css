@@ -1,7 +1,14 @@
 [contenteditable] {
     outline: 0;
-    border: 0;
 }
+
+input, select {
+    outline: 0;
+    background: rgb(var(--background));
+    border: 0;
+    color: var(--text-color);
+}
+
 
 @property --rotate {
     syntax: "<angle>";
@@ -154,14 +161,6 @@ h3 {
     font-size: 20px;
 }
 
-bottom_buttons {
-    width: 100%;
-}
-
-bottom_buttons button {
-    display: block;
-    width: 100%;
-}
 
 /*article {*/
 /*    overflow: hidden;*/
@@ -185,8 +184,6 @@ nav {
     display: block;
 }
 
-nav ul {
-}
 
 nav ul li {
     line-height: 30px;
@@ -356,14 +353,14 @@ button {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    margin: 4px 2px;
+    /*margin: 4px 2px;*/
     cursor: pointer;
 
     border-radius: 5px;
-    margin-left: 5px;
-    background: rgba(195, 195, 195, 0.3);
-    color: black;
-    height: 30px;
+    /*margin-left: 5px;*/
+    background: rgb(var(--main-color));
+    color: rgb(var(--text-color));
+    /*height: 30px;*/
     transition: all 0.2s ease-in-out;
 }
 
@@ -373,6 +370,11 @@ button:hover {
 }
 
 .btn {
+    border-radius: 3px;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+
     text-align: center;
     position: relative;
     border: none;

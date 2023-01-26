@@ -13,6 +13,7 @@ use yew::prelude::*;
 use yew_hooks::use_toggle;
 use yew_router::prelude::{use_navigator, use_route};
 use yewdux::prelude::*;
+use shared::*;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -187,10 +188,25 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let _id = id.clone();
     let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
-            let input: HtmlInputElement = _e.target_unchecked_into();
-            let value: String = input.value();
             Box::pin(async move {
+
+                let input: HtmlInputElement = _e.target_unchecked_into();
+                let value: String = input.inner_text();
+
                 if _e.key() == "Enter" {
+                    _e.prevent_default();
+                };
+
+
+                if _e.key() != "Enter" {
+                    input.class_list().remove_1("tool").unwrap();
+                };
+
+                let clone_id = _id.clone();
+
+                if _e.key() == "Enter" && value.is_empty() {
+                    input.class_list().add_1("tool").unwrap();
+                } else if _e.key() == "Enter" {
                     let res = backend::rename_file(_id.clone(), value.clone()).await;
                     if (res.is_ok()) {
                         state.files.vertices.get_mut(&_id).unwrap().name = value;
@@ -259,7 +275,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     // });
 
     html! {
-        <div>
+        <div
+        class={css_file_macro!("file_component.css")}
+        >
         // TODO
         //  {if is_first_file {
         //         html!{
@@ -288,7 +306,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            onclick={props.onclickfile.clone()}
            draggable="true"
            class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(),(*is_enter).clone(), "")}
-           style="margin-left: 30px; min-width: 0px; align-items: center; height: 100%; display: block;"
           >
            {props.name.clone()}
            </li>
@@ -309,10 +326,11 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             click_on={Some(true)}
            position = {position.clone()}
            items={vec![
-           html! {<a><input
+           html! {<a><span
                 {onkeydown}
-                value={props.name.clone()}
-                autofocus=true placeholder="rename.."/></a>},
+                contenteditable="true"
+                data-tip="File must have at least 1 character."
+                autofocus=true placeholder="rename..">{props.name.clone()}</span></a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},

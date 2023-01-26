@@ -1,8 +1,8 @@
 use crate::components::{Avatar, PopOverMenu};
 use yew::prelude::*;
 
-#[function_component(SearchFilters)]
-pub fn search_filters() -> Html {
+#[function_component]
+pub fn SearchFilters() -> Html {
     let event: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let replace: UseStateHandle<bool> = use_state(|| false);
 
