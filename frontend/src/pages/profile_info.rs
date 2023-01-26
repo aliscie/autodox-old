@@ -1,9 +1,9 @@
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yewdux::dispatch::Dispatch;
 use yewdux::functional::use_store;
 use crate::shared::*;
 use crate::utils::{DeviceInfo, Image};
-use crate::components::{ToolTip};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {}
@@ -12,8 +12,6 @@ use crate::components::{Avatar};
 
 #[function_component]
 pub fn ProfileInfo(props: &Props) -> Html {
-    let show: UseStateHandle<bool> = use_state(|| false);
-
     let (device, _) = use_store::<DeviceInfo>();
     let profile = device.profile.clone();
     let profile_object = serde_json::json!(device.profile);
@@ -26,24 +24,23 @@ pub fn ProfileInfo(props: &Props) -> Html {
         log!("xxx");
     });
 
-    let _show = show.clone();
     let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
+        let curr: HtmlInputElement = _e.target_unchecked_into();
+
         if _e.key() == " " {
-            _show.set(true);
+            curr.class_list().toggle("tool").unwrap();
             _e.prevent_default();
-        } else {
-            if *_show { _show.set(false) };
+        } else if curr.class_list().contains("tool") {
+            curr.class_list().toggle("tool").unwrap();
         }
     });
-    let _show = show.clone();
     html! {<form
         {onsubmit}
         class={css_file_macro!("profile_info.css")}
         >
         <Avatar size={Some(150)} src={Image::get_opt_link(profile.image.clone())}/>
-        <ToolTip show={Some(*_show)} context={html!{<span>{"Spaces are not allowed"}</span>}}>
-            <h2 {onkeydown} contenteditable="true" name="username" >{profile.username.unwrap()}</h2>
-        </ToolTip>
+        <h2 data-tip="Spaces are not allowed." tabindex="1"
+        {onkeydown} contenteditable="true" name="username" >{profile.username.unwrap()}</h2>
 
             <table>
               {
