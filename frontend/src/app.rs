@@ -1,6 +1,6 @@
 use crate::backend;
 use crate::router::{switch, Route};
-use crate::specific_components::{ButtonsGroup, SearchFilters};
+use crate::specific_components::{FilesCategory, SearchFilters};
 use crate::utils::filetree::FileTree;
 use crate::utils::{DeviceInfo, GetTitleBar};
 use shared::schema::UserQuery;
@@ -98,7 +98,7 @@ pub fn app() -> Html {
                 <GetTitleBar/>
                 <aside style={aside_style}>
                     <SearchFilters/>
-                    <ButtonsGroup/>
+                    <FilesCategory/>
                     <ul id="myUL">
                         <FileTree/>
                         <bottom_buttons>

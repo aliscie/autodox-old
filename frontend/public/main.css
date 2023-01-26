@@ -361,8 +361,8 @@ button {
 
     border-radius: 5px;
     margin-left: 5px;
-    background: rgba(195, 195, 195, 0.3);
-    color: black;
+    background: rgb(var(--main-color));
+    color: rgb(var(--text-color));
     height: 30px;
     transition: all 0.2s ease-in-out;
 }

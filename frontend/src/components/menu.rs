@@ -71,9 +71,7 @@ pub fn menu(props: &MenuProps) -> Html {
         style={format!("{}", display)}
         class={"dropdown-content"}
         >
-            {props.items.clone().into_iter().map(|item| {
-                item
-            }).collect::<Html>()}
+            {props.items.clone()}
         </div>
     };
 }

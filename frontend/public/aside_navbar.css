@@ -7,7 +7,7 @@ aside {
     position: fixed;
     bottom: 0;
 
-    background: rgba(var(--primary-background), 0.5) !important;
+    background: rgb(var(--primary-background)) !important;
     backdrop-filter: blur(15px);
 
     z-index: 299;
@@ -39,6 +39,11 @@ aside {
     width: 100%;
     position: relative;
     display: flex;
+}
+
+.search span {
+    color: rgb(var(--item-color));
+    background: rgb(var(--background));
 }
 
 .searchTerm {

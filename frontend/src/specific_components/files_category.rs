@@ -4,8 +4,8 @@ use shared::*;
 use yew::prelude::*;
 use yew::{function_component, html, Html};
 
-#[function_component(ButtonsGroup)]
-pub fn buttons_group() -> Html {
+#[function_component]
+pub fn FilesCategory() -> Html {
     let click_on = use_state_eq(|| false);
     let category = use_state_eq(|| "home".to_string());
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
@@ -23,18 +23,21 @@ pub fn buttons_group() -> Html {
         _style.set("display:inline-block;animation-name: btnEntrance; transition:0.2s".to_string())
     });
 
-    // let items: Vec<Html> = vec![
-    //     html! {<a><i class="fa-solid fa-home"></i>{"Home"}</a>},
-    //     html! {<a><i class="fa-solid fa-trash"></i>{"Trash"}</a>},
-    //     html! {<a>{"School"}</a>},
-    //     html! {<a {on_mouse_down}>
-    //         <span style={format!("{}",&*style.clone())}><input placeholder="rename.."/></span>
-    //         <i style="display:inline-block" class="fa-solid fa-plus"></i>
-    //         {"add category"}
-    //     </a>},
-    // ];
+    let items: Vec<Html> = vec![
+        html! {<option>{"Home"}</option>},
+        html! {<option>{"Trash"}</option>},
+        html! {<option>{"School"}</option>},
+        // html! {<a {on_mouse_down}>
+        //     <span style={format!("{}",&*style.clone())}><input placeholder="rename.."/></span>
+        //     <i style="display:inline-block" class="fa-solid fa-plus"></i>
+        //     {"add category"}
+        // </option>},
+        html! {<option>{"Add a category +"}</option>},
+    ];
 
     html! {
-        <span onmouseup={on_mouse_up} class="ptn" style="width:100%;">{format!("{}",*category.clone())}</span>
+        <select onmouseup={on_mouse_up} style="width:100%; outline: None;">
+            {items}
+        </select>
     }
 }

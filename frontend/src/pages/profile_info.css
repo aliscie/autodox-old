@@ -1,5 +1,5 @@
 table {
-    background: rgba(140, 140, 140, 0.3);
+    background: rgb(var(--primary-background));
     font-family: arial, sans-serif;
     border-collapse: collapse;
     align-self: center;
