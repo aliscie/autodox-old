@@ -5,7 +5,6 @@ use wasm_bindgen::prelude::*;
 use web_sys::{Element, KeyboardEvent, MouseEvent, Node, Range, window};
 use yew::prelude::*;
 use shared::*;
-use crate::plugins::DropDownItemEvent;
 
 
 use crate::plugins::inset_component::types::{CommandItems, DropDownItem, Position};

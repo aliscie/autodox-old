@@ -32,8 +32,8 @@ pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHand
             let r = range.delete_contents();
             log!(_item[0].value.clone()); // TODO why this is lays return the same value even after resorting them and set to the new sorted?
             command(DropDownItem {
-                value: Default::default(),
-                text: "".to_string(),
+                value: "❤️".to_string(),
+                text: "hart".to_string(),
                 tag: None,
                 attrs: Default::default(),
             }, Some(range.clone()));

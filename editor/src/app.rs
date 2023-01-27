@@ -11,7 +11,7 @@ use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit,
 use yew::prelude::*;
 use yew::{function_component, html};
 use yew::virtual_dom::VNode;
-use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem, DropDownItemEvent};
+use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -170,9 +170,7 @@ pub fn Editor(props: &EditorProps) -> Html {
         log!(event.value);
     });
     let emoji_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
-        // let value: VNode = event.value; // TODO get inner text
-        log!("------------------------------------------------------------");
-        let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node("❤️"));
+        let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
     });
 
     let mention_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {

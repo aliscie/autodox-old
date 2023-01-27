@@ -9,7 +9,7 @@ pub fn emojies() -> CommandItems {
 
     for i in emojis::iter() {
         emojis.push(DropDownItem {
-            value: html! { i.emoji },
+            value: i.emoji.parse().unwrap(),
             text: i.name.to_string(),
             tag: None,
             attrs: HashMap::new(),
