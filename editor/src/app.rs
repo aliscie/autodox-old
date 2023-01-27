@@ -6,11 +6,12 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
-use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
+use wasm_bindgen::{prelude::Closure, JsCast, UnwrapThrowExt};
+use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord, Node, Range, window};
 use yew::prelude::*;
 use yew::{function_component, html};
-use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
+use yew::virtual_dom::VNode;
+use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem, DropDownItemEvent};
 
 /// this captures all the changes in a editor element
 #[derive(Debug)]
@@ -165,13 +166,16 @@ pub fn Editor(props: &EditorProps) -> Html {
         },
         editor_ref.clone(),
     );
-    let slash_clouser: fn(DropDownItem) = (|event| {
+    let slash_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
         log!(event.value);
     });
-    let emoji_clouser: fn(DropDownItem) = (|event| {
-        log!(event.value);
+    let emoji_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
+        // let value: VNode = event.value; // TODO get inner text
+        log!("------------------------------------------------------------");
+        let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node("❤️"));
     });
-    let mention_clouser: fn(DropDownItem) = (|event| {
+
+    let mention_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
         log!(event.value);
     });
 
