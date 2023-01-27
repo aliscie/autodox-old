@@ -42,11 +42,15 @@ pub fn EditorInsert(props: &Props) -> Html {
     let editor = doc.query_selector(".text_editor");
     let _editor = editor.clone();
     let _items = items.clone();
+    let handle_command: Callback<Range> = Callback::from(move |range| {
+        command(_items[0].clone(), Some(range));
+    });
+    let _items = items.clone();
     use_effect_with_deps(
         move |editor_ref| {
             if let Ok(text_editor) = _editor {
                 if let Some(text_editor) = text_editor {
-                    utiles::trigger_popover(&text_editor, _trigger, _position, _input_text, command, _items);
+                    utiles::trigger_popover(&text_editor, _trigger, _position, _input_text, handle_command);
                 };
             };
             // TODO on hit Enter ot Tab
@@ -60,7 +64,6 @@ pub fn EditorInsert(props: &Props) -> Html {
     let _input_text = input_text.clone();
     let _trigger = trigger.clone();
     let x = "done";
-
 
 
     use_effect_with_deps(

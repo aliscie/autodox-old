@@ -1,5 +1,5 @@
 use web_sys::{Element, KeyboardEvent, Node, Range, window};
-use yew::UseStateHandle;
+use yew::{Callback, UseStateHandle};
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use crate::plugins;
@@ -7,7 +7,7 @@ use crate::plugins::inset_component::types::Position;
 use shared::*;
 use crate::plugins::DropDownItem;
 
-pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHandle<Option<Position>>, input_text: UseStateHandle<String>, command: fn(DropDownItem, Option<Range>), _items: UseStateHandle<Vec<DropDownItem>>) {
+pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHandle<Option<Position>>, input_text: UseStateHandle<String>, command: Callback<Range>) {
     let mut is_track = (*(position.clone())).is_some();
 
     let mut range = window().unwrap_throw().document().unwrap_throw().create_range().unwrap();
@@ -21,7 +21,6 @@ pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHand
 
     &window().unwrap_throw().add_event_listener_with_callback("click", &handle_click.as_ref().unchecked_ref());
     &handle_click.forget();
-    let _item = (&*_items).clone();
     let handle_keydown = Closure::wrap(Box::new(move |e: KeyboardEvent| {
         let selection = window().unwrap_throw().get_selection().unwrap().unwrap();
         let curr_focus: Node = selection.focus_node().unwrap();
@@ -30,14 +29,7 @@ pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHand
         if is_track && (&e.key() == "Enter" || e.key() == "Tab") {
             e.prevent_default();
             let r = range.delete_contents();
-            log!(_item[0].value.clone()); // TODO why this is lays return the same value even after resorting them and set to the new sorted?
-            command(DropDownItem {
-                value: "❤️".to_string(),
-                text: "hart".to_string(),
-                tag: None,
-                attrs: Default::default(),
-            }, Some(range.clone()));
-            // range_sate.set(Some(range.clone()));
+            command.emit(range.clone());
             is_track = false;
             position.set(None);
         };
