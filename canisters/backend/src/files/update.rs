@@ -1,5 +1,6 @@
-use std::collections::HashMap;
-
+use crate::files::types::*;
+use crate::users::types::*;
+use crate::utils::{Status, UpdateResponse};
 use candid::{CandidType, Deserialize, Principal};
 use ic_cdk;
 use ic_kit::candid::candid_method;
@@ -10,16 +11,12 @@ use ic_stable_memory::{
     s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade,
 };
 use serde::Serialize;
-
 use shared::id::Id;
 use shared::schema::{
-    FileDirectory, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate,
+    FileDirectory, FileMode, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate,
 };
 use shared::Tree;
-
-use crate::files::types::*;
-use crate::users::types::*;
-use crate::utils::{Status, UpdateResponse};
+use std::collections::HashMap;
 
 #[update]
 #[candid_method(update)]
@@ -98,6 +95,7 @@ pub async fn create_directory() -> String {
             name: "root".into(),
             element_tree: None,
             test: "None".to_string(),
+            file_mode: FileMode::Private,
         },
     );
     file_directory

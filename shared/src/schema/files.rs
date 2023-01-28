@@ -1,10 +1,15 @@
+use super::{EditorElement, ElementTree};
 use crate::{
     id::Id,
     traits::{Creatable, Entity, Queryable, Updatable},
     Error, Tree,
 };
+#[cfg(feature = "backend")]
+use candid::CandidType;
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "backend")]
+use speedy::{Readable, Writable};
 use std::collections::{BTreeMap, HashMap};
 #[cfg(feature = "tauri")]
 use surrealdb::sql::{Array, Object, Thing, Value};
@@ -12,15 +17,7 @@ use uuid::Uuid;
 #[cfg(feature = "frontend")]
 use yewdux::store::Store;
 
-use super::{EditorElement, ElementTree};
-
-#[cfg(feature = "backend")]
-use candid::CandidType;
-
-#[cfg(feature = "backend")]
-use speedy::{Readable, Writable};
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub enum FileMode {
     Public,
@@ -45,6 +42,7 @@ impl From<FileNodeCreate> for FileNode {
             name: value.name,
             element_tree: None,
             test: "None".to_string(),
+            file_mode: FileMode::Private,
         }
     }
 }
@@ -79,7 +77,6 @@ impl From<FileNodeCreate> for Object {
     }
 }
 
-/// type for updating file_node
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct FileNodeUpdate {
@@ -139,6 +136,7 @@ pub struct FileNode {
     pub name: String,
     pub element_tree: Option<Id>,
     pub test: String,
+    pub file_mode: FileMode,
 }
 
 #[cfg(not(feature = "backend"))]
@@ -149,6 +147,7 @@ impl Default for FileNode {
             name: "untitled".to_string(),
             element_tree: None,
             test: "None".to_string(),
+            file_mode: FileMode::Private,
         }
     }
 }
@@ -212,6 +211,7 @@ impl Default for FileDirectory {
                 name: "root".into(),
                 element_tree: None,
                 test: "None".to_string(),
+                file_mode: FileMode::Private,
             },
         );
         d.files.adjacency.insert(id.clone().into(), Vec::new());
@@ -299,6 +299,7 @@ impl TryFrom<Object> for FileNode {
                 _ => None,
             }),
             test: todo!(),
+            file_mode: todo!(),
         })
     }
 }
