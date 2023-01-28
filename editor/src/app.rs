@@ -166,11 +166,18 @@ pub fn Editor(props: &EditorProps) -> Html {
         },
         editor_ref.clone(),
     );
+
+
     let slash_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
         log!(event.value);
     });
-    let emoji_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
-        let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
+    // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
+    let emojis_command: fn(DropDownItem, Option<Range>) = (|event, range| {
+        // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
+        let window = web_sys::window().unwrap();
+        let document = window.document().unwrap();
+        let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+        let _ = html_document.exec_command_with_show_ui_and_value("InsertText", false, &event.value).unwrap();
     });
 
     let mention_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
@@ -212,7 +219,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             <EditorToolbar  action={action}/>
             <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
             <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
-            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
+            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emojis_command}/>
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
