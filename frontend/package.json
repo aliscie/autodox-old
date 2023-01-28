@@ -7,8 +7,8 @@
         "clean": "rimraf dist pkg target",
         "wasm": "RUSTFLAGS=\"$RUSTFLAGS -A unused\" wasm-pack build . --target web --dev -- --features \"web\"",
         "wasm:watch": "RUSTFLAGS=\"$RUSTFLAGS -A unused\" cargo watch -i .gitignore -i \"pkg/*\" -i \"dist/*\" -s 'wasm-pack build . --target web --dev -- --features \"web\"'",
-        "dev": "yarn wasm && vite",
-        "dev:watch": "concurrently \"yarn wasm:watch\" \"vite\"",
+        "dev": "yarn wasm && NODE_ENV=production tailwindcss -c ./tailwind.config.js -o ./tailwind.css --minify && vite",
+        "dev:watch": "concurrently \"yarn wasm:watch\" \"NODE_ENV=production tailwindcss -c ./tailwind.config.js -o ./tailwind.css --minify\" \"vite\"",
         "build": "vite build"
     },
     "devDependencies": {
@@ -33,6 +33,7 @@
         "cross-env": "^7.0.3",
         "dotenv": "^16.0.3",
         "path": "^0.12.7",
+        "tailwindcss": "^3.2.4",
         "vite": "^3.2.4",
         "vite-plugin-environment": "^1.1.3",
         "vite-plugin-wasm-pack": "^0.1.12",
