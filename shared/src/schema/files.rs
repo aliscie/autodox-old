@@ -87,6 +87,7 @@ impl From<FileNodeCreate> for FileNode {
             id: value.id,
             name: value.name,
             element_tree: None,
+            test: None,
         }
     }
 }
@@ -230,6 +231,7 @@ pub struct FileNode {
     pub id: Id,
     pub name: String,
     pub element_tree: Option<Id>,
+    pub test: Option<String>,
 }
 
 #[cfg(feature = "backend")]
@@ -248,6 +250,10 @@ impl candid::types::CandidType for FileNode {
                 id: candid::types::Label::Named("element_tree".to_string()),
                 ty: <Option<Id> as ::candid::types::CandidType>::ty(),
             },
+            candid::types::Field {
+                id: candid::types::Label::Named("test".to_string()),
+                ty: <Option<String> as ::candid::types::CandidType>::ty(),
+            },
         ])))
     }
     fn id() -> candid::types::TypeId {
@@ -261,6 +267,7 @@ impl candid::types::CandidType for FileNode {
         candid::types::Compound::serialize_element(&mut ser, &self.id)?;
         candid::types::Compound::serialize_element(&mut ser, &self.name)?;
         candid::types::Compound::serialize_element(&mut ser, &self.element_tree)?;
+        candid::types::Compound::serialize_element(&mut ser, &self.test)?;
         Ok(())
     }
 }
@@ -272,6 +279,7 @@ impl Default for FileNode {
             id: Id::new(),
             name: "untitled".to_string(),
             element_tree: None,
+            test: None,
         }
     }
 }
@@ -367,6 +375,7 @@ impl Default for FileDirectory {
                 id: id.into(),
                 name: "root".into(),
                 element_tree: None,
+                test: None,
             },
         );
         d.files.adjacency.insert(id.clone().into(), Vec::new());
@@ -453,6 +462,7 @@ impl TryFrom<Object> for FileNode {
                 Value::Thing(x) => x.id.to_raw().as_str().parse::<Uuid>().map(Id::from).ok(),
                 _ => None,
             }),
+            test: todo!(),
         })
     }
 }

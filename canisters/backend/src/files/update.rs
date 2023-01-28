@@ -97,6 +97,7 @@ pub async fn create_directory() -> String {
             id: id.into(),
             name: "root".into(),
             element_tree: None,
+            test: None,
         },
     );
     file_directory
