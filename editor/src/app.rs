@@ -187,7 +187,15 @@ pub fn Editor(props: &EditorProps) -> Html {
         //     ..Default::default()
         // }));
     });
-
+    let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
+        if _e.key() == "Tab" {
+            _e.prevent_default();
+            let window = web_sys::window().unwrap();
+            let document = window.document().unwrap();
+            let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+            let _ = html_document.exec_command_with_show_ui_and_value("InsertText", false, "    ").unwrap();
+        }
+    });
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -196,6 +204,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             {props.title.clone()}
         </h2>
             <span
+            {onkeydown}
             class = "text_editor_container"
             id = "text_editor_container"
            >
