@@ -12,7 +12,8 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{console, window};
-use yewdux::prelude::Dispatch;
+use yewdux::prelude::{Dispatch, use_store};
+use shared::schema::FileNode;
 
 pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
     let data = FileNodeUpdate {
@@ -35,7 +36,7 @@ pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
             "rename_file".to_string(),
             serde_json::json!(data).to_string(),
         )
-        .await;
+            .await;
         let _ = curr.class_list().toggle("loader");
         return Ok(());
     } else {
@@ -92,7 +93,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -112,7 +113,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -129,10 +130,36 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
+    }
+}
+
+pub async fn get_file(id: Id) -> Result<Option<FileNode>, String> {
+    // TODO
+    //  if File exists in Yewdux then return it
+    //  else fetch it from IC backend and return it or Err("No such file in the IC nor in the Yewdux".to_string());
+
+    let info = Dispatch::<DeviceInfo>::new();
+    // let file_node = Dispatch::<FileDirectory>::new();
+    // let (files, _) = use_store::<FileDirectory>();
+    // let file = files.clone().get().files.vertices.get(&id);
+    // if let Some(file) = file {
+    //     return Ok(Some(file.clone()));
+    // }
+
+    if info.get().is_web {
+        if info.get().is_online {
+            return Err("web and online".to_string());
+        } else {
+            return Err("web and not online".to_string());
+        }
+    } else if info.get().is_online {
+        return Err("Desktop and online".to_string());
+    } else {
+        return Err("Desktop and not online".to_string());
     }
 }
 
@@ -153,7 +180,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-        .await;
+            .await;
         log!(&x);
         return x;
     } else {

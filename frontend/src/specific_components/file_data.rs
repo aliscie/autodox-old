@@ -90,6 +90,9 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
 
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
+    // TODO use backend::get_file here
+    //  Even the hook maybe should consider different way in order to have all the if statements inside teh backend::get_file
+
     let res = use_element_tree(props.id)?;
     let result_html = match *res {
         Ok(ref tree) => {
@@ -120,6 +123,8 @@ pub fn FileData(props: &Props) -> HtmlResult {
 
 #[hook]
 fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<ElementTree, String>>> {
+
+
     let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     use_future_with_deps(
         |file_id| async move {
