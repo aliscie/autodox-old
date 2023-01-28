@@ -142,7 +142,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
         // TODO backend::call_ic("create_directory"); make this dynamic
         log!("before get dirs");
         let response = backend::get_directories_ic().await;
-        // log!(&response);
+        log!(&response);
         let file_tree: Result<Option<FileDirectory>, serde_wasm_bindgen::Error> =
             serde_wasm_bindgen::from_value(response);
         log!(&file_tree);

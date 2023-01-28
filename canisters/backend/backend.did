@@ -8,7 +8,7 @@ type FileNode = record {
     id : text;
     name: text;
     element_tree: opt text;
-    test: opt text;
+    test: text;
 };
 
 type CreateFileData = record {
