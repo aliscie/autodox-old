@@ -20,9 +20,16 @@ use yewdux::store::Store;
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub enum FileMode {
-    Public,
     Private,
     Restricted,
+    Public,
+}
+
+#[cfg(not(feature = "backend"))]
+impl Default for FileMode {
+    fn default() -> Self {
+        Self::Private
+    }
 }
 
 #[derive(Deserialize, Serialize, Debug)]

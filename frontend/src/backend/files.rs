@@ -6,7 +6,9 @@ use futures::future::err;
 use shared::{
     id::Id,
     log,
-    schema::{FileDirectory, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate},
+    schema::{
+        FileDirectory, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate,
+    },
 };
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
@@ -67,6 +69,22 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         return crate::backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
     } else {
         // user is offline throw a error
+        return Err("user is offline".to_string());
+    }
+}
+
+pub async fn get_file(file_id: Id) -> Result<(), String> {
+    let info = Dispatch::<DeviceInfo>::new();
+    if info.get().is_web || info.get().is_online {
+        let file_id_str = serde_json::json!(file_id).to_string();
+        let file_node_jv = backend::call_ic("get_file".to_string(), file_id.to_string()).await;
+        log!(&file_node_jv);
+        let file_node_res = serde_wasm_bindgen::from_value::<Option<FileNode>>(file_node_jv);
+        log!(&file_node_res);
+        return Ok(());
+    } else if !info.get().is_web {
+        return Err("user is offline".to_string());
+    } else {
         return Err("user is offline".to_string());
     }
 }
@@ -143,8 +161,9 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
         log!("before get dirs");
         let response = backend::get_directories_ic().await;
         log!(&response);
-        let file_tree: Result<Option<FileDirectory>, serde_wasm_bindgen::Error> =
-            serde_wasm_bindgen::from_value(response);
+        // let file_tree: Result<Option<FileDirectory>, serde_wasm_bindgen::Error> =
+        //     serde_wasm_bindgen::from_value(response);
+        let file_tree = serde_wasm_bindgen::from_value::<Option<FileDirectory>>(response);
         log!(&file_tree);
         return file_tree.map_err(|e| "serde error".to_string());
     }

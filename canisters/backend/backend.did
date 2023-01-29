@@ -12,20 +12,6 @@ type FileNode = record {
     file_mode: FileMode;
 };
 
-type CreateFileData = record {
-    id : text;
-    name: text;
-    directory_id : text;
-    parent_id : text;
-    children: opt vec text;
-};
-
-type CreateDirectoryData = record {
-    id : text;
-    name: text;
-    files: Tree;
-};
-
 type Tree = record {
     root : opt text;
     vertices : vec record {
@@ -44,36 +30,20 @@ type FileDirectory = record {
     files: Tree;
 };
 
-type UpdateResponse = record {
-    status : Status;
-    message: text;
-};
-
-type Status = variant {
-    Success;
-    UnAuthorized;
-    InvalidInput;
-};
-
-type UserUpdate = record {
-    image: vec nat8;
-    username: text;
-};
-
-type UserQuery = opt record {
+type UserQuery = record {
     image: opt vec nat8;
     username: opt text;
 };
 
 service : {
-    "rename_file": (text) -> (text);
+    "register": (text) -> (text);
+    "update_profile" : (text) -> (text);
+    "get_profile" : () -> (opt UserQuery) query;
     "create_file": (text) -> (text);
+    "get_file": (text) -> (opt FileNode) query;
+    "rename_file": (text) -> (text);
     "delete_file": (text) -> (text);
-    "change_directory": (text) -> (text);
     "create_directory": () -> (text);
     "get_directories": () ->(opt FileDirectory) query;
-    "register": (text) -> (text);
-    "test_ic" : () -> (text) query;
-    "update_profile" : (text) -> (text);
-    "get_profile" : () -> (UserQuery) query;
+    "change_directory": (text) -> (text);
 }
