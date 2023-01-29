@@ -32,7 +32,7 @@ pub fn SearchFilters() -> Html {
     html! {
         <div class="search_button">
             <div class="search">
-                <input type="text" class="searchTerm" placeholder="Search..."/>
+                <span style="width: 250px;" contenteditable="true" class="btn" type="text" class="searchTerm" >{"Search..."}</span>
                 <input
                     style={format!("{}", if (*replace).clone() { "display: block"} else {"display: none"})}
                     type="text" class="searchTerm" placeholder="Replace..."
