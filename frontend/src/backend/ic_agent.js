@@ -93,6 +93,7 @@ export async function get_directories() {
     if (result) {
         for (let i = 0; i < result.files.vertices.length; i++) {
             result.files.vertices[i][1].element_tree = result.files.vertices[i][1].element_tree[0];
+            result.files.vertices[i][1].test = result.files.vertices[i][1].test[0];
         }
         result.files.root = result.files.root[0];
     }
