@@ -1,8 +1,8 @@
-import {AuthClient} from "@dfinity/auth-client";
-import {createActor, canisterId, idlFactory} from './../../../../../src/declarations/backend';
+import { AuthClient } from "@dfinity/auth-client";
+import { createActor, canisterId, idlFactory } from './../../../../../src/declarations/backend';
 
-const {ic} = window;
-const {plug} = ic;
+const { ic } = window;
+const { plug } = ic;
 
 let backendActor, loading = false
 
@@ -29,7 +29,7 @@ export const get_actor = async () => {
                 return
             }
 
-            backendActor = await plug.createActor({canisterId, interfaceFactory: idlFactory, agent: plug.agent});
+            backendActor = await plug.createActor({ canisterId, interfaceFactory: idlFactory, agent: plug.agent });
         } else {
             const authClient = await AuthClient.create();
             const identity = await authClient.getIdentity();
@@ -89,6 +89,7 @@ export async function get_profile() {
 export async function get_directories() {
     let actor = await get_actor()
     let result = await actor.get_directories();
+    console.log('ic_agent#get_directories: result: ', result)
     result = result[0];
     if (result) {
         for (let i = 0; i < result.files.vertices.length; i++) {
@@ -99,14 +100,41 @@ export async function get_directories() {
     return result;
 }
 
+const isObject = data => {
+    return Object.prototype.toString.call(data) === '[object Object]'
+}
+
+const isOption = data => {
+    const res = !!(Array.isArray(data) && data.length <= 1)
+    return res
+}
+
+const getNoOption = (data) => {
+    if (isOption(data)) {
+        return getNoOption(data[0])
+    }
+    if (!isObject(data)) {
+        return data
+    }
+    const noOption = {}
+    Object.keys(data).forEach(key => {
+        noOption[key] = getNoOption(data[key])
+    })
+    return noOption
+}
+
 export async function call_ic(method, stringify) {
     let actor = await get_actor();
-    return await actor[method](stringify);
+    let res = await actor[method](stringify)
+    const noOption = getNoOption(res)
+    return noOption;
 }
 
 export async function call_ic_np(method) { // np: no parameter
     let actor = await get_actor();
-    return await actor[method]();
+    let res = await actor[method]()
+    const noOption = getNoOption(res)
+    return noOption;
 }
 
 export async function register(username) {
