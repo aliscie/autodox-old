@@ -13,7 +13,7 @@ use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{console, window};
 use yewdux::prelude::{Dispatch, use_store};
-use shared::schema::FileNode;
+use shared::schema::{ElementTree, FileNode};
 
 pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
     let data = FileNodeUpdate {
@@ -137,7 +137,8 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
     }
 }
 
-pub async fn get_file(id: Id) -> Result<Option<FileNode>, String> {
+pub async fn get_file(id: Id) -> Result<Option<ElementTree>, String> {
+
     // TODO
     //  if File exists in Yewdux then return it
     //  else fetch it from IC backend and return it or Err("No such file in the IC nor in the Yewdux".to_string());
