@@ -99,7 +99,7 @@ pub async fn get_file(file_id: Id) -> Result<FileNode, Error> {
         // log!(&file_node_res);
         file_node_res
     } else if !info.get().is_web {
-        return Err(Error::new("user is offline".to_string()));
+        return Err(Error::new("user is is offline".to_string()));
     } else {
         return Err(Error::new("user is offline".to_string()));
     }
@@ -173,14 +173,9 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
 pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        // TODO backend::call_ic("create_directory"); make this dynamic
-        log!("before get dirs");
-        let response = backend::get_directories_ic().await;
-        log!(&response);
-        // let file_tree: Result<Option<FileDirectory>, serde_wasm_bindgen::Error> =
-        //     serde_wasm_bindgen::from_value(response);
+        // let response = backend::get_directories_ic().await;
+        let response = backend::call_ic_np("get_directories".to_string()).await;
         let file_tree = serde_wasm_bindgen::from_value::<Option<FileDirectory>>(response);
-        log!(&file_tree);
         return file_tree.map_err(|e| "serde error".to_string());
     }
     if !info.get().is_web {
