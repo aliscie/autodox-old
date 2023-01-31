@@ -11,9 +11,12 @@ use shared::schema::EditorElementDelete;
 use shared::schema::{EditorElement, ElementTree, FileDirectory};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::collections::VecDeque;
 use std::rc::Rc;
+use std::time::Duration;
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
+use yew::platform::time::sleep;
 use yew::prelude::*;
 use yew::suspense::use_future_with_deps;
 use yew::suspense::SuspensionResult;
@@ -25,8 +28,12 @@ pub struct Props {
     pub id: Id,
 }
 
-fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
-    Callback::from(move |e| {
+fn onchange_element_tree(
+    element_tree: Rc<RefCell<ElementTree>>,
+    changes: Rc<RefCell<VecDeque<EditorChange>>>,
+) -> Callback<EditorChange> {
+    Callback::from(move |e: EditorChange| {
+        changes.as_ref().borrow_mut().push_back(e.clone());
         match e {
             EditorChange::Update(x) => {
                 log!(&x);
@@ -71,14 +78,8 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                 ////log!(element_tree.elements.adjacency.get(&x.parent_id));
                 //}
             }
-            EditorChange::Delete(id) => {
-                log!(&id);
-                let parent_id = element_tree.clone().borrow_mut().elements.remove(&id);
-                let data = EditorElementDelete {
-                    id,
-                    parent_id,
-                    tree_id: element_tree.clone().borrow().id,
-                };
+            EditorChange::Delete(data) => {
+                element_tree.as_ref().borrow_mut().elements.remove(&data.id);
                 spawn_local(async move {
                     let result = delete_element(data).await;
                     log!(result);
@@ -91,6 +92,7 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
     let res = use_element_tree(props.id)?;
+    let changes = use_changes();
     let result_html = match *res {
         Ok(ref tree) => {
             log!(&tree);
@@ -106,7 +108,7 @@ pub fn FileData(props: &Props) -> HtmlResult {
                 <Editor
                 title = { file_node.name.clone() }
                 element_tree = { element_tree.clone() }
-                onchange = { onchange_element_tree(element_tree.clone())}
+                onchange = { onchange_element_tree(element_tree.clone(), changes.clone())}
                />
             }
         }
@@ -178,4 +180,23 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
         },
         file_id,
     )
+}
+
+#[hook]
+fn use_changes() -> Rc<RefCell<VecDeque<EditorChange>>> {
+    let state = use_mut_ref(|| VecDeque::new());
+    let delay = Duration::from_secs(2);
+    {
+        let state = state.clone();
+        spawn_local(async move {
+            loop {
+                sleep(delay).await;
+                if state.as_ref().borrow().len() == 0 {
+                    continue;
+                }
+                todo!("call backend here!!");
+            }
+        });
+    }
+    state
 }

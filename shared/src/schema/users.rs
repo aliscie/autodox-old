@@ -9,7 +9,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Serialize, Clone, PartialEq, Debug, Eq, Hash)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct UserQuery {
-    #[serde(default)]
     pub username: Option<String>,
     pub image: Option<Vec<u8>>,
     pub last_name: Option<String>,
