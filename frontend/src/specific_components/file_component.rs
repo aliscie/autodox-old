@@ -1,11 +1,6 @@
-use crate::pages::PagesRoute;
 use crate::{backend, components::PopOverMenu, router::Route};
+
 use shared::*;
-use shared::{
-    id::Id,
-    log,
-    schema::{FileDirectory, FileNode, FileNodeDelete},
-};
 use std::str::FromStr;
 use uuid::Uuid;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
@@ -15,6 +10,9 @@ use yew::prelude::*;
 use yew_hooks::use_toggle;
 use yew_router::prelude::{use_navigator, use_route};
 use yewdux::prelude::*;
+use shared::id::Id;
+use shared::schema::{FileDirectory, FileNode, FileNodeDelete};
+use crate::pages::PagesRoute;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -193,13 +191,16 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
 
             let clone_name = name.clone();
+
             Box::pin(async move {
+
                 let input: HtmlInputElement = _e.target_unchecked_into();
                 let value: String = input.inner_text();
 
                 if _e.key() == "Enter" {
                     _e.prevent_default();
                 };
+
 
                 if _e.key() != "Enter" {
                     input.class_list().remove_1("tool").unwrap();
