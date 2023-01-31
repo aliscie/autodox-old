@@ -189,6 +189,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let _id = id.clone();
     let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+
             let clone_name = name.clone();
 
             Box::pin(async move {
@@ -343,7 +344,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            html! {<a><span
                 {onkeydown}
                 contenteditable="true"
-                data-tip="File must have at least 1 character."
                 autofocus=true placeholder="rename..">{props.name.clone()}</span></a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a onclick={on_permission}><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
