@@ -2,7 +2,7 @@ use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::render::render;
 use serde::{Deserialize, Serialize};
 use shared::id::Id;
-use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
+use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
 use shared::*;
 use std::cell::RefCell;
 use std::collections::HashMap;

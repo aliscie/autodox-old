@@ -387,3 +387,23 @@ button:hover {
 .btn:hover {
     background: rgba(var(--hover-color), 0.6);
 }
+
+
+table {
+    background: rgb(var(--primary-background));
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    align-self: center;
+    width: 100%;
+    max-width: 300px;
+}
+
+td, th {
+    border: 1px solid rgb(var(--color));
+    text-align: left;
+    padding: 8px;
+}
+
+h2 {
+    width: 50%
+}

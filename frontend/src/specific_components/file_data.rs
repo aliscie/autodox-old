@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use crate::backend::create_element;
 use crate::backend::create_element_tree;
 use crate::backend::delete_element;
@@ -24,7 +25,10 @@ use yew::suspense::SuspensionResult;
 use yew::suspense::UseFutureHandle;
 use yewdux::prelude::*;
 use wasm_bindgen::{JsCast};
+use web_sys::{Range, window};
 use editor::insertion_closures;
+use yew::platform::time::sleep;
+
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -153,8 +157,7 @@ pub fn FileData(props: &Props) -> HtmlResult {
                 <Editor
                 title = { file_node.name.clone() }
                 element_tree = { element_tree.clone() }
-
-                onchange = { onchange_element_tree(element_tree.clone())}
+                onchange = { onchange_element_tree(element_tree.clone(), changes.clone())}
                >
                     <EditorToolbar  action={action}/>
                     <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
