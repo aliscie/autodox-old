@@ -2,12 +2,13 @@ use crate::backend;
 use crate::shared::*;
 use shared::{
     id::Id,
-    schema::{FileMode, FileNode},
+    schema::{FileDirectory, FileMode, FileNode},
 };
 use std::pin::Pin;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew::suspense::*;
+use yewdux::prelude::Dispatch;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -16,12 +17,14 @@ pub struct Props {
 
 #[function_component]
 pub fn Permission(props: &Props) -> Html {
+    let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     let file_node_state: UseStateHandle<Option<FileNode>> = use_state(|| None);
 
     let _file_id = props.file_id.clone();
     let _file_node_state = file_node_state.clone();
     use_future(move || async move {
         let res = backend::get_file(_file_id).await;
+        log!(&res);
         if let Ok(_file_node) = res {
             _file_node_state.set(Some(_file_node));
         }
@@ -55,10 +58,15 @@ pub fn Permission(props: &Props) -> Html {
     });
 
     let _file_node_state = file_node_state.clone();
-    let on_save = Callback::from(move |e: MouseEvent| {
-        let mut _file_node = (*_file_node_state).clone().unwrap_or_default();
-        log!(&_file_node);
-    });
+    let on_save: Callback<MouseEvent> =
+        dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
+            let _file_node_state = _file_node_state.clone();
+            Box::pin(async move {
+                let _file_node = (*_file_node_state).clone().unwrap_or_default();
+                let res = backend::update_file(_file_node).await;
+                // log!(&res);
+            })
+        });
 
     html! {
         <div class="m-8 flex flex-col gap-8 items-center justify-center">

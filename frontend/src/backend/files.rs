@@ -74,6 +74,21 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
     }
 }
 
+pub async fn update_file(data: FileNode) -> Result<(), String> {
+    let info = Dispatch::<DeviceInfo>::new();
+    if info.get().is_web || info.get().is_online {
+        let data_json = serde_json::json!(data).to_string();
+        let res = backend::call_ic("update_file".to_string(), data_json).await;
+        log!(&res);
+        return Ok(());
+    }
+    if !info.get().is_web {
+        unimplemented!();
+    } else {
+        return Err("user is offline".to_string())
+    }
+}
+
 pub async fn get_file(file_id: Id) -> Result<FileNode, Error> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
