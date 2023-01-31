@@ -1,4 +1,6 @@
+use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::render::render;
+use serde::{Deserialize, Serialize};
 use shared::id::Id;
 use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
 use shared::*;
@@ -13,11 +15,11 @@ use yew::{function_component, html};
 
 
 /// this captures all the changes in a editor element
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum EditorChange {
     Update(EditorElementUpdate),
     Create(EditorElementCreate),
-    Delete(Id),
+    Delete(EditorElementDelete),
 }
 
 #[derive(Properties, PartialEq)]
@@ -32,7 +34,6 @@ pub struct EditorProps {
 
 #[function_component]
 pub fn Editor(props: &EditorProps) -> Html {
-
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
@@ -87,10 +88,27 @@ pub fn Editor(props: &EditorProps) -> Html {
                                         .and_then(|element| {
                                             Uuid::parse_str(element.id().as_str()).ok()
                                         })
-                                        .map(|id| onchange.emit(EditorChange::Delete(id.into())));
+                                        .map(Id::from)
+                                        .map(|id| {
+                                            let parent_id = element_tree
+                                                .as_ref()
+                                                .borrow()
+                                                .elements
+                                                .adjacency
+                                                .iter()
+                                                .find(|(_, vec)| vec.contains(&id))
+                                                .unwrap()
+                                                .0
+                                                .clone();
+                                            let delete = EditorElementDelete {
+                                                id,
+                                                tree_id: element_tree.as_ref().borrow().id.clone(),
+                                                parent_id,
+                                            };
+                                            onchange.emit(EditorChange::Delete(delete))
+                                        });
                                 }
                                 if removed_nodes.length() > 0 {
-                                    unimplemented!();
                                     // move to next mutation record!
                                     // crate::shared::log!("got element delete!");
                                     // crate::shared::log!(mutation_type.removed_nodes());
@@ -104,7 +122,6 @@ pub fn Editor(props: &EditorProps) -> Html {
                                 let mut prev_element_id: Option<Id> = None;
                                 if let Some(prev_node) = element.previous_sibling() {
                                     let prev_element = prev_node.unchecked_into::<Element>();
-                                    unimplemented!();
                                     // crate::shared::log!(format!("previous element id : {:?}", prev_element.id()));
                                     prev_element_id = Uuid::parse_str(prev_element.id().as_str())
                                         .map(Id::from)

@@ -1,4 +1,6 @@
+use crate::pages::PagesRoute;
 use crate::{backend, components::PopOverMenu, router::Route};
+use shared::*;
 use shared::{
     id::Id,
     log,
@@ -13,7 +15,6 @@ use yew::prelude::*;
 use yew_hooks::use_toggle;
 use yew_router::prelude::{use_navigator, use_route};
 use yewdux::prelude::*;
-use shared::*;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -190,8 +191,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let _id = id.clone();
     let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
-            let clone_name = name.clone();
 
+            let clone_name = name.clone();
             Box::pin(async move {
                 let input: HtmlInputElement = _e.target_unchecked_into();
                 let value: String = input.inner_text();
@@ -199,7 +200,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 if _e.key() == "Enter" {
                     _e.prevent_default();
                 };
-
 
                 if _e.key() != "Enter" {
                     input.class_list().remove_1("tool").unwrap();
@@ -237,12 +237,13 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             tree_id: _dispatch_file_directory.get().id,
         };
         let file_id = id.clone();
+        let _navigator = navigator.clone();
         _dispatch_file_directory.reduce_mut_future_callback(move |state| {
             match route {
                 // the current file is in use navigate to home!
                 Route::File { id } => {
                     if file_id == id {
-                        navigator.push(&Route::Home);
+                        _navigator.push(&Route::Home);
                     }
                 }
                 _ => {}
@@ -280,6 +281,12 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     //     _e.prevent_default();
     //     _is_drag_above.set("".to_string());
     // });
+
+    let on_permission = {
+        let _navigator = navigator.clone();
+        let _id = props.id.clone();
+        move |_| _navigator.push(&PagesRoute::Permission { id: _id })
+    };
 
     html! {
         <div
@@ -338,7 +345,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 contenteditable="true"
                 autofocus=true placeholder="rename..">{props.name.clone()}</span></a>},
            html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
-           html! {<a><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
+           html! {<a onclick={on_permission}><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
            ]}

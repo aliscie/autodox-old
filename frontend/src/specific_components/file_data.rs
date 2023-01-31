@@ -11,11 +11,13 @@ use shared::schema::EditorElementDelete;
 use shared::schema::{EditorElement, ElementTree, FileDirectory};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::collections::VecDeque;
 use std::rc::Rc;
+use std::time::Duration;
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::{Range, window};
+
 use yew::prelude::*;
 use yew::suspense::use_future_with_deps;
 use yew::suspense::SuspensionResult;
@@ -29,8 +31,12 @@ pub struct Props {
     pub id: Id,
 }
 
-fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
-    Callback::from(move |e| {
+fn onchange_element_tree(
+    element_tree: Rc<RefCell<ElementTree>>,
+    changes: Rc<RefCell<VecDeque<EditorChange>>>,
+) -> Callback<EditorChange> {
+    Callback::from(move |e: EditorChange| {
+        changes.as_ref().borrow_mut().push_back(e.clone());
         match e {
             EditorChange::Update(x) => {
                 log!(&x);
@@ -75,14 +81,8 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                 ////log!(element_tree.elements.adjacency.get(&x.parent_id));
                 //}
             }
-            EditorChange::Delete(id) => {
-                log!(&id);
-                let parent_id = element_tree.clone().borrow_mut().elements.remove(&id);
-                let data = EditorElementDelete {
-                    id,
-                    parent_id,
-                    tree_id: element_tree.clone().borrow().id,
-                };
+            EditorChange::Delete(data) => {
+                element_tree.as_ref().borrow_mut().elements.remove(&data.id);
                 spawn_local(async move {
                     let result = delete_element(data).await;
                     log!(result);
@@ -96,7 +96,12 @@ use editor::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
 
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
+    // TODO use backend::get_file here
+    //  Even the hook maybe should consider different way in order to have all the if statements inside teh backend::get_file
+    let dispatch_file_directory = Dispatch::<FileDirectory>::new();
+
     let res = use_element_tree(props.id)?;
+    let changes = use_changes();
     let result_html = match *res {
         Ok(ref tree) => {
             log!(&tree);
@@ -148,6 +153,7 @@ pub fn FileData(props: &Props) -> HtmlResult {
                 <Editor
                 title = { file_node.name.clone() }
                 element_tree = { element_tree.clone() }
+
                 onchange = { onchange_element_tree(element_tree.clone())}
                >
                     <EditorToolbar  action={action}/>
@@ -164,6 +170,35 @@ pub fn FileData(props: &Props) -> HtmlResult {
         }
     };
     Ok(result_html) // TODO after loading the data this should rerender
+}
+
+fn dummy_data() -> ElementTree {
+    let mut default_element_tree = ElementTree::default();
+    let root_id = default_element_tree.elements.root.unwrap();
+    let id: Id = Uuid::new_v4().into();
+    default_element_tree.elements.push_children(
+        root_id,
+        id.clone(),
+        EditorElement::new(
+            id,
+            "bold text".to_string(),
+            HashMap::from([(
+                "style".to_string(),
+                "font-weight: bold;".to_string(),
+            )]),
+        ),
+    );
+    let id: Id = Uuid::new_v4().into();
+    default_element_tree.elements.push_children(
+        root_id,
+        id,
+        EditorElement::new(
+            id,
+            r#"Element is here."#.to_string(),
+            HashMap::new(),
+        ),
+    );
+    return default_element_tree;
 }
 
 #[hook]
@@ -185,32 +220,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                             return get_element_tree(&tree_id).await;
                         }
                         None => {
-                            // create new element_tree
-                            let mut default_element_tree = ElementTree::default();
-                            let root_id = default_element_tree.elements.root.unwrap();
-                            let id: Id = Uuid::new_v4().into();
-                            default_element_tree.elements.push_children(
-                                root_id,
-                                id.clone(),
-                                EditorElement::new(
-                                    id,
-                                    "bold text".to_string(),
-                                    HashMap::from([(
-                                        "style".to_string(),
-                                        "font-weight: bold;".to_string(),
-                                    )]),
-                                ),
-                            );
-                            let id: Id = Uuid::new_v4().into();
-                            default_element_tree.elements.push_children(
-                                root_id,
-                                id,
-                                EditorElement::new(
-                                    id,
-                                    r#"Element is here."#.to_string(),
-                                    HashMap::new(),
-                                ),
-                            );
+                            let default_element_tree = dummy_data();
                             // let _ = create_element_tree(&default_element_tree, *file_id).await?;
                             let tree_id = default_element_tree.id;
                             dispatch_file_directory.clone().reduce_mut(|f| {
@@ -226,4 +236,23 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
         },
         file_id,
     )
+}
+
+#[hook]
+fn use_changes() -> Rc<RefCell<VecDeque<EditorChange>>> {
+    let state = use_mut_ref(|| VecDeque::new());
+    let delay = Duration::from_secs(2);
+    {
+        let state = state.clone();
+        spawn_local(async move {
+            loop {
+                sleep(delay).await;
+                if state.as_ref().borrow().len() == 0 {
+                    continue;
+                }
+                todo!("call backend here!!");
+            }
+        });
+    }
+    state
 }

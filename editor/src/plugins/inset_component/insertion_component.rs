@@ -4,6 +4,7 @@ use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::*;
 use web_sys::{Element, KeyboardEvent, MouseEvent, Node, Range, window};
 use yew::prelude::*;
+use yew::suspense::{SuspensionResult, UseFutureHandle};
 use shared::*;
 
 
@@ -27,38 +28,23 @@ pub struct Props {
 
 #[function_component]
 pub fn EditorInsert(props: &Props) -> Html {
-    let position: UseStateHandle<Option<Position>> = use_state(|| None);
-
-    let input_text: UseStateHandle<String> = use_state(|| "".to_string());
-    let _input_text = input_text.clone();
 
     let trigger = props.trigger.clone();
     let items = props.items.clone();
+
     let items: UseStateHandle<Vec<DropDownItem>> = use_state(|| items);
     let command = props.command.clone();
+
     let _trigger = trigger.clone();
-    let _position = position.clone();
-    let doc = window().unwrap_throw().document().unwrap_throw();
-    let editor = doc.query_selector(".text_editor");
-    let _editor = editor.clone();
     let _items = items.clone();
     let handle_command: Callback<Range> = Callback::from(move |range| {
         command(_items[0].clone(), Some(range));
     });
-    let _items = items.clone();
-    use_effect_with_deps(
-        move |editor_ref| {
-            if let Ok(text_editor) = _editor {
-                if let Some(text_editor) = text_editor {
-                    utiles::trigger_popover(&text_editor, _trigger, _position, _input_text, handle_command);
-                };
-            };
-            // TODO on hit Enter ot Tab
-            //  command(current_item)
-        },
-        editor.clone(),
-    );
 
+    let (input_text,position ) = utiles::use_trigger_popover(trigger.clone(), handle_command);
+    let _input_text = input_text.clone();
+
+    let _items = items.clone();
     let mut sorted_items = (&*items).clone();
     let _items = items.clone();
     let _input_text = input_text.clone();
@@ -90,14 +76,12 @@ pub fn EditorInsert(props: &Props) -> Html {
         input_text.clone(),
     );
 
-    let _position = position.clone();
-
     if (*position.clone()).is_none() {
         return html! {
         <></>
     };
     };
-    let p = (&*_position).as_ref().unwrap();
+    let p = (&*position).as_ref().unwrap();
     let items = items.clone();
 
 
