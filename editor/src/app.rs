@@ -8,10 +8,12 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
-use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
+use wasm_bindgen::{prelude::Closure, JsCast, UnwrapThrowExt};
+use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord, Node, Range, window};
 use yew::prelude::*;
 use yew::{function_component, html};
+
+
 
 /// this captures all the changes in a editor element
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -181,13 +183,21 @@ pub fn Editor(props: &EditorProps) -> Html {
         },
         editor_ref.clone(),
     );
-    let slash_clouser: fn(DropDownItem) = (|event| {
+
+
+    let slash_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
         log!(event.value);
     });
-    let emoji_clouser: fn(DropDownItem) = (|event| {
-        log!(event.value);
+    // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
+    let emojis_command: fn(DropDownItem, Option<Range>) = (|event, range| {
+        // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
+        let window = web_sys::window().unwrap();
+        let document = window.document().unwrap();
+        let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+        let _ = html_document.exec_command_with_show_ui_and_value("InsertText", false, &event.value).unwrap();
     });
-    let mention_clouser: fn(DropDownItem) = (|event| {
+
+    let mention_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
         log!(event.value);
     });
 
@@ -201,7 +211,15 @@ pub fn Editor(props: &EditorProps) -> Html {
         //     ..Default::default()
         // }));
     });
-
+    let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
+        if _e.key() == "Tab" {
+            _e.prevent_default();
+            let window = web_sys::window().unwrap();
+            let document = window.document().unwrap();
+            let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+            let _ = html_document.exec_command_with_show_ui_and_value("InsertText", false, "    ").unwrap();
+        }
+    });
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -210,6 +228,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             {props.title.clone()}
         </h2>
             <span
+            {onkeydown}
             class = "text_editor_container"
             id = "text_editor_container"
            >
@@ -217,7 +236,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             <EditorToolbar  action={action}/>
             <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
             <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
-            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
+            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emojis_command}/>
 
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }

@@ -5,49 +5,49 @@ use crate::plugins::{CommandItems, DropDownItem};
 pub fn components() -> CommandItems {
     vec![
         DropDownItem {
-            value: html! {<a>{"Table"}</a>},
+            value: "Table".to_string(),
             text: "table".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"Image"}</a>},
+            value: "image".parse().unwrap(),
             text: "image".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"Video"}</a>},
+            value: "video".parse().unwrap(),
             text: "video".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"Audio"}</a>},
+            value: "Table".to_string(),
             text: "audio".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"Link"}</a>},
+            value: "Table".to_string(),
             text: "link".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"List"}</a>},
+            value: "Table".to_string(),
             text: "list".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"Code"}</a>},
+            value: "Table".to_string(),
             text: "code".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"Quote"}</a>},
+            value: "Table".to_string(),
             text: "quote".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
