@@ -3,6 +3,7 @@ use std::str::FromStr;
 use crate::backend;
 use crate::utils::DeviceInfo;
 use futures::future::err;
+use serde_wasm_bindgen::Error;
 use shared::{
     id::Id,
     log,
@@ -73,19 +74,34 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
     }
 }
 
-pub async fn get_file(file_id: Id) -> Result<(), String> {
+pub async fn update_file(data: FileNode) -> Result<(), String> {
+    let info = Dispatch::<DeviceInfo>::new();
+    if info.get().is_web || info.get().is_online {
+        let data_json = serde_json::json!(data).to_string();
+        let res = backend::call_ic("update_file".to_string(), data_json).await;
+        log!(&res);
+        return Ok(());
+    }
+    if !info.get().is_web {
+        unimplemented!();
+    } else {
+        return Err("user is offline".to_string())
+    }
+}
+
+pub async fn get_file(file_id: Id) -> Result<FileNode, Error> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let file_id_str = serde_json::json!(file_id).to_string();
         let file_node_jv = backend::call_ic("get_file".to_string(), file_id.to_string()).await;
-        log!(&file_node_jv);
-        let file_node_res = serde_wasm_bindgen::from_value::<Option<FileNode>>(file_node_jv);
-        log!(&file_node_res);
-        return Ok(());
+        // log!(&file_node_jv);
+        let file_node_res = serde_wasm_bindgen::from_value::<FileNode>(file_node_jv);
+        // log!(&file_node_res);
+        file_node_res
     } else if !info.get().is_web {
-        return Err("user is offline".to_string());
+        return Err(Error::new("user is offline".to_string()));
     } else {
-        return Err("user is offline".to_string());
+        return Err(Error::new("user is offline".to_string()));
     }
 }
 

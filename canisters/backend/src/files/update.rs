@@ -47,6 +47,24 @@ pub fn create_file(data: String) -> String {
 
 #[update]
 #[candid_method(update)]
+pub fn update_file(json_data: String) -> String {
+    let data = serde_json::from_str::<FileNode>(&json_data).unwrap();
+    let user = User::current();
+    if user.is_none() {
+        return "User not found".to_string();
+    };
+    let mut user_files: UserFiles = s!(UserFiles);
+    if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
+        file_directory.files.vertices.insert(data.id, data.into());
+        s! {UserFiles = user_files};
+        return "File is updated".to_string();
+    } else {
+        return "No directory".to_string();
+    }
+}
+
+#[update]
+#[candid_method(update)]
 pub fn delete_file(json_data: String) -> String {
     let data = serde_json::from_str::<FileNodeDelete>(&json_data).unwrap();
     let user = User::current();
