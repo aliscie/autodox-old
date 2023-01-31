@@ -25,7 +25,7 @@ use yew::suspense::SuspensionResult;
 use yew::suspense::UseFutureHandle;
 use yewdux::prelude::*;
 use wasm_bindgen::{JsCast};
-use web_sys::{Range, window};
+use web_sys::{Range, Selection, window};
 use editor::insertion_closures;
 use yew::platform::time::sleep;
 
@@ -117,15 +117,10 @@ pub fn FileData(props: &Props) -> HtmlResult {
                 .unwrap()
                 .clone();
             let element_tree = Rc::new(RefCell::new(tree.clone()));
-
-            let action: Callback<String> = Callback::from(move |e: String| {
-                // log!(e.clone());
-                // onchange.emit(EditorChange::Update(EditorElementUpdate {
-                //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
-                //     text_format: Some(format),
-                //     ..Default::default()
-                // }));
+            let action: fn(String, Selection) = (|event: String, selection: Selection| {
+                log!(selection.to_string());
             });
+
             let slash_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
                 let text = event.text.as_str();
                 match text {

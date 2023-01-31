@@ -5,13 +5,13 @@ use crate::plugins::editor_toolbar;
 use shared::*;
 use web_sys::{HtmlInputElement, window};
 use yew::prelude::*;
-
+use web_sys::Selection;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::Closure;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub action: Callback<String>,
+    pub action: fn(String, Selection),
 }
 
 
@@ -19,10 +19,10 @@ pub struct Props {
 pub fn EditorToolbar(props: &Props) -> Html {
     let init: UseStateHandle<bool> = use_state(|| false);
 
-    let window = web_sys::window().unwrap();
-    let document = window.document().unwrap();
+    let win = web_sys::window().unwrap();
+    let document = win.document().unwrap();
     let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
-    let editor = window.document().unwrap().query_selector(".text_editor").unwrap();
+    let editor = win.document().unwrap().query_selector(".text_editor").unwrap();
     let _editor = editor.clone();
 
     let _init = init.clone();
@@ -60,7 +60,7 @@ pub fn EditorToolbar(props: &Props) -> Html {
         if let Some(data) = _e.data() {
             // TODO why thi is not working? (not this is a compensatory task)
             // let x = html_document.exec_command_with_show_ui_and_value("foreColor", false, data).unwrap();
-            _action.emit(data)
+            // _action.emit(data)
         }
     });
 
@@ -80,8 +80,9 @@ pub fn EditorToolbar(props: &Props) -> Html {
                             let html_document = html_document.clone();
                             let icon = icon.clone();
                             move |_| {
+                                let selection: Selection = window().unwrap_throw().get_selection().unwrap().unwrap();
                                 let x = html_document.exec_command(&icon).unwrap();
-                                action.clone().emit(button.to_string())
+                                action(button.to_string(),selection)
                             }
                             }
                         class={format!("btn fa-solid fa-{}",icon)}
