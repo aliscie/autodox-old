@@ -1,5 +1,6 @@
-use std::collections::HashMap;
-
+use crate::files::types::*;
+use crate::users::types::*;
+use crate::utils::{Status, UpdateResponse};
 use candid::{CandidType, Deserialize, Principal};
 use ic_cdk;
 use ic_kit::candid::candid_method;
@@ -10,16 +11,12 @@ use ic_stable_memory::{
     s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade,
 };
 use serde::Serialize;
-
 use shared::id::Id;
 use shared::schema::{
-    FileDirectory, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate,
+    FileDirectory, FileMode, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate,
 };
 use shared::Tree;
-
-use crate::files::types::*;
-use crate::users::types::*;
-use crate::utils::{Status, UpdateResponse};
+use std::collections::HashMap;
 
 #[update]
 #[candid_method(update)]
@@ -46,6 +43,24 @@ pub fn create_file(data: String) -> String {
     // let _= create::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
     s! { UserFiles = user_files};
     "New file is created.".to_string()
+}
+
+#[update]
+#[candid_method(update)]
+pub fn update_file(json_data: String) -> String {
+    let data = serde_json::from_str::<FileNode>(&json_data).unwrap();
+    let user = User::current();
+    if user.is_none() {
+        return "User not found".to_string();
+    };
+    let mut user_files: UserFiles = s!(UserFiles);
+    if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
+        file_directory.files.vertices.insert(data.id, data.into());
+        s! {UserFiles = user_files};
+        return "File is updated".to_string();
+    } else {
+        return "No directory".to_string();
+    }
 }
 
 #[update]
@@ -97,6 +112,8 @@ pub async fn create_directory() -> String {
             id: id.into(),
             name: "root".into(),
             element_tree: None,
+            test: "None".to_string(),
+            file_mode: FileMode::Private,
         },
     );
     file_directory
