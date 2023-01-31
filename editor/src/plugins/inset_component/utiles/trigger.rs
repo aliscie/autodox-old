@@ -40,10 +40,12 @@ pub fn use_trigger_popover(trigger: String, command: Callback<Range>) -> (UseSta
 
     let _input_text = input_text.clone();
     let _position = position.clone();
+    let doc = window().unwrap_throw().document().unwrap_throw();
+    let editor = doc.query_selector(".text_editor");
+    let _editor = editor.clone();
     use_effect_with_deps(move |editor_ref| {
         let position = _position.clone();
-        let doc = window().unwrap_throw().document().unwrap_throw();
-        let editor = doc.query_selector(".text_editor");
+
 
         let mut is_track = (*(_position.clone())).is_some();
         let mut range = window().unwrap_throw().document().unwrap_throw().create_range().unwrap();
@@ -85,11 +87,12 @@ pub fn use_trigger_popover(trigger: String, command: Callback<Range>) -> (UseSta
                 };
             }
         }) as Box<dyn FnMut(_)>);
-
-        let _ = &editor.unwrap().unwrap().add_event_listener_with_callback("keydown", &handle_keydown.as_ref().unchecked_ref());
+        if let Some(editor) = _editor.unwrap() {
+            let _ = &editor.add_event_listener_with_callback("keydown", &handle_keydown.as_ref().unchecked_ref());
+        };
         let _ = &handle_keydown.forget();
     },
-                         (),
+                         editor.clone(),
     );
     return (input_text, position);
 }
