@@ -85,7 +85,7 @@ pub async fn get_file(file_id: Id) -> Result<(), String> {
         return Ok(());
     } else if !info.get().is_web {
 
-        return Err(Error::new("user is is offline".to_string()));
+        return Err("user is is offline".to_string());
 
     } else {
         return Err("user is offline".to_string());
