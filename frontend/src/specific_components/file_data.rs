@@ -118,7 +118,9 @@ pub fn FileData(props: &Props) -> HtmlResult {
                 .clone();
             let element_tree = Rc::new(RefCell::new(tree.clone()));
             let action: fn(String, Selection) = (|event: String, selection: Selection| {
-                log!(selection.to_string());
+                // get the id of the parent element of the selection
+                log!(selection.focus_node().unwrap().parent_element().unwrap().id());
+
             });
 
             let slash_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {

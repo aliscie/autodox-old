@@ -101,7 +101,7 @@ fn render_file_element(props: &RenderFileElementProps) -> Html {
                 name={props.file_node.name.clone()}
             />
             if props.has_children && *display == "active" {
-                <ul class={"nested active"}>
+                <ul style="margin-left: 25px;" class={"nested active"}>
                 {
                     props.file_directory.files.adjacency.get(&props.file_node.id)
                         .unwrap()
