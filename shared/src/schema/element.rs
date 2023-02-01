@@ -106,7 +106,7 @@ impl Entity for EditorElement {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct EditorElementCreate {
     pub id: Id,
     pub text: String,
@@ -119,7 +119,7 @@ pub struct EditorElementCreate {
 }
 
 /// type for updating editor elements
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct EditorElementUpdate {
     pub id: Id,
     pub text: Option<String>,
@@ -385,7 +385,7 @@ impl ElementTree {
     }
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
 pub struct EditorElementDelete {
     pub parent_id: Id,
     pub id: Id,

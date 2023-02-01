@@ -181,7 +181,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
     )
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct UseChangeHandle {
     pub changes: VecDeque<EditorChange>,
 }
@@ -193,6 +193,6 @@ impl Store for UseChangeHandle {
         }
     }
     fn should_notify(&self, old: &Self) -> bool {
-        false
+        old != self
     }
 }
