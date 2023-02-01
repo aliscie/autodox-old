@@ -359,6 +359,7 @@ impl Store for ElementTree {
 
 impl ElementTree {
     #[cfg(feature = "frontend")]
+    /// breaks the element into three parts
     pub fn break_element(&mut self, parent_id: Id, from: usize, till: usize) -> Option<(Id, Id)> {
         let element = self.elements.vertices.get_mut(&parent_id)?;
         let (first_part, second_part) = element.text.split_at(from);
