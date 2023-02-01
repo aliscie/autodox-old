@@ -24,8 +24,8 @@ pub fn FileTree() -> Html {
     let start = tree.clone().files.root.unwrap().clone();
     let map: Rc<RefCell<HashMap<Id, VNode>>> = Rc::new(RefCell::new(HashMap::new()));
 
-    if format!("{:#?}", &tree.clone().files).len()< 355 {
-        return html!{<div class="loader"/>}
+    if format!("{:#?}", &tree.clone().files).len() < 355 {
+        return html! {<div class="loader"/>};
     }
 
     for (id, file_node) in tree.clone().files.into_iter(start) {

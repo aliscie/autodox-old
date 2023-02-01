@@ -1,5 +1,7 @@
+use crate::insertion_closures;
 use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::render::render;
+use crate::utils::on_slash_input;
 use serde::{Deserialize, Serialize};
 use shared::id::Id;
 use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
@@ -8,11 +10,13 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
+use wasm_bindgen::prelude::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range, window};
+use web_sys::{
+    window, Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range,
+};
 use yew::prelude::*;
 use yew::{function_component, html};
-
 
 /// this captures all the changes in a editor element
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -27,7 +31,6 @@ pub struct EditorProps {
     pub title: String,
     pub element_tree: Rc<RefCell<ElementTree>>,
     pub onchange: Callback<EditorChange>,
-    pub children: Children,
 }
 
 // this is used for the work space
@@ -57,13 +60,12 @@ pub fn Editor(props: &EditorProps) -> Html {
                     if let Some(current_element) = mutation_type.target() {
                         match mutation_type.type_().as_ref() {
                             "characterData" => {
-                                log!("xxxx");
                                 if let Some(parent_element) = current_element.parent_element() {
                                     if let Ok(id) =
                                         Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
                                     {
-                                        // log!(&format!("{:?}", parent_element.inner_html()).into());
-                                        // log!(&format!("{:?}", id).into());
+                                        //log!(&format!("{:?}", parent_element.inner_html()).into());
+                                        //log!(&format!("{:?}", id).into());
                                         let update = EditorElementUpdate {
                                             id,
                                             text: Some(parent_element.inner_html().clone()),
@@ -75,8 +77,7 @@ pub fn Editor(props: &EditorProps) -> Html {
                             }
                             "attributes" => {
                                 if let Some(parent_element) = current_element.parent_element() {
-                                    unimplemented!();
-                                    // crate::shared::log!(format!("Got create: {:?}", parent_element.inner_html()));
+                                    log!(format!("Got create: {:?}", parent_element.inner_html()));
                                 }
                             }
                             "childList" => {
@@ -89,15 +90,14 @@ pub fn Editor(props: &EditorProps) -> Html {
                                             Uuid::parse_str(element.id().as_str()).ok()
                                         })
                                         .map(Id::from)
-                                        .map(|id| {
+                                        .and_then(|id| {
                                             let parent_id = element_tree
                                                 .as_ref()
                                                 .borrow()
                                                 .elements
                                                 .adjacency
                                                 .iter()
-                                                .find(|(_, vec)| vec.contains(&id))
-                                                .unwrap()
+                                                .find(|(_, vec)| vec.contains(&id))?
                                                 .0
                                                 .clone();
                                             let delete = EditorElementDelete {
@@ -105,7 +105,8 @@ pub fn Editor(props: &EditorProps) -> Html {
                                                 tree_id: element_tree.as_ref().borrow().id.clone(),
                                                 parent_id,
                                             };
-                                            onchange.emit(EditorChange::Delete(delete))
+                                            onchange.emit(EditorChange::Delete(delete));
+                                            Some(())
                                         });
                                 }
                                 if removed_nodes.length() > 0 {
@@ -184,7 +185,6 @@ pub fn Editor(props: &EditorProps) -> Html {
         editor_ref.clone(),
     );
 
-
     let element_tree = props.element_tree.clone();
 
     let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
@@ -193,9 +193,33 @@ pub fn Editor(props: &EditorProps) -> Html {
             let window = web_sys::window().unwrap();
             let document = window.document().unwrap();
             let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
-            let _ = html_document.exec_command_with_show_ui_and_value("InsertText", false, "    ").unwrap();
+            let _ = html_document
+                .exec_command_with_show_ui_and_value("InsertText", false, "    ")
+                .unwrap();
         }
     });
+    // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
+    let emojis_command: fn(DropDownItem, Option<Range>) -> Option<()> = (|event, range| {
+        // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
+        let window = web_sys::window().unwrap();
+        let document = window.document().unwrap();
+        let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+        let _ = html_document
+            .exec_command_with_show_ui_and_value("InsertText", false, &event.value)
+            .unwrap();
+        return Some(());
+    });
+    let action: Callback<String> = Callback::from(move |e: String| {
+        // log!(e.clone());
+        // onchange.emit(EditorChange::Update(EditorElementUpdate {
+        //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
+        //     text_format: Some(format),
+        //     ..Default::default()
+        // }));
+    });
+
+    let mention_clouser: fn(DropDownItem, Option<Range>) -> Option<()> =
+        (|event, range| return Some(()));
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -208,7 +232,10 @@ pub fn Editor(props: &EditorProps) -> Html {
             class = "text_editor_container"
             id = "text_editor_container"
            >
-            {props.children.clone()}
+            <EditorToolbar  action={action}/>
+            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={Callback::from(move |(e, r)| on_slash_input(e, r))}/>
+            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={Callback::from(move |(e, r)| mention_clouser(e, r))}/>
+            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={Callback::from(move |(e, r) | emojis_command(e, r))}/>
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
         </div>
@@ -216,4 +243,3 @@ pub fn Editor(props: &EditorProps) -> Html {
             </span>
     }
 }
-

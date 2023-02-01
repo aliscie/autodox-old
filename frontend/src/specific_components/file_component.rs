@@ -1,5 +1,8 @@
 use crate::{backend, components::PopOverMenu, router::Route};
 
+use crate::pages::PagesRoute;
+use shared::id::Id;
+use shared::schema::{FileDirectory, FileNode, FileNodeDelete};
 use shared::*;
 use std::str::FromStr;
 use uuid::Uuid;
@@ -10,9 +13,6 @@ use yew::prelude::*;
 use yew_hooks::use_toggle;
 use yew_router::prelude::{use_navigator, use_route};
 use yewdux::prelude::*;
-use shared::id::Id;
-use shared::schema::{FileDirectory, FileNode, FileNodeDelete};
-use crate::pages::PagesRoute;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -189,18 +189,15 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let _id = id.clone();
     let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
-
             let clone_name = name.clone();
 
             Box::pin(async move {
-
                 let input: HtmlInputElement = _e.target_unchecked_into();
                 let value: String = input.inner_text();
 
                 if _e.key() == "Enter" {
                     _e.prevent_default();
                 };
-
 
                 if _e.key() != "Enter" {
                     input.class_list().remove_1("tool").unwrap();
@@ -210,10 +207,14 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
                 if value == clone_name {
                     input.class_list().add_1("tool").unwrap();
-                    input.set_attribute("data-tip", "name has not changed").unwrap();
+                    input
+                        .set_attribute("data-tip", "name has not changed")
+                        .unwrap();
                 } else if _e.key() == "Enter" && value.is_empty() {
                     input.class_list().add_1("tool").unwrap();
-                    input.set_attribute("data-tip", "File must have at least 1 character.").unwrap();
+                    input
+                        .set_attribute("data-tip", "File must have at least 1 character.")
+                        .unwrap();
                 } else if _e.key() == "Enter" {
                     let res = backend::rename_file(_id.clone(), value.clone()).await;
                     if (res.is_ok()) {
@@ -290,8 +291,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     };
 
     html! {
-        <div
-        class={css_file_macro!("file_component.css")}
+        <li
         >
         // TODO
         //  {if is_first_file {
@@ -304,7 +304,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         //         }
         //  }}
 
-        <div {oncontextmenu} style="position: relative; width:100%; display: block;">
+        <div {oncontextmenu} style="position: relative; width:100%; display: block;"
+            class={css_file_macro!("file_component.css")}
+            >
            if props.class.contains("caret"){
                <button class={format!("{} crate_button",(*caret))}
                onmouseup={toggle_caret}
@@ -336,7 +338,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             // ondragenter={ondragenter_under}
             // ondragleave={ondragleave_under}
             // class="drag_under"/>
-
            <PopOverMenu
             click_on={Some(true)}
            position = {position.clone()}
@@ -351,8 +352,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
            ]}
           />
-
-        </div>
-
+        </li>
     }
 }
