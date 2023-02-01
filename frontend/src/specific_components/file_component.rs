@@ -23,8 +23,8 @@ pub struct FileComponentProps {
     pub id: Id,
 }
 
-#[function_component(FileComponent)]
-pub fn file_component(props: &FileComponentProps) -> Html {
+#[function_component]
+pub fn FileComponent(props: &FileComponentProps) -> Html {
     // HasMap
     // {
     // type:"dropover", // or dropunder or dropbellow,
@@ -289,7 +289,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         let _id = props.id.clone();
         move |_| _navigator.push(&PagesRoute::Permission { id: _id })
     };
-
+    log!(*caret);
     html! {
         <li
         >
@@ -304,13 +304,20 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         //         }
         //  }}
 
+
         <div {oncontextmenu} style="position: relative; width:100%; display: block;"
             class={css_file_macro!("file_component.css")}
             >
+
            if props.class.contains("caret"){
-               <button class={format!("{} crate_button",(*caret))}
-               onmouseup={toggle_caret}
-               onclick = { props.onclick.clone() }><i class="fa-solid fa-caret-right"></i></button>
+               <span class="btn">
+                    <span
+                            class={format!(" {} crate_button",(*caret))}
+                            onmouseup={toggle_caret}
+                            onclick = { props.onclick.clone() }><i class="fa-solid fa-caret-right"></i>
+
+                    </span>
+                </span>
            }
            <li
            ondragover={ondragover.clone()}
