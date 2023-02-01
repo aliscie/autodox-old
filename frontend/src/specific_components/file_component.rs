@@ -1,18 +1,19 @@
-use crate::{backend, components::PopOverMenu, router::Route};
-
-use crate::pages::PagesRoute;
-use shared::id::Id;
-use shared::schema::{FileDirectory, FileNode, FileNodeDelete};
-use shared::*;
 use std::str::FromStr;
+
 use uuid::Uuid;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use wasm_bindgen_futures::spawn_local;
 use web_sys::{Element, HtmlInputElement, KeyboardEvent, MouseEvent};
 use yew::prelude::*;
 use yew_hooks::use_toggle;
 use yew_router::prelude::{use_navigator, use_route};
 use yewdux::prelude::*;
+
+use shared::*;
+use shared::id::Id;
+use shared::schema::{FileDirectory, FileNode, FileNodeDelete};
+
+use crate::{backend, components::PopOverMenu, router::Route};
+use crate::pages::PagesRoute;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -25,16 +26,7 @@ pub struct FileComponentProps {
 
 #[function_component]
 pub fn FileComponent(props: &FileComponentProps) -> Html {
-    // HasMap
-    // {
-    // type:"dropover", // or dropunder or dropbellow,
-    // dragged_id: uuid,
-    // target_id: uuid
-    // }
-    //let drop_data = use_state(|| "".to_string());
-    //let is_drag_over = use_state(|| "".to_string());
     let dispatch_file_directory = Dispatch::<FileDirectory>::new();
-    let is_drag_under = use_state(|| "".to_string());
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
@@ -87,26 +79,6 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
         _is_enter.set("".to_string());
     });
 
-    // let ondrop: Callback<DragEvent> = {
-    //     let id = id.clone();
-    //     let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
-    //     Callback::from(move |e: DragEvent| {
-    //         e.prevent_default();
-    //         let curr: Element = e.target_unchecked_into();
-    //         let _ = curr.class_list().toggle("dragging_over");
-    //         let dragged = e.data_transfer().unwrap().get_data("dragged_item").unwrap();
-    //         let id = id.clone();
-    //         let mut old_parent_id: Id = Uuid::new_v4().into();
-    //         let dragged_uuid = Uuid::parse_str(dragged.as_str()).map(Id::from).unwrap();
-    //         for (i, value) in &_dispatch_file_directory.get().files.adjacency {
-    //             if value.contains(&dragged_uuid) {
-    //                 old_parent_id = *i;
-    //                 break;
-    //             }
-    //         }
-    //         crate::backend::change_directory(id.to_string(), dragged, old_parent_id.to_string());
-    //     })
-    // };
 
     let _id = id.clone();
 
@@ -149,19 +121,12 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
             })
         });
 
-    let _is_drag_under = is_drag_under.clone();
-    let _is_dragged = is_dragged.clone();
-    let ondragenter_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        if (*_is_dragged).len() == 0 {
-            _is_drag_under.set("height: 20px; opacity:1;".to_string());
-        }
-    });
+
 
     let ondragover: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
         _e.prevent_default();
     });
 
-    let _is_drag_under = is_drag_under.clone();
     let _id = id.clone();
     let ondrop_under: Callback<DragEvent> = Callback::from(move |e: DragEvent| {
         e.prevent_default();
@@ -199,6 +164,7 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
                     _e.prevent_default();
                 };
 
+
                 if _e.key() != "Enter" {
                     input.class_list().remove_1("tool").unwrap();
                 };
@@ -207,14 +173,10 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
 
                 if value == clone_name {
                     input.class_list().add_1("tool").unwrap();
-                    input
-                        .set_attribute("data-tip", "name has not changed")
-                        .unwrap();
+                    input.set_attribute("data-tip", "name has not changed").unwrap();
                 } else if _e.key() == "Enter" && value.is_empty() {
                     input.class_list().add_1("tool").unwrap();
-                    input
-                        .set_attribute("data-tip", "File must have at least 1 character.")
-                        .unwrap();
+                    input.set_attribute("data-tip", "File must have at least 1 character.").unwrap();
                 } else if _e.key() == "Enter" {
                     let res = backend::rename_file(_id.clone(), value.clone()).await;
                     if (res.is_ok()) {
@@ -259,10 +221,6 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
         })
     };
 
-    let _is_drag_under = is_drag_under.clone();
-    let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-        _is_drag_under.set("".to_string());
-    });
     let oncontextmenu = {
         let position = position.clone();
         Callback::from(move |e: MouseEvent| {
@@ -271,44 +229,17 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
         })
     };
 
-    // let ondragenter_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-    //     _is_drag_above.set("height: 20px; opacity:1;".to_string());
-    // });
-
-    // let ondragleave_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-    //     _is_drag_above.set("".to_string());
-    // });
-
-    // let ondrop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
-    //     _e.prevent_default();
-    //     _is_drag_above.set("".to_string());
-    // });
-
     let on_permission = {
         let _navigator = navigator.clone();
         let _id = props.id.clone();
         move |_| _navigator.push(&PagesRoute::Permission { id: _id })
     };
-    log!(*caret);
     html! {
-        <li
+        <div
+        class={css_file_macro!("file_component.css")}
         >
-        // TODO
-        //  {if is_first_file {
-        //         html!{
-        //         <div
-        //            ondrop={ondrop_above}
-        //            ondragenter={ondragenter_above}
-        //            ondragleave={ondragleave_above}
-        //            class="drag_under"/>
-        //         }
-        //  }}
 
-
-        <div {oncontextmenu} style="position: relative; width:100%; display: block;"
-            class={css_file_macro!("file_component.css")}
-            >
-
+        <div {oncontextmenu} style="position: relative; width:100%; display: inline-block;">
            if props.class.contains("caret"){
                <span class="btn">
                     <span
@@ -338,13 +269,6 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
            ></i>
         </div>
 
-            // <div
-            // ondragover={ondragover.clone()}
-            // style={format!("{}",(*is_drag_under).clone())}
-            // ondrop={ondrop_under}
-            // ondragenter={ondragenter_under}
-            // ondragleave={ondragleave_under}
-            // class="drag_under"/>
            <PopOverMenu
             click_on={Some(true)}
            position = {position.clone()}
@@ -359,6 +283,8 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
            ]}
           />
-        </li>
+
+        </div>
+
     }
 }
