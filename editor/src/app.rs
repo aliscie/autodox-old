@@ -232,7 +232,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             class = "text_editor_container"
             id = "text_editor_container"
            >
-            <EditorToolbar  action={action}/>
+            <EditorToolbar />
             <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={Callback::from(move |(e, r)| on_slash_input(e, r))}/>
             <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={Callback::from(move |(e, r)| mention_clouser(e, r))}/>
             <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={Callback::from(move |(e, r) | emojis_command(e, r))}/>

@@ -11,7 +11,7 @@ use wasm_bindgen::prelude::Closure;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub action: fn(String, Selection),
+    // pub action: fn(String, Selection),
 }
 
 
@@ -51,8 +51,8 @@ pub fn EditorToolbar(props: &Props) -> Html {
         "Color",
     ];
 
-    let action = props.action.clone();
-    let _action = props.action.clone();
+    // let action = props.action.clone();
+    // let _action = props.action.clone();
     let _html_document = html_document.clone();
     let oninput: Callback<InputEvent> = Callback::from(move |_e: InputEvent| {
         _e.prevent_default();
@@ -76,13 +76,13 @@ pub fn EditorToolbar(props: &Props) -> Html {
                     html! {
                     <span
                         onmousedown = {
-                            let action = action.clone();
+                            // let action = action.clone();
                             let html_document = html_document.clone();
                             let icon = icon.clone();
                             move |_| {
-                                let selection: Selection = window().unwrap_throw().get_selection().unwrap().unwrap();
-                                let x = html_document.exec_command(&icon).unwrap();
-                                action(button.to_string(),selection)
+                                // let selection: Selection = window().unwrap_throw().get_selection().unwrap().unwrap();
+                                let _ = html_document.exec_command(&icon).unwrap();
+                                // action(button.to_string(),selection)
                             }
                             }
                         class={format!("btn fa-solid fa-{}",icon)}

@@ -28,7 +28,6 @@ use yew::suspense::SuspensionResult;
 use yew::suspense::UseFutureHandle;
 use yewdux::prelude::*;
 
-
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub id: Id,
@@ -121,10 +120,6 @@ pub fn FileData(props: &Props) -> HtmlResult {
                 .unwrap()
                 .clone();
             let element_tree = Rc::new(RefCell::new(tree.clone()));
-            let action: fn(String, Selection) = (|event: String, selection: Selection| {
-                // get the id of the parent element of the selection
-                log!(selection.focus_node().unwrap().parent_element().unwrap().id());
-
 
             html! {
                 <Editor
