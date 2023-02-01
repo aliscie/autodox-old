@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::Closure;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
@@ -6,6 +7,7 @@ use yew::prelude::*;
 use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
+use editor::EditorChange;
 use shared::log;
 
 // use shared::{invoke, log};
@@ -23,8 +25,11 @@ pub struct DownloadProps {
 
 #[function_component]
 pub fn SaveButton(props: &DownloadProps) -> Html {
+    let (device, _) = use_store::<DeviceInfo>();
     let (changes, dispatch) = use_store::<UseChangeHandle>();
     let is_saved = changes.changes.is_empty();
+
+
 
     let onclick = {
         let dispatch = dispatch.clone();
@@ -40,7 +45,8 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
             // TODO
             //     let res = backend::multi_update(changs.changes);
             //     if res.is_ok() {
-            //         let _ = dispatch.reduce_mut(|state| state.changs = Dispatch::<UseChangeHandle>::new(););
+                let empty_data: VecDeque<EditorChange> = VecDeque::new();
+                let _ = dispatch.reduce_mut(|state| state.changes = empty_data);
             //     }
 
             let _ = target.class_list().remove_1("loader");
@@ -62,7 +68,7 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
             {"Saved"}
         </span>}
     }
-    if is_saved {
+    if device.is_web {
         return html! {
                 <span {onclick}>
             {save_mark}
