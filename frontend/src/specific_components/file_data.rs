@@ -183,7 +183,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
 
 #[derive(Debug, Clone)]
 pub struct UseChangeHandle {
-    changes: VecDeque<EditorChange>,
+    pub changes: VecDeque<EditorChange>,
 }
 
 impl Store for UseChangeHandle {

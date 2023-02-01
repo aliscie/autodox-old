@@ -7,7 +7,7 @@ use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use shared::invoke;
+// use shared::{invoke, log};
 
 use crate::components::PopOverMenu;
 use crate::router::Route;
@@ -23,8 +23,10 @@ pub struct DownloadProps {
 #[function_component]
 pub fn SaveButton(props: &DownloadProps) -> Html {
     let (device, dispatch) = use_store::<DeviceInfo>();
-    let changes = use_store_value::<UseChangeHandle>();
-
+    // let changes = use_store_value::<UseChangeHandle>();
+    // log!(&changes.changes);
+    // let is_empty = changes.changes.is_empty();
+    // log!(is_empty);
     let onclick = {
         let dispatch = dispatch.clone();
         Callback::from(move |e: MouseEvent| {
