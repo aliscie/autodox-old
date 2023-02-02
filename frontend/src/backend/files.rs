@@ -74,19 +74,15 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
     }
 }
 
-pub async fn get_file(file_id: Id) -> Result<(), String> {
+pub async fn get_file(auther_id: Id, file_id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let file_id_str = serde_json::json!(file_id).to_string();
-        let file_node_jv = backend::call_ic("get_file".to_string(), file_id.to_string()).await;
-        log!(&file_node_jv);
-        let file_node_res = serde_wasm_bindgen::from_value::<Option<FileNode>>(file_node_jv);
-        log!(&file_node_res);
+        let input_data = serde_json::json!((auther_id, file_id)).to_string();
+        let file_node_jv = backend::call_ic("get_file".to_string(), input_data.to_string()).await;
+        // let file_node_res = serde_wasm_bindgen::from_value::<Option<FileNode>>(file_node_jv);
         return Ok(());
     } else if !info.get().is_web {
-
         return Err("user is is offline".to_string());
-
     } else {
         return Err("user is offline".to_string());
     }

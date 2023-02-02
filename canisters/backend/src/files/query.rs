@@ -15,14 +15,29 @@ pub fn get_directories() -> Option<FileDirectory> {
 
 #[query]
 #[candid_method(query)]
-pub fn get_file(file_id: String) -> Option<FileNode> {
-    let file_id = Id::try_from(file_id).ok()?;
-    let user = User::current()?;
+pub fn get_file(data: String) -> Option<FileNode> {
+    // TODO we should return the FileNode Or the ElementTree
+    let (auther_id, file_id) = serde_json::from_str::<(Id, Id)>(&data).unwrap();
+    let current_user = User::current()?;
+    let mut users: Users = s!(Users);
+    let mut auther: Option<User> = None;
+    for u in users {
+        if u.address.to_string() == auther_id.to_string() {
+            auther = Some(u);
+        };
+    };
+
     let mut user_files: UserFiles = s!(UserFiles);
-    user_files
-        .get(&user)?
+    let file = user_files
+        .get(&auther.clone().unwrap())?
         .files
         .vertices
         .get(&file_id)
-        .map(|s| s.clone())
+        .map(|s| s.clone());
+    if &current_user == &auther.unwrap()
+    // || file.file_mode == FileMode::Public
+    {
+        return file;
+    };
+    return None;
 }
