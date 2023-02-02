@@ -19,7 +19,7 @@ use yew::prelude::*;
 use yew::{function_component, html};
 
 /// this captures all the changes in a editor element
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum EditorChange {
     Update(EditorElementUpdate),
     Create(EditorElementCreate),

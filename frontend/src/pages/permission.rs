@@ -16,7 +16,11 @@ pub fn Permission(props: &Props) -> Html {
     let _file_node = file_node.clone();
     let _file_id = props.file_id.clone();
     use_future(move || async move {
-        let res = backend::get_file(_file_id.clone()).await;
+        // TODO
+        //  let res = backend::update_file(new_data,_file_id.clone()).await;
+        //  On update file U can get file from yewdux
+        //  then call update_file
+        //  No need to call get_file at all, becuase the files the you own are all in yewdux come with get_directories
     });
 
     html! {
