@@ -1,5 +1,4 @@
 use crate::backend::create_element;
-use crate::backend::create_element_tree;
 use crate::backend::delete_element;
 use crate::backend::get_element_tree;
 use crate::backend::update_element;
@@ -7,21 +6,15 @@ use editor::Editor;
 use editor::EditorChange;
 use shared::id::Id;
 use shared::log;
-use shared::schema::EditorElementDelete;
-use shared::schema::{EditorElement, ElementTree, FileDirectory};
-use std::borrow::Borrow;
+use shared::schema::{EditorElement, ElementTree, FileDirectory, FileNode};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::collections::VecDeque;
 use std::rc::Rc;
-use std::time::Duration;
 use uuid::Uuid;
-use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 
-use wasm_bindgen::JsCast;
-use web_sys::{window, Range};
-use yew::platform::time::sleep;
+use web_sys::{Range};
 use yew::prelude::*;
 use yew::suspense::use_future_with_deps;
 use yew::suspense::SuspensionResult;
@@ -85,14 +78,12 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
 }
 
 use editor::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
+use crate::backend;
 
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
-    // TODO use backend::get_file here
-    //  Even the hook maybe should consider different way in order to have all the if statements inside teh backend::get_file
-    let dispatch_file_directory = Dispatch::<FileDirectory>::new();
-
     let res = use_element_tree(props.id)?;
+
     let result_html = match *res {
         Ok(ref tree) => {
             log!(&tree);
@@ -174,7 +165,18 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                         }
                     };
                 }
-                None => return Err(String::from("Not found!")),
+                None => {
+                    // TODO
+                    //     let auther_id = "";
+                    //     let data = serde_json::json!((auther_id,file_id));
+                    //     let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
+                    //     let res = res.as_string().unwrap();
+                    //     let file_node = serde_json::from_value::<Option<FileNode>>(res.parse().unwrap()).unwrap();
+                    //     if let Some(file_node) = file_node {
+                    //         return Ok(file_node.element_tree) // here this should return Element tree
+                    //     }
+                    return Err(String::from("Not found!"));
+                }
             }
         },
         file_id,
