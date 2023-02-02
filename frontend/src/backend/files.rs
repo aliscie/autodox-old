@@ -3,7 +3,6 @@ use std::str::FromStr;
 use crate::backend;
 use crate::utils::DeviceInfo;
 use futures::future::err;
-use serde_wasm_bindgen::Error;
 use shared::{
     id::Id,
     log,
@@ -15,7 +14,8 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{console, window};
-use yewdux::prelude::Dispatch;
+use yewdux::prelude::{Dispatch, use_store};
+use shared::schema::{ElementTree};
 
 pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
     let data = FileNodeUpdate {
@@ -38,7 +38,7 @@ pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
             "rename_file".to_string(),
             serde_json::json!(data).to_string(),
         )
-        .await;
+            .await;
         let _ = curr.class_list().toggle("loader");
         return Ok(());
     } else {
@@ -67,41 +67,28 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
     } else if !info.get().is_web {
         log!("Desktop");
         let new_file = serde_json::json!({ "data": data });
-        return crate::backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
+        return backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
     }
 }
 
-pub async fn update_file(data: FileNode) -> Result<(), String> {
-    let info = Dispatch::<DeviceInfo>::new();
-    if info.get().is_web || info.get().is_online {
-        let data_json = serde_json::json!(data).to_string();
-        let res = backend::call_ic("update_file".to_string(), data_json).await;
-        log!(&res);
-        return Ok(());
-    }
-    if !info.get().is_web {
-        unimplemented!();
-    } else {
-        return Err("user is offline".to_string())
-    }
-}
-
-pub async fn get_file(file_id: Id) -> Result<FileNode, Error> {
+pub async fn get_file(file_id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let file_id_str = serde_json::json!(file_id).to_string();
         let file_node_jv = backend::call_ic("get_file".to_string(), file_id.to_string()).await;
-        // log!(&file_node_jv);
-        let file_node_res = serde_wasm_bindgen::from_value::<FileNode>(file_node_jv);
-        // log!(&file_node_res);
-        file_node_res
+        log!(&file_node_jv);
+        let file_node_res = serde_wasm_bindgen::from_value::<Option<FileNode>>(file_node_jv);
+        log!(&file_node_res);
+        return Ok(());
     } else if !info.get().is_web {
-        return Err(Error::new("user is is offline".to_string()));
+
+        return Err("user is is offline".to_string());
+
     } else {
-        return Err(Error::new("user is offline".to_string()));
+        return Err("user is offline".to_string());
     }
 }
 
@@ -126,7 +113,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -146,7 +133,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -163,12 +150,39 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
     }
 }
+
+// pub async fn get_file(id: Id) -> Result<Option<ElementTree>, String> {
+//
+//     // TODO
+//     //  if File exists in Yewdux then return it
+//     //  else fetch it from IC backend and return it or Err("No such file in the IC nor in the Yewdux".to_string());
+//
+//     let info = Dispatch::<DeviceInfo>::new();
+//     // let file_node = Dispatch::<FileDirectory>::new();
+//     // let (files, _) = use_store::<FileDirectory>();
+//     // let file = files.clone().get().files.vertices.get(&id);
+//     // if let Some(file) = file {
+//     //     return Ok(Some(file.clone()));
+//     // }
+//
+//     if info.get().is_web {
+//         if info.get().is_online {
+//             return Err("web and online".to_string());
+//         } else {
+//             return Err("web and not online".to_string());
+//         }
+//     } else if info.get().is_online {
+//         return Err("Desktop and online".to_string());
+//     } else {
+//         return Err("Desktop and not online".to_string());
+//     }
+// }
 
 pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
@@ -183,7 +197,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-        .await;
+            .await;
         log!(&x);
         return x;
     } else {

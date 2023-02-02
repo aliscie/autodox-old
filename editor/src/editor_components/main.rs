@@ -1,6 +1,7 @@
 // editor/src/editor_
 use std::collections::HashMap;
 
+use shared::id::Id;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{window, Element};
 use yew::prelude::*;
@@ -20,6 +21,7 @@ pub struct ConstractorProps {
     tag: Option<String>,
     attrs: HashMap<String, String>,
     text: String,
+    id: Id,
 }
 
 #[function_component]
@@ -35,6 +37,7 @@ fn ConstructElement(props: &ConstractorProps) -> Html {
     for (key, value) in props.attrs.iter() {
         new_element.set_attribute(key, value).unwrap();
     }
+    new_element.set_id(props.id.to_string().as_str());
     Html::VRef(new_element.unchecked_into())
 }
 
@@ -42,14 +45,14 @@ fn ConstructElement(props: &ConstractorProps) -> Html {
 pub fn EditorComponent(props: &Props) -> Html {
     let node = &props.node;
     if node.tag.is_none() {
-        return html! {<p>{&node.text}</p>};
+        return html! {<p id = {node.id.to_string()}>{&node.text}</p>};
     }
     let tag = node.tag.clone();
     let response = match tag.clone().unwrap().as_str() {
         "table" => html! { <Table/>},
         "form" => html! { <FromComponent/>},
         _ => {
-            html! {<ConstructElement tag={tag} attrs={node.clone().attrs} text={node.clone().text}/>}
+            html! {<ConstructElement tag={tag} attrs={node.clone().attrs} id = {node.id} text={node.clone().text}/>}
         }
     };
 

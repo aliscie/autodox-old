@@ -9,8 +9,7 @@ edition = "2021"
 stylist = { version = "0.10.0", features = ["yew"] }
 table-extract = "0.2.2"
 yew = {version = "0.20.0", features = ["csr"]}
-
-
+emojis = { git = "https://github.com/aliscie/emojis"}
 wasm-bindgen = "0.2"
 html-minifier = "3.0.15"
 js-sys = "0.3.56"

@@ -4,10 +4,11 @@ extern crate yew;
 pub use app::{Editor, EditorChange};
 
 mod app;
-pub(crate) mod spesific_components;
-pub(crate) mod components;
-mod render;
-mod plugins;
 mod backend;
+pub(crate) mod components;
 mod editor_components;
-mod insertion_closures;
+pub mod insertion_closures;
+pub mod plugins;
+pub mod render;
+pub(crate) mod spesific_components;
+mod utils;

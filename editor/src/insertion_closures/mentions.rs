@@ -5,20 +5,20 @@ use crate::plugins::{CommandItems, DropDownItem};
 pub fn mentions() -> CommandItems {
     vec![
         DropDownItem {
-            value: html! {<a>{"Ali"}</a>},
-            text: "this is a bold text".to_string(),
+            value: "Ali".parse().unwrap(),
+            text: "Ali".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"Aman"}</a>},
-            text: "this is a bold text".to_string(),
+            value: "Ali".parse().unwrap(),
+            text: "Aman".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
         DropDownItem {
-            value: html! {<a>{"Young"}</a>},
-            text: "this is a bold text".to_string(),
+            value: "Ali".parse().unwrap(),
+            text: "Young".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },

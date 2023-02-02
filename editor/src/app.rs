@@ -1,23 +1,29 @@
+use crate::insertion_closures;
+use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::render::render;
+use crate::utils::on_slash_input;
+use serde::{Deserialize, Serialize};
 use shared::id::Id;
-use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
+use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
 use shared::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
+use wasm_bindgen::prelude::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{Element, HtmlInputElement, MutationObserver, MutationObserverInit, MutationRecord};
+use web_sys::{
+    window, Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range,
+};
 use yew::prelude::*;
 use yew::{function_component, html};
-use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
 
 /// this captures all the changes in a editor element
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum EditorChange {
     Update(EditorElementUpdate),
     Create(EditorElementCreate),
-    Delete(Id),
+    Delete(EditorElementDelete),
 }
 
 #[derive(Properties, PartialEq)]
@@ -31,7 +37,6 @@ pub struct EditorProps {
 
 #[function_component]
 pub fn Editor(props: &EditorProps) -> Html {
-
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
@@ -55,13 +60,12 @@ pub fn Editor(props: &EditorProps) -> Html {
                     if let Some(current_element) = mutation_type.target() {
                         match mutation_type.type_().as_ref() {
                             "characterData" => {
-                                log!("xxxx");
                                 if let Some(parent_element) = current_element.parent_element() {
                                     if let Ok(id) =
                                         Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
                                     {
-                                        // log!(&format!("{:?}", parent_element.inner_html()).into());
-                                        // log!(&format!("{:?}", id).into());
+                                        //log!(&format!("{:?}", parent_element.inner_html()).into());
+                                        //log!(&format!("{:?}", id).into());
                                         let update = EditorElementUpdate {
                                             id,
                                             text: Some(parent_element.inner_html().clone()),
@@ -73,8 +77,7 @@ pub fn Editor(props: &EditorProps) -> Html {
                             }
                             "attributes" => {
                                 if let Some(parent_element) = current_element.parent_element() {
-                                    unimplemented!();
-                                    // crate::shared::log!(format!("Got create: {:?}", parent_element.inner_html()));
+                                    log!(format!("Got create: {:?}", parent_element.inner_html()));
                                 }
                             }
                             "childList" => {
@@ -86,10 +89,27 @@ pub fn Editor(props: &EditorProps) -> Html {
                                         .and_then(|element| {
                                             Uuid::parse_str(element.id().as_str()).ok()
                                         })
-                                        .map(|id| onchange.emit(EditorChange::Delete(id.into())));
+                                        .map(Id::from)
+                                        .and_then(|id| {
+                                            let parent_id = element_tree
+                                                .as_ref()
+                                                .borrow()
+                                                .elements
+                                                .adjacency
+                                                .iter()
+                                                .find(|(_, vec)| vec.contains(&id))?
+                                                .0
+                                                .clone();
+                                            let delete = EditorElementDelete {
+                                                id,
+                                                tree_id: element_tree.as_ref().borrow().id.clone(),
+                                                parent_id,
+                                            };
+                                            onchange.emit(EditorChange::Delete(delete));
+                                            Some(())
+                                        });
                                 }
                                 if removed_nodes.length() > 0 {
-                                    unimplemented!();
                                     // move to next mutation record!
                                     // crate::shared::log!("got element delete!");
                                     // crate::shared::log!(mutation_type.removed_nodes());
@@ -103,7 +123,6 @@ pub fn Editor(props: &EditorProps) -> Html {
                                 let mut prev_element_id: Option<Id> = None;
                                 if let Some(prev_node) = element.previous_sibling() {
                                     let prev_element = prev_node.unchecked_into::<Element>();
-                                    unimplemented!();
                                     // crate::shared::log!(format!("previous element id : {:?}", prev_element.id()));
                                     prev_element_id = Uuid::parse_str(prev_element.id().as_str())
                                         .map(Id::from)
@@ -165,20 +184,33 @@ pub fn Editor(props: &EditorProps) -> Html {
         },
         editor_ref.clone(),
     );
-    let slash_clouser: fn(DropDownItem) = (|event| {
-        log!(event.value);
-    });
-    let emoji_clouser: fn(DropDownItem) = (|event| {
-        log!(event.value);
-    });
-    let mention_clouser: fn(DropDownItem) = (|event| {
-        log!(event.value);
-    });
 
     let element_tree = props.element_tree.clone();
 
+    let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
+        if _e.key() == "Tab" {
+            _e.prevent_default();
+            let window = web_sys::window().unwrap();
+            let document = window.document().unwrap();
+            let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+            let _ = html_document
+                .exec_command_with_show_ui_and_value("InsertText", false, "    ")
+                .unwrap();
+        }
+    });
+    // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
+    let emojis_command: fn(DropDownItem, Option<Range>) -> Option<()> = (|event, range| {
+        // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
+        let window = web_sys::window().unwrap();
+        let document = window.document().unwrap();
+        let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+        let _ = html_document
+            .exec_command_with_show_ui_and_value("InsertText", false, &event.value)
+            .unwrap();
+        return Some(());
+    });
     let action: Callback<String> = Callback::from(move |e: String| {
-        log!(e.clone());
+        // log!(e.clone());
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
         //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
         //     text_format: Some(format),
@@ -186,6 +218,8 @@ pub fn Editor(props: &EditorProps) -> Html {
         // }));
     });
 
+    let mention_clouser: fn(DropDownItem, Option<Range>) -> Option<()> =
+        (|event, range| return Some(()));
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -194,15 +228,14 @@ pub fn Editor(props: &EditorProps) -> Html {
             {props.title.clone()}
         </h2>
             <span
+            {onkeydown}
             class = "text_editor_container"
             id = "text_editor_container"
            >
-
-            <EditorToolbar  action={action}/>
-            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
-            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
-            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emoji_clouser}/>
-
+            <EditorToolbar />
+            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={Callback::from(move |(e, r)| on_slash_input(e, r))}/>
+            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={Callback::from(move |(e, r)| mention_clouser(e, r))}/>
+            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={Callback::from(move |(e, r) | emojis_command(e, r))}/>
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
         </div>
@@ -210,6 +243,3 @@ pub fn Editor(props: &EditorProps) -> Html {
             </span>
     }
 }
-
-use shared::schema::*;
-use crate::{insertion_closures, plugins};
