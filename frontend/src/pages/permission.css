@@ -1,0 +1,22 @@
+.container {
+    margin: 2em;
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    align-items: center;
+    justify-content: center;
+}
+
+.radio-group {
+    display: flex;
+    gap: 2em;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.btn {
+    padding: 0 1em;
+    font-size: 2em;
+}

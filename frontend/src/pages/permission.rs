@@ -24,22 +24,25 @@ pub fn Permission(props: &Props) -> Html {
     });
 
     html! {
-        <div class="m-8 flex flex-col gap-8 items-center justify-center">
-            <div class="flex flex-row gap-8">
-                <div>
-                    <input type="radio" id="public" name="permission" value="Public"/>
-                    <label class="cursor-pointer" for="public">{"Public"}</label>
+        <div class={css_file_macro!("permission.css")}>
+            <div class="container">
+                <div class="radio-group">
+                    <div>
+                        <input type="radio" id="public" name="permission" value="Public"/>
+                        <label class="cursor-pointer" for="public">{"Public"}</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="private" name="permission" value="Private"/>
+                        <label class="cursor-pointer" for="private">{"Private"}</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="restricted" name="permission" value="Restricted"/>
+                        <label class="cursor-pointer" for="restricted">{"Restricted"}</label>
+                    </div>
                 </div>
-                <div>
-                    <input type="radio" id="private" name="permission" value="Private"/>
-                    <label class="cursor-pointer" for="private">{"Private"}</label>
-                </div>
-                <div>
-                    <input type="radio" id="restricted" name="permission" value="Restricted"/>
-                    <label class="cursor-pointer" for="restricted">{"Restricted"}</label>
-                </div>
+                <button class="btn">{"Save"}</button>
             </div>
-            <button class="px-4">{"Save"}</button>
         </div>
+
     }
 }
