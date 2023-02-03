@@ -16,7 +16,7 @@ pub fn get_directories() -> Option<FileDirectory> {
 
 #[query]
 #[candid_method(query)]
-pub fn get_file(data: String) -> Option<FileDirectory> {
+pub fn get_directory(data: String) -> Option<FileDirectory> {
     let mut user_files: UserFiles = s!(UserFiles);
     let users: Users = s!(Users);
 
