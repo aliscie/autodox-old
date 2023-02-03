@@ -3,6 +3,7 @@ use std::str::FromStr;
 use crate::backend;
 use crate::utils::DeviceInfo;
 use futures::future::err;
+use shared::schema::ElementTree;
 use shared::{
     id::Id,
     log,
@@ -14,8 +15,7 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{console, window};
-use yewdux::prelude::{Dispatch, use_store};
-use shared::schema::{ElementTree};
+use yewdux::prelude::{use_store, Dispatch};
 
 pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
     let data = FileNodeUpdate {
@@ -38,7 +38,7 @@ pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
             "rename_file".to_string(),
             serde_json::json!(data).to_string(),
         )
-            .await;
+        .await;
         let _ = curr.class_list().toggle("loader");
         return Ok(());
     } else {
@@ -70,6 +70,20 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         return backend::call_surreal("create_file".to_string(), Some(&new_file)).await;
     } else {
         // user is offline throw a error
+        return Err("user is offline".to_string());
+    }
+}
+
+pub async fn update_file(file_node: FileNode) -> Result<(), String> {
+    let info = Dispatch::<DeviceInfo>::new();
+    if info.get().is_web || info.get().is_online {
+        let file_json = serde_json::json!(file_node);
+        let res = backend::call_ic("update_file".to_string(), file_json.to_string()).await;
+        log!(&res);
+        return Ok(());
+    } else if !info.get().is_web {
+        unimplemented!();
+    } else {
         return Err("user is offline".to_string());
     }
 }
@@ -109,7 +123,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -129,7 +143,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -146,7 +160,7 @@ pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -193,7 +207,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-            .await;
+        .await;
         log!(&x);
         return x;
     } else {
