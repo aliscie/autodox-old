@@ -33,6 +33,7 @@ type FileDirectory = record {
 type UserQuery = record {
     image: opt vec nat8;
     username: opt text;
+    address: text;
 };
 
 service : {

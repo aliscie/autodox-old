@@ -24,6 +24,7 @@ use yewdux::prelude::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub id: Id,
+    pub auther: Id,
 }
 
 fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
