@@ -59,9 +59,10 @@ pub fn Permission(props: &Props) -> Html {
     let _file_mode = file_mode.clone();
     let on_btn_save: Callback<MouseEvent> =
         fd_dispatch.reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
+            let _file_mode = _file_mode.clone();
             Box::pin(async move {
                 if let Some(file_node) = state.files.vertices.get_mut(&_file_id) {
-                    file_node.file_mode = FileMode::Public; // Todo
+                    file_node.file_mode = _file_mode;
                     let res = backend::update_file(file_node.clone()).await;
                     if (res.is_ok()) {
                         log!("Do something...");
