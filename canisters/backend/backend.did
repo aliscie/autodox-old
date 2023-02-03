@@ -41,7 +41,7 @@ service : {
     "update_profile" : (text) -> (text);
     "get_profile" : () -> (opt UserQuery) query;
     "create_file": (text) -> (text);
-    "get_file": (text) -> (opt FileNode) query;
+    "get_file": (text) -> (opt FileDirectory) query;
     "rename_file": (text) -> (text);
     "delete_file": (text) -> (text);
     "create_directory": () -> (text);
