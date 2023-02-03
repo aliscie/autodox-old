@@ -233,7 +233,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         _dispatch_file_directory.reduce_mut_future_callback(move |state| {
             match route {
                 // the current file is in use navigate to home!
-                Route::File { id } => {
+                Route::File { id, auther } => {
                     if file_id == id {
                         _navigator.push(&Route::Home);
                     }
