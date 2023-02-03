@@ -114,6 +114,7 @@ pub async fn create_directory() -> String {
             name: "root".into(),
             element_tree: None,
             file_mode: FileMode::Private,
+            user_addresses_can_see: [].to_vec(),
         },
     );
     file_directory
@@ -161,7 +162,7 @@ pub async fn change_directory(data: String) -> String {
                 .iter()
                 .position(|x| *x == json_data.id)
                 .unwrap();
-            if (file_index >= 0) {
+            if file_index >= 0 {
                 old_adjacency.remove(file_index);
             }
         }

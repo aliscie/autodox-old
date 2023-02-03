@@ -9,6 +9,7 @@ type FileNode = record {
     name: text;
     element_tree: opt text;
     file_mode: FileMode;
+    user_addresses_can_see: vec text;
 };
 
 type Tree = record {
@@ -30,9 +31,14 @@ type FileDirectory = record {
 };
 
 type UserQuery = record {
-    image: opt vec nat8;
-    username: opt text;
     address: text;
+    username: opt text;
+    image: opt vec nat8;
+    last_name: opt text;
+    first_name: opt text;
+    birthdate: opt text;
+    email: opt text;
+    emails: opt vec text;
 };
 
 service : {

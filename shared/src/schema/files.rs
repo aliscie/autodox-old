@@ -49,6 +49,7 @@ impl From<FileNodeCreate> for FileNode {
             name: value.name,
             element_tree: None,
             file_mode: FileMode::Private,
+            user_addresses_can_see: [].to_vec(),
         }
     }
 }
@@ -142,6 +143,7 @@ pub struct FileNode {
     pub name: String,
     pub element_tree: Option<Id>,
     pub file_mode: FileMode,
+    pub user_addresses_can_see: Vec<String>,
 }
 
 #[cfg(not(feature = "backend"))]
@@ -152,6 +154,7 @@ impl Default for FileNode {
             name: "untitled".to_string(),
             element_tree: None,
             file_mode: FileMode::Private,
+            user_addresses_can_see: [].to_vec(),
         }
     }
 }
@@ -215,6 +218,7 @@ impl Default for FileDirectory {
                 name: "root".into(),
                 element_tree: None,
                 file_mode: FileMode::Private,
+                user_addresses_can_see: [].to_vec(),
             },
         );
         d.files.adjacency.insert(id.clone().into(), Vec::new());
@@ -302,6 +306,7 @@ impl TryFrom<Object> for FileNode {
                 _ => None,
             }),
             file_mode: todo!(),
+            user_addresses_can_see: todo!(),
         })
     }
 }
