@@ -48,7 +48,6 @@ impl From<FileNodeCreate> for FileNode {
             id: value.id,
             name: value.name,
             element_tree: None,
-            test: "None".to_string(),
             file_mode: FileMode::Private,
         }
     }
@@ -142,7 +141,6 @@ pub struct FileNode {
     pub id: Id,
     pub name: String,
     pub element_tree: Option<Id>,
-    pub test: String,
     pub file_mode: FileMode,
 }
 
@@ -153,7 +151,6 @@ impl Default for FileNode {
             id: Id::new(),
             name: "untitled".to_string(),
             element_tree: None,
-            test: "None".to_string(),
             file_mode: FileMode::Private,
         }
     }
@@ -217,7 +214,6 @@ impl Default for FileDirectory {
                 id: id.into(),
                 name: "root".into(),
                 element_tree: None,
-                test: "None".to_string(),
                 file_mode: FileMode::Private,
             },
         );
@@ -305,7 +301,6 @@ impl TryFrom<Object> for FileNode {
                 Value::Thing(x) => x.id.to_raw().as_str().parse::<Uuid>().map(Id::from).ok(),
                 _ => None,
             }),
-            test: todo!(),
             file_mode: todo!(),
         })
     }
