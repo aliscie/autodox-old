@@ -14,7 +14,7 @@ use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen_futures::spawn_local;
 
-use web_sys::{Range};
+use web_sys::Range;
 use yew::prelude::*;
 use yew::suspense::use_future_with_deps;
 use yew::suspense::SuspensionResult;
@@ -78,8 +78,8 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
     })
 }
 
-use editor::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::backend;
+use editor::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {

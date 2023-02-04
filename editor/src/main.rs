@@ -27,6 +27,7 @@ mod app;
 mod backend;
 pub(crate) mod components;
 mod dummy_data;
+mod handle_mutation;
 mod insertion_closures;
 mod plugins;
 mod render;
