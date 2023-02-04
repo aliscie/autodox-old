@@ -63,9 +63,7 @@ pub fn Share(props: &Props) -> Html {
                 if let Some(file_node) = state.files.vertices.get_mut(&_file_id) {
                     file_node.file_mode = _file_mode;
                     let res = backend::update_file(file_node.clone()).await;
-                    if (res.is_ok()) {
-                        log!("Do something...");
-                    }
+                    log!(&res);
                 }
             })
         });
