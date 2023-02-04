@@ -227,8 +227,12 @@ pub fn Editor(props: &EditorProps) -> Html {
         // }));
     });
 
-    let mention_clouser: fn(DropDownItem, Option<Range>) -> Option<()> =
-        (|event, range| return Some(()));
+    let mention_clouser: fn(DropDownItem, Option<Range>) -> Option<()> = (|event, range| return Some(()));
+
+    // let format_command: fn(String, selectoin) -> Option<()> =  (|event, range| return Some((
+    //     onchange.emit(EditorChange::Update(update)); // TODO this should be the same for  on_slash_input, mention_clouser and emojis_command
+    //     )));
+
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -241,7 +245,9 @@ pub fn Editor(props: &EditorProps) -> Html {
             class = "text_editor_container"
             id = "text_editor_container"
            >
-            <EditorToolbar />
+            <EditorToolbar
+            // command={Callback::from(move |(e, r)| format_command(e, r))}
+            />
             <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={Callback::from(move |(e, r)| on_slash_input(e, r))}/>
             <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={Callback::from(move |(e, r)| mention_clouser(e, r))}/>
             <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={Callback::from(move |(e, r) | emojis_command(e, r))}/>
