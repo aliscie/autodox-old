@@ -9,7 +9,7 @@ type FileNode = record {
     name: text;
     element_tree: opt text;
     file_mode: FileMode;
-    user_addresses_can_see: vec text;
+    users_can_see: vec UserQuery;
 };
 
 type Tree = record {

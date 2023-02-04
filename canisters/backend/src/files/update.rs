@@ -114,7 +114,7 @@ pub async fn create_directory() -> String {
             name: "root".into(),
             element_tree: None,
             file_mode: FileMode::Private,
-            user_addresses_can_see: [].to_vec(),
+            users_can_see: [].to_vec(),
         },
     );
     file_directory

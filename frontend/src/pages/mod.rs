@@ -4,6 +4,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 mod market;
 mod permission;
+mod share;
 mod profile_info;
 mod settings;
 
@@ -23,6 +24,8 @@ pub enum PagesRoute {
     NotFound,
     #[at("/permission/:id")]
     Permission { id: Id },
+    #[at("/share/:id")]
+    Share { id: Id },
 }
 
 pub fn page_switch(route: PagesRoute) -> Html {
@@ -32,5 +35,6 @@ pub fn page_switch(route: PagesRoute) -> Html {
         PagesRoute::Settings => html! { <settings::Settings/> },
         PagesRoute::NotFound => html! {<Redirect<Route> to={Route::NotFound}/>},
         PagesRoute::Permission { id } => html! {<permission::Permission file_id={id} />},
+        PagesRoute::Share { id } => html! {<share::Share file_id={id} />},
     }
 }

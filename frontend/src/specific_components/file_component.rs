@@ -1,5 +1,6 @@
 use crate::pages::PagesRoute;
 use crate::{backend, components::PopOverMenu, router::Route};
+use shared::schema::FileMode;
 use shared::*;
 use shared::{
     id::Id,
@@ -35,7 +36,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     // }
     //let drop_data = use_state(|| "".to_string());
     //let is_drag_over = use_state(|| "".to_string());
-    let dispatch_file_directory = Dispatch::<FileDirectory>::new();
+    let (fd_rc, fd_dispatch) = use_store::<FileDirectory>();
     let is_drag_under = use_state(|| "".to_string());
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let is_dragged = use_state(|| "".to_string());
@@ -111,7 +112,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
 
     let _id = id.clone();
     let ondrop: Callback<DragEvent> =
-        dispatch_file_directory.reduce_mut_future_callback_with(move |state, _e: DragEvent| {
+        fd_dispatch.reduce_mut_future_callback_with(move |state, _e: DragEvent| {
             _e.prevent_default();
             let curr: Element = _e.target_unchecked_into();
             curr.class_list().toggle("dragging_over");
@@ -172,8 +173,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     });
 
     let _id = id.clone();
-    let on_create_file: Callback<MouseEvent> = dispatch_file_directory
-        .reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
+    let on_create_file: Callback<MouseEvent> =
+        fd_dispatch.reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
             Box::pin(async move {
                 let mut file = FileNode::default();
                 let file_name = "new file".to_string();
@@ -187,8 +188,8 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         });
 
     let _id = id.clone();
-    let onkeydown: Callback<KeyboardEvent> = dispatch_file_directory
-        .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+    let onkeydown: Callback<KeyboardEvent> =
+        fd_dispatch.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
             Box::pin(async move {
                 let input: HtmlInputElement = _e.target_unchecked_into();
                 let value: String = input.inner_text();
@@ -280,6 +281,25 @@ pub fn file_component(props: &FileComponentProps) -> Html {
         move |_| _navigator.push(&PagesRoute::Permission { id: _id })
     };
 
+    let _id = props.id.clone();
+    let _fd_rc = fd_rc.clone();
+    let _navigator = navigator.clone();
+    let on_share = Callback::from(move |_e: MouseEvent| {
+        let file_mode = _fd_rc
+            .clone()
+            .files
+            .vertices
+            .get(&_id)
+            .unwrap_or(&FileNode::default())
+            .file_mode
+            .clone();
+        if (file_mode == FileMode::Restricted) {
+            _navigator.push(&PagesRoute::Share { id: _id });
+        } else {
+            log!("Can't share since user isn't restricted");
+        }
+    });
+
     html! {
         <div
         class={css_file_macro!("file_component.css")}
@@ -337,7 +357,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
                 contenteditable="true"
                 data-tip="File must have at least 1 character."
                 autofocus=true placeholder="rename..">{props.name.clone()}</span></a>},
-           html! {<a><i class="fa-solid fa-upload"/>{"Share"}</a>},
+           html! {<a onclick={on_share}><i class="fa-solid fa-upload"/>{"Share"}</a>},
            html! {<a onclick={on_permission}><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
            html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
            html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
