@@ -159,6 +159,14 @@ pub fn Editor(props: &EditorProps) -> Html {
                 MutationObserver::new(oninput_event.as_ref().unchecked_ref()).unwrap();
             //let doc = window().unwrap_throw().document().unwrap_throw();
             //let editor: Rc<Element> = Rc::new(editor_ref.c!(ast::<Element>().unwrap());
+
+            // TODO
+            //  nested update is a problem
+            //  If we create a nested element
+            //   It is coming as update on the parent element.
+            //   It should show as a create event on the root
+
+
             let _ = mutation_observer.observe_with_options(
                 &editor_ref.get().unwrap(),
                 MutationObserverInit::new()
@@ -177,6 +185,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline specific_components
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
+
             move || {
                 drop(oninput_event);
                 mutation_observer.disconnect();
