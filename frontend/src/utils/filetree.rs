@@ -81,7 +81,7 @@ fn RenderFileElement(props: &RenderFileElementProps) -> Html {
         let element: Element = e.target_unchecked_into();
         history.push(&Route::File {
             id: element.id().parse().unwrap(),
-            auther: Id::try_from(address.clone()).expect(format!("------- {} is not a valid Id String -------", address).as_str()),
+            auther: address.clone(),
         });
     });
 
