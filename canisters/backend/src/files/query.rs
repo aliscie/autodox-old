@@ -16,7 +16,7 @@ pub fn get_directories() -> Option<FileDirectory> {
 
 #[query]
 #[candid_method(query)]
-pub fn get_directory(data: String) -> Option<FileDirectory> {
+pub async fn get_directory(data: String) -> Option<FileDirectory> {
     let mut user_files: UserFiles = s!(UserFiles);
     let users: Users = s!(Users);
 
@@ -40,16 +40,9 @@ pub fn get_directory(data: String) -> Option<FileDirectory> {
     if &current_user == &auther.unwrap()
     // || file.file_mode == FileMode::Public
     {
-        return Some(FileDirectory{
-            id: Default::default(),
-            name: "".to_string(),
-            files: Tree {
-                // TODO add this file somewhere here
-                vertices: HashMap::new(),
-                adjacency: HashMap::new(),
-                root: None,
-            },
-        });
+        let file_dir = FileDirectory::default();
+        file_dir.files.push_children(file_dir.files.root.unwrap(), file.id, file);
+        return Some(file_dir);
     };
     return None;
 }

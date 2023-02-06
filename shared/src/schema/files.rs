@@ -227,6 +227,28 @@ impl Default for FileDirectory {
     }
 }
 
+
+#[cfg(feature = "backend")]
+impl FileDirectory {
+    pub async fn default() -> Self {
+        let mut d = Self::new( Id::ic_new().await, "default".to_string());
+        let id = Id::ic_new().await;
+        d.files.push_vertex(
+            id.into(),
+            FileNode {
+                id: id.into(),
+                name: "root".into(),
+                element_tree: None,
+                test: "None".to_string(),
+                file_mode: FileMode::Private,
+            },
+        );
+        d.files.adjacency.insert(id.clone().into(), Vec::new());
+        d.files.root = Some(id.into());
+        return d;
+    }
+}
+
 impl FileDirectory {
     //#[inline]
     pub fn new(id: Id, name: String) -> Self {
