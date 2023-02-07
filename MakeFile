@@ -51,5 +51,8 @@ deploy_internet:
 watch_fe:
 	cargo watch -w "./frontend" -s "cd frontend; yarn wasm ; yarn run build ; cd ../;  dfx deploy backend "
 
+deploy_be:
+	dfx deploy backend
+
 watch_be:
 	cargo watch -w "./canisters" -s "dfx deploy"

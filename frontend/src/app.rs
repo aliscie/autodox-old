@@ -125,7 +125,7 @@ pub fn app() -> Html {
                             <button style="width:100%" onclick={on_market_place}><i class=" fa-solid fa-globe"></i>{"Market place"}</button>
                     </ul>
                 </aside>
-                <main style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
+                <main class="main_container" style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
                     <Switch<Route> render= {switch}/>
                 </main>
             </div>

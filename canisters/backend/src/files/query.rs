@@ -20,29 +20,27 @@ pub async fn get_directory(data: String) -> Option<FileDirectory> {
     let mut user_files: UserFiles = s!(UserFiles);
     let users: Users = s!(Users);
 
-    let (auther_id, file_id) = serde_json::from_str::<(Id, Id)>(&data).unwrap();
+    let (auther_id, file_id) = serde_json::from_str::<(String, Id)>(&data).unwrap();
     let current_user = User::current()?;
 
-    let mut auther: Option<User> = None;
-    for u in users {
-        if u.address.to_string() == auther_id.to_string() {
-            auther = Some(u);
+    for auther in users {
+        if auther.address.to_string() == auther_id {
+            let directories = user_files.get(&auther)?; // TODO why this return None?
+            let file = directories
+                .files
+                .vertices
+                .get(&file_id)
+                .map(|s| s.clone());
+
+            if &current_user == &auther
+            // || file.file_mode == FileMode::Public
+            {
+            let mut file_dir = FileDirectory::default().await;
+            file_dir.files.push_children(file_dir.files.root.unwrap(), file.clone().unwrap().id, file.unwrap());
+            return Some(file_dir);
+            };
         };
     };
 
-    let file = user_files
-        .get(&auther.clone().unwrap())?
-        .files
-        .vertices
-        .get(&file_id)
-        .map(|s| s.clone());
-
-    if &current_user == &auther.unwrap()
-    // || file.file_mode == FileMode::Public
-    {
-        let file_dir = FileDirectory::default();
-        file_dir.files.push_children(file_dir.files.root.unwrap(), file.id, file);
-        return Some(file_dir);
-    };
     return None;
 }
