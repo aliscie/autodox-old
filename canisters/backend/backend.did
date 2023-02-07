@@ -8,8 +8,8 @@ type FileNode = record {
     id : text;
     name: text;
     element_tree: opt text;
-    test: text;
     file_mode: FileMode;
+    users_can_see: vec UserQuery;
 };
 
 type Tree = record {
@@ -31,9 +31,14 @@ type FileDirectory = record {
 };
 
 type UserQuery = record {
-    image: opt vec nat8;
-    username: opt text;
     address: text;
+    username: opt text;
+    image: opt vec nat8;
+    last_name: opt text;
+    first_name: opt text;
+    birthdate: opt text;
+    email: opt text;
+    emails: opt vec text;
 };
 
 service : {
@@ -41,10 +46,12 @@ service : {
     "update_profile" : (text) -> (text);
     "get_profile" : () -> (opt UserQuery) query;
     "create_file": (text) -> (text);
+    "update_file": (text) -> (text);
     "get_directory": (text) -> (opt FileDirectory) query;
     "rename_file": (text) -> (text);
     "delete_file": (text) -> (text);
     "create_directory": () -> (text);
     "get_directories": () ->(opt FileDirectory) query;
     "change_directory": (text) -> (text);
+    "get_users" : () -> (vec UserQuery) query;
 }
