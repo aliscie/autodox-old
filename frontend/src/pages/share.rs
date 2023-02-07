@@ -19,6 +19,8 @@ pub struct Props {
 pub fn Share(props: &Props) -> Html {
     let (fd_rc, fd_dispatch) = use_store::<FileDirectory>();
     let users_state: UseStateHandle<Vec<UserQuery>> = use_state(|| [].to_vec());
+    let file_mode_state: UseStateHandle<FileMode> = use_state(|| FileMode::Private);
+    let file_mode = (*file_mode_state).clone();
 
     let _users_state = users_state.clone();
     use_future(move || async move {
