@@ -1,9 +1,9 @@
+use shared::id::Id;
+use shared::schema::{EditorElement, ElementTree};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
-use shared::id::Id;
-use shared::schema::{EditorElement, ElementTree};
 
 pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
     let mut default_element_tree = ElementTree::default();
@@ -31,7 +31,12 @@ pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
     default_element_tree.elements.push_children(
         root,
         id,
-        EditorElement::new(id, r#"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
+        EditorElement::new(id, r#"Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
+            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+            It has survived not only five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+            sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
     );
 
     Rc::new(RefCell::new(default_element_tree.clone()))

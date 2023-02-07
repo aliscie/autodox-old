@@ -1,6 +1,3 @@
-// editor/src/insertion_component
-extern crate web_sys;
-
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -44,7 +41,6 @@ fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
     Callback::from(move |e| {
         match e {
             EditorChange::Update(x) => {
-                log!(&x);
                 let update_data = x.clone();
                 if let Some(element) = element_tree
                     .as_ref()
@@ -62,29 +58,30 @@ fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
                 }
             }
             EditorChange::Create(x) => {
-                log!(&x);
                 let create_data = x.clone();
                 element_tree.clone().borrow_mut().elements.push_children(
                     x.parent_id.clone(),
                     x.id.clone(),
                     x.clone().into(),
                 );
-                //if let Some(prev_element_id) = x.prev_element_id {
-                //    let mut element_tree = element_tree.as_ref().borrow_mut();
-                //    let children_list_of_parent_element = element_tree
-                //        .elements
-                //        .adjacency
-                //        .get_mut(&x.parent_id)
-                //        .unwrap();
-                //    let index_of_prev_element = children_list_of_parent_element
-                //        .get_index_of(&prev_element_id)
-                //        .unwrap();
-                //    let index_of_last_element =
-                //        children_list_of_parent_element.get_index_of(&x.id).unwrap();
-                //    children_list_of_parent_element
-                //        .move_index(index_of_last_element, index_of_prev_element + 1);
-                //    log!(element_tree.elements.adjacency.get(&x.parent_id));
-                //}
+                if let Some(prev_element_id) = x.prev_element_id {
+                    let mut element_tree = element_tree.as_ref().borrow_mut();
+                    let children_list_of_parent_element = element_tree
+                        .elements
+                        .adjacency
+                        .get_mut(&x.parent_id)
+                        .unwrap();
+                    let index_of_prev_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == x.id)
+                        .unwrap();
+                    let index_of_last_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == x.id)
+                        .unwrap();
+                    children_list_of_parent_element
+                        .swap(index_of_last_element, index_of_prev_element);
+                }
             }
             EditorChange::Delete(data) => {
                 element_tree.as_ref().borrow_mut().elements.remove(&data.id);

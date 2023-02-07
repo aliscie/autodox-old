@@ -33,11 +33,9 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
         changes.reduce_mut(|s| s.changes.push_back(e.clone()));
         match e {
             EditorChange::Update(x) => {
-                log!(&x);
                 let update_data = x.clone();
                 spawn_local(async move {
                     let x = update_element(update_data).await;
-                    log!(x);
                 });
                 if let Some(element) = element_tree
                     .as_ref()
@@ -55,11 +53,9 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                 }
             }
             EditorChange::Create(x) => {
-                log!(&x);
                 let create_data = x.clone();
                 spawn_local(async move {
                     let result = create_element(create_data).await;
-                    log!(result);
                 });
                 element_tree.clone().borrow_mut().elements.push_children(
                     x.parent_id.clone(),
@@ -71,7 +67,6 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                 element_tree.as_ref().borrow_mut().elements.remove(&data.id);
                 spawn_local(async move {
                     let result = delete_element(data).await;
-                    log!(result);
                 });
             }
         };
