@@ -4,6 +4,7 @@ use shared::id::Id;
 use shared::schema::FileDirectory;
 use shared::schema::FileMode;
 use shared::schema::FileNode;
+use shared::schema::UserQuery;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew::suspense::*;
@@ -15,25 +16,15 @@ pub struct Props {
 }
 
 #[function_component]
-pub fn Permission(props: &Props) -> Html {
+pub fn Share(props: &Props) -> Html {
     let (fd_rc, fd_dispatch) = use_store::<FileDirectory>();
-    let file_mode_state = use_state(|| FileMode::Public);
+    let users_state: UseStateHandle<Vec<UserQuery>> = use_state(|| [].to_vec());
+    let file_mode_state: UseStateHandle<FileMode> = use_state(|| FileMode::Private);
     let file_mode = (*file_mode_state).clone();
 
-    let _file_mode_state = file_mode_state.clone();
-    let _fd_rc = fd_rc.clone();
-    let _file_id = props.file_id.clone();
+    let _users_state = users_state.clone();
     use_future(move || async move {
-        _file_mode_state.set(
-            _fd_rc
-                .clone()
-                .files
-                .vertices
-                .get(&_file_id)
-                .unwrap_or(&FileNode::default())
-                .file_mode
-                .clone(),
-        );
+        let res = backend::get_users().await;
     });
 
     let _file_mode_state = file_mode_state.clone();
@@ -69,24 +60,8 @@ pub fn Permission(props: &Props) -> Html {
         });
 
     html! {
-        <div class={css_file_macro!("permission.css")}>
-            <div class="container">
-                <div class="radio-group">
-                    <div>
-                        <input type="radio" id="private" name="permission" value="Private" checked={file_mode==FileMode::Private} onclick={on_radio_permission.clone()}/>
-                        <label class="cursor-pointer" for="private">{"Private"}</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="restricted" name="permission" value="Restricted" checked={file_mode==FileMode::Restricted} onclick={on_radio_permission.clone()}/>
-                        <label class="cursor-pointer" for="restricted">{"Restricted"}</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="public" name="permission" value="Public" checked={file_mode==FileMode::Public} onclick={on_radio_permission.clone()}/>
-                        <label class="cursor-pointer" for="public">{"Public"}</label>
-                    </div>
-                </div>
-                <button class="btn" onclick={on_btn_save}>{"Save"}</button>
-            </div>
+        <div class={css_file_macro!("share.css")}>
+            {"Share"}
         </div>
 
     }
