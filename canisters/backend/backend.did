@@ -53,4 +53,5 @@ service : {
     "create_directory": () -> (text);
     "get_directories": () ->(opt FileDirectory) query;
     "change_directory": (text) -> (text);
+    "get_users" : () -> (vec UserQuery) query;
 }

@@ -4,6 +4,7 @@ use shared::id::Id;
 use shared::schema::FileDirectory;
 use shared::schema::FileMode;
 use shared::schema::FileNode;
+use shared::schema::UserQuery;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew::suspense::*;
@@ -17,23 +18,11 @@ pub struct Props {
 #[function_component]
 pub fn Share(props: &Props) -> Html {
     let (fd_rc, fd_dispatch) = use_store::<FileDirectory>();
-    let file_mode_state = use_state(|| FileMode::Public);
-    let file_mode = (*file_mode_state).clone();
+    let users_state: UseStateHandle<Vec<UserQuery>> = use_state(|| [].to_vec());
 
-    let _file_mode_state = file_mode_state.clone();
-    let _fd_rc = fd_rc.clone();
-    let _file_id = props.file_id.clone();
+    let _users_state = users_state.clone();
     use_future(move || async move {
-        _file_mode_state.set(
-            _fd_rc
-                .clone()
-                .files
-                .vertices
-                .get(&_file_id)
-                .unwrap_or(&FileNode::default())
-                .file_mode
-                .clone(),
-        );
+        let res = backend::get_users().await;
     });
 
     let _file_mode_state = file_mode_state.clone();

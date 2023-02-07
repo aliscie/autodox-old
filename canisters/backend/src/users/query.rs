@@ -23,3 +23,22 @@ pub fn get_profile() -> Option<UserQuery> {
     }
     None
 }
+
+#[query]
+#[candid_method(query)]
+pub fn get_users() -> Vec<UserQuery> {
+    let users = s!(Users);
+    let caller = User::caller();
+    let mut query_users = Vec::new();
+    for user in users {
+        if &user.address != &caller {
+            query_users.push(UserQuery {
+                address: user.address.to_string(),
+                image: user.image,
+                username: user.username,
+                ..UserQuery::default()
+            });
+        }
+    }
+    query_users
+}
