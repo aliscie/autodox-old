@@ -2,6 +2,7 @@ use crate::files::types::*;
 use crate::users::types::*;
 use crate::utils::{Status, UpdateResponse};
 use candid::{CandidType, Deserialize, Principal};
+use std::collections::VecDeque;
 use ic_cdk;
 use ic_kit::candid::candid_method;
 use ic_kit::macros::update;
@@ -17,6 +18,9 @@ use shared::schema::{
 };
 use shared::Tree;
 use std::collections::HashMap;
+use indexmap::IndexSet;
+// use editor::EditorChange;
+
 
 #[update]
 #[candid_method(update)]
@@ -87,6 +91,67 @@ pub fn delete_file(json_data: String) -> String {
     }
     s! {UserFiles = user_files};
     "File is deleted.".to_string()
+}
+#[update]
+#[candid_method(update)]
+pub async fn group_update(data: String) -> String {
+    // let changes = serde_json::from_str::<VecDeque<EditorChange>>(&data).unwrap();
+    // let user = User::current().unwrap();
+    // let mut user_files = s!(UserFiles);
+    // let file_directory = user_files.get_mut(&user).unwrap();
+    // for change in changes {
+    //     match change {
+    //         EditorChange::CreateFile(data) => {
+    //             let mut parent_adjacency = file_directory
+    //                 .files
+    //                 .adjacency
+    //                 .entry(data.parent_id)
+    //                 .or_default();
+    //             parent_adjacency.push(data.id);
+    //             file_directory
+    //                 .files
+    //                 .vertices
+    //                 .insert(data.id, data.into());
+    //         }
+    //         EditorChange::UpdateFile(data) => {
+    //             file_directory
+    //                 .files
+    //                 .vertices
+    //                 .insert(data.id, data.into());
+    //         }
+    //         EditorChange::DeleteFile(data) => {
+    //             let adjacency = file_directory
+    //                 .files
+    //                 .adjacency
+    //                 .get_mut(&data.parent_id)
+    //                 .unwrap();
+    //             if adjacency.len() > 0 {
+    //                 let index = adjacency.iter().position(|x| *x == data.id).unwrap();
+    //                 adjacency.remove(index);
+    //             }
+    //             file_directory.files.vertices.remove(&data.id);
+    //         }
+    //         EditorChange::MoveFile(data) => {
+    //             let adjacency = file_directory
+    //                 .files
+    //                 .adjacency
+    //                 .get_mut(&data.parent_id)
+    //                 .unwrap();
+    //             if adjacency.len() > 0 {
+    //                 let index = adjacency.iter().position(|x| *x == data.id).unwrap();
+    //                 adjacency.remove(index);
+    //             }
+    //             let mut parent_adjacency = file_directory
+    //                 .files
+    //                 .adjacency
+    //                 .entry(data.new_parent_id)
+    //                 .or_default();
+    //             parent_adjacency.push(data.id);
+    //         }
+    //     }
+    // };
+    // s! { UserFiles = user_files};
+    "Files are updated.".to_string()
 }
 
 #[update]
