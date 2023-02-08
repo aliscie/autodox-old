@@ -59,7 +59,7 @@ fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
             }
             EditorChange::Create(x) => {
                 let create_data = x.clone();
-                element_tree.clone().borrow_mut().elements.push_children(
+                element_tree.as_ref().borrow_mut().elements.push_children(
                     x.parent_id.clone(),
                     x.id.clone(),
                     x.clone().into(),

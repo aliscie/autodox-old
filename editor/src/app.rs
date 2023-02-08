@@ -55,11 +55,7 @@ pub fn Editor(props: &EditorProps) -> Html {
         let onchange = props.onchange.clone();
         Closure::wrap(Box::new(
             move |mutation_event: Vec<MutationRecord>, _observer: MutationObserver| {
-                for mutation in mutation_event {
-                    // log!(&format!("{:?}", mutation_type.type_()).into());
-                    // log!(&format!("{:?}", mutation_type.target()).into());
-                    handle_mutation(mutation, &onchange, element_tree.clone());
-                }
+                handle_mutation(&mutation_event, &onchange, element_tree.clone());
             },
         ) as Box<dyn FnMut(_, _)>)
     };

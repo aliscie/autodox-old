@@ -62,6 +62,24 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                     x.id.clone(),
                     x.clone().into(),
                 );
+                if let Some(prev_element_id) = x.prev_element_id {
+                    let mut element_tree = element_tree.as_ref().borrow_mut();
+                    let children_list_of_parent_element = element_tree
+                        .elements
+                        .adjacency
+                        .get_mut(&x.parent_id)
+                        .unwrap();
+                    let index_of_prev_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == x.id)
+                        .unwrap();
+                    let index_of_last_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == x.id)
+                        .unwrap();
+                    children_list_of_parent_element
+                        .swap(index_of_last_element, index_of_prev_element);
+                }
             }
             EditorChange::Delete(data) => {
                 element_tree.as_ref().borrow_mut().elements.remove(&data.id);
