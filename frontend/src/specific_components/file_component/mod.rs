@@ -16,6 +16,8 @@ use yew::prelude::*;
 use yew_hooks::use_toggle;
 use yew_router::prelude::{use_navigator, use_route};
 use yewdux::prelude::*;
+mod handle_menu_items;
+use handle_menu_items::use_file_items;
 
 #[derive(PartialEq, Properties)]
 pub struct FileComponentProps {
@@ -28,6 +30,7 @@ pub struct FileComponentProps {
 
 #[function_component(FileComponent)]
 pub fn file_component(props: &FileComponentProps) -> Html {
+    let menu_items = use_file_items(props.clone());
     // HasMap
     // {
     // type:"dropover", // or dropunder or dropbellow,
@@ -41,8 +44,6 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let is_dragged = use_state(|| "".to_string());
     let is_enter = use_state(|| "".to_string());
-    let navigator = use_navigator().unwrap();
-    let route = use_route::<Route>().unwrap_or_default();
 
     let caret = use_toggle("", "caret-down");
     let id = props.id.clone();
@@ -187,68 +188,9 @@ pub fn file_component(props: &FileComponentProps) -> Html {
             })
         });
 
-    let _id = id.clone();
-    let onkeydown: Callback<KeyboardEvent> =
-        fd_dispatch.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
-            Box::pin(async move {
-                let input: HtmlInputElement = _e.target_unchecked_into();
-                let value: String = input.inner_text();
 
-                if _e.key() == "Enter" {
-                    _e.prevent_default();
-                };
 
-                if _e.key() != "Enter" {
-                    input.class_list().remove_1("tool").unwrap();
-                };
 
-                let clone_id = _id.clone();
-
-                if _e.key() == "Enter" && value.is_empty() {
-                    input.class_list().add_1("tool").unwrap();
-                } else if _e.key() == "Enter" {
-                    let res = backend::rename_file(_id.clone(), value.clone()).await;
-                    if (res.is_ok()) {
-                        state.files.vertices.get_mut(&_id).unwrap().name = value;
-                    }
-                }
-            })
-        });
-
-    let ondelete = {
-        let id = id.clone();
-        let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
-        let mut parent_id = Id::default();
-        for (parent, child_id) in &_dispatch_file_directory.get().files.adjacency {
-            if child_id.contains(&id) {
-                parent_id = *parent;
-            }
-        }
-        let delete_file_node = FileNodeDelete {
-            id,
-            parent_id,
-            tree_id: _dispatch_file_directory.get().id,
-        };
-        let file_id = id.clone();
-        let _navigator = navigator.clone();
-        _dispatch_file_directory.reduce_mut_future_callback(move |state| {
-            match route {
-                // the current file is in use navigate to home!
-                Route::File { id, auther: _ } => {
-                    if file_id == id {
-                        _navigator.push(&Route::Home);
-                    }
-                }
-                _ => {}
-            }
-            Box::pin(async move {
-                let result = crate::backend::delete_file(delete_file_node).await;
-
-                log!(result);
-                state.files.remove(&file_id);
-            })
-        })
-    };
 
     let _is_drag_under = is_drag_under.clone();
     let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
@@ -275,30 +217,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
     //     _is_drag_above.set("".to_string());
     // });
 
-    let on_permission = {
-        let _navigator = navigator.clone();
-        let _id = props.id.clone();
-        move |_| _navigator.push(&PagesRoute::Permission { id: _id })
-    };
 
-    let _id = props.id.clone();
-    let _fd_rc = fd_rc.clone();
-    let _navigator = navigator.clone();
-    let on_share = Callback::from(move |_e: MouseEvent| {
-        let file_mode = _fd_rc
-            .clone()
-            .files
-            .vertices
-            .get(&_id)
-            .unwrap_or(&FileNode::default())
-            .file_mode
-            .clone();
-        if (file_mode == FileMode::Restricted) {
-            _navigator.push(&PagesRoute::Share { id: _id });
-        } else {
-            log!("Can't share since user isn't restricted");
-        }
-    });
 
     html! {
         <div
@@ -351,17 +270,7 @@ pub fn file_component(props: &FileComponentProps) -> Html {
            <PopOverMenu
             click_on={Some(true)}
            position = {position.clone()}
-           items={vec![
-           html! {<a><span
-                {onkeydown}
-                contenteditable="true"
-                data-tip="File must have at least 1 character."
-                autofocus=true placeholder="rename..">{props.name.clone()}</span></a>},
-           html! {<a onclick={on_share}><i class="fa-solid fa-upload"/>{"Share"}</a>},
-           html! {<a onclick={on_permission}><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
-           html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
-           html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
-           ]}
+           items={menu_items.clone()}
           />
 
         </div>

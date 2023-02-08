@@ -13,6 +13,18 @@ pub fn get_directories() -> Option<FileDirectory> {
     let mut user_files: UserFiles = s!(UserFiles);
     user_files.get(&user).map(|s| s.clone())
 }
+enum PermissionTypes{
+    // Create,
+    Read,
+    Update,
+    // Delete,
+}
+
+struct RestrictedPermission {
+    any_one: bool,
+    user: User,
+    permission: Vec<PermissionTypes>
+}
 
 #[query]
 #[candid_method(query)]
@@ -33,7 +45,7 @@ pub async fn get_directory(data: String) -> Option<FileDirectory> {
                 .map(|s| s.clone());
 
             if &current_user == &auther
-            // || file.file_mode == FileMode::Public
+                // || file.file_mode == FileMode::Public || file.permeted_users.contains(&current_user)
             {
             let mut file_dir = FileDirectory::default().await;
             file_dir.files.push_children(file_dir.files.root.unwrap(), file.clone().unwrap().id, file.unwrap());

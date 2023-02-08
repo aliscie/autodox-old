@@ -16,8 +16,8 @@ pub struct MenuProps {
     pub click_on: Option<bool>,
 }
 
-#[function_component(PopOverMenu)]
-pub fn menu(props: &MenuProps) -> Html {
+#[function_component]
+pub fn PopOverMenu(props: &MenuProps) -> Html {
     let _popover = NodeRef::default();
     let _clicked_element: Option<Element> = if let Some(p) = &*props.position {
         Some(p.target_unchecked_into::<Element>())
@@ -50,7 +50,7 @@ pub fn menu(props: &MenuProps) -> Html {
     let clicked_element = _clicked_element.clone();
     let popover = _popover.clone();
     let click_on = props.click_on.clone();
-    use_event_with_window("click", move |_e: MouseEvent| {
+    use_event_with_window("mousedown", move |_e: MouseEvent| {
         let element = popover.cast::<Node>();
         let target = &_e.target_unchecked_into::<Element>();
         let target_node = &_e.target_unchecked_into::<Node>();
