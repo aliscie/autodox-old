@@ -18,16 +18,19 @@ use yew_router::prelude::{use_navigator, use_route};
 use yewdux::prelude::*;
 
 #[derive(PartialEq, Properties)]
-pub struct FileComponentProps {
-    pub onclick: Callback<MouseEvent>,
-    pub onclickfile: Callback<MouseEvent>,
-    pub name: String,
-    pub class: String,
+pub struct DragComponentProps {
+    pub children: Children,
     pub id: Id,
 }
 
 #[function_component]
-pub fn DragComponent() -> Html {
+pub fn DragComponent(props: &DragComponentProps) -> Html {
+    let (fd_rc, fd_dispatch) = use_store::<FileDirectory>();
+    let is_drag_under = use_state(|| "".to_string());
+    let is_dragged = use_state(|| "".to_string());
+    let is_enter = use_state(|| "".to_string());
+    let id = props.id.clone();
+
     let ondragstart: Callback<DragEvent> = {
         let is_dragged = is_dragged.clone();
         let id = id.clone();
@@ -145,11 +148,56 @@ pub fn DragComponent() -> Html {
 
         let _dragged = e.data_transfer().unwrap().get_data("dragged_item");
     });
+    // let ondragenter_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+    //     _is_drag_above.set("height: 20px; opacity:1;".to_string());
+    // });
+
+    // let ondragleave_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+    //     _is_drag_above.set("".to_string());
+    // });
+
+    // let ondrop_above: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+    //     _e.prevent_default();
+    //     _is_drag_above.set("".to_string());
+    // });
+
+    let _is_drag_under = is_drag_under.clone();
+    let ondragleave_under: Callback<DragEvent> = Callback::from(move |_e: DragEvent| {
+        _is_drag_under.set("".to_string());
+    });
 
     html! {
-        <div>
+        <li
+        class={format!("right_clickable file_component hovering active {} {} {}",(*is_dragged).clone(),(*is_enter).clone(), "")}
+        id = { id.to_string()}
+        draggable="true"
+        ondragover={ondragover.clone()}
+           {ondrop}
+           {ondragenter}
+           {ondragleave}
+           {ondragstart}
+           {ondragend}>
 
-        </div>
+             // TODO
+        //  {if is_first_file {
+        //         html!{
+        //         <div
+        //            ondrop={ondrop_above}
+        //            ondragenter={ondragenter_above}
+        //            ondragleave={ondragleave_above}
+        //            class="drag_under"/>
+        //         }
+        //  }}
+        {props.children.clone()}
+
+          // <div
+            // ondragover={ondragover.clone()}
+            // style={format!("{}",(*is_drag_under).clone())}
+            // ondrop={ondrop_under}
+            // ondragenter={ondragenter_under}
+            // ondragleave={ondragleave_under}
+            // class="drag_under"/>
+        </li>
 
     }
 }
