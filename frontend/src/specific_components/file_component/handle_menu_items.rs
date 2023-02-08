@@ -21,7 +21,7 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
     let navigator = use_navigator().unwrap();
     let route = use_route::<Route>().unwrap_or_default();
     let (fd_rc, fd_dispatch) = use_store::<FileDirectory>();
-    let id = props.id.clone();
+    let id = props.file_node.id.clone();
     let _id = id.clone();
 
     let onkeydown: Callback<KeyboardEvent> =
@@ -53,11 +53,11 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
 
     let on_permission = {
         let _navigator = navigator.clone();
-        let _id = props.id.clone();
+        let _id = props.file_node.id.clone();
         // move |_| _navigator.push(&PagesRoute::Permission { id: _id })
     };
 
-    let _id = props.id.clone();
+    let _id = props.file_node.id.clone();
     let _fd_rc = fd_rc.clone();
     let _navigator = navigator.clone();
     let on_share = Callback::from(move |_e: MouseEvent| {
@@ -75,15 +75,39 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
             log!("Can't share since user isn't restricted");
         }
     });
-    let handle_public = {
-        // let dispatch = dispatch.clone();
-        Callback::from(move |e: MouseEvent| {})
-    };
+    let file_mode_state = use_state(|| FileMode::Public);
+    let _file_mode_state = file_mode_state.clone();
+    let file_mode = (*file_mode_state).clone();
 
-    let handle_private = {
-        // let dispatch = dispatch.clone();
-        Callback::from(move |e: MouseEvent| {})
-    };
+
+    let _id = id.clone();
+    let handle_public: Callback<MouseEvent> =
+        fd_dispatch.reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
+            Box::pin(async move {
+                if let Some(file_node) = state.files.vertices.get_mut(&_id) {
+                    if file_node.file_mode != FileMode::Public {
+                        file_node.file_mode = FileMode::Public;
+                        let res = backend::update_file(file_node.clone()).await;
+                        log!(&res);
+                    };
+                }
+            })
+        });
+
+    let _id = id.clone();
+    let handle_private: Callback<MouseEvent> =
+        fd_dispatch.reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
+            Box::pin(async move {
+                if let Some(file_node) = state.files.vertices.get_mut(&_id) {
+                    if file_node.file_mode != FileMode::Private {
+                        file_node.file_mode = FileMode::Private;
+                        let res = backend::update_file(file_node.clone()).await;
+                        log!(&res);
+                    };
+                }
+            })
+        });
+
 
     let ondelete = {
         let id = id.clone();
@@ -140,10 +164,13 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
                 if _e.key() == "Enter" && value.is_empty() {
                     input.class_list().add_1("tool").unwrap();
                 } else if _e.key() == "Enter" {
-                    let res = backend::rename_file(_id.clone(), value.clone()).await;
-                    if (res.is_ok()) {
-                        state.files.vertices.get_mut(&_id).unwrap().name = value;
-                    }
+                    if let Some(file_node) = state.files.vertices.get_mut(&_id) {
+                        file_node.name = value.clone();
+                        let res = backend::update_file(file_node.clone()).await;
+                        if (res.is_ok()) {
+                            state.files.vertices.get_mut(&_id).unwrap().name = value;
+                        }
+                    };
                 }
             })
         });
@@ -152,12 +179,12 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
                 {onkeydown}
                 contenteditable="true"
                 data-tip="File must have at least 1 character."
-                autofocus=true placeholder="rename..">{props.name.clone()}</span></a>},
+                autofocus=true placeholder="rename..">{props.file_node.name.clone()}</span></a>},
         // html! {<a onclick={on_share}><i class="fa-solid fa-upload"/>{"Share"}</a>},
         // html! {<a onclick={on_permission}><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
         html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
         html! {<a><i class="fa-brands fa-medium"></i>{"Category"}</a>},
-        html! {<a ><i onclick = {handle_public}  class="fa-solid fa-eye"/>{"Public"}</a>},
-        html! {<a ><i onclick = {handle_private} class="fa-solid fa-eye-slash"/>{"Private"}</a>},
+        html! {<a onclick = {handle_public}><i   class="fa-solid fa-eye"/>{"Public"}</a>},
+        html! {<a onclick = {handle_private}><i  class="fa-solid fa-eye-slash"/>{"Private"}</a>},
     ];
 }

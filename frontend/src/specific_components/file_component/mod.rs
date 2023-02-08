@@ -25,9 +25,8 @@ use draggable_component::DragComponent;
 pub struct FileComponentProps {
     pub onclick: Callback<MouseEvent>,
     pub onclickfile: Callback<MouseEvent>,
-    pub name: String,
     pub class: String,
-    pub id: Id,
+    pub file_node: FileNode,
 }
 
 #[function_component]
@@ -45,7 +44,7 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
 
     let caret = use_toggle("", "caret-down");
-    let id = props.id.clone();
+    let id = props.file_node.id.clone();
 
     let toggle_caret = {
         let caret = caret.clone();
@@ -85,10 +84,14 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
 
 
 
-
+    let mut style = "color: tomato;";
+    if props.file_node.file_mode == FileMode::Public {
+        style = "color: lightgreen;";
+    };
 
     html! {
         <div
+        {style}
         class={css_file_macro!("file_component.css")}
         >
 
@@ -101,7 +104,7 @@ pub fn FileComponent(props: &FileComponentProps) -> Html {
            }
 
             <span onclick={props.onclickfile.clone()}>
-                <DragComponent id={id.clone()}>{props.name.clone()}</DragComponent>
+                <DragComponent id={id.clone()}>{props.file_node.name.clone()}</DragComponent>
             </span>
 
 

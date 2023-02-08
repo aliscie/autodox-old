@@ -38,7 +38,7 @@ pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
             "rename_file".to_string(),
             serde_json::json!(data).to_string(),
         )
-        .await;
+            .await;
         let _ = curr.class_list().toggle("loader");
         return Ok(());
     } else {
@@ -78,7 +78,15 @@ pub async fn update_file(file_node: FileNode) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let file_json = serde_json::json!(file_node);
+        let curr = window()
+            .unwrap_throw()
+            .document()
+            .unwrap_throw()
+            .get_element_by_id(&file_node.id.to_string())
+            .unwrap();
+        let _ = curr.class_list().add_1("loader");
         let res = backend::call_ic("update_file".to_string(), file_json.to_string()).await;
+        let _ = curr.class_list().remove_1("loader");
         log!(&res);
         return Ok(());
     } else if !info.get().is_web {
@@ -109,7 +117,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -129,7 +137,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -150,7 +158,7 @@ pub async fn get_directory(id: Id, auther_id: Id) -> Result<FileDirectory, Strin
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -197,7 +205,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-        .await;
+            .await;
         log!(&x);
         return x;
     } else {
