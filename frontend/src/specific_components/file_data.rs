@@ -3,7 +3,7 @@ use crate::backend::delete_element;
 use crate::backend::get_element_tree;
 use crate::backend::update_element;
 use editor::Editor;
-use editor::EditorChange;
+use shared::schema::EditorChange;
 use shared::id::Id;
 use shared::log;
 use shared::schema::{EditorElement, ElementTree, FileDirectory, FileNode, UserQuery};

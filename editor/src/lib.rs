@@ -1,7 +1,7 @@
 extern crate web_sys;
 extern crate yew;
 
-pub use app::{Editor, EditorChange};
+pub use app::{Editor};
 
 mod app;
 mod backend;

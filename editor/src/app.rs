@@ -4,7 +4,7 @@ use crate::render::render;
 use crate::utils::on_slash_input;
 use serde::{Deserialize, Serialize};
 use shared::id::Id;
-use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
+use shared::schema::{EditorChange, EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
 use shared::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -17,14 +17,6 @@ use web_sys::{
 };
 use yew::prelude::*;
 use yew::{function_component, html};
-
-/// this captures all the changes in a editor element
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum EditorChange {
-    Update(EditorElementUpdate),
-    Create(EditorElementCreate),
-    Delete(EditorElementDelete),
-}
 
 #[derive(Properties, PartialEq)]
 pub struct EditorProps {

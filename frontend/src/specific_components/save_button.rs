@@ -7,7 +7,7 @@ use yew::prelude::*;
 use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use editor::EditorChange;
+use shared::schema::EditorChange;
 use shared::log;
 
 // use shared::{invoke, log};
