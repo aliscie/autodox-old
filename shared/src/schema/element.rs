@@ -115,6 +115,7 @@ impl Entity for EditorElement {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementCreate {
     pub id: Id,
     pub text: String,
@@ -129,25 +130,14 @@ pub struct EditorElementCreate {
 
 /// type for updating editor elements
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementUpdate {
     pub id: Id,
+    pub tree_id: Id,
     pub text: Option<String>,
     pub attrs: Option<HashMap<String, String>>,
     pub parent: Option<Id>,
     pub children: Option<Vec<Id>>,
-}
-
-#[cfg(any(feature = "frontend", feature = "tauri"))]
-impl Default for EditorElementUpdate {
-    fn default() -> Self {
-        Self {
-            id: Id::new(),
-            text: None,
-            attrs: None,
-            parent: None,
-            children: None,
-        }
-    }
 }
 
 impl From<EditorElementCreate> for EditorElement {
@@ -395,6 +385,7 @@ impl ElementTree {
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementDelete {
     pub parent_id: Id,
     pub id: Id,
