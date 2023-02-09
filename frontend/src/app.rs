@@ -5,9 +5,10 @@ use crate::utils::filetree::FileTree;
 use crate::utils::{DeviceInfo, GetTitleBar};
 use shared::schema::UserQuery;
 use shared::schema::{FileDirectory, FileNode};
+
 use shared::*;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, HtmlInputElement, MouseEvent};
+use web_sys::{Element, window, HtmlInputElement, MouseEvent, FocusEvent};
 use yew::prelude::*;
 use yew::suspense::*;
 use yew_router::prelude::*;
@@ -108,6 +109,14 @@ pub fn app() -> Html {
     {
         main_style = "margin-left:250px";
     }
+    let add_file_blur: Callback<FocusEvent> = Callback::from(move |_e: FocusEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_inner_html("Hit enter to add new file.");
+    });
+    let add_file_focus: Callback<FocusEvent> = Callback::from(move |_e: FocusEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_inner_html("");
+    });
 
     html! {
         <BrowserRouter>
@@ -120,12 +129,12 @@ pub fn app() -> Html {
                         <div class="files-tree">
                             <FileTree/>
                         </div>
-                            <span onkeydown={on_create_file} contenteditable="true" class="btn" data-tip="File must have at least 1 character." style="width:100%" > {"Add new file."}</span>
+                            <span onfocus={add_file_focus} onblur={add_file_blur} onkeydown={on_create_file} contenteditable="true" class="btn" data-tip="File must have at least 1 character." style="width:100%" > {"Hit enter to add new file."}</span>
                             // <span><input placeholder="Add from test"/></span>
                             <button style="width:100%" onclick={on_market_place}><i class=" fa-solid fa-globe"></i>{"Market place"}</button>
                     </ul>
                 </aside>
-                <main style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
+                <main class="main_container" style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
                     <Switch<Route> render= {switch}/>
                 </main>
             </div>

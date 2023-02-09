@@ -100,6 +100,13 @@ export async function get_directories() {
     return result;
 }
 
+export async function register(username) {
+    const backend = await get_actor()
+    return await backend.register(username);
+}
+
+/* Common Call */
+
 const isObject = data => {
     return Object.prototype.toString.call(data) === '[object Object]'
 }
@@ -123,21 +130,26 @@ const getNoOption = (data) => {
     return noOption
 }
 
-export async function call_ic(method, stringify) {
+export async function call_ic_raw(method, stringify) {
     let actor = await get_actor();
     let res = await actor[method](stringify)
+    return res;
+}
+
+export async function call_ic(method, stringify) {
+    let res = await call_ic_raw(method, stringify);
     const noOption = getNoOption(res)
     return noOption;
+}
+
+export async function call_ic_np_raw(method) { // np: no parameter
+    let actor = await get_actor();
+    let res = await actor[method]()
+    return res;
 }
 
 export async function call_ic_np(method) { // np: no parameter
-    let actor = await get_actor();
-    let res = await actor[method]()
+    let res = await call_ic_np_raw(method);
     const noOption = getNoOption(res)
     return noOption;
-}
-
-export async function register(username) {
-    const backend = await get_actor()
-    return await backend.register(username);
 }

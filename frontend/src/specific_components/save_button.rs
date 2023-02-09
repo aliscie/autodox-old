@@ -7,7 +7,7 @@ use yew::prelude::*;
 use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use editor::EditorChange;
+use shared::schema::EditorChange;
 use shared::log;
 
 // use shared::{invoke, log};
@@ -43,7 +43,7 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
             let target: Element = e.target_unchecked_into();
             let _ = target.class_list().add_1("loader");
             // TODO
-            //     let res = backend::multi_update(changs.changes);
+            //     let res = backend::call_ic("group_update".to_string"),changs.changes).await;
             //     if res.is_ok() {
                 let empty_data: VecDeque<EditorChange> = VecDeque::new();
                 let _ = dispatch.reduce_mut(|state| state.changes = empty_data);

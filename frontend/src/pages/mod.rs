@@ -3,7 +3,6 @@ use shared::id::Id;
 use yew::prelude::*;
 use yew_router::prelude::*;
 mod market;
-mod permission;
 mod profile_info;
 mod settings;
 
@@ -21,8 +20,6 @@ pub enum PagesRoute {
     #[not_found]
     #[at("/404")]
     NotFound,
-    #[at("/permission/:id")]
-    Permission { id: Id },
 }
 
 pub fn page_switch(route: PagesRoute) -> Html {
@@ -31,6 +28,5 @@ pub fn page_switch(route: PagesRoute) -> Html {
         PagesRoute::Market => html! { <market::Market/> },
         PagesRoute::Settings => html! { <settings::Settings/> },
         PagesRoute::NotFound => html! {<Redirect<Route> to={Route::NotFound}/>},
-        PagesRoute::Permission { id } => html! {<permission::Permission file_id={id} />},
     }
 }

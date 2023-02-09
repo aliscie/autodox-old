@@ -11,7 +11,7 @@ pub enum Route {
     #[at("/*")]
     Page,
     #[at("/files/:id/:auther")]
-    File { id: Id, auther: Id },
+    File { id: Id, auther: String },
     #[not_found]
     #[at("/404")]
     NotFound,

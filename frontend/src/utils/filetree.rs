@@ -81,7 +81,7 @@ fn RenderFileElement(props: &RenderFileElementProps) -> Html {
         let element: Element = e.target_unchecked_into();
         history.push(&Route::File {
             id: element.id().parse().unwrap(),
-            auther: Id::try_from(address.clone()).expect(format!("------- {} is not a valid Id String -------", address).as_str()),
+            auther: address.clone(),
         });
     });
 
@@ -96,12 +96,11 @@ fn RenderFileElement(props: &RenderFileElementProps) -> Html {
     html! {
         <>
             <FileComponent
-                key = {props.file_node.id.to_string()}
-                id = {props.file_node.id}
+                // key = {props.file_node.id.to_string()}
+                file_node={props.file_node.clone()}
                 class={format!("{}",props.class_name)}
                 onclickfile = {on_file}
                 onclick={on_toggle}
-                name={props.file_node.name.clone()}
             />
             if props.has_children && *display == "active" {
                 <ul style="margin-left: 25px;" class={"nested active"}>
