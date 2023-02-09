@@ -49,6 +49,7 @@ pub fn Editor(props: &EditorProps) -> Html {
 
     //
     // let state = use_state(|| "".to_string());
+    let toggle = use_force_update();
     let editor_ref = NodeRef::default();
     let oninput_event = {
         let element_tree = props.element_tree.clone();
@@ -114,7 +115,7 @@ pub fn Editor(props: &EditorProps) -> Html {
         }
     });
     // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
-    let emojis_command: fn(DropDownItem, Option<Range>) -> Option<()> = (|event, range| {
+    let emojis_command: fn(DropDownItem, Option<Range>) = (|event, range| {
         // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
         let window = web_sys::window().unwrap();
         let document = window.document().unwrap();
@@ -122,8 +123,14 @@ pub fn Editor(props: &EditorProps) -> Html {
         let _ = html_document
             .exec_command_with_show_ui_and_value("InsertText", false, &event.value)
             .unwrap();
-        return Some(());
     });
+    let slash_command = {
+        let element_tree = element_tree.clone();
+        Callback::from(move |(event, range)| {
+            on_slash_input(event, range, element_tree.clone());
+            toggle.force_update();
+        })
+    };
     let action: Callback<String> = Callback::from(move |e: String| {
         // log!(e.clone());
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
@@ -133,8 +140,7 @@ pub fn Editor(props: &EditorProps) -> Html {
         // }));
     });
 
-    let mention_clouser: fn(DropDownItem, Option<Range>) -> Option<()> =
-        (|event, range| return Some(()));
+    let mention_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {});
 
     // let format_command: fn(String, selectoin) -> Option<()> =  (|event, range| return Some((
     //     onchange.emit(EditorChange::Update(update)); // TODO this should be the same for  on_slash_input, mention_clouser and emojis_command
@@ -158,7 +164,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             <EditorInsert
                 items={insertion_closures::components()}
                 trigger={"/".to_string()}
-                command={Callback::from(move |(e, r)| on_slash_input(e, r))}/>
+                command={slash_command}/>
             <EditorInsert
                 items={insertion_closures::mentions()}
                 trigger={"@".to_string()}

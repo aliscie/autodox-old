@@ -20,7 +20,7 @@ extern "C" {
 pub struct Props {
     pub trigger: String,
     pub items: CommandItems,
-    pub command: Callback<(DropDownItem, Option<Range>), Option<()>>,
+    pub command: Callback<(DropDownItem, Option<Range>)>,
 }
 
 #[function_component]
