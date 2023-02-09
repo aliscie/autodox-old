@@ -11,7 +11,7 @@ use wasm_bindgen::prelude::Closure;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    // pub action: fn(String, Selection),
+    // pub command: Callback<(String, Selectoin), Option<()>>,
 }
 
 
@@ -63,7 +63,9 @@ pub fn EditorToolbar(props: &Props) -> Html {
             // _action.emit(data)
         }
     });
-
+    
+    // let command = props.command.clone();
+    
     html! {
         <span class={css_file_macro!("toolbar.css")}>
             <div
@@ -83,6 +85,7 @@ pub fn EditorToolbar(props: &Props) -> Html {
                                 // let selection: Selection = window().unwrap_throw().get_selection().unwrap().unwrap();
                                 let _ = html_document.exec_command(&icon).unwrap();
                                 // action(button.to_string(),selection)
+                                // command.emit(button.to_string(),selection)
                             }
                             }
                         class={format!("btn fa-solid fa-{}",icon)}

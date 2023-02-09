@@ -7,6 +7,7 @@ mod app;
 mod backend;
 pub(crate) mod components;
 mod editor_components;
+mod handle_mutation;
 pub mod insertion_closures;
 pub mod plugins;
 pub mod render;

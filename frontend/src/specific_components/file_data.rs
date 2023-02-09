@@ -15,7 +15,9 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 
+
 use web_sys::{Range, window};
+
 use yew::prelude::*;
 use yew::suspense::use_future_with_deps;
 use yew::suspense::SuspensionResult;
@@ -34,11 +36,9 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
         changes.reduce_mut(|s| s.changes.push_back(e.clone()));
         match e {
             EditorChange::Update(x) => {
-                log!(&x);
                 let update_data = x.clone();
                 spawn_local(async move {
                     let x = update_element(update_data).await;
-                    log!(x);
                 });
                 if let Some(element) = element_tree
                     .as_ref()
@@ -56,32 +56,45 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                 }
             }
             EditorChange::Create(x) => {
-                log!(&x);
                 let create_data = x.clone();
                 spawn_local(async move {
                     let result = create_element(create_data).await;
-                    log!(result);
                 });
                 element_tree.clone().borrow_mut().elements.push_children(
                     x.parent_id.clone(),
                     x.id.clone(),
                     x.clone().into(),
                 );
+                if let Some(prev_element_id) = x.prev_element_id {
+                    let mut element_tree = element_tree.as_ref().borrow_mut();
+                    let children_list_of_parent_element = element_tree
+                        .elements
+                        .adjacency
+                        .get_mut(&x.parent_id)
+                        .unwrap();
+                    let index_of_prev_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == x.id)
+                        .unwrap();
+                    let index_of_last_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == x.id)
+                        .unwrap();
+                    children_list_of_parent_element
+                        .swap(index_of_last_element, index_of_prev_element);
+                }
             }
             EditorChange::Delete(data) => {
                 element_tree.as_ref().borrow_mut().elements.remove(&data.id);
                 spawn_local(async move {
                     let result = delete_element(data).await;
-                    log!(result);
                 });
             }
         };
     })
 }
 
-use editor::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::backend;
-use crate::utils::DeviceInfo;
 
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {

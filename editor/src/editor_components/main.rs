@@ -28,7 +28,7 @@ pub struct ConstractorProps {
 fn ConstructElement(props: &ConstractorProps) -> Html {
     let mut tag = props.tag.clone();
     if tag.is_none() {
-        tag = Some("p".to_string());
+        tag = Some("div".to_string());
     }
     let doc = window().unwrap_throw().document().unwrap_throw();
     let new_element: Element = doc.create_element(&tag.unwrap()).unwrap();
@@ -44,15 +44,12 @@ fn ConstructElement(props: &ConstractorProps) -> Html {
 #[function_component]
 pub fn EditorComponent(props: &Props) -> Html {
     let node = &props.node;
-    if node.tag.is_none() {
-        return html! {<p id = {node.id.to_string()}>{&node.text}</p>};
-    }
     let tag = node.tag.clone();
-    let response = match tag.clone().unwrap().as_str() {
+    let response = match tag.unwrap_or(String::from("")).as_str() {
         "table" => html! { <Table/>},
         "form" => html! { <FromComponent/>},
         _ => {
-            html! {<ConstructElement tag={tag} attrs={node.clone().attrs} id = {node.id} text={node.clone().text}/>}
+            html! {<ConstructElement tag={node.tag.clone()} attrs={node.clone().attrs} id = {node.id} text={node.clone().text}/>}
         }
     };
 
