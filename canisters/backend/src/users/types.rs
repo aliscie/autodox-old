@@ -18,7 +18,7 @@ use shared::Error;
 use candid::CandidType;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, PartialEq, Readable, Writable, Deserialize, Debug, Eq, Hash)]
+#[derive(Clone, Readable, Writable, Deserialize, Debug, Hash)]
 pub struct User {
     pub address: SPrincipal,
     pub image: Option<Vec<u8>>,
@@ -28,6 +28,14 @@ pub struct User {
     // birthdate: Option<String>,
     // email: Option<String>,
     // emails: Option<Vec<String>>,
+}
+
+impl Eq for User {}
+
+impl PartialEq for User {
+    fn eq(&self, other: &Self) -> bool {
+        self.address == other.address
+    }
 }
 
 impl User {
@@ -74,7 +82,11 @@ impl User {
         let mut users = s!(Users);
         for user in users.iter() {
             // if &user.address.to_string() == &address.to_string() {
-            return Some(Self { address, image: None, username: None });
+            return Some(Self {
+                address,
+                image: None,
+                username: None,
+            });
             // }
         }
         None

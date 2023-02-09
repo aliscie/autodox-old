@@ -18,12 +18,19 @@ use crate::{
     Error, Tree,
 };
 
+#[cfg(feature = "backend")]
+use {
+    candid::CandidType,
+    speedy::{Readable, Writable},
+};
+
 /// marker trait of id
 //pub trait InternalId : Into<Uuid>{}
 
 //impl InternalId for Uuid {}
 //impl InternalId for String {}
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct ElementTree {
     pub id: Id,
     pub elements: Tree<Id, EditorElement>,
@@ -31,6 +38,7 @@ pub struct ElementTree {
 
 /// make id as generic
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElement {
     pub id: Id,
     pub text: String,

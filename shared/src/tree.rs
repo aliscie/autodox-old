@@ -7,7 +7,10 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 #[cfg(feature = "backend")]
-use speedy::{Readable, Writable};
+use {
+    candid::CandidType,
+    speedy::{Readable, Writable},
+};
 
 #[cfg(feature = "tauri")]
 use surrealdb::sql::{Array, Object, Value};

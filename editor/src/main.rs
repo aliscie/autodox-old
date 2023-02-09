@@ -15,7 +15,7 @@ use shared::schema::{
 };
 use shared::tree::Tree;
 
-use crate::app::EditorChange;
+use shared::schema::EditorChange;
 
 mod editor_components;
 mod utils;
