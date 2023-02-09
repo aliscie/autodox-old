@@ -2,6 +2,7 @@ use crate::files::types::*;
 use crate::users::types::*;
 use crate::utils::{Status, UpdateResponse};
 use candid::{CandidType, Deserialize, Principal};
+use std::collections::VecDeque;
 use ic_cdk;
 use ic_kit::candid::candid_method;
 use ic_kit::macros::update;
@@ -13,10 +14,12 @@ use ic_stable_memory::{
 use serde::Serialize;
 use shared::id::Id;
 use shared::schema::{
-    FileDirectory, FileMode, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate,
+    FileDirectory, FileMode, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate, EditorChange,
 };
 use shared::Tree;
 use std::collections::HashMap;
+use indexmap::IndexSet;
+
 
 #[update]
 #[candid_method(update)]
@@ -41,8 +44,29 @@ pub fn create_file(data: String) -> String {
             .insert(create_file_data.id, create_file_data.into());
     }
     // let _= create::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
     "New file is created.".to_string()
+}
+
+#[update]
+#[candid_method(update)]
+pub fn update_file(data: String) -> String {
+    let file_node = serde_json::from_str::<FileNode>(&data).unwrap();
+    let user = User::current();
+    if user.is_none() {
+        return "user not found".to_string();
+    };
+    let mut user_files: UserFiles = s!(UserFiles);
+    if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
+        file_directory
+            .files
+            .vertices
+            .insert(file_node.id, file_node.into());
+    }
+    s! { UserFiles = user_files}
+    ;
+    "file is updated.".to_string()
 }
 
 #[update]
@@ -66,8 +90,74 @@ pub fn delete_file(json_data: String) -> String {
         }
         file_directory.files.vertices.remove(&data.id);
     }
-    s! {UserFiles = user_files};
+    s! {UserFiles = user_files}
+    ;
     "File is deleted.".to_string()
+}
+
+#[update]
+#[candid_method(update)]
+pub async fn group_update(data: String) -> String {
+    let changes = serde_json::from_str::<VecDeque<EditorChange>>(&data).unwrap();
+    let user = User::current().unwrap();
+    let mut user_files = s!(UserFiles);
+    let file_directory = user_files.get_mut(&user).unwrap();
+    for change in changes {
+        match change {
+            EditorChange::Create(data) => {
+                // let mut parent_adjacency = file_directory
+                //     .files
+                //     .adjacency
+                //     .entry(data.parent_id)
+                //     .or_default();
+                // parent_adjacency.push(data.id);
+                // file_directory
+                //     .files
+                //     .vertices
+                //     .insert(data.id, data.into());
+            }
+            EditorChange::Update(data) => {
+                // file_directory
+                //     .files
+                //     .vertices
+                //     .insert(data.id, data.into());
+                // TODO
+                //   the trait `From<EditorElementUpdate>` is not implemented for `FileNode`
+            }
+            EditorChange::Delete(data) => {
+                // let adjacency = file_directory
+                //     .files
+                //     .adjacency
+                //     .get_mut(&data.parent_id)
+                //     .unwrap();
+                // if adjacency.len() > 0 {
+                //     let index = adjacency.iter().position(|x| *x == data.id).unwrap();
+                //     adjacency.remove(index);
+                // }
+                // file_directory.files.vertices.remove(&data.id);
+            }
+            // EditorChange::MoveFile(data) => {
+            //     let adjacency = file_directory
+            //         .files
+            //         .adjacency
+            //         .get_mut(&data.parent_id)
+            //         .unwrap();
+            //     if adjacency.len() > 0 {
+            //         let index = adjacency.iter().position(|x| *x == data.id).unwrap();
+            //         adjacency.remove(index);
+            //     }
+            //     let mut parent_adjacency = file_directory
+            //         .files
+            //         .adjacency
+            //         .entry(data.new_parent_id)
+            //         .or_default();
+            //     parent_adjacency.push(data.id);
+            // }
+        }
+    };
+    s! { UserFiles = user_files}
+    ;
+    "Files are updated.".to_string()
 }
 
 #[update]
@@ -94,8 +184,8 @@ pub async fn create_directory() -> String {
             id: id.into(),
             name: "root".into(),
             element_tree: None,
-            test: "None".to_string(),
             file_mode: FileMode::Private,
+            // users_can_see: [].to_vec(),
         },
     );
     file_directory
@@ -104,7 +194,8 @@ pub async fn create_directory() -> String {
         .insert(id.clone().into(), Vec::new());
     file_directory.files.root = Some(id.into());
     user_files.insert(current_user.unwrap(), file_directory.clone());
-    s! { UserFiles = user_files};
+    s! { UserFiles = user_files}
+    ;
     "New directory is created.".to_string()
 }
 
@@ -121,7 +212,8 @@ pub async fn rename_file(data: String) -> String {
             .get_mut(&json_data.id)
             .unwrap()
             .name = json_data.name.unwrap().clone();
-        s! { UserFiles = user_files};
+        s! { UserFiles = user_files}
+        ;
     };
     return "File is renamed".to_string();
 }
@@ -143,7 +235,7 @@ pub async fn change_directory(data: String) -> String {
                 .iter()
                 .position(|x| *x == json_data.id)
                 .unwrap();
-            if (file_index >= 0) {
+            if file_index >= 0 {
                 old_adjacency.remove(file_index);
             }
         }
@@ -153,7 +245,8 @@ pub async fn change_directory(data: String) -> String {
             .entry(json_data.new_parent_id)
             .or_default();
         new_adjacency.push(json_data.id);
-        s! {UserFiles = user_files};
+        s! {UserFiles = user_files}
+        ;
     };
     return "File is moved".to_string();
 }

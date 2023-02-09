@@ -3,6 +3,7 @@ use std::str::FromStr;
 use crate::backend;
 use crate::utils::DeviceInfo;
 use futures::future::err;
+use shared::schema::ElementTree;
 use shared::{
     id::Id,
     log,
@@ -14,8 +15,7 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{console, window};
-use yewdux::prelude::{Dispatch, use_store};
-use shared::schema::{ElementTree};
+use yewdux::prelude::{use_store, Dispatch};
 
 pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
     let data = FileNodeUpdate {
@@ -74,15 +74,23 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
     }
 }
 
-pub async fn get_file(auther_id: Id, file_id: Id) -> Result<(), String> {
+pub async fn update_file(file_node: FileNode) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        let input_data = serde_json::json!((auther_id, file_id)).to_string();
-        let file_node_jv = backend::call_ic("get_file".to_string(), input_data.to_string()).await;
-        // let file_node_res = serde_wasm_bindgen::from_value::<Option<FileNode>>(file_node_jv);
+        let file_json = serde_json::json!(file_node);
+        let curr = window()
+            .unwrap_throw()
+            .document()
+            .unwrap_throw()
+            .get_element_by_id(&file_node.id.to_string())
+            .unwrap();
+        let _ = curr.class_list().add_1("loader");
+        let res = backend::call_ic("update_file".to_string(), file_json.to_string()).await;
+        let _ = curr.class_list().remove_1("loader");
+        log!(&res);
         return Ok(());
     } else if !info.get().is_web {
-        return Err("user is is offline".to_string());
+        unimplemented!();
     } else {
         return Err("user is offline".to_string());
     }
@@ -136,9 +144,13 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
     }
 }
 
-pub async fn get_directory(id: Id) -> Result<FileDirectory, String> {
+pub async fn get_directory(id: Id, auther_id: Id) -> Result<FileDirectory, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
+        //
+        let input_data = serde_json::json!((auther_id, id)).to_string();
+        let file_node_jv = backend::call_ic("get_file".to_string(), input_data.to_string()).await;
+        // let file_node_res = serde_wasm_bindgen::from_value::<Option<FileNode>>(file_node_jv);
         unimplemented!();
     }
     if !info.get().is_web {
@@ -184,8 +196,11 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         // let response = backend::call_ic_np("get_directories".to_string()).await;
+        let file_tree_component = window().unwrap_throw().document().unwrap_throw().query_selector("#aside-content").unwrap().unwrap();
+        file_tree_component.class_list().add_1("loader");
         let response = backend::get_directories_ic().await;
         let file_tree: Result<Option<FileDirectory>, _> = serde_wasm_bindgen::from_value(response);
+        file_tree_component.class_list().remove_1("loader");
         return file_tree.map_err(|e| "serde error".to_string());
     }
     if !info.get().is_web {

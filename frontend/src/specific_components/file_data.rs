@@ -3,18 +3,19 @@ use crate::backend::delete_element;
 use crate::backend::get_element_tree;
 use crate::backend::update_element;
 use editor::Editor;
-use editor::EditorChange;
+use shared::schema::EditorChange;
 use shared::id::Id;
 use shared::log;
-use shared::schema::{EditorElement, ElementTree, FileDirectory, FileNode};
+use shared::schema::{EditorElement, ElementTree, FileDirectory, FileNode, UserQuery};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::collections::VecDeque;
 use std::rc::Rc;
 use uuid::Uuid;
+use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 
-use web_sys::{Range};
+use web_sys::{Range, window};
 use yew::prelude::*;
 use yew::suspense::use_future_with_deps;
 use yew::suspense::SuspensionResult;
@@ -24,6 +25,7 @@ use yewdux::prelude::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub id: Id,
+    pub auther: String,
 }
 
 fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
@@ -79,6 +81,7 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
 
 use editor::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::backend;
+use crate::utils::DeviceInfo;
 
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
@@ -106,7 +109,6 @@ pub fn FileData(props: &Props) -> HtmlResult {
             }
         }
         Err(ref failure) => {
-            log!(failure);
             failure.to_string().into()
         }
     };
@@ -166,14 +168,32 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                     };
                 }
                 None => {
-                    // TODO
-                    //     let auther_id = "";
-                    //     let data = serde_json::json!((auther_id,file_id));
-                    //     let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
-                    //     let res = res.as_string().unwrap();
-                    //     let file_node = serde_json::from_value::<Option<FileNode>>(res.parse().unwrap()).unwrap();
-                    //     if let Some(file_node) = file_node {
-                    //         return Ok(file_node.element_tree) // here this should return Element tree
+                    let doc = window().unwrap_throw().document().unwrap_throw();
+                    let editor = doc.query_selector(".main_container").unwrap_throw().unwrap_throw();
+                    editor.class_list().add_1("loading");
+                    let url = window().unwrap_throw().location();
+                    let auther = url.pathname().unwrap_throw();
+                    let data = auther.split("/").collect::<Vec<&str>>();
+                    let auther = data[3];
+                    let data = serde_json::json!((auther,file_id.clone()));
+                    let res = backend::call_ic("get_directory".to_string(), data.to_string()).await;
+                    let file_dir: Result<Option<FileDirectory>, _> = serde_wasm_bindgen::from_value(res);
+                    log!(file_dir); // TODO fix this None value
+
+                    editor.class_list().remove_1("loading");
+
+                    // TODo fix this
+                    //     if let Some(file_dir) = file_dir.unwrap() {
+                    //         let element_tree: ElementTree = file_dir
+                    //             .files
+                    //             .vertices
+                    //             .get(&file_id)
+                    //             .unwrap()
+                    //             .element_tree
+                    //             .to_owned()
+                    //             .unwrap()
+                    //             .clone();
+                    //         return Ok(element_tree);
                     //     }
                     return Err(String::from("Not found!"));
                 }

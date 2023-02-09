@@ -16,8 +16,8 @@ pub struct MenuProps {
     pub click_on: Option<bool>,
 }
 
-#[function_component(PopOverMenu)]
-pub fn menu(props: &MenuProps) -> Html {
+#[function_component]
+pub fn PopOverMenu(props: &MenuProps) -> Html {
     let _popover = NodeRef::default();
     let _clicked_element: Option<Element> = if let Some(p) = &*props.position {
         Some(p.target_unchecked_into::<Element>())

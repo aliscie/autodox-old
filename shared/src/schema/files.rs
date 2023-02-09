@@ -1,4 +1,4 @@
-use super::{EditorElement, ElementTree};
+use super::{EditorElement, ElementTree, UserQuery};
 use crate::{
     id::Id,
     traits::{Creatable, Entity, Queryable, Updatable},
@@ -48,8 +48,8 @@ impl From<FileNodeCreate> for FileNode {
             id: value.id,
             name: value.name,
             element_tree: None,
-            test: "None".to_string(),
             file_mode: FileMode::Private,
+            // users_can_see: [].to_vec(),
         }
     }
 }
@@ -142,8 +142,8 @@ pub struct FileNode {
     pub id: Id,
     pub name: String,
     pub element_tree: Option<Id>,
-    pub test: String,
     pub file_mode: FileMode,
+    // pub users_can_see: Vec<UserQuery>,
 }
 
 #[cfg(not(feature = "backend"))]
@@ -153,8 +153,8 @@ impl Default for FileNode {
             id: Id::new(),
             name: "untitled".to_string(),
             element_tree: None,
-            test: "None".to_string(),
             file_mode: FileMode::Private,
+            // users_can_see: [].to_vec(),
         }
     }
 }
@@ -217,8 +217,31 @@ impl Default for FileDirectory {
                 id: id.into(),
                 name: "root".into(),
                 element_tree: None,
-                test: "None".to_string(),
                 file_mode: FileMode::Private,
+                // users_can_see: [].to_vec(),
+            },
+        );
+        d.files.adjacency.insert(id.clone().into(), Vec::new());
+        d.files.root = Some(id.into());
+        return d;
+    }
+}
+
+
+#[cfg(feature = "backend")]
+impl FileDirectory {
+    pub async fn default() -> Self {
+        let mut d = Self::new( Id::ic_new().await, "default".to_string());
+        let id = Id::ic_new().await;
+        d.files.push_vertex(
+            id.into(),
+            FileNode {
+                id: id.into(),
+                name: "root".into(),
+                element_tree: None,
+                // test: "None".to_string(),
+                file_mode: FileMode::Private,
+                // users_can_see: (),
             },
         );
         d.files.adjacency.insert(id.clone().into(), Vec::new());
@@ -305,8 +328,8 @@ impl TryFrom<Object> for FileNode {
                 Value::Thing(x) => x.id.to_raw().as_str().parse::<Uuid>().map(Id::from).ok(),
                 _ => None,
             }),
-            test: todo!(),
             file_mode: todo!(),
+            users_can_see: todo!(),
         })
     }
 }

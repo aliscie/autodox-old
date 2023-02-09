@@ -42,7 +42,7 @@ pub fn Download(props: &DownloadProps) -> Html {
     if device.is_web {
         res = html! {
         <>
-            <PopOverMenu items = {items} position = {position.clone()}/>
+            <PopOverMenu {items} position = {position.clone()}/>
             <span  {onclick} class="btn"><i class="fa-solid fa-download"></i>{"Download"}</span>
         </>
     };

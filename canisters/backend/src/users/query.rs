@@ -3,6 +3,7 @@ use candid::candid_method;
 use ic_kit::macros::query;
 use ic_stable_memory::s;
 use ic_stable_memory::utils::ic_types::SPrincipal;
+use shared::id::Id;
 use shared::schema::UserQuery;
 
 #[query]
@@ -13,6 +14,7 @@ pub fn get_profile() -> Option<UserQuery> {
     for user in users {
         if &user.address == &caller {
             return Some(UserQuery {
+                address: user.address.to_string(),
                 image: user.image,
                 username: user.username,
                 ..UserQuery::default()
@@ -20,4 +22,23 @@ pub fn get_profile() -> Option<UserQuery> {
         }
     }
     None
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_users() -> Vec<UserQuery> {
+    let users = s!(Users);
+    let caller = User::caller();
+    let mut query_users = Vec::new();
+    for user in users {
+        if &user.address != &caller {
+            query_users.push(UserQuery {
+                address: user.address.to_string(),
+                image: user.image,
+                username: user.username,
+                ..UserQuery::default()
+            });
+        }
+    }
+    query_users
 }
