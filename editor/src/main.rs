@@ -17,7 +17,6 @@ use shared::tree::Tree;
 
 use shared::schema::EditorChange;
 
-mod editor_components;
 mod utils;
 
 mod app;
@@ -27,7 +26,6 @@ mod dummy_data;
 mod handle_mutation;
 mod insertion_closures;
 mod plugins;
-mod render;
 pub(crate) mod spesific_components;
 
 use shared::*;
