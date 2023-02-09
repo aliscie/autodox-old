@@ -1,4 +1,4 @@
-use crate::EditorChange;
+use shared::schema::EditorChange;
 use shared::id::Id;
 use shared::log;
 use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
