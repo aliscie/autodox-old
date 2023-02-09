@@ -14,7 +14,7 @@ use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
-
+use crate::editor_components::element_renderer;
 
 use web_sys::{Range, window};
 
@@ -114,6 +114,7 @@ pub fn FileData(props: &Props) -> HtmlResult {
 
             html! {
                 <Editor
+                element_renderer={element_renderer.clone()}
                 title = { file_node.name.clone() }
                 element_tree = { element_tree.clone() }
                 onchange = { onchange_element_tree(element_tree.clone())}

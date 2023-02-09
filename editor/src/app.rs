@@ -1,7 +1,7 @@
 use crate::handle_mutation::handle_mutation;
 use crate::insertion_closures;
 use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
-use crate::render::render;
+// use crate::render::render;
 use crate::utils::on_slash_input;
 use serde::{Deserialize, Serialize};
 use shared::id::Id;
@@ -24,6 +24,7 @@ pub struct EditorProps {
     pub title: String,
     pub element_tree: Rc<RefCell<ElementTree>>,
     pub onchange: Callback<EditorChange>,
+    pub element_renderer: fn(ElementTree, Id),
 }
 
 // this is used for the work space
@@ -137,7 +138,7 @@ pub fn Editor(props: &EditorProps) -> Html {
     // let format_command: fn(String, selectoin) -> Option<()> =  (|event, range| return Some((
     //     onchange.emit(EditorChange::Update(update)); // TODO this should be the same for  on_slash_input, mention_clouser and emojis_command
     //     )));
-
+    let render = props.element_renderer.clone();
     html! {
         <span
             class={css_file_macro!("main.css")}
@@ -166,7 +167,7 @@ pub fn Editor(props: &EditorProps) -> Html {
                 trigger={":".to_string()}
                 command={Callback::from(move |(e, r) | emojis_command(e, r))}/>
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
-            { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
+            { render(element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
         </div>
             </span>
             </span>

@@ -2,6 +2,7 @@ extern crate futures;
 extern crate shared;
 extern crate wasm_bindgen_futures;
 extern crate yew;
+pub mod editor_components;
 mod app;
 mod backend;
 mod components;

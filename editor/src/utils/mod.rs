@@ -9,7 +9,7 @@ use uuid::Uuid;
 use web_sys::{window, Range};
 use yewdux::prelude::Dispatch;
 
-use crate::{plugins::DropDownItem, render::render};
+use crate::{plugins::DropDownItem};
 
 pub fn on_slash_input(
     event: DropDownItem,

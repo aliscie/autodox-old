@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use yew::prelude::*;
 
-pub(crate) fn render(tree: &ElementTree, start: Id) -> Html {
+pub(crate) fn element_renderer(tree: ElementTree, start: Id) -> Html {
     let map: Rc<RefCell<HashMap<Id, Html>>> = Rc::new(RefCell::new(HashMap::new()));
     for (id, node) in tree.elements.into_iter(start) {
         let mut has_children = false;
