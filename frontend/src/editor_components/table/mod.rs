@@ -5,6 +5,22 @@ use web_sys::{MouseEvent, window};
 
 use crate::components::PopOverMenu;
 
+#[wasm_bindgen(module = "/src/editor_components/table/table_insertions.js")]
+extern "C" {
+    #[wasm_bindgen(js_name = insCol)]
+    pub fn insCol(id: String);
+
+    #[wasm_bindgen(js_name = insRow)]
+    pub fn insRow(id: String);
+
+    #[wasm_bindgen(js_name = deleteCol)]
+    pub fn deleteCol(id: String);
+
+    #[wasm_bindgen(js_name = deleteRow)]
+    pub fn deleteRow(id: String);
+}
+
+
 #[derive(Properties, PartialEq)]
 pub struct Props {
     // pub columns: Vec<String>,

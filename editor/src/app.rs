@@ -24,7 +24,7 @@ pub struct EditorProps {
     pub title: String,
     pub element_tree: Rc<RefCell<ElementTree>>,
     pub onchange: Callback<EditorChange>,
-    pub element_renderer: fn(ElementTree, Id),
+    pub element_renderer: fn(&'static ElementTree, Id),
 }
 
 // this is used for the work space
