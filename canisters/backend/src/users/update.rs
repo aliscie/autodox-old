@@ -13,7 +13,7 @@ use ic_stable_memory::utils::ic_types::SPrincipal;
 #[candid_method(update)]
 pub fn register(username: String) -> String {
     let mut users = s!(Users);
-    let caller: Option<User> = User::new();
+    let mut caller: Option<User> = User::new();
 
     if User::is_anonymous() {
         // return UpdateResponse {
@@ -38,9 +38,9 @@ pub fn register(username: String) -> String {
         // };
         return "Please try to login".to_string();
     }
-
     users.push(caller.unwrap());
-    s! { Users = users};
+    s! { Users = users}
+    ;
     // UpdateResponse {
     //     status: Status::Success,
     //     message: "ok".to_string(),
@@ -60,7 +60,8 @@ pub fn update_profile(data: String) -> String {
         if &user.address == &caller {
             user.image = profile_data.image;
             user.username = profile_data.username;
-            s! { Users = users};
+            s! { Users = users}
+            ;
             // return UpdateResponse {
             //     status: Status::Success,
             //     message: "Your profile has been s updated.".to_string(),

@@ -34,4 +34,16 @@ impl UserQuery {
             emails: None,
         }
     }
+    pub fn update<T>(&mut self, key: &str, value: T)
+        where T: std::convert::Into<String> + Clone
+    {
+        match key {
+            "first_name" => self.first_name = Some(value.clone().into()),
+            "last_name" => self.last_name = Some(value.clone().into()),
+            "username" => self.username = Some(value.clone().into()),
+            "birthdate" => self.birthdate = Some(value.clone().into()),
+            // "image" => self.image = Some(value.clone()),
+            _ => println!("Invalid field"),
+        }
+    }
 }

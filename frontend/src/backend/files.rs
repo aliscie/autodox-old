@@ -196,8 +196,11 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         // let response = backend::call_ic_np("get_directories".to_string()).await;
+        let file_tree_component = window().unwrap_throw().document().unwrap_throw().query_selector("#aside-content").unwrap().unwrap();
+        file_tree_component.class_list().add_1("loader");
         let response = backend::get_directories_ic().await;
         let file_tree: Result<Option<FileDirectory>, _> = serde_wasm_bindgen::from_value(response);
+        file_tree_component.class_list().remove_1("loader");
         return file_tree.map_err(|e| "serde error".to_string());
     }
     if !info.get().is_web {
