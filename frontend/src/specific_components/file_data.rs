@@ -179,22 +179,22 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                 }
                 None => {
                     let doc = window().unwrap_throw().document().unwrap_throw();
-                    let editor = doc
-                        .query_selector(".main_container")
-                        .unwrap_throw()
-                        .unwrap_throw();
-                    editor.class_list().add_1("loading");
-                    let url = window().unwrap_throw().location();
-                    let auther = url.pathname().unwrap_throw();
-                    let data = auther.split("/").collect::<Vec<&str>>();
-                    let auther = data[3];
-                    let data = serde_json::json!((auther, file_id.clone()));
-                    let res = backend::call_ic("get_directory".to_string(), data.to_string()).await;
-                    let file_dir: Result<Option<FileDirectory>, _> =
-                        serde_wasm_bindgen::from_value(res);
-                    log!(file_dir); // TODO fix this None value
+                    // let editor = doc
+                    //     .query_selector(".main_container")
+                    //     .unwrap_throw()
+                    //     .unwrap_throw();
+                    // editor.class_list().add_1("loading");
+                    // let url = window().unwrap_throw().location();
+                    // let auther = url.pathname().unwrap_throw();
+                    // let data = auther.split("/").collect::<Vec<&str>>();
+                    // let auther = data[3];
+                    // let data = serde_json::json!((auther, file_id.clone()));
+                    // let res = backend::call_ic("get_directory".to_string(), data.to_string()).await;
+                    // let file_dir: Result<Option<FileDirectory>, _> =
+                    //     serde_wasm_bindgen::from_value(res);
+                    // log!(file_dir); // TODO fix this None value
 
-                    editor.class_list().remove_1("loading");
+                    // editor.class_list().remove_1("loading");
 
                     // TODo fix this
                     //     if let Some(file_dir) = file_dir.unwrap() {

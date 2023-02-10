@@ -19,7 +19,7 @@ pub fn ProfileInfo(props: &Props) -> Html {
     let profile = device.profile.clone();
     let profile_object = serde_json::json!(device.profile);
     if device.profile.address.contains("000") {
-        return html! {<div class="loader"/>};
+        return html! {<div class="profile loader"/>};
     }
     let _profile = profile.clone();
     let profile_object = profile_object.as_object().unwrap().iter().filter(|(k, v)| { !["image", "username"].contains(&&***k) });
