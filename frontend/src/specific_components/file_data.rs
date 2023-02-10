@@ -3,9 +3,9 @@ use crate::backend::delete_element;
 use crate::backend::get_element_tree;
 use crate::backend::update_element;
 use editor::Editor;
-use shared::schema::EditorChange;
 use shared::id::Id;
 use shared::log;
+use shared::schema::EditorChange;
 use shared::schema::{EditorElement, ElementTree, FileDirectory, FileNode, UserQuery};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -15,8 +15,7 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 
-
-use web_sys::{Range, window};
+use web_sys::{window, Range};
 
 use yew::prelude::*;
 use yew::suspense::use_future_with_deps;
@@ -121,9 +120,7 @@ pub fn FileData(props: &Props) -> HtmlResult {
                 </Editor>
             }
         }
-        Err(ref failure) => {
-            failure.to_string().into()
-        }
+        Err(ref failure) => failure.to_string().into(),
     };
     Ok(result_html) // TODO after loading the data this should rerender
 }
@@ -170,11 +167,11 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                         }
                         None => {
                             let default_element_tree = dummy_data();
-                            // let _ = create_element_tree(&default_element_tree, *file_id).await?;
+                            let _ = create_element_tree(&default_element_tree, *file_id).await?;
                             let tree_id = default_element_tree.id;
                             dispatch_file_directory.clone().reduce_mut(|f| {
                                 let file_node = f.files.vertices.get_mut(&file_id).unwrap();
-                                // file_node.element_tree = Some(Uuid::new_v4().into());
+                                file_node.element_tree = Some(tree_id);
                             });
                             return Ok(default_element_tree);
                         }
@@ -182,15 +179,19 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                 }
                 None => {
                     let doc = window().unwrap_throw().document().unwrap_throw();
-                    let editor = doc.query_selector(".main_container").unwrap_throw().unwrap_throw();
+                    let editor = doc
+                        .query_selector(".main_container")
+                        .unwrap_throw()
+                        .unwrap_throw();
                     editor.class_list().add_1("loading");
                     let url = window().unwrap_throw().location();
                     let auther = url.pathname().unwrap_throw();
                     let data = auther.split("/").collect::<Vec<&str>>();
                     let auther = data[3];
-                    let data = serde_json::json!((auther,file_id.clone()));
+                    let data = serde_json::json!((auther, file_id.clone()));
                     let res = backend::call_ic("get_directory".to_string(), data.to_string()).await;
-                    let file_dir: Result<Option<FileDirectory>, _> = serde_wasm_bindgen::from_value(res);
+                    let file_dir: Result<Option<FileDirectory>, _> =
+                        serde_wasm_bindgen::from_value(res);
                     log!(file_dir); // TODO fix this None value
 
                     editor.class_list().remove_1("loading");
