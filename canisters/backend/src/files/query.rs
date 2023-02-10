@@ -14,6 +14,7 @@ pub fn get_directories() -> Option<FileDirectory> {
     let mut user_files: UserFiles = s!(UserFiles);
     user_files.get(&user).map(|s| s.clone())
 }
+
 enum PermissionTypes {
     // Create,
     Read,
@@ -54,18 +55,29 @@ pub fn get_directory(data: String) -> Option<FileDirectory> {
 
 #[query]
 #[candid_method(query)]
-pub fn get_file_node(file_id: Id) -> Option<(FileNode, ElementTree)> {
-    let user = User::current()?;
+pub fn get_file(data: String) -> Option<(FileNode, ElementTree)> {
+    let current_user = User::current()?;
+    let (auther_id, file_id) = serde_json::from_str::<(String, Id)>(&data).unwrap();
+    let users = s!(Users);
     let mut user_files: UserFiles = s! {UserFiles};
     let element_trees: ElementTrees = s!(ElementTrees);
     let files: UserFiles = s!(UserFiles);
-    let file_node: FileNode = user_files
-        .get(&user)
-        .and_then(|directory| directory.files.vertices.get(&file_id))?
-        .clone();
-    let tree = file_node
-        .element_tree
-        .and_then(|element_tree_id| element_trees.get(&element_tree_id))?
-        .clone();
-    Some((file_node, tree))
+    for user in users {
+        if user.address.to_string() == auther_id {
+            let file_node: FileNode = user_files
+                .get(&user)
+                .and_then(|directory| directory.files.vertices.get(&file_id))?
+                .clone();
+            let tree = file_node
+                .element_tree
+                .and_then(|element_tree_id| element_trees.get(&element_tree_id))?
+                .clone();
+            if file_node.file_mode == FileMode::Public || current_user == user
+            // || file_node.permeted_users.contains(&user)
+            {
+                return Some((file_node, tree));
+            }
+        }
+    }
+    None
 }

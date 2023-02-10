@@ -22,7 +22,7 @@ pub fn switch(routes: Route) -> Html {
     match routes {
         // Dashboard
         Route::Home => html! {<span>{"We are at home!"}</span>},
-        Route::File { id, auther } => html! { <Suspense {fallback}><FileData {auther} {id}/></Suspense>},
+        Route::File { id, auther } => html! { <FileData {auther} {id}/>},
         Route::NotFound => html! { <span>{"404"}</span> },
         Route::Page => html! { <Switch<PagesRoute> render={page_switch}/>},
     }

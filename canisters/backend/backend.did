@@ -9,7 +9,7 @@ type FileNode = record {
     name: text;
     element_tree: opt text;
     file_mode: FileMode;
-//    users_can_see: vec UserQuery;
+    //    users_can_see: vec UserQuery;
 };
 
 type Tree = record {
@@ -41,6 +41,11 @@ type UserQuery = record {
     emails: opt vec text;
 };
 
+type ElementTree  = record{
+    id: text;
+    elements: Tree;
+}
+
 service : {
     "register": (text) -> (text);
     "update_profile" : (text) -> (text);
@@ -55,4 +60,7 @@ service : {
     "change_directory": (text) -> (text);
     "get_users" : () -> (vec UserQuery) query;
     "group_update": (text) -> (text);
+    "get_file": (text) -> (opt record { FileNode; ElementTree }) query;
+
 }
+
