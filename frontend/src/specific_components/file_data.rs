@@ -99,16 +99,16 @@ use crate::backend;
 pub fn FileData(props: &Props) -> HtmlResult {
     let res = use_element_tree(props.id)?;
 
-    let result_html = match *res {
-        Ok(ref tree) => {
-            log!(&tree);
-            let file_node = Dispatch::<FileDirectory>::new()
-                .get()
-                .files
-                .vertices
-                .get(&props.id)
-                .unwrap()
-                .clone();
+    let result_html = match &*res {
+        Ok((file_node, ref tree)) => {
+            // log!(&tree);
+            // let file_node = Dispatch::<FileDirectory>::new()
+            //     .get()
+            //     .files
+            //     .vertices
+            //     .get(&props.id)
+            //     .unwrap()
+            //     .clone();
             let element_tree = Rc::new(RefCell::new(tree.clone()));
 
             html! {
@@ -148,7 +148,7 @@ fn dummy_data() -> ElementTree {
 }
 
 #[hook]
-fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<ElementTree, String>>> {
+fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(FileNode, ElementTree), String>>> {
     let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     use_future_with_deps(
         |file_id| async move {
@@ -163,20 +163,30 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                     log!(current_file_data);
                     match current_file_data.element_tree {
                         Some(tree_id) => {
-                            return get_element_tree(&tree_id).await;
-                        }
+                            let file_node = dispatch_file_directory
+                                .get()
+                                .files
+                                .vertices
+                                .get(&file_id)
+                                .unwrap()
+                                .clone();
+                            return Ok((file_node, get_element_tree(&tree_id).await.unwrap()));
+                        },
                         None => {
                             let default_element_tree = dummy_data();
                             let _ = backend::create_element_tree(&default_element_tree, *file_id).await?;
                             let tree_id = default_element_tree.id;
-                            dispatch_file_directory.clone().reduce_mut(|f| {
-                                let file_node = f.files.vertices.get_mut(&file_id).unwrap();
-                                file_node.element_tree = Some(tree_id);
-                            });
-                            return Ok(default_element_tree);
+                            let file_node = dispatch_file_directory
+                                .get()
+                                .files
+                                .vertices
+                                .get(&file_id)
+                                .unwrap()
+                                .clone();
+                            return Ok((file_node, default_element_tree));
                         }
                     };
-                }
+                },
                 None => {
                     let doc = window().unwrap_throw().document().unwrap_throw();
                     // let editor = doc
@@ -189,7 +199,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                     // let data = auther.split("/").collect::<Vec<&str>>();
                     // let auther = data[3];
                     // let data = serde_json::json!((auther, file_id.clone()));
-                    // let res = backend::call_ic("get_directory".to_string(), data.to_string()).await;
+                    // let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
                     // let file_dir: Result<Option<FileDirectory>, _> =
                     //     serde_wasm_bindgen::from_value(res);
                     // log!(file_dir); // TODO fix this None value
