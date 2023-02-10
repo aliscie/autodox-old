@@ -61,6 +61,6 @@ service : {
     "get_users" : () -> (vec UserQuery) query;
     "group_update": (text) -> (text);
     "get_file": (text) -> (opt record { FileNode; ElementTree }) query;
-    "create_element_tree" : (string) -> opt String;
+    "create_element_tree" : (string) -> (opt String);
 }
 
