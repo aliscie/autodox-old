@@ -1561,6 +1561,7 @@ dependencies = [
  "wasm-bindgen",
  "web-sys",
  "yew 0.20.0",
+ "yew-hooks",
  "yew-style-in-rs",
  "yewdux",
 ]
