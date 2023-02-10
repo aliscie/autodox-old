@@ -55,4 +55,5 @@ service : {
     "change_directory": (text) -> (text);
     "get_users" : () -> (vec UserQuery) query;
     "group_update": (text) -> (text);
+    "create_element_tree" : (string) -> opt String;
 }
