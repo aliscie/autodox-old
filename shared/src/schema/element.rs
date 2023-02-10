@@ -129,7 +129,7 @@ pub struct EditorElementCreate {
 }
 
 /// type for updating editor elements
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementUpdate {
     pub id: Id,

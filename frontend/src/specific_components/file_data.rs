@@ -167,7 +167,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<Elem
                         }
                         None => {
                             let default_element_tree = dummy_data();
-                            let _ = create_element_tree(&default_element_tree, *file_id).await?;
+                            let _ = backend::create_element_tree(&default_element_tree, *file_id).await?;
                             let tree_id = default_element_tree.id;
                             dispatch_file_directory.clone().reduce_mut(|f| {
                                 let file_node = f.files.vertices.get_mut(&file_id).unwrap();
