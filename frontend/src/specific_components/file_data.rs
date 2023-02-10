@@ -171,7 +171,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                                 .unwrap()
                                 .clone();
                             return Ok((file_node, get_element_tree(&tree_id).await.unwrap()));
-                        },
+                        }
                         None => {
                             let default_element_tree = dummy_data();
                             let _ = backend::create_element_tree(&default_element_tree, *file_id).await?;
@@ -186,39 +186,27 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                             return Ok((file_node, default_element_tree));
                         }
                     };
-                },
+                }
                 None => {
                     let doc = window().unwrap_throw().document().unwrap_throw();
-                    // let editor = doc
-                    //     .query_selector(".main_container")
-                    //     .unwrap_throw()
-                    //     .unwrap_throw();
-                    // editor.class_list().add_1("loading");
-                    // let url = window().unwrap_throw().location();
-                    // let auther = url.pathname().unwrap_throw();
-                    // let data = auther.split("/").collect::<Vec<&str>>();
-                    // let auther = data[3];
-                    // let data = serde_json::json!((auther, file_id.clone()));
-                    // let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
-                    // let file_dir: Result<Option<FileDirectory>, _> =
-                    //     serde_wasm_bindgen::from_value(res);
-                    // log!(file_dir); // TODO fix this None value
+                    let editor = doc
+                        .query_selector(".main_container")
+                        .unwrap_throw()
+                        .unwrap_throw();
+                    editor.class_list().add_1("loading");
+                    let url = window().unwrap_throw().location();
+                    let auther = url.pathname().unwrap_throw();
+                    let data = auther.split("/").collect::<Vec<&str>>();
+                    let auther = data[3];
+                    let data = serde_json::json!((auther, file_id.clone()));
+                    let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
+                    let file_dir: Result<Option<(FileNode, ElementTree)>, _> = serde_wasm_bindgen::from_value(res);
+                    if let Ok(file_dir) = file_dir {
+                        if let Some((file_node, element_tree)) = file_dir {
+                            return Ok((file_node, element_tree));
+                        }
+                    }
 
-                    // editor.class_list().remove_1("loading");
-
-                    // TODo fix this
-                    //     if let Some(file_dir) = file_dir.unwrap() {
-                    //         let element_tree: ElementTree = file_dir
-                    //             .files
-                    //             .vertices
-                    //             .get(&file_id)
-                    //             .unwrap()
-                    //             .element_tree
-                    //             .to_owned()
-                    //             .unwrap()
-                    //             .clone();
-                    //         return Ok(element_tree);
-                    //     }
                     return Err(String::from("Not found!"));
                 }
             }
