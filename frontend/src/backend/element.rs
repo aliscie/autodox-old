@@ -4,6 +4,8 @@ use shared::id::Id;
 use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
 use yewdux::prelude::Dispatch;
 
+use super::call_ic;
+
 pub async fn update_element(data: EditorElementUpdate) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
@@ -75,7 +77,16 @@ pub async fn get_element_tree(id: &Id) -> Result<ElementTree, String> {
 pub async fn create_element_tree(data: &ElementTree, file_id: Id) -> Result<(), String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
-        unimplemented!();
+        let result = call_ic(
+            "create_element_tree".to_string(),
+            serde_json::json!({
+                "data" : data,
+                "fileId" : file_id
+            })
+            .to_string(),
+        )
+        .await;
+        return Ok(());
     }
     if !info.get().is_web {
         return call_surreal(

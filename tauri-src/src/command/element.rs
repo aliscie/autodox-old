@@ -22,6 +22,7 @@ pub async fn create_element_tree(
         let element_create = EditorElementCreate {
             id: *id,
             text: i.text.clone(),
+            tag: i.tag.clone(),
             children: Some(children),
             attrs: i.attrs.clone(),
             // these doesn't matter we are throwing
@@ -133,7 +134,7 @@ pub async fn delete_element(data: EditorElementDelete, ctx: State<'_, Context>) 
     let store = ctx.get_store();
     let mut stack = vec![data.id];
     let mut current_index = 0;
-    while current_index <stack.len() {
+    while current_index < stack.len() {
         let children: Vec<Value> = store
             .exec_delete::<EditorElement>(stack[current_index].to_string())
             .await?
