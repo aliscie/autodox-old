@@ -5,7 +5,9 @@ use crate::render::render;
 use crate::utils::on_slash_input;
 use serde::{Deserialize, Serialize};
 use shared::id::Id;
-use shared::schema::{EditorChange, EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
+use shared::schema::{
+    EditorChange, EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree,
+};
 use shared::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -151,6 +153,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             id = "text_editor_container"
            >
             <EditorToolbar
+                editor_ref = { editor_ref.clone()}
             // command={Callback::from(move |(e, r)| format_command(e, r))}
             />
             <EditorInsert
