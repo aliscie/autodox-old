@@ -7,7 +7,10 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 #[cfg(feature = "backend")]
-use speedy::{Readable, Writable};
+use {
+    candid::CandidType,
+    speedy::{Readable, Writable},
+};
 
 #[cfg(feature = "tauri")]
 use surrealdb::sql::{Array, Object, Value};
@@ -80,7 +83,7 @@ where
         }
         visited_nodes.len()
     }
-
+    /// removes a element and returns its parent id
     pub fn remove(&mut self, id: &ID) -> ID {
         let mut remove_stack = VecDeque::from([id.clone()]);
         while remove_stack.len() > 0 {
@@ -328,7 +331,7 @@ where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
 {
-    #[inline]
+    //#[inline]
     fn read_from<R_: speedy::Reader<'a_, C_>>(
         _reader_: &mut R_,
     ) -> std::result::Result<Self, C_::Error> {
@@ -355,7 +358,7 @@ where
             root,
         })
     }
-    #[inline]
+    //#[inline]
     fn minimum_bytes_needed() -> usize {
         {
             let mut out = 0;
@@ -378,7 +381,7 @@ where
     ID: Hash + PartialEq + Eq + Clone + Default + Debug,
     T: PartialEq + Eq + Clone + Debug,
 {
-    #[inline]
+    //#[inline]
     fn write_to<T_: ?Sized + speedy::Writer<C_>>(
         &self,
         _writer_: &mut T_,

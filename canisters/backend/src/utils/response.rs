@@ -1,12 +1,14 @@
-#[derive(CandidType)]
+use candid::CandidType;
+use serde::{Deserialize, Serialize};
+use speedy::{Readable, Writable};
+
+#[derive(Debug, Serialize, Deserialize, Readable, Writable, CandidType)]
 pub struct UpdateResponse {
-    pub(crate) status: Status,
-    pub(crate) message: String,
+    status: Status,
+    message: String,
 }
 
-use candid::CandidType;
-
-#[derive(CandidType)]
+#[derive(Debug, Serialize, Deserialize, Readable, Writable, CandidType)]
 pub enum Status {
     Success,
     UnAuthorized,

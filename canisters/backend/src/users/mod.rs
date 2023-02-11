@@ -7,3 +7,4 @@ pub mod types;
 mod update;
 
 pub mod utils;
+mod tests;

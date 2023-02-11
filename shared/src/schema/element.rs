@@ -18,13 +18,19 @@ use crate::{
     Error, Tree,
 };
 
+#[cfg(feature = "backend")]
+use {
+    candid::CandidType,
+    speedy::{Readable, Writable},
+};
+
 /// marker trait of id
 //pub trait InternalId : Into<Uuid>{}
 
 //impl InternalId for Uuid {}
 //impl InternalId for String {}
-
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct ElementTree {
     pub id: Id,
     pub elements: Tree<Id, EditorElement>,
@@ -32,21 +38,23 @@ pub struct ElementTree {
 
 /// make id as generic
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElement {
     pub id: Id,
     pub text: String,
-    pub attrs: HashMap<Attrs, String>,
+    pub tag: Option<String>,
+    pub attrs: HashMap<String, String>, //pub attrs: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, Default)]
-pub enum Attrs {
-    #[default]
-    Style,
-    Href,
-    Src,
-}
+// #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Hash, Default)]
+// pub enum Attrs {
+//     #[default]
+//     Style,
+//     Href,
+//     Src,
+// }
 
-#[cfg(not(feature = "backend"))]
+#[cfg(any(feature = "frontend", feature = "tauri"))]
 impl Default for ElementTree {
     fn default() -> Self {
         let mut tree = Tree::new();
@@ -60,12 +68,13 @@ impl Default for ElementTree {
     }
 }
 
-#[cfg(not(feature = "backend"))]
+#[cfg(any(feature = "frontend", feature = "tauri"))]
 impl Default for EditorElement {
     fn default() -> Self {
         // this creates a root element
         Self {
             id: Id::new(),
+            tag: None,
             text: "".to_owned(),
             attrs: HashMap::new(),
         }
@@ -73,14 +82,15 @@ impl Default for EditorElement {
 }
 
 impl EditorElement {
-    #[inline]
-    pub fn new<T>(id: T, text: String, attrs: HashMap<Attrs, String>) -> Self
+    //#[inline]
+    pub fn new<T>(id: T, text: String, attrs: HashMap<String, String>) -> Self
     where
         T: Into<Id>,
     {
         Self {
             id: id.into(),
             text,
+            tag: None,
             attrs,
         }
     }
@@ -104,39 +114,30 @@ impl Entity for EditorElement {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementCreate {
     pub id: Id,
     pub text: String,
-    pub attrs: HashMap<Attrs, String>,
+    pub attrs: HashMap<String, String>,
+    pub tag: Option<String>,
     pub tree_id: Id,
     pub parent_id: Id,
     pub children: Option<Vec<Id>>,
-    // represents the element after which the current element should be pushed
+    /// represents the element after which the current element should be pushed
     pub prev_element_id: Option<Id>,
 }
 
 /// type for updating editor elements
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementUpdate {
     pub id: Id,
+    pub tree_id: Id,
     pub text: Option<String>,
-    pub attrs: Option<HashMap<Attrs, String>>,
+    pub attrs: Option<HashMap<String, String>>,
     pub parent: Option<Id>,
-    pub children: Option<IndexSet<Id>>,
-}
-
-#[cfg(not(feature = "backend"))]
-impl Default for EditorElementUpdate {
-    fn default() -> Self {
-        Self {
-            id: Id::new(),
-            text: None,
-            attrs: None,
-            parent: None,
-            children: None,
-        }
-    }
+    pub children: Option<Vec<Id>>,
 }
 
 impl From<EditorElementCreate> for EditorElement {
@@ -144,6 +145,7 @@ impl From<EditorElementCreate> for EditorElement {
         Self {
             id: v.id,
             text: v.text,
+            tag: None,
             attrs: v.attrs,
         }
     }
@@ -240,14 +242,14 @@ impl Entity for ElementTree {
 }
 
 #[cfg(feature = "tauri")]
-fn attrs_to_object(attrs: HashMap<Attrs, String>, object: &mut BTreeMap<String, Value>) {
+fn attrs_to_object(attrs: HashMap<String, String>, object: &mut BTreeMap<String, Value>) {
     for (attrs, data) in attrs {
-        let attr = match attrs {
-            Attrs::Src => "Src",
-            Attrs::Href => "Href",
-            Attrs::Style => "Style",
-        };
-        object.insert(attr.to_string(), data.into());
+        // let attr = match attrs {
+        //     Attrs::Src => "Src",
+        //     Attrs::Href => "Href",
+        //     Attrs::Style => "Style",
+        // };
+        object.insert(attrs.to_string(), data.into());
     }
 }
 
@@ -299,22 +301,22 @@ impl From<ElementTree> for Object {
 impl TryFrom<Object> for EditorElement {
     type Error = crate::Error;
     fn try_from(mut value: Object) -> Result<Self, Self::Error> {
-        let mut attrs: HashMap<Attrs, String> = HashMap::new();
+        let mut attrs: HashMap<String, String> = HashMap::new();
         if let Some(x) = value.remove("Src") {
             attrs.insert(
-                Attrs::Src,
+                "src".to_string(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
         if let Some(x) = value.remove("Href") {
             attrs.insert(
-                Attrs::Href,
+                "hrf".to_string(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
         if let Some(x) = value.remove("Style") {
             attrs.insert(
-                Attrs::Style,
+                "style".parse().unwrap(),
                 x.try_into().map_err(|_| Error::XValueNotOfType("String"))?,
             );
         }
@@ -338,6 +340,7 @@ impl TryFrom<Object> for EditorElement {
                 .ok_or(Error::XPropertyNotFound("text".into()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("String"))?,
+            tag: None,
             attrs,
         })
     }
@@ -353,7 +356,36 @@ impl Store for ElementTree {
     }
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+impl ElementTree {
+    #[cfg(feature = "frontend")]
+    /// breaks the element into three parts
+    pub fn break_element(&mut self, parent_id: Id, from: usize, till: usize) -> Option<(Id, Id)> {
+        let element = self.elements.vertices.get_mut(&parent_id)?;
+        let (first_part, second_part) = element.text.split_at(from);
+        let (second_part, third_part) = second_part.split_at(till);
+        let element_1 = EditorElement::new(Id::new(), second_part.to_string(), HashMap::new());
+        let element_2 = EditorElement::new(Id::new(), third_part.to_string(), HashMap::new());
+        element.text = String::from(first_part);
+        match self.elements.adjacency.get_mut(&parent_id) {
+            Some(mut children) => {
+                children.insert(0, element_1.id);
+                children.insert(1, element_2.id);
+            }
+            None => {
+                let children = vec![element_1.id, element_2.id];
+                self.elements.adjacency.insert(parent_id, children);
+            }
+        }
+        let first_id = element_1.id;
+        let second_id = element_2.id;
+        self.elements.push_vertex(element_1.id, element_1);
+        self.elements.push_vertex(element_2.id, element_2);
+        Some((first_id, second_id))
+    }
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementDelete {
     pub parent_id: Id,
     pub id: Id,

@@ -3,10 +3,15 @@
 /.idea
 /target/
 /.github
-.env
+frontend/.env
 .dfx
 /declarations
 /node_modules
 .cache
 .parcel-cache
 *.old.did
+.github
+internet_identity.wasm
+internet_identity.did
+canisters/internet_identity/**
+**/declarations/**

@@ -1,0 +1,21 @@
+#editor_dropdown {
+    background: rgb(96, 96, 96);
+    color: #fdfdfd;
+    fotn-size: 18px;
+    position: absolute;
+}
+
+#editor_dropdown option {
+    display: block;
+
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
+
+
+}
+
+#editor_dropdown option:hover {
+    background: #71fff8;
+}

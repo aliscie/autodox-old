@@ -1,5 +1,47 @@
-.editor_title, .text_editor_container {
 
+#selection-popper {
+    justify-content: space-evenly;
+    font-size: 1.25rem;
+    border-radius: 3%;
+    position: absolute;
+    z-index: 10;
+    display: none;
+}
+
+
+#selection-popper button {
+    height: 100%;
+    position: relative;
+    outline: none;
+    border: none;
+    background-color: rgb(140, 140, 140);
+    font-size: 17px;
+}
+
+#selection-popper :first-child {
+    border-top-left-radius: 50px 50px;
+    border-bottom-left-radius: 50px 50px;
+}
+
+
+.btnEntrance {
+    animation-duration: 0.2s;
+    animation-fill-mode: both;
+    animation-name: btnEntrance;
+}
+
+@keyframes btnEntrance { /* zoomIn */
+    0% {
+        opacity: 0;
+        transform: scale3d(0.3, 0.3, 0.3);
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+.editor_title, .text_editor_container {
     flex-shrink: 0;
     flex-grow: 1;
     /*max-width: 80%;*/
@@ -39,59 +81,21 @@
 }
 
 
-#selection-popper {
-    width: 2.5rem;
-    height: 2.5rem;
-    font-size: 1.25rem;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    display: none;
-
+table {
+    background: rgb(var(--primary-background));
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    align-self: center;
+    width: 100%;
+    max-width: 300px;
 }
 
-#selection-popper .btn {
-    background-color: rgba(var(--primary-background), 0.9);
-    width: 40px;
+td, th {
+    border: 1px solid rgb(var(--color));
+    text-align: left;
+    padding: 8px;
 }
 
-#selection-popper .btn:hover {
-    background: rgba(var(--object-color), 1);
-    width: 40px;
-}
-
-.btnEntrance {
-    animation-duration: 0.2s;
-    animation-fill-mode: both;
-    animation-name: btnEntrance;
-}
-
-@keyframes btnEntrance { /* zoomIn */
-    0% {
-        opacity: 0;
-        transform: scale3d(0.3, 0.3, 0.3);
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-.bold {
-    font-weight: bold;
-}
-
-.italic {
-    font-style: italic;
-}
-
-.header {
-    border-bottom: 2px solid #fcba03;
-    box-sizing: border-box;
-    display: block;
-    font-family: "roboto", sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #333;
-
+h2 {
+    width: 50%
 }

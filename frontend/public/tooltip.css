@@ -1,0 +1,117 @@
+/*@import url(https://fonts.googleapis.com/css?family=Audiowide);*/
+html {
+   box-sizing: border-box;
+   font-family: Arial, sans-serif;
+   font-size: 16px;
+   font-weight: normal;
+}
+
+*,
+*:before,
+*:after {
+   box-sizing: inherit;
+}
+
+html,
+body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+   width: 100%;
+}
+
+pre {
+   background: #fff;
+   display: inline-block;
+   font-size: .55em;
+   margin-top: 2em;
+   padding: 1em;
+}
+
+@media (min-width: 360px) {
+   pre {
+      font-size: .7em;
+   }
+}
+
+@media (min-width: 500px) {
+   pre {
+      font-size: 1em;
+   }
+}
+
+
+/*== start of code for tooltips ==*/
+.tool {
+    cursor: help;
+    position: relative;
+}
+
+
+/*== common styles for both parts of tool tip ==*/
+.tool::before,
+.tool::after {
+    left: 50%;
+    opacity: 0;
+    position: absolute;
+    z-index: -100;
+}
+
+.tool:hover::before,
+.tool:focus::before,
+.tool:hover::after,
+.tool:focus::after {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    z-index: 100;
+}
+
+
+.tool::before {
+    border-style: solid;
+    border-width: 0.75em 0.5em 0 0.5em;
+    border-color: rgb(var(--item-color)) transparent transparent transparent;
+    bottom: 100%;
+    content: "";
+    transition: all .35s cubic-bezier(.84,-0.18,.31,1.26), opacity .35s .5s;
+    transform:  scale(.6) translateY(-90%);
+    left: inherit;
+}
+
+.tool:hover::before,
+.tool:focus::before {
+    transition: all .35s cubic-bezier(.84,-0.18,.31,1.26) .2s;
+}
+
+
+/*== speech bubble ==*/
+.tool::after {
+    z-index: 555;
+    outline: none;
+    background: rgb(var(--item-color));
+    border-radius: .25em;
+    bottom: 180%;
+    color: rgb(var(--text-color));
+    content: attr(data-tip);
+    margin-left: -8.75em;
+    transition: all .35s cubic-bezier(.84,-0.18,.31,1.26) .2s;
+    transform:  scale(.6) translateY(50%);
+    max-width: 12em;
+    font-size: 15px;
+    left: inherit;
+}
+
+/*.tool:hover::after,*/
+/*.tool:focus::after  {*/
+/*    transition: all .35s cubic-bezier(.84,-0.18,.31,1.26);*/
+/*}*/
+
+@media (max-width: 760px) {
+  .tool::after {
+        font-size: .75em;
+        margin-left: -5em;
+        width: 10em;
+  }
+}
+
+

@@ -1,27 +1,22 @@
+use crate::components::PopOverMenu;
+use crate::router::Route;
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::{JsCast, UnwrapThrowExt};
-// use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
+use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
 use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::ContextMenu;
-use crate::router::Route;
-
-#[derive(PartialEq, Properties)]
-pub struct PageOptionsProps {
-    // pub id: u64,
-}
-
 #[function_component(PageOptions)]
-pub fn page_options(props: &PageOptionsProps) -> Html {
+pub fn page_options() -> Html {
     let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
+
     let _position = position.clone();
-    let onmouseup: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        _position.set(Some(_e));
+    let on_click = Callback::from(move |e: MouseEvent| {
+        crate::shared::log!("click");
+        _position.set(Some(e));
     });
 
     let items: Vec<Html> = vec![
@@ -35,12 +30,11 @@ pub fn page_options(props: &PageOptionsProps) -> Html {
     ];
 
     html! {
-    <>
-        <span {onmouseup} class="btn">
-            <i class="fa-solid fa-ellipsis-vertical"></i>
-        </span>
-
-
-    </>
+        <>
+            <PopOverMenu items={items} position={position.clone()}/>
+            <span onclick={on_click} class="btn">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </span>
+        </>
     }
 }

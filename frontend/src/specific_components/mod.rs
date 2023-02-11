@@ -5,21 +5,19 @@
 pub use download_component::Download;
 pub use file_component::FileComponent;
 pub use file_data::FileData;
-pub use files_category::ButtonsGroup;
+pub use files_category::FilesCategory;
 pub use markdown_button::Markdown;
 pub use page_option_component::PageOptions;
-pub use search_filters::SearchFiltes;
+pub use save_button::*;
+pub use search_filters::SearchFilters;
 pub use title_avatar_component::TitleAvatarComponent;
 
-mod file_component;
-
-mod title_avatar_component;
-
-mod page_option_component;
-
 mod download_component;
-mod search_filters;
+mod file_component;
+mod file_data;
 mod files_category;
 mod markdown_button;
-
-mod file_data;
+mod page_option_component;
+mod search_filters;
+mod title_avatar_component;
+mod save_button;

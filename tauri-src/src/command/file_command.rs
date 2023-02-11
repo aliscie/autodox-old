@@ -24,7 +24,7 @@ pub async fn create_directory(data: FileDirectory, ctx: State<'_, Context>) -> R
             id: *id,
             name: i.name.clone(),
             children: Some(children),
-            mode: FileMode::Public,
+            // mode: FileMode::Public,
             // these two doesn't matter using any value
             directory_id: Uuid::new_v4().into(),
             parent_id: Uuid::new_v4().into(),
@@ -41,7 +41,7 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
     let id = data.id;
     let parent_id = data.parent_id;
     let directory_id = data.directory_id;
-    println!("create_file data is : {:?}", data);
+    // println!("create_file data is : {:?}", data);
     store.exec_create(data).await?;
     // cannot use store.exec_update here due to pushing value to array
     let sql = "update $tb set children += $va";
@@ -67,20 +67,18 @@ pub async fn create_file(data: FileNodeCreate, ctx: State<'_, Context>) -> Resul
 }
 
 #[tauri::command]
-pub async fn get_directories(ctx: State<'_, Context>) -> Result<Vec<FileDirectory>> {
+pub async fn get_directories(ctx: State<'_, Context>) -> Result<Option<FileDirectory>> {
     let store = ctx.get_store();
-    let res: Vec<FileDirectory> = store
+    let res: Option<Object> = store
         .exec_get::<FileDirectory>(None, Some("files.vertices.*.*"))
         .await?
         .into_iter()
-        .map(|f| FileDirectory::try_from(f))
-        .filter_map(|f| {
-            println!("{:?}", f);
-            f.ok()
-        })
-        .collect();
-    println!("{:?}", res);
-    Ok(res)
+        .next();
+    let res = res
+        .map(FileDirectory::try_from)
+        .transpose()
+        .map_err(Error::from);
+    res
 }
 
 #[tauri::command]
@@ -99,7 +97,7 @@ pub async fn delete_file(data: FileNodeDelete, ctx: State<'_, Context>) -> Resul
     let store = ctx.get_store();
     let mut stack = vec![data.id];
     let mut current_index = 0;
-    while current_index < stack.len() {
+    while current_index <stack.len() {
         let children: Vec<Value> = store
             .exec_delete::<FileNode>(stack[current_index].to_string())
             .await?

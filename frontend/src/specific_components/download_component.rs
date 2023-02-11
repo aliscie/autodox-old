@@ -1,52 +1,52 @@
 use serde::{Deserialize, Serialize};
-use shared::invoke;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 // use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::Closure;
-use web_sys::{window, DragEvent, Element, MouseEvent};
-use yew::prelude::*;
+use web_sys::{DragEvent, Element, MouseEvent, window};
 use yew::{html, Html};
+use yew::prelude::*;
 use yew_router::prelude::*;
 use yewdux::prelude::*;
 
-use crate::components::ContextMenu;
+use shared::invoke;
+
+use crate::*;
+use crate::components::PopOverMenu;
 use crate::router::Route;
 use crate::utils::DeviceInfo;
-use crate::*;
 
 #[derive(PartialEq, Properties)]
 pub struct DownloadProps {
     // pub id: u64,
 }
 
-#[function_component(Download)]
-pub fn download(props: &DownloadProps) -> Html {
-    let position: UseStateHandle<Option<(i32, i32)>> = use_state(|| None);
-    let onmouseup: Callback<MouseEvent> = {
-        let position = position.clone();
-        Callback::from(move |_e: MouseEvent| {
-            position.set(None);
-        })
-    };
+#[function_component]
+pub fn Download(props: &DownloadProps) -> Html {
+    let (device, _) = use_store::<DeviceInfo>();
+
+    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
     let onclick = {
         let position = position.clone();
         Callback::from(move |e: MouseEvent| {
-            let y = e.page_y();
-            let x = e.page_x();
-            position.set(Some((y, x)));
+            position.set(Some(e));
         })
     };
 
     let items: Vec<Html> = vec![
         html! {<a><i class="fa-brands fa-apple"></i>{"Mac"}</a>},
-        html! {<a><i class="fa-brands fa-windows"></i>{"Window"}</a>},
+        html! {<a href={"blob:https://mega.nz/9b38ed11-8f43-404b-87d5-eb7b2ac37692"} target="_blank"><i class="fa-brands fa-windows"></i>{"Windows"}</a>},
         html! {<a><i class="fa-brands fa-ubuntu"></i>{"Linux"}</a>},
     ];
+    let mut res = html! {};
 
-    return html! {
-    <>
-        <ContextMenu items = {items} position = {position.clone()}/>
-        <span  {onclick} {onmouseup} class="btn" ><i class="fa-solid fa-download"></i>{"Download"}</span>
-    </>
+    if device.is_web {
+        res = html! {
+        <>
+            <PopOverMenu {items} position = {position.clone()}/>
+            <span  {onclick} class="btn"><i class="fa-solid fa-download"></i>{"Download"}</span>
+        </>
     };
+    }
+
+    return res;
 }

@@ -1,28 +1,48 @@
 <!DOCTYPE html>
-<html
-        oncontextmenu="return false"
->
+<html>
+
 <head>
-    <meta charset="utf-8"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx"
-          crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
-            crossorigin="anonymous"></script>
-    <script type="module" src="index.js"></script>
     <title>AUTODOX</title>
+    <meta charset="utf-8" />
 
-    <script type = "module" src="public/icons.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="public/aside_navbar.css"/>
-    <link rel="stylesheet" href="public/title_bar.css"/>
-    <link rel="stylesheet" href="public/drag_drop.css"/>
-    <link rel="stylesheet" href="public/main.css"/>
-    <link rel="stylesheet" href="public/tree_list.css"/>
-
-
+    <script type="module" src="./index.js"></script>
+    <link rel="stylesheet" href="./public/loader.css" />
+    <script type="module" src="./public/icons.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./public/aside_navbar.css" />
+    <link rel="stylesheet" href="./public/title_bar.css" />
+    <link rel="stylesheet" href="./public/drag_drop.css" />
+    <link rel="stylesheet" href="./public/main.css" />
+    <link rel="stylesheet" href="./public/tree_list.css" />
+    <link rel="stylesheet" href="./public/tooltip.css" />
 </head>
+<style>
+    :root {
+        --item-color: 147, 179, 242;
+        --primary-background: 53, 54, 58;
+        --hover-color: 152, 152, 152;
+        --background: 32, 33, 36;
+        --color: 255, 255, 255;
+        --main-color: rgb(114, 115, 117);
+        --primary-color: rgb(196, 196, 196);
+        --text-color: white;
+        --object-color: 172, 105, 251;
+        --card-height: 65vh;
+        --card-width: calc(var(--card-height) / 1.5);
+        /*--bg-image: url('https://images.unsplash.com/photo-1538370965046-79c0d6907d47?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80');*/
+    }
+
+    .light-mode {
+        --primary-background: 152, 152, 152;
+        --hover-color: 141, 141, 141;
+        --background: 255, 255, 255;
+        --color: 0, 0, 0;
+        --main-color: #ffffff;
+        --primary-color: rgb(109, 109, 109);
+        --text-color: black;
+    }
+</style>
+
 <body>
 </body>
+
 </html>

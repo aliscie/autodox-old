@@ -1,12 +1,16 @@
 import {defineConfig} from 'vite';
 import wasmPack from 'vite-plugin-wasm-pack';
+import * as dotenv from 'dotenv';
+dotenv.config();
+const env = process.env;
+
 
 export default defineConfig({
     publicDir: './public',
     server: {
         watch: {
             usePolling: true,
-            // path: "./src",  TODO use rollup because vite does not reload on changes.
+            // path: "./src",
         }
     },
     build: {
@@ -16,6 +20,9 @@ export default defineConfig({
         copyPublicDir: true,
     },
     plugins: [
-        wasmPack(["../frontend"])
-    ]
+        wasmPack(["../frontend"]),
+    ],
+    define: {
+        'process.env': env,
+    },
 });

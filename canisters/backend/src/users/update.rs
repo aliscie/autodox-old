@@ -1,30 +1,77 @@
 use candid::candid_method;
 use ic_cdk::export::Principal;
-use ic_cdk_macros::update;
+use shared::schema::UserQuery;
+// use ic_cdk_macros::update;
+use crate::custom_traits::*;
+use crate::users::types::{User, Users};
+use crate::utils::{Status, UpdateResponse};
+use ic_kit::macros::update;
 use ic_stable_memory::s;
 use ic_stable_memory::utils::ic_types::SPrincipal;
-use crate::custom_traits::*;
-
-use crate::users::types::{User, Users};
-use crate::users::utils::is_registered;
-
 
 #[update]
 #[candid_method(update)]
-pub fn register(user_name: String) -> String {
-    println!("{:#?}", ic_cdk::caller());
-    let caller: SPrincipal = SPrincipal(ic_cdk::caller());
-    let _caller: Principal = ic_cdk::caller();
+pub fn register(username: String) -> String {
     let mut users = s!(Users);
-    if Principal::is_anonymous() {
-        "Please login with the IC identity.".to_string();
+    let mut caller: Option<User> = User::new();
+
+    if User::is_anonymous() {
+        // return UpdateResponse {
+        //     status: Status::UnAuthorized,
+        //     message: "Anonymous user.".to_string(),
+        // };
+        return "Anonymous user.".to_string();
+    };
+
+    if User::is_registered() {
+        // return UpdateResponse {
+        //     status: Status::InvalidInput,
+        //     message: "User already registered".to_string(),
+        // };
+        return "User already registered".to_string();
+    };
+
+    if caller.is_none() {
+        // return UpdateResponse {
+        //     status: Status::UnAuthorized,
+        //     message: "Please try to login".to_string(),
+        // };
+        return "Please try to login".to_string();
     }
-    if let Some(registered_name) = is_registered(&caller, users.clone()) {
-        return "already exits".to_string();//RegisterResponse::AlreadyRegistered { user_name: registered_name };
-    }
-    let new_user = User { user_name: user_name.clone(), address: caller.clone() };
-    users.push(new_user);
+    users.push(caller.unwrap());
     s! { Users = users}
     ;
-    "ok".to_string()
+    // UpdateResponse {
+    //     status: Status::Success,
+    //     message: "ok".to_string(),
+    // }
+    return "ok".to_string();
+}
+
+#[update]
+#[candid_method(update)]
+pub fn update_profile(data: String) -> String {
+    // TODO pub fn update_profile(data: User) -> String {
+
+    let profile_data = serde_json::from_str::<UserQuery>(&data).unwrap();
+    let mut users = s!(Users);
+    let caller = User::caller();
+    for mut user in &mut users {
+        if &user.address == &caller {
+            user.image = profile_data.image;
+            user.username = profile_data.username;
+            s! { Users = users}
+            ;
+            // return UpdateResponse {
+            //     status: Status::Success,
+            //     message: "Your profile has been s updated.".to_string(),
+            // };
+            return "Your profile has been s updated.".to_string();
+        }
+    }
+    // UpdateResponse {
+    //     status: Status::UnAuthorized,
+    //     message: "User not registered.".to_string(),
+    // }
+    "User not registered.".to_string()
 }

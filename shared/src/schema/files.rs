@@ -1,10 +1,15 @@
+use super::{EditorElement, ElementTree, UserQuery};
 use crate::{
     id::Id,
     traits::{Creatable, Entity, Queryable, Updatable},
     Error, Tree,
 };
+#[cfg(feature = "backend")]
+use candid::CandidType;
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "backend")]
+use speedy::{Readable, Writable};
 use std::collections::{BTreeMap, HashMap};
 #[cfg(feature = "tauri")]
 use surrealdb::sql::{Array, Object, Thing, Value};
@@ -12,123 +17,40 @@ use uuid::Uuid;
 #[cfg(feature = "frontend")]
 use yewdux::store::Store;
 
-use super::{EditorElement, ElementTree};
-
-#[cfg(feature = "backend")]
-use candid::CandidType;
-
-#[cfg(feature = "backend")]
-use speedy::{Readable, Writable};
-
-#[derive(Debug, Serialize, Deserialize)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable))]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub enum FileMode {
-    Public,
     Private,
     Restricted,
+    Public,
 }
 
-#[cfg(feature = "backend")]
-impl CandidType for FileMode {
-    fn _ty() -> candid::types::Type {
-        candid::types::Type::Variant(<[_]>::into_vec(Box::new([
-            candid::types::Field {
-                id: candid::types::Label::Named("Public".to_owned()),
-                ty: candid::types::Type::Null,
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("Private".to_owned()),
-                ty: candid::types::Type::Null,
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("Restricted".to_owned()),
-                ty: candid::types::Type::Null,
-            },
-        ])))
-    }
-
-    fn id() -> candid::types::TypeId {
-        candid::types::TypeId::of::<FileMode>()
-    }
-
-    fn idl_serialize<S>(&self, _serializer: S) -> std::result::Result<(), S::Error>
-    where
-        S: candid::types::Serializer,
-    {
-        match *self {
-            FileMode::Private => {
-                let mut _ser = _serializer.serialize_variant(0_64)?;
-            }
-            FileMode::Public => {
-                let mut _ser = _serializer.serialize_variant(1_u64)?;
-            }
-            FileMode::Restricted => {
-                let mut _ser = _serializer.serialize_variant(2u64)?;
-            }
-        };
-        Ok(())
+#[cfg(not(feature = "backend"))]
+impl Default for FileMode {
+    fn default() -> Self {
+        Self::Private
     }
 }
 
-/// type for creating file
 #[derive(Deserialize, Serialize, Debug)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable))]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct FileNodeCreate {
     pub id: Id,
     pub name: String,
-    pub mode: FileMode,
     pub directory_id: Id,
     pub parent_id: Id,
     pub children: Option<Vec<Id>>,
 }
 
-#[cfg(feature = "backend")]
-impl CandidType for FileNodeCreate {
-    fn _ty() -> candid::types::Type {
-        candid::types::Type::Record(<[_]>::into_vec(Box::new([
-            candid::types::Field {
-                id: candid::types::Label::Named("id".to_string()),
-                ty: <Id as CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("name".to_string()),
-                ty: <String as CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("mode".to_string()),
-                ty: <FileMode as CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("directory_id".to_string()),
-                ty: <Id as CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("parent_id".to_string()),
-                ty: <Id as CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("children".to_string()),
-                ty: <Option<Vec<Id>> as CandidType>::ty(),
-            },
-        ])))
-    }
-
-    fn id() -> candid::types::TypeId {
-        candid::types::TypeId::of::<FileNodeCreate>()
-    }
-
-    fn idl_serialize<S>(&self, _serializer: S) -> std::result::Result<(), S::Error>
-    where
-        S: candid::types::Serializer,
-    {
-        let mut ser = _serializer.serialize_struct()?;
-        candid::types::Compound::serialize_element(&mut ser, &self.id)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.name)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.mode)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.directory_id)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.parent_id)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.children)?;
-        Ok(())
+impl From<FileNodeCreate> for FileNode {
+    fn from(value: FileNodeCreate) -> Self {
+        Self {
+            id: value.id,
+            name: value.name,
+            element_tree: None,
+            file_mode: FileMode::Private,
+            // users_can_see: [].to_vec(),
+        }
     }
 }
 
@@ -162,13 +84,11 @@ impl From<FileNodeCreate> for Object {
     }
 }
 
-/// type for updating file_node
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
 #[cfg_attr(feature = "backend", derive(Readable, Writable))]
 pub struct FileNodeUpdate {
     pub id: Id,
     pub children: Option<Vec<Id>>,
-    // TODO : cannot update this using this method think of something else
     pub parent_id: Option<Id>,
     pub name: Option<String>,
     pub element_tree: Option<Id>,
@@ -217,44 +137,13 @@ impl From<FileNodeUpdate> for Object {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable))]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct FileNode {
     pub id: Id,
     pub name: String,
     pub element_tree: Option<Id>,
-}
-
-#[cfg(feature = "backend")]
-impl candid::types::CandidType for FileNode {
-    fn _ty() -> ::candid::types::Type {
-        candid::types::Type::Record(<[_]>::into_vec(Box::new([
-            candid::types::Field {
-                id: candid::types::Label::Named("id".to_string()),
-                ty: <Id as candid::types::CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("name".to_string()),
-                ty: <String as candid::types::CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("element_tree".to_string()),
-                ty: <Option<Id> as ::candid::types::CandidType>::ty(),
-            },
-        ])))
-    }
-    fn id() -> candid::types::TypeId {
-        candid::types::TypeId::of::<FileNode>()
-    }
-    fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
-    where
-        __S: candid::types::Serializer,
-    {
-        let mut ser = __serializer.serialize_struct()?;
-        candid::types::Compound::serialize_element(&mut ser, &self.id)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.name)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.element_tree)?;
-        Ok(())
-    }
+    pub file_mode: FileMode,
+    // pub users_can_see: Vec<UserQuery>,
 }
 
 #[cfg(not(feature = "backend"))]
@@ -264,6 +153,8 @@ impl Default for FileNode {
             id: Id::new(),
             name: "untitled".to_string(),
             element_tree: None,
+            file_mode: FileMode::Private,
+            // users_can_see: [].to_vec(),
         }
     }
 }
@@ -280,45 +171,26 @@ impl Entity for FileNode {
 impl Queryable for FileNode {}
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Eq)]
-#[cfg_attr(feature = "backend", derive(Readable, Writable))]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct FileDirectory {
     pub id: Id,
     pub name: String,
     pub files: Tree<Id, FileNode>,
 }
 
-#[cfg(feature = "backend")]
-impl candid::types::CandidType for FileDirectory {
-    fn _ty() -> candid::types::Type {
-        candid::types::Type::Record(<[_]>::into_vec(Box::new([
-            candid::types::Field {
-                id: candid::types::Label::Named("id".to_string()),
-                ty: <Id as candid::types::CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("files".to_string()),
-                ty: <Tree<Id, FileNode> as candid::types::CandidType>::ty(),
-            },
-            candid::types::Field {
-                id: candid::types::Label::Named("name".to_string()),
-                ty: <String as candid::types::CandidType>::ty(),
-            },
-        ])))
-    }
-    fn id() -> candid::types::TypeId {
-        candid::types::TypeId::of::<FileDirectory>()
-    }
-    fn idl_serialize<__S>(&self, __serializer: __S) -> std::result::Result<(), __S::Error>
-    where
-        __S: candid::types::Serializer,
-    {
-        let mut ser = __serializer.serialize_struct()?;
-        candid::types::Compound::serialize_element(&mut ser, &self.id)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.files)?;
-        candid::types::Compound::serialize_element(&mut ser, &self.name)?;
-        Ok(())
-    }
-}
+// TODO Something like this
+//     trait FileAction {
+//         fn get_file_by_id(&self, id: Id) -> Option<FileNode>;
+//     }
+//     impl FileAction for FileDirectory {
+//         fn get_file_by_id((&self, id: Id) -> Option<FileNode> {
+//             for file in &self.files {
+//                 if file.id == id {
+//                     return Some(file.clone());
+//                 }
+//             }
+//         }
+//     }
 
 #[cfg(feature = "tauri")]
 impl Entity for FileDirectory {
@@ -345,6 +217,31 @@ impl Default for FileDirectory {
                 id: id.into(),
                 name: "root".into(),
                 element_tree: None,
+                file_mode: FileMode::Private,
+                // users_can_see: [].to_vec(),
+            },
+        );
+        d.files.adjacency.insert(id.clone().into(), Vec::new());
+        d.files.root = Some(id.into());
+        return d;
+    }
+}
+
+
+#[cfg(feature = "backend")]
+impl FileDirectory {
+    pub async fn default() -> Self {
+        let mut d = Self::new( Id::ic_new().await, "default".to_string());
+        let id = Id::ic_new().await;
+        d.files.push_vertex(
+            id.into(),
+            FileNode {
+                id: id.into(),
+                name: "root".into(),
+                element_tree: None,
+                // test: "None".to_string(),
+                file_mode: FileMode::Private,
+                // users_can_see: (),
             },
         );
         d.files.adjacency.insert(id.clone().into(), Vec::new());
@@ -354,11 +251,11 @@ impl Default for FileDirectory {
 }
 
 impl FileDirectory {
-    #[inline]
+    //#[inline]
     pub fn new(id: Id, name: String) -> Self {
         Self {
             files: Tree::new(),
-            id: id.into(),
+            id,
             name,
         }
     }
@@ -431,6 +328,8 @@ impl TryFrom<Object> for FileNode {
                 Value::Thing(x) => x.id.to_raw().as_str().parse::<Uuid>().map(Id::from).ok(),
                 _ => None,
             }),
+            file_mode: todo!(),
+            users_can_see: todo!(),
         })
     }
 }
@@ -479,4 +378,11 @@ pub struct FileNodeDelete {
     pub id: Id,
     pub tree_id: Id,
     pub parent_id: Id,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct FileNodeMove {
+    pub id: Id,
+    pub old_parent_id: Id,
+    pub new_parent_id: Id,
 }

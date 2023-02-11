@@ -5,4 +5,3 @@ import init from './pkg/frontend.js';
 init().then((instance) => {
     instance.run();
 })
-

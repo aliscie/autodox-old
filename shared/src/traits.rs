@@ -11,14 +11,14 @@ pub trait Entity {
     fn table_name() -> String;
 }
 
-/// marker trait for insert types
+/// marker trait for insert types.rs
 #[async_trait(?Send)]
 pub trait Creatable: Entity + Into<<Self as Entity>::DatabaseType> {}
 
-/// marker trait for Queryable types
+/// marker trait for Queryable types.rs
 pub trait Queryable: Entity + TryFrom<<Self as Entity>::DatabaseType> {}
 
-/// trait for updatable types
+/// trait for updatable types.rs
 pub trait Updatable: Entity + Into<<Self as Entity>::DatabaseType> {}
 
 // cannot get this to work!

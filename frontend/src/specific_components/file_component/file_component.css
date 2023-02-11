@@ -1,0 +1,6 @@
+.file_component {
+    min-width: 0px;
+    align-items: center;
+    height: 100%;
+    display: inline-block
+}

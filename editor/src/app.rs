@@ -1,27 +1,28 @@
+use crate::handle_mutation::handle_mutation;
+use crate::insertion_closures;
+use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::render::render;
+use crate::utils::on_slash_input;
+use serde::{Deserialize, Serialize};
 use shared::id::Id;
-use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
+use shared::schema::{
+    EditorChange, EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree,
+};
 use shared::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
+use wasm_bindgen::prelude::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::console::log_1;
-use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord};
+use web_sys::{
+    window, Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range,
+};
 use yew::prelude::*;
 use yew::{function_component, html};
 
-/// this captures all the changes in a editor element
-#[derive(Debug)]
-pub enum EditorChange {
-    Update(EditorElementUpdate),
-    Create(EditorElementCreate),
-    Delete(Id),
-}
-
 #[derive(Properties, PartialEq)]
-pub struct Props {
+pub struct EditorProps {
     pub title: String,
     pub element_tree: Rc<RefCell<ElementTree>>,
     pub onchange: Callback<EditorChange>,
@@ -29,8 +30,8 @@ pub struct Props {
 
 // this is used for the work space
 
-#[function_component(Editor)]
-pub fn editor(props: &Props) -> Html {
+#[function_component]
+pub fn Editor(props: &EditorProps) -> Html {
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
@@ -42,100 +43,31 @@ pub fn editor(props: &Props) -> Html {
 
     //
     // let state = use_state(|| "".to_string());
+    let toggle = use_force_update();
     let editor_ref = NodeRef::default();
     let oninput_event = {
         let element_tree = props.element_tree.clone();
         let onchange = props.onchange.clone();
         Closure::wrap(Box::new(
             move |mutation_event: Vec<MutationRecord>, _observer: MutationObserver| {
-                for mutation_type in mutation_event {
-                    log_1(&format!("{:?}", mutation_type.type_()).into());
-                    log_1(&format!("{:?}", mutation_type.target()).into());
-                    if let Some(current_element) = mutation_type.target() {
-                        match mutation_type.type_().as_ref() {
-                            "characterData" => {
-                                if let Some(parent_element) = current_element.parent_element() {
-                                    if let Ok(id) =
-                                        Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
-                                    {
-                                        log_1(&format!("{:?}", parent_element.inner_html()).into());
-                                        log_1(&format!("{:?}", id).into());
-                                        let update = EditorElementUpdate {
-                                            id,
-                                            text: Some(parent_element.inner_html().clone()),
-                                            ..Default::default()
-                                        };
-                                        onchange.emit(EditorChange::Update(update));
-                                    }
-                                }
-                            }
-                            "attributes" => {
-                                if let Some(parent_element) = current_element.parent_element() {
-                                    log!(format!("Got create: {:?}", parent_element.inner_html()));
-                                }
-                            }
-                            "childList" => {
-                                let removed_nodes = mutation_type.removed_nodes();
-                                for i in 0..removed_nodes.length() {
-                                    removed_nodes
-                                        .get(i)
-                                        .and_then(|node| node.dyn_into::<Element>().ok())
-                                        .and_then(|element| {
-                                            Uuid::parse_str(element.id().as_str()).ok()
-                                        })
-                                        .map(|id| onchange.emit(EditorChange::Delete(id.into())));
-                                }
-                                if removed_nodes.length() > 0 {
-                                    // move to next mutation record!
-                                    log!("got element delete!");
-                                    log!(mutation_type.removed_nodes());
-                                    continue;
-                                }
-                                let element = current_element.unchecked_into::<Element>();
-                                if element.id() == "text_editor" {
-                                    continue;
-                                }
-                                let new_id = Uuid::new_v4();
-                                let mut prev_element_id: Option<Id> = None;
-                                if let Some(prev_node) = element.previous_sibling() {
-                                    let prev_element = prev_node.unchecked_into::<Element>();
-                                    log!(format!("previous element id : {:?}", prev_element.id()));
-                                    prev_element_id = Uuid::parse_str(prev_element.id().as_str())
-                                        .map(Id::from)
-                                        .ok();
-                                }
-                                let element_create = EditorElementCreate {
-                                    id: new_id.into(),
-                                    text: element.text_content().unwrap_or_default(),
-                                    attrs: HashMap::new(),
-                                    tree_id: element_tree.as_ref().borrow().id,
-                                    parent_id: element_tree
-                                        .as_ref()
-                                        .borrow()
-                                        .elements
-                                        .root
-                                        .unwrap(),
-                                    prev_element_id,
-                                    children: None,
-                                };
-                                onchange.emit(EditorChange::Create(element_create));
-                                element.set_id(&new_id.to_string());
-                            }
-                            anything_else => log!(anything_else),
-                        }
-                    }
-                }
+                handle_mutation(&mutation_event, &onchange, element_tree.clone());
             },
         ) as Box<dyn FnMut(_, _)>)
     };
 
     use_effect_with_deps(
         move |editor_ref| {
-            //let data = &my_function();
             let mutation_observer =
                 MutationObserver::new(oninput_event.as_ref().unchecked_ref()).unwrap();
             //let doc = window().unwrap_throw().document().unwrap_throw();
             //let editor: Rc<Element> = Rc::new(editor_ref.c!(ast::<Element>().unwrap());
+
+            // TODO
+            //  nested update is a problem
+            //  If we create a nested element
+            //   It is coming as update on the parent element.
+            //   It should show as a create event on the root
+
             let _ = mutation_observer.observe_with_options(
                 &editor_ref.get().unwrap(),
                 MutationObserverInit::new()
@@ -154,6 +86,7 @@ pub fn editor(props: &Props) -> Html {
             // Mention::new(editor.clone(), reg_ex("@\w+"), mentions_components_list); // use the mention plugin to insert mention inline specific_components
             // Mention::new(editor.clone(), "\//w+", components_list); // use the mention plugin for / insert component blocks
             // Mention::new(editor.clone(), "\:/w+",emojis_components_list); // use the mention plugin for : insert emojis inline
+
             move || {
                 drop(oninput_event);
                 mutation_observer.disconnect();
@@ -164,25 +97,77 @@ pub fn editor(props: &Props) -> Html {
 
     let element_tree = props.element_tree.clone();
 
+    let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
+        if _e.key() == "Tab" {
+            _e.prevent_default();
+            let window = web_sys::window().unwrap();
+            let document = window.document().unwrap();
+            let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+            let _ = html_document
+                .exec_command_with_show_ui_and_value("InsertText", false, "    ")
+                .unwrap();
+        }
+    });
+    // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
+    let emojis_command: fn(DropDownItem, Option<Range>) = (|event, range| {
+        // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
+        let window = web_sys::window().unwrap();
+        let document = window.document().unwrap();
+        let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
+        let _ = html_document
+            .exec_command_with_show_ui_and_value("InsertText", false, &event.value)
+            .unwrap();
+    });
+    let slash_command = {
+        let element_tree = element_tree.clone();
+        Callback::from(move |(event, range)| {
+            on_slash_input(event, range, element_tree.clone());
+            toggle.force_update();
+        })
+    };
+    let action: Callback<String> = Callback::from(move |e: String| {
+        // log!(e.clone());
+        // onchange.emit(EditorChange::Update(EditorElementUpdate {
+        //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
+        //     text_format: Some(format),
+        //     ..Default::default()
+        // }));
+    });
+
+    let mention_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {});
+
+    // let format_command: fn(String, selectoin) -> Option<()> =  (|event, range| return Some((
+    //     onchange.emit(EditorChange::Update(update)); // TODO this should be the same for  on_slash_input, mention_clouser and emojis_command
+    //     )));
+
     html! {
         <span
             class={css_file_macro!("main.css")}
-        >
+       >
             <h2 contenteditable="true" class={"editor_title heading"}>
             {props.title.clone()}
         </h2>
             <span
+            {onkeydown}
             class = "text_editor_container"
             id = "text_editor_container"
-            >
-            <div contenteditable="false" id="selection-popper" class="buttons_group_class">
-            <span class="btn"><i class="fa-bold"></i></span>
-            <span class="btn"><i class="fa-italic"></i></span>
-            <span class="btn"><i class="fa-paint-roller"></i></span>
-            <span class="btn"><i class="fa-comment"></i></span>
-            <span class="btn"><i class="fa-droplet"></i></span>
-            </div>
-
+           >
+            <EditorToolbar
+                editor_ref = { editor_ref.clone()}
+            // command={Callback::from(move |(e, r)| format_command(e, r))}
+            />
+            <EditorInsert
+                items={insertion_closures::components()}
+                trigger={"/".to_string()}
+                command={slash_command}/>
+            <EditorInsert
+                items={insertion_closures::mentions()}
+                trigger={"@".to_string()}
+                command={Callback::from(move |(e, r)| mention_clouser(e, r))}/>
+            <EditorInsert
+                items={insertion_closures::emojies()}
+                trigger={":".to_string()}
+                command={Callback::from(move |(e, r) | emojis_command(e, r))}/>
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
         </div>

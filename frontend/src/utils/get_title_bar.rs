@@ -1,95 +1,69 @@
+use crate::components::{CurDirectory, TitleBar};
+use crate::specific_components::{SaveButton, Download, Markdown, PageOptions, TitleAvatarComponent};
+use crate::utils::DeviceInfo;
+use crate::*;
 use wasm_bindgen::prelude::*;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
-use crate::utils::DeviceInfo;
 use yewdux::prelude::*;
 
-use crate::specific_components::{Download, Markdown, PageOptions, TitleAvatarComponent};
-use crate::components::{CurrDirectory, TitleBar};
-use crate::*;
-
-#[derive(Properties, Debug, PartialEq)]
-pub struct Props {
-    pub toggle: UseStateHandle<String>,
-}
-
 #[function_component(GetTitleBar)]
-pub fn get_titlebar(props: &Props) -> Html {
-    let is_light_mode = use_state(|| false);
-    let x = props.toggle.clone();
+pub fn get_title_bar() -> Html {
+    let (rc_device_info, dispatch_device_info) = use_store::<DeviceInfo>();
+    let document = window().unwrap_throw().document().unwrap_throw();
 
-    let is_expanded = x.chars().count();
-    let doc = window().unwrap_throw().document().unwrap_throw();
-    let current_directory = html! {<CurrDirectory/>};
-
-    let handle_light_mod: Callback<MouseEvent> = {
-        let is_light_mode = is_light_mode.clone();
-        let doc = doc.clone();
+    let _rc_device_info = rc_device_info.clone();
+    let _dispatch_device_info = dispatch_device_info.clone();
+    let on_light_mode: Callback<MouseEvent> = {
         Callback::from(move |_e: MouseEvent| {
-            let _ = doc
+            let _ = document
                 .query_selector("html")
                 .unwrap()
                 .unwrap()
                 .class_list()
-                .toggle("light-mod");
-            is_light_mode.set(!(*is_light_mode));
+                .toggle("light-mode");
+            let _ = &_dispatch_device_info
+                .reduce_mut(|state| state.is_light_mode = !_rc_device_info.is_light_mode);
         })
     };
 
-    let toggle_asidebar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
-        if x.chars().count() > 1 {
-            x.set("".to_string());
-            let _ = &doc
-                .query_selector(".editor_title")
-                .unwrap()
-                .unwrap()
-                .set_attribute("style", "margin-left:0px; width:100%");
-            let _ = &doc
-                .query_selector(".text_editor_container")
-                .unwrap()
-                .unwrap()
-                .set_attribute("style", "margin-left:0px; width:100%");
+    let _dispatch_device_info = dispatch_device_info.clone();
+    let _rc_device_info = rc_device_info.clone();
+    let on_aside_bar: Callback<MouseEvent> = Callback::from(move |_e: MouseEvent| {
+        if _rc_device_info.is_aside {
+            let _ = &_dispatch_device_info.reduce_mut(|state| state.is_aside = false);
         } else {
-            x.set("width:250px".to_string());
-            let _ = &doc
-                .query_selector(".editor_title")
-                .unwrap()
-                .unwrap()
-                .set_attribute("style", "margin-left:250px; margin-right:2%; width:80%");
-            let _ = &doc
-                .query_selector(".text_editor_container")
-                .unwrap()
-                .unwrap()
-                .set_attribute("style", "margin-left:250px; margin-right:2%; width:80%");
+            let _ = &_dispatch_device_info.reduce_mut(|state| state.is_aside = true);
         }
     });
 
     let right_content: Html = html! {
-       <>
-               <Download/>
-               <i
-               onclick={handle_light_mod}
-               class={format!("btn {}",if *is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
-               ></i>
-
-           <TitleAvatarComponent/>
-
-           <PageOptions/>
-       </>
+        <>
+            <SaveButton/>
+            <Download/>
+            <i
+                onclick={on_light_mode}
+                class={format!("btn {}",if rc_device_info.is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
+            ></i>
+            <Suspense fallback = {html! {<div class="titlebar loader"/>}}>
+                <TitleAvatarComponent/>
+            </Suspense>
+            <PageOptions/>
+        </>
     };
-    let (device, _) = use_store::<DeviceInfo>();
+
     html! {
         <TitleBar
-            style={(if !(device.is_web) {"padding-left: 75px; cursor: grab;"} else {""}).to_string()}
-            title={current_directory}
+            style={(if !(rc_device_info.is_web) {"padding-left: 75px; cursor: grab;"} else {""}).to_string()}
+            title={html! {<CurDirectory/>}}
             {right_content}
          >
-            <li class="btn" onclick={toggle_asidebar}>
-            {if is_expanded > 1{
-                html!{<i class="fa-solid fa-x"></i>}
-            } else{
-                html!{<i class="fa-solid fa-bars"></i>}
-            }}
+            <li class="btn" onclick={on_aside_bar}>
+                {if rc_device_info.is_aside {
+                    html!{<i class="fa-solid fa-x"></i>}
+                } else{
+                    html!{<i class="fa-solid fa-bars"></i>}
+                }}
             </li>
             <Markdown/>
         </TitleBar >

@@ -1,31 +1,19 @@
+[contenteditable] {
+    outline: 0;
+}
+
+input, select {
+    outline: 0;
+    background: rgb(var(--background));
+    border: 0;
+    color: var(--text-color);
+}
+
+
 @property --rotate {
     syntax: "<angle>";
     initial-value: 132deg;
     inherits: false;
-}
-
-:root {
-    --primary-background: 71, 71, 71;
-    --hover-color: 152, 152, 152;
-    --background: 15, 15, 15;
-    --color: 255, 255, 255;
-    --main-color: rgb(147 147 147);
-    --primary-color: rgb(196, 196, 196);
-    --text-color: white;
-    --object-color: 172, 105, 251;
-    --card-height: 65vh;
-    --card-width: calc(var(--card-height) / 1.5);
-    --bg-image: url('https://images.unsplash.com/photo-1538370965046-79c0d6907d47?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80');
-}
-
-.light-mod {
-    --primary-background: 152, 152, 152;
-    --hover-color: 141, 141, 141;
-    --background: 255, 255, 255;
-    --color: 0, 0, 0;
-    --main-color: #a4a4a4;
-    --primary-color: rgb(109, 109, 109);
-    --text-color: black;
 }
 
 /* ©2015 Johannes Jakob
@@ -173,14 +161,6 @@ h3 {
     font-size: 20px;
 }
 
-bottom_buttons {
-    width: 100%;
-}
-
-bottom_buttons button {
-    display: block;
-    width: 100%;
-}
 
 /*article {*/
 /*    overflow: hidden;*/
@@ -204,8 +184,6 @@ nav {
     display: block;
 }
 
-nav ul {
-}
 
 nav ul li {
     line-height: 30px;
@@ -375,14 +353,14 @@ button {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    margin: 4px 2px;
+    /*margin: 4px 2px;*/
     cursor: pointer;
 
     border-radius: 5px;
-    margin-left: 5px;
-    background: rgba(195, 195, 195, 0.3);
-    color: black;
-    height: 30px;
+    /*margin-left: 5px;*/
+    background: rgb(var(--main-color));
+    color: rgb(var(--text-color));
+    /*height: 30px;*/
     transition: all 0.2s ease-in-out;
 }
 
@@ -392,6 +370,11 @@ button:hover {
 }
 
 .btn {
+    border-radius: 3px;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+
     text-align: center;
     position: relative;
     border: none;
@@ -403,4 +386,24 @@ button:hover {
 
 .btn:hover {
     background: rgba(var(--hover-color), 0.6);
+}
+
+
+table {
+    background: rgb(var(--primary-background));
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    align-self: center;
+    width: 100%;
+    max-width: 300px;
+}
+
+td, th {
+    border: 1px solid rgb(var(--color));
+    text-align: left;
+    padding: 8px;
+}
+
+h2 {
+    width: 50%
 }

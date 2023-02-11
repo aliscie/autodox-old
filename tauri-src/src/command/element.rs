@@ -22,6 +22,7 @@ pub async fn create_element_tree(
         let element_create = EditorElementCreate {
             id: *id,
             text: i.text.clone(),
+            tag: i.tag.clone(),
             children: Some(children),
             attrs: i.attrs.clone(),
             // these doesn't matter we are throwing
