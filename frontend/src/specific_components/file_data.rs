@@ -151,6 +151,8 @@ fn dummy_data() -> ElementTree {
 #[hook]
 fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(FileNode, ElementTree), String>>> {
     let dispatch_file_directory = Dispatch::<FileDirectory>::new();
+    let dispatch_element_tree = Dispatch::<crate::hooks::ElementTreeStore>::new();
+
     use_future_with_deps(
         |file_id| async move {
             match dispatch_file_directory
@@ -174,9 +176,9 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                             return Ok((file_node, get_element_tree(&tree_id).await.unwrap()));
                         }
                         None => {
-                            let default_element_tree = dummy_data();
-                            let _ = backend::create_element_tree(&default_element_tree, *file_id).await?;
-                            let tree_id = default_element_tree.id;
+                            // let element_tree = dummy_data();
+                            // let _ = backend::create_element_tree(&element_tree, *file_id).await?;
+                            // let tree_id = element_tree.id;
                             let file_node = dispatch_file_directory
                                 .get()
                                 .files
@@ -184,7 +186,13 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                                 .get(&file_id)
                                 .unwrap()
                                 .clone();
-                            return Ok((file_node, default_element_tree));
+                            // let element_tree = dummy_data();
+                            let element_tree = dispatch_element_tree.get().map.get(&file_node.id).unwrap().clone();
+                            if dispatch_element_tree.get().map.get(&file_node.id).is_none() {
+                                let _ = backend::create_element_tree(&element_tree, *file_id).await?;
+                                // dispatch_element_tree.dispatch(ElementTreeStoreAction::AddElementTree(file_node.id, element_tree.clone()));
+                            }
+                            return Ok((file_node, element_tree));
                         }
                     };
                 }

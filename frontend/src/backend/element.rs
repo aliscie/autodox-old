@@ -3,7 +3,8 @@ use crate::utils::DeviceInfo;
 use shared::id::Id;
 use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
 use yewdux::prelude::Dispatch;
-
+use std::collections::HashMap;
+use crate::backend;
 use super::call_ic;
 
 // pub async fn update_element(data: EditorElementUpdate) -> Result<(), String> {
@@ -98,4 +99,26 @@ pub async fn create_element_tree(data: &ElementTree, file_id: Id) -> Result<(), 
         // user is offline throw a error
         return Err("user is offline".to_string());
     }
+}
+
+pub async fn get_element_trees() -> Result<Option<HashMap<Id, ElementTree>>, String> {
+    let info = Dispatch::<DeviceInfo>::new();
+    if info.get().is_web || info.get().is_online {
+        let response = backend::call_ic_np("get_element_trees".to_string()).await;
+        // let element_trees: Result<Option<HashMap<Id, ElementTree>>, _> =
+        //     serde_wasm_bindgen::from_value(response);
+        // return element_trees.map_err(|e| "serde error".to_string());
+        return Err("not implemented".to_string());
+    }
+    if !info.get().is_web {
+        return crate::backend::call_surreal(
+            "get_element_trees".to_string(),
+            Some(&serde_json::json!({})),
+        )
+            .await;
+    } else {
+        // user is offline throw a error
+        return Err("user is offline".to_string());
+    }
+
 }
