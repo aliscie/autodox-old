@@ -12,6 +12,9 @@
 # lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cloud-foundry
 # custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
 ---
-platform: "tether_trc20"
-tetherAddress: "TUk9zrtacBzmfUpWAwnkNfjQCKzG9vF66z"
+- type: usdt-erc20
+  network: ethereum
+  address: <your USDT-ERC20 contract address>
+  id: <an identifier for this payment option>
+  label: <a user-friendly label for this payment option>
 ---
