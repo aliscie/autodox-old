@@ -11,10 +11,9 @@
 # otechie: # Replace with a single Otechie username
 # lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cloud-foundry
 # custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
----
-- type: usdt-erc20
-  network: ethereum
-  address: <your USDT-ERC20 contract address>
-  id: <an identifier for this payment option>
+- type: custom
   label: <a user-friendly label for this payment option>
----
+  info: <any additional information or instructions for using this payment option>
+  links:
+  - type: <a label for this link>
+    url: <the URL for this link>
