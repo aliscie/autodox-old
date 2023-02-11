@@ -70,7 +70,7 @@ pub fn get_file(data: String) -> Option<(FileNode, ElementTree)> {
                 .clone();
             let tree = file_node
                 .element_tree
-                .and_then(|element_tree_id| element_trees.get(&element_tree_id))?
+                .and_then(|element_tree_id| element_trees.get(&user)?.get(&element_tree_id))?
                 .clone();
             if file_node.file_mode == FileMode::Public || current_user == user
             // || file_node.permeted_users.contains(&user)

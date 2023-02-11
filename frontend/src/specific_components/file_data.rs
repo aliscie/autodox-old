@@ -2,7 +2,7 @@ use crate::backend::create_element;
 use crate::backend::create_element_tree;
 use crate::backend::delete_element;
 use crate::backend::get_element_tree;
-use crate::backend::update_element;
+// use crate::backend::update_element;
 use editor::Editor;
 use shared::id::Id;
 use shared::log;
@@ -36,10 +36,10 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
         changes.reduce_mut(|s| s.changes.push_back(e.clone()));
         match e {
             EditorChange::Update(x) => {
-                let update_data = x.clone();
-                spawn_local(async move {
-                    let x = update_element(update_data).await;
-                });
+                // let update_data = x.clone();
+                // spawn_local(async move {
+                //     let x = update_element(update_data).await;
+                // });
                 if let Some(element) = element_tree
                     .as_ref()
                     .borrow_mut()
@@ -201,16 +201,16 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                     let auther = data[3];
                     let data = serde_json::json!((auther, file_id.clone()));
                     let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
+                    log!(&res);
                     let file_dir: Result<Option<(FileNode, ElementTree)>, _> = serde_wasm_bindgen::from_value(res);
                     if let Ok(file_dir) = file_dir {
                         if let Some((file_node, element_tree)) = file_dir {
                             return Ok((file_node, element_tree));
                         }
                     }
-
-                    return Err(String::from("Not found!"));
                 }
             }
+            return Err(String::from("Not found!"));
         },
         file_id,
     )

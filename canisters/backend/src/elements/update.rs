@@ -16,19 +16,24 @@ struct ElementTreeCreate {
 
 #[update]
 #[candid_method(update)]
-pub fn create_element_tree(data: String) -> Result<(), String> {
-    let ElementTreeCreate { data, file_id } =
-        serde_json::from_str::<ElementTreeCreate>(&data).map_err(|_| "Serde errror".to_string())?;
-    let user = User::current().ok_or("user not found")?;
+pub fn create_element_tree(data: String) -> Option<String> {
+    let res = serde_json::from_str::<ElementTreeCreate>(&data);
+    if res.is_err() {
+        return Some(format!("Error: {:?}", res.err()));
+    };
+    let res = res.unwrap();
+    let data = res.data;
+    let file_id = res.file_id;
+
+    let user = User::current()?;
     let mut user_files: UserFiles = s!(UserFiles);
     let file_directory = user_files.get_mut(&user).unwrap();
     let mut element_trees: ElementTrees = s!(ElementTrees);
     let mut file_node = file_directory
         .files
         .vertices
-        .get_mut(&file_id)
-        .ok_or("file_id not found")?;
+        .get_mut(&file_id)?;
     file_node.element_tree = Some(data.id);
-    element_trees.insert(data.id, data);
-    Ok(())
+    element_trees.get_mut(&user)?.insert(data.id, data);
+    Some("ok".to_string())
 }

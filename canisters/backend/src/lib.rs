@@ -27,3 +27,14 @@ fn pre_upgrade() {
 fn post_upgrade() {
     stable_memory_post_upgrade(0);
 }
+
+
+use ic_cdk::export::candid::{
+    candid_method, check_prog, export_service, CandidType, Deserialize, IDLProg, TypeEnv,
+};
+
+// #[query(name = "__get_candid_interface_tmp_hack")]
+// pub fn export_candid() -> String {
+//     export_service!(); // <---- try to move your export in this scope
+//     __export_service()
+// }
