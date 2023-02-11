@@ -26,7 +26,7 @@ pub fn FileTree() -> Html {
     let map: Rc<RefCell<HashMap<Id, VNode>>> = Rc::new(RefCell::new(HashMap::new()));
 
     if format!("{:#?}", &tree.clone().files).len() < 355 {
-        return html! {<div class="loader"/>};
+        return html! {<div class="filetree loader"/>};
     }
 
     for (id, file_node) in tree.clone().files.into_iter(start) {

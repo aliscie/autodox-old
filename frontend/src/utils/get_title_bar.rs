@@ -45,7 +45,7 @@ pub fn get_title_bar() -> Html {
                 onclick={on_light_mode}
                 class={format!("btn {}",if rc_device_info.is_light_mode {"fa-solid fa-moon"} else {"fa-solid fa-sun"})}
             ></i>
-            <Suspense fallback = {html! {<div class="loader"/>}}>
+            <Suspense fallback = {html! {<div class="titlebar loader"/>}}>
                 <TitleAvatarComponent/>
             </Suspense>
             <PageOptions/>

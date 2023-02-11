@@ -148,8 +148,8 @@ pub async fn get_directory(id: Id, auther_id: Id) -> Result<FileDirectory, Strin
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         //
-        let input_data = serde_json::json!((auther_id, id)).to_string();
-        let file_node_jv = backend::call_ic("get_file".to_string(), input_data.to_string()).await;
+        // let input_data = serde_json::json!((auther_id, id)).to_string();
+        // let file_node_jv = backend::call_ic("get_director".to_string(), input_data.to_string()).await;
         // let file_node_res = serde_wasm_bindgen::from_value::<Option<FileNode>>(file_node_jv);
         unimplemented!();
     }

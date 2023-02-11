@@ -9,6 +9,7 @@ use yew_router::prelude::*;
 use yewdux::prelude::*;
 use shared::schema::EditorChange;
 use shared::log;
+use wasm_bindgen_futures::spawn_local;
 
 // use shared::{invoke, log};
 
@@ -30,7 +31,6 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
     let is_saved = changes.changes.is_empty();
 
 
-
     let onclick = {
         let dispatch = dispatch.clone();
         Callback::from(move |e: MouseEvent| {
@@ -41,18 +41,24 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
             };
 
             let target: Element = e.target_unchecked_into();
-            let _ = target.class_list().add_1("loader");
-            // TODO
-            //     let res = backend::call_ic("group_update".to_string"),changs.changes).await;
-            //     if res.is_ok() {
+            let _ = target.class_list().add_1("loader").unwrap();
+            let changes = changes.changes.clone();
+            let dispatch = dispatch.clone();
+            spawn_local(async move {
+                let input_data = serde_json::to_string(&changes).unwrap_throw();
+                let res = backend::call_ic("group_update".to_string(), input_data.to_string()).await;
+                log!("group is saved");
+                log!(&res);
+                // if res.is_ok() {
                 let empty_data: VecDeque<EditorChange> = VecDeque::new();
                 let _ = dispatch.reduce_mut(|state| state.changes = empty_data);
-            //     }
+                // }
 
-            let _ = target.class_list().remove_1("loader");
-            if let Some(editor) = editor.unwrap() {
-                editor.class_list().remove_1("loader");
-            };
+                let _ = target.class_list().remove_1("loader");
+                if let Some(editor) = editor.unwrap() {
+                    editor.class_list().remove_1("loader");
+                };
+            });
         })
     };
 

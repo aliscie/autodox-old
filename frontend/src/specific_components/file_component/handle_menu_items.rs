@@ -42,7 +42,7 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
 
                 if _e.key() == "Enter" && value.is_empty() {
                     input.class_list().add_1("tool").unwrap();
-                } else if _e.key() == "Enter" {
+                } else if _e.key() == "Enter" && !&value.is_empty() {
                     let res = backend::rename_file(_id.clone(), value.clone()).await;
                     if (res.is_ok()) {
                         state.files.vertices.get_mut(&_id).unwrap().name = value;
@@ -145,8 +145,10 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
     };
 
     let _id = id.clone();
+    let _name = props.file_node.name.clone();
     let onkeydown: Callback<KeyboardEvent> =
         fd_dispatch.reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
+            let _name = _name.clone();
             Box::pin(async move {
                 let input: HtmlInputElement = _e.target_unchecked_into();
                 let value: String = input.inner_text();
@@ -163,6 +165,10 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
 
                 if _e.key() == "Enter" && value.is_empty() {
                     input.class_list().add_1("tool").unwrap();
+                    input.set_attribute("data-tip", "File must have at least 1 character.").unwrap();
+                } else if &_name == &value {
+                    input.class_list().add_1("tool").unwrap();
+                    input.set_attribute("data-tip", "Name is the same.").unwrap();
                 } else if _e.key() == "Enter" {
                     if let Some(file_node) = state.files.vertices.get_mut(&_id) {
                         file_node.name = value.clone();

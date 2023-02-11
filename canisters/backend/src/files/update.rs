@@ -104,7 +104,7 @@ pub async fn group_update(data: String) -> Option<String> {
     for change in changes {
         match change {
             EditorChange::Create(data) => {
-                let element_tree: &mut ElementTree = element_trees.get_mut(&data.tree_id)?;
+                let element_tree: &mut ElementTree = element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 element_tree.elements.push_children(
                     data.parent_id.clone(),
                     data.id.clone(),
@@ -124,7 +124,7 @@ pub async fn group_update(data: String) -> Option<String> {
                 }
             }
             EditorChange::Update(data) => {
-                let element_tree: &mut ElementTree = element_trees.get_mut(&data.tree_id)?;
+                let element_tree: &mut ElementTree =element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 if let Some(element) = element_tree.elements.vertices.get_mut(&data.id) {
                     if let Some(text) = data.text {
                         element.text = text;
@@ -135,7 +135,7 @@ pub async fn group_update(data: String) -> Option<String> {
                 }
             }
             EditorChange::Delete(data) => {
-                let element_tree: &mut ElementTree = element_trees.get_mut(&data.tree_id)?;
+                let element_tree: &mut ElementTree =element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 element_tree.elements.remove(&data.id);
             } // EditorChange::MoveFile(data) => {
               //     let adjacency = file_directory

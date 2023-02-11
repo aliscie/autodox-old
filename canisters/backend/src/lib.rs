@@ -1,9 +1,16 @@
+use ic_cdk::export::candid::{
+    candid_method, check_prog, export_service, CandidType, Deserialize, IDLProg, TypeEnv,
+};
+
 mod elements;
 mod files;
 mod initialize;
 mod users;
+
+pub use elements::*;
 pub use files::*;
 pub use users::*;
+
 mod utils;
 
 use crate::files::types::MyStrings;
@@ -16,6 +23,8 @@ use initialize::*;
 
 pub mod custom_traits;
 
+use shared::schema::*;
+
 // before upgrading the code of the canister (before deploying the app)
 #[pre_upgrade]
 fn pre_upgrade() {
@@ -27,3 +36,10 @@ fn pre_upgrade() {
 fn post_upgrade() {
     stable_memory_post_upgrade(0);
 }
+
+// export_service!();
+//
+// #[ic_cdk_macros::query(name = "__get_candid_interface_tmp_hack")]
+// fn export_candid() -> String {
+//     __export_service()
+// }
