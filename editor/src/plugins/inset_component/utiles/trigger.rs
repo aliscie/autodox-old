@@ -22,13 +22,14 @@ use yewdux::prelude::*;
 pub fn use_trigger_popover(
     trigger: String,
     command: Callback<Range>,
-) -> (UseStateHandle<String>, UseStateHandle<Option<Position>>) {
+) -> (UseStateHandle<Option<Range>>, UseStateHandle<Option<Position>>) {
     // pub fn trigger_popover(editor: &Element, trigger: String, position: UseStateHandle<Option<Position>>, input_text: UseStateHandle<String>, command: Callback<Range>) {
 
     let position: UseStateHandle<Option<Position>> = use_state(|| None);
-    let input_text: UseStateHandle<String> = use_state(|| "".to_string());
+    // let input_text: UseStateHandle<String> = use_state(|| "".to_string());
+    let range_state: UseStateHandle<Option<Range>> = use_state(|| None);
 
-    let _input_text = input_text.clone();
+    // let _input_text = input_text.clone();
     let _position = position.clone();
 
     let handle_click = Closure::wrap(Box::new(move |e: KeyboardEvent| {
@@ -42,7 +43,8 @@ pub fn use_trigger_popover(
         .add_event_listener_with_callback("click", &handle_click.as_ref().unchecked_ref());
     &handle_click.forget();
 
-    let _input_text = input_text.clone();
+    // let _input_text = input_text.clone();
+    let _range_state = range_state.clone();
     let _position = position.clone();
     let doc = window().unwrap_throw().document().unwrap_throw();
     let editor = doc.query_selector(".text_editor");
@@ -89,7 +91,8 @@ pub fn use_trigger_popover(
                 // log!(&*_position); // TODO why this is always None even after I set it to Some?
 
                 if is_track && &e.key() != "Enter" && e.key() != "Tab" {
-                    _input_text.set(format!("{}", range.to_string()).to_string());
+                    _range_state.set(Some(range.clone()));
+                    // _input_text.set(format!("{}", range.to_string()).to_string());
                     if let Some(p) = range.get_client_rects() {
                         let p = p.get(0).unwrap();
                         is_track = true;
@@ -112,5 +115,5 @@ pub fn use_trigger_popover(
         },
         editor.clone(),
     );
-    return (input_text, position);
+    return (range_state, position);
 }

@@ -38,21 +38,20 @@ pub fn EditorInsert(props: &Props) -> Html {
     let command = props.command.clone();
 
     let handle_command: Callback<Range> = {
+        // let range = range.clone();
         let command = command.clone();
         Callback::from(move |range| {
             command.emit((_items[0].clone(), Some(range)));
         })
     };
+    let (range, position) = utiles::use_trigger_popover(trigger.clone(), handle_command.clone());
 
-    let (input_text, position) = utiles::use_trigger_popover(trigger.clone(), handle_command.clone());
-    let _input_text = input_text.clone();
 
     let _items = items.clone();
     let mut sorted_items = (&*items).clone();
     let _items = items.clone();
-    let _input_text = input_text.clone();
     let _trigger = trigger.clone();
-    let x = "done";
+    let _range = (&*range).clone();
 
     use_effect_with_deps(
         move |editor_ref| {
@@ -77,21 +76,24 @@ pub fn EditorInsert(props: &Props) -> Html {
             //     std::cmp::Ordering::Equal
             // });
 
-            let input_text = (*_input_text)
-                .to_lowercase()
-                .replace(" ", "")
-                .replace(_trigger.as_str(), "");
-            let matcher = SkimMatcherV2::default();
-            sorted_items.sort_unstable_by(|a, b| {
-                let a_distance = matcher.fuzzy_match(&a.text, &input_text);
-                let b_distance = matcher.fuzzy_match(&b.text, &input_text);
-                b_distance.cmp(&a_distance).then(a.text.cmp(&b.text))
-            });
+            if let Some(_range) = _range {
+                let input_text = format!("{}", _range.to_string()).to_string();
+                let input_text = input_text
+                    .to_lowercase()
+                    .replace(" ", "")
+                    .replace(_trigger.as_str(), "");
+                let matcher = SkimMatcherV2::default();
+                sorted_items.sort_unstable_by(|a, b| {
+                    let a_distance = matcher.fuzzy_match(&a.text, &input_text);
+                    let b_distance = matcher.fuzzy_match(&b.text, &input_text);
+                    b_distance.cmp(&a_distance).then(a.text.cmp(&b.text))
+                });
+            };
 
 
             _items.set(sorted_items.clone());
         },
-        input_text.clone(),
+        range.clone(),
     );
 
     if (*position.clone()).is_none() {
@@ -125,32 +127,10 @@ pub fn EditorInsert(props: &Props) -> Html {
                 let command = command.clone();
                 let position = position.clone();
                 let trigger = trigger.clone();
+                let range = (&*range).clone();
                 Callback::from(move |_| {
-                    let selection = window().unwrap_throw().get_selection().unwrap().unwrap();
-                    let curr_focus: Node = selection.focus_node().unwrap();
-                    let mut range = window().unwrap_throw().document().unwrap_throw().create_range().unwrap();
-                    let caret = get_caret_position();
-                    range.set_end(&curr_focus, caret);
-
-
-                    let mut start = caret;
-                    let text = curr_focus.node_value().unwrap();
-
-                    while start > 0 {
-                        start -= 1;
-                        log!(start);
-                        log!(text.clone());
-                        log!(text.clone().len());
-                        log!(text.chars().nth((start) as usize));
-                        if text.chars().nth((start) as usize).unwrap() == trigger.chars().nth(0).unwrap() {
-                            break;
-                        }
-                    };
-
-                    range.set_start(&curr_focus, start);
-                    range.delete_contents();
                     position.set(None);
-                    command.emit((_item.clone(), Some(range)));
+                    command.emit((_item.clone(), range.clone()));
                 })
             }
             >{item.value}</ option>}
