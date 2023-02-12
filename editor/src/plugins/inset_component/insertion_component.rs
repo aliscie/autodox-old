@@ -78,6 +78,7 @@ pub fn EditorInsert(props: &Props) -> Html {
 
             if let Some(_range) = _range {
                 let input_text = format!("{}", _range.to_string()).to_string();
+                log!(&input_text); // TODO this should rerender evy time i type something?
                 let input_text = input_text
                     .to_lowercase()
                     .replace(" ", "")

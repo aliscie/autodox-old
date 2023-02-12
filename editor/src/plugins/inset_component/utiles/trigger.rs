@@ -92,6 +92,7 @@ pub fn use_trigger_popover(
 
                 if is_track && &e.key() != "Enter" && e.key() != "Tab" {
                     _range_state.set(Some(range.clone()));
+                    log!(format!("{}", range.to_string()).to_string());
                     // _input_text.set(format!("{}", range.to_string()).to_string());
                     if let Some(p) = range.get_client_rects() {
                         let p = p.get(0).unwrap();
@@ -113,7 +114,7 @@ pub fn use_trigger_popover(
                 drop(handle_keydown);
             }
         },
-        editor.clone(),
+        editor.clone(), // TODO setting this to range_state  is a rerender problem?
     );
     return (range_state, position);
 }
