@@ -16,7 +16,7 @@ pub type UserName = String;
 pub fn get_username(address: SPrincipal, users: &Vec<User>) -> Option<UserName> {
     for user in users {
         if user.address == address {
-            return Some(user.user_name.clone());
+            return Some(user.username.clone());
         }
     }
     None

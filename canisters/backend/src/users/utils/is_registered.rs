@@ -6,7 +6,7 @@ pub fn is_registered(address: &SPrincipal, mut list: Vec<User>) -> Option<String
     if list.len() == 0{
         return None
     }
-    Some(list.get(0).unwrap().user_name.clone())
+    list.get(0).unwrap().username.clone()
 }
 
 // pub fn username_check(address: &SPrincipal, mut list: Vec<User>) -> Option<String>{
