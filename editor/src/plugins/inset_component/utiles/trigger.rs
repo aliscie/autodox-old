@@ -70,13 +70,11 @@ pub fn use_trigger_popover(
 
                 if is_track && (&e.key() == "Enter" || e.key() == "Tab") {
                     e.prevent_default();
-                    let r = range.delete_contents();
-                    command.emit(range.clone());
+                    // let r = range.delete_contents();
                     is_track = false;
+                    command.emit(range.clone());
                     _position.set(None);
-                };
-
-                if e.key() == trigger {
+                } else if e.key() == trigger {
                     let _ = range.set_start(&curr_focus, plugins::get_caret_position());
                     if let Some(p) = range.get_client_rects() {
                         let p = p.get(0).unwrap();
@@ -86,11 +84,7 @@ pub fn use_trigger_popover(
                             y: p.y(),
                         }));
                     };
-                }
-
-                // log!(&*_position); // TODO why this is always None even after I set it to Some?
-
-                if is_track && &e.key() != "Enter" && e.key() != "Tab" {
+                } else if is_track && &e.key() != "Enter" && e.key() != "Tab" {
                     _range_state.set(Some(range.clone()));
                     log!(format!("{}", range.to_string()).to_string());
                     // _input_text.set(format!("{}", range.to_string()).to_string());
@@ -114,7 +108,7 @@ pub fn use_trigger_popover(
                 drop(handle_keydown);
             }
         },
-        editor.clone(), // TODO setting this to range_state  is a rerender problem?
+        editor.clone(),
     );
     return (range_state, position);
 }

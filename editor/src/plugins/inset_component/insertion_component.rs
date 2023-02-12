@@ -36,22 +36,29 @@ pub fn EditorInsert(props: &Props) -> Html {
     let _trigger = trigger.clone();
     let _items = items.clone();
     let command = props.command.clone();
-
+    // log!((&*items)[0].value.clone());
     let handle_command: Callback<Range> = {
-        // let range = range.clone();
+        let items = items.clone();
         let command = command.clone();
-        Callback::from(move |range| {
-            command.emit((_items[0].clone(), Some(range)));
+        Callback::from(move |range: Range| {
+            // TODO  items[0].clone()  // why this always return the same item ??
+            log!(format!("{}", range.clone().to_string()).to_string());
+            range.delete_contents();
+            command.emit((items[0].clone(), Some(range)));
         })
     };
     let (range, position) = utiles::use_trigger_popover(trigger.clone(), handle_command.clone());
 
 
-    let _items = items.clone();
     let mut sorted_items = (&*items).clone();
     let _items = items.clone();
     let _trigger = trigger.clone();
     let _range = (&*range).clone();
+    let mut input_text = "".to_string();
+    if let Some(_range) = _range.clone() {
+        input_text = format!("{}", _range.to_string()).to_string();
+    };
+    let _input_text = input_text.clone();
 
     use_effect_with_deps(
         move |editor_ref| {
@@ -76,25 +83,19 @@ pub fn EditorInsert(props: &Props) -> Html {
             //     std::cmp::Ordering::Equal
             // });
 
-            if let Some(_range) = _range {
-                let input_text = format!("{}", _range.to_string()).to_string();
-                log!(&input_text); // TODO this should rerender evy time i type something?
-                let input_text = input_text
-                    .to_lowercase()
-                    .replace(" ", "")
-                    .replace(_trigger.as_str(), "");
-                let matcher = SkimMatcherV2::default();
-                sorted_items.sort_unstable_by(|a, b| {
-                    let a_distance = matcher.fuzzy_match(&a.text, &input_text);
-                    let b_distance = matcher.fuzzy_match(&b.text, &input_text);
-                    b_distance.cmp(&a_distance).then(a.text.cmp(&b.text))
-                });
-            };
-
-
+            let input_text = _input_text
+                .to_lowercase()
+                .replace(" ", "")
+                .replace(_trigger.as_str(), "");
+            let matcher = SkimMatcherV2::default();
+            sorted_items.sort_unstable_by(|a, b| {
+                let a_distance = matcher.fuzzy_match(&a.text, &input_text);
+                let b_distance = matcher.fuzzy_match(&b.text, &input_text);
+                b_distance.cmp(&a_distance).then(a.text.cmp(&b.text))
+            });
             _items.set(sorted_items.clone());
         },
-        range.clone(),
+        input_text.clone(),
     );
 
     if (*position.clone()).is_none() {
@@ -104,10 +105,10 @@ pub fn EditorInsert(props: &Props) -> Html {
     };
     let p = (&*position).as_ref().unwrap();
     let items = items.clone();
-    let mut items_value = (&*items).clone();
+    let mut short_items = (&*items).clone();
     let items = if items.len() > 15 {
         // set items to the first 15 items
-        items_value = items_value
+        short_items = short_items
             .iter()
             .take(15)
             .cloned()
@@ -119,7 +120,7 @@ pub fn EditorInsert(props: &Props) -> Html {
 
     <select size="5" id = "editor_dropdown" style ={format ! (" top:{}px; left:{}px", p.y, p.x)}>
     {
-    (items_value).clone()
+    short_items.clone()
     .into_iter().map( | item | {
         let _item = item.clone();
         html !{<option
@@ -130,8 +131,11 @@ pub fn EditorInsert(props: &Props) -> Html {
                 let trigger = trigger.clone();
                 let range = (&*range).clone();
                 Callback::from(move |_| {
+                    let range = range.clone().unwrap();
                     position.set(None);
-                    command.emit((_item.clone(), range.clone()));
+                    range.set_end(&range.end_container().unwrap(), range.end_offset().unwrap() + 1 as u32);
+                    range.delete_contents();
+                    command.emit((_item.clone(), Some(range.clone())));
                 })
             }
             >{item.value}</ option>}
