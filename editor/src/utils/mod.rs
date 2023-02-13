@@ -23,9 +23,11 @@ pub fn on_slash_input(
         .and_then(|f| f.id().parse::<Uuid>().ok())
         .map(Id::from)
         .or(element_tree.as_ref().borrow().elements.root)?;
-    log!(current_element.clone());
+    // log!(current_element.clone());
+    log!(&event.text.as_str()); // TODo on hit enter this return code instead of table?
     match event.text.as_str() {
         "table" => {
+            // TODO we should hav ea generic way to create elements without using event.text.as_str()
             let (elements, adjacency) = get_example_table();
             {
                 let mut value = element_tree.as_ref().borrow_mut();
