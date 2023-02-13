@@ -170,6 +170,7 @@ export async function call_ic_raw(method, stringify) {
 }
 
 export async function call_ic(method, stringify) {
+    console.log('call_ic: ', method)
     let res = await call_ic_raw(method, stringify);
     const noOption = getNoOption(res)
     return noOption;

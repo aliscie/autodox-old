@@ -102,7 +102,7 @@ pub fn handle_mutation(
             }
         }
     }
-    log!(element_tree.as_ref().borrow());
+    // log!(element_tree.as_ref().borrow());
     Some(())
 }
 

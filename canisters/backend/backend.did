@@ -72,7 +72,14 @@ service : {
         FileNode;
         ElementTree
     }) query;
-    "create_element_tree" : (text) -> (opt text);
-    "get_element_trees" : () -> (opt vec record { text; ElementTree;});
-
+    "create_element_tree" : (text) -> (variant {Ok: text; Err: text});
+    "get_element_trees": () -> (opt record {
+        text;
+        ElementTree
+    }) query;
+//    "get_element_trees": () -> (variant {
+//        Ok: ElementTree;
+//        Err: text
+//    }) query;
 }
+
