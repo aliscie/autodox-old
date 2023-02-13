@@ -1,0 +1,78 @@
+type FileMode = variant {
+    Private;
+    Public;
+    Restricted;
+};
+
+type FileNode = record {
+    id : text;
+    name: text;
+    element_tree: opt text;
+    file_mode: FileMode;
+    //    users_can_see: vec UserQuery;
+};
+
+type Tree = record {
+    root : opt text;
+    vertices : vec record {
+        text;
+        FileNode
+    };
+    adjacency : vec record {
+        text;
+        vec text;
+    };
+};
+
+type FileDirectory = record {
+    id : text;
+    name: text;
+    files: Tree;
+};
+
+type UserQuery = record {
+    address: text;
+    username: opt text;
+    image: opt vec nat8;
+    last_name: opt text;
+    first_name: opt text;
+    birthdate: opt text;
+    email: opt text;
+    emails: opt vec text;
+};
+
+type ElementTree = record {
+    id: text;
+    elements: Tree;
+};
+
+    //type getFile = variant {
+    //    Ok: record {
+    //        FileNode;
+    //        ElementTree
+    //    };
+    //    Err: text
+    //};
+
+service : {
+    "register": (text) -> (text);
+    "update_profile" : (text) -> (text);
+    "get_profile" : () -> (opt UserQuery) query;
+    "create_file": (text) -> (text);
+    "update_file": (text) -> (text);
+    "get_directory": (text) -> (opt FileDirectory) query;
+    "rename_file": (text) -> (text);
+    "delete_file": (text) -> (text);
+    "create_directory": () -> (text);
+    "get_directories": () ->(opt FileDirectory) query;
+    "change_directory": (text) -> (text);
+    "get_users" : () -> (vec UserQuery) query;
+    "group_update": (text) -> (opt text);
+    "get_file": (text) -> (opt record {
+        FileNode;
+        ElementTree
+    }) query;
+    "create_element_tree" : (text) -> (opt text);
+    "get_element_trees" : () -> (opt vec record { text; ElementTree;});
+
+}
