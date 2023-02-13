@@ -15,10 +15,9 @@ pub(crate) fn render(tree: &ElementTree, start: Id) -> Html {
         }
 
         let html_node = html! {
-            <>
-                <EditorComponent
-                    key = { id.to_string() }
-                    node={node.clone()}/>
+            <EditorComponent
+                key = { id.to_string() }
+                node={node.clone()}>
                 if has_children {{
                     tree.elements.adjacency.get(id)
                         .unwrap()
@@ -26,7 +25,8 @@ pub(crate) fn render(tree: &ElementTree, start: Id) -> Html {
                         .map(|f| map.borrow().get(f).unwrap().to_owned())
                         .collect::<Html>()
                 }}
-            </>
+            </EditorComponent>
+
         };
         map.borrow_mut().insert(*id, html_node);
     }
