@@ -31,6 +31,12 @@ pub fn create_file(data: String) -> String {
         return "user not found".to_string();
     };
     let mut user_files: UserFiles = s!(UserFiles);
+    let mut element_trees: ElementTrees = s!(ElementTrees);
+    // if let Some(element_tree) = element_trees.get_mut(&user.unwrap()){
+    //     element_tree.insert(file_id, element_tree)
+    // } else {
+    //     element_trees.insert(user.clone().unwrap(), element_tree);
+    // }
 
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
         let mut parent_adjacency = file_directory
@@ -44,7 +50,6 @@ pub fn create_file(data: String) -> String {
             .vertices
             .insert(create_file_data.id, create_file_data.into());
     }
-    // let _= create::_create_file(&mut user_files, &username, create_file_data.directory_id, create_file_data.id, create_file_data.name, create_file_data.children);
     s! { UserFiles = user_files};
     "New file is created.".to_string()
 }

@@ -186,8 +186,8 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                                 .get(&file_id)
                                 .unwrap()
                                 .clone();
-                            // let element_tree = dummy_data();
-                            let element_tree = dispatch_element_tree.get().map.get(&file_node.id).unwrap().clone();
+                            let dummy_element_tree = dummy_data();
+                            let element_tree = dispatch_element_tree.get().map.get(&file_node.id).unwrap_or(&dummy_element_tree).clone();
                             if dispatch_element_tree.get().map.get(&file_node.id).is_none() {
                                 let _ = backend::create_element_tree(&element_tree, *file_id).await?;
                                 // dispatch_element_tree.dispatch(ElementTreeStoreAction::AddElementTree(file_node.id, element_tree.clone()));
