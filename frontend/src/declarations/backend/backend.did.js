@@ -50,7 +50,12 @@ export const idlFactory = ({ IDL }) => {
       ),
     'get_file' : IDL.Func(
         [IDL.Text],
-        [IDL.Opt(IDL.Tuple(FileNode, ElementTree))],
+        [
+          IDL.Variant({
+            'Ok' : IDL.Tuple(FileNode, ElementTree),
+            'Err' : IDL.Text,
+          }),
+        ],
         ['query'],
       ),
     'get_profile' : IDL.Func([], [IDL.Opt(UserQuery)], ['query']),

@@ -44,7 +44,11 @@ export interface _SERVICE {
   'get_directories' : ActorMethod<[], [] | [FileDirectory]>,
   'get_directory' : ActorMethod<[string], [] | [FileDirectory]>,
   'get_element_trees' : ActorMethod<[], [] | [[string, ElementTree]]>,
-  'get_file' : ActorMethod<[string], [] | [[FileNode, ElementTree]]>,
+  'get_file' : ActorMethod<
+    [string],
+    { 'Ok' : [FileNode, ElementTree] } |
+      { 'Err' : string }
+  >,
   'get_profile' : ActorMethod<[], [] | [UserQuery]>,
   'get_users' : ActorMethod<[], Array<UserQuery>>,
   'group_update' : ActorMethod<[string], [] | [string]>,
