@@ -27,7 +27,7 @@ use yewdux::prelude::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub id: Id,
-    pub auther: String,
+    pub author: String,
 }
 
 fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
@@ -149,7 +149,9 @@ fn dummy_data() -> ElementTree {
 }
 
 #[hook]
-fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(FileNode, ElementTree), String>>> {
+fn use_element_tree(
+    file_id: Id,
+) -> SuspensionResult<UseFutureHandle<Result<(FileNode, ElementTree), String>>> {
     let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     let dispatch_element_tree = Dispatch::<crate::hooks::ElementTreeStore>::new();
 
@@ -187,9 +189,15 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                                 .unwrap()
                                 .clone();
                             let dummy_element_tree = dummy_data();
-                            let element_tree = dispatch_element_tree.get().map.get(&file_node.id).unwrap_or(&dummy_element_tree).clone();
+                            let element_tree = dispatch_element_tree
+                                .get()
+                                .map
+                                .get(&file_node.id)
+                                .unwrap_or(&dummy_element_tree)
+                                .clone();
                             if dispatch_element_tree.get().map.get(&file_node.id).is_none() {
-                                let _ = backend::create_element_tree(&element_tree, *file_id).await?;
+                                let _ =
+                                    backend::create_element_tree(&element_tree, *file_id).await?;
                                 // dispatch_element_tree.dispatch(ElementTreeStoreAction::AddElementTree(file_node.id, element_tree.clone()));
                             }
                             return Ok((file_node, element_tree));
@@ -210,7 +218,8 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                     let data = serde_json::json!((auther, file_id.clone()));
                     let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
                     log!(&res);
-                    let file_dir: Result<Option<(FileNode, ElementTree)>, _> = serde_wasm_bindgen::from_value(res);
+                    let file_dir: Result<Option<(FileNode, ElementTree)>, _> =
+                        serde_wasm_bindgen::from_value(res);
                     if let Ok(file_dir) = file_dir {
                         if let Some((file_node, element_tree)) = file_dir {
                             return Ok((file_node, element_tree));
