@@ -3,8 +3,9 @@ use std::collections::HashMap;
 
 use shared::id::Id;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
-use web_sys::{window, Element};
+use web_sys::{console, window, Element};
 use yew::prelude::*;
+use yew::virtual_dom::VTag;
 use yew::{function_component, html};
 
 use shared::schema::EditorElement;
@@ -14,6 +15,8 @@ use crate::editor_components::{FromComponent, Table};
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub node: EditorElement,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[derive(Properties, PartialEq)]
@@ -22,23 +25,20 @@ pub struct ConstractorProps {
     attrs: HashMap<String, String>,
     text: String,
     id: Id,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[function_component]
 fn ConstructElement(props: &ConstractorProps) -> Html {
     let mut tag = props.tag.clone();
-    if tag.is_none() {
-        tag = Some("div".to_string());
+    let tag = format!("{}", tag.unwrap_or(String::from("div")));
+    html! {
+        <@{tag} id = {{props.id.to_string()}}>
+            {&props.text}
+            { props.children.clone() }
+        </@>
     }
-    let doc = window().unwrap_throw().document().unwrap_throw();
-    let new_element: Element = doc.create_element(&tag.unwrap()).unwrap();
-    new_element.set_inner_html(&props.text);
-
-    for (key, value) in props.attrs.iter() {
-        new_element.set_attribute(key, value).unwrap();
-    }
-    new_element.set_id(props.id.to_string().as_str());
-    Html::VRef(new_element.unchecked_into())
 }
 
 #[function_component]
@@ -46,10 +46,18 @@ pub fn EditorComponent(props: &Props) -> Html {
     let node = &props.node;
     let tag = node.tag.clone();
     let response = match tag.unwrap_or(String::from("")).as_str() {
-        "table" => html! { <Table/>},
+        "table" => html! { <Table> {props.children.clone()}</Table>},
         "form" => html! { <FromComponent/>},
         _ => {
-            html! {<ConstructElement tag={node.tag.clone()} attrs={node.clone().attrs} id = {node.id} text={node.clone().text}/>}
+            html! {
+            <ConstructElement
+                tag={node.tag.clone()}
+                attrs={node.clone().attrs}
+                id = {node.id}
+                text={node.clone().text}>
+            {props.children.clone()}
+            </ConstructElement>
+            }
         }
     };
 

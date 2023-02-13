@@ -8,7 +8,6 @@ mod paste_converter;
 mod inset_component;
 
 mod drag_and_drop;
-mod mention;
 mod editor_toolbar_plugin;
 
 // use web_sys::{Element, MouseEvent, window, Document};

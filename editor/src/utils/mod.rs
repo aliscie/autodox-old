@@ -77,9 +77,9 @@ fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
         tag: Some("td".to_string()),
     };
     let adjacency_list = HashMap::from([
-        (root_table.id, vec![heading.id, table_body.id]),
-        (heading.id, vec![company.id]),
-        (table_body.id, vec![table_row.id]),
+        (root_table.id, vec![heading.id, table_body.id, table_body.id]),
+        (heading.id, vec![company.id, company.id, company.id]),
+        (table_body.id, vec![table_row.id, table_row.id, table_row.id]),
     ]);
     return (
         vec![root_table, heading, company, table_body, table_row],

@@ -1,10 +1,43 @@
 import { AuthClient } from "@dfinity/auth-client";
-import { createActor, canisterId, idlFactory } from './../../../../../src/declarations/backend';
+import { Actor, HttpAgent } from "@dfinity/agent";
+import { idlFactory } from './../../../../../src/declarations/backend/backend.did.js';
 
 const { ic } = window;
 const { plug } = ic;
 
 let backendActor, loading = false
+
+// CANISTER_ID is replaced by webpack based on node environment
+export const canisterId = import.meta.env.VITE_BACKEND_CANISTER_ID;
+
+export const createActor = (canisterId, options = {}) => {
+  const agent = options.agent || new HttpAgent({ ...options.agentOptions });
+
+  if (options.agent && options.agentOptions) {
+    console.warn(
+      "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
+    );
+  }
+
+  // Fetch root key for certificate validation during development
+  if (import.meta.env.VITE_DFX_NETWORK !== "ic") {
+    agent.fetchRootKey().catch((err) => {
+      console.warn(
+        "Unable to fetch root key. Check to ensure that your local replica is running"
+      );
+      console.error(err);
+    });
+  }
+
+  // Creates an actor with using the candid interface and the HttpAgent
+  return Actor.createActor(idlFactory, {
+    agent,
+    canisterId,
+    ...options.actorOptions,
+  });
+};
+
+export const backend = createActor(canisterId);
 
 export const get_actor = async () => {
     await new Promise(resolve => !loading && resolve());
@@ -12,12 +45,12 @@ export const get_actor = async () => {
     loading = true
 
     if (!backendActor) {
-        if (process.env.USE_WALLET) {
+        if (import.meta.env.VITE_USE_WALLET) {
             try {
                 if (!(await is_logged())) {
                     await plug.requestConnect({
-                        whitelist: [process.env.BACKEND_CANISTER_ID],
-                        host: process.env.DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
+                        whitelist: [import.meta.env.VITE_BACKEND_CANISTER_ID],
+                        host: import.meta.env.VITE_DFX_NETWORK === "ic" ? 'https://mainnet.dfinity.network' : 'http://localhost:8510',
                         timeout: 50000,
                         onConnectionUpdate: () => {
                             console.log('sessionData: ', plug.sessionManager.sessionData)
@@ -52,8 +85,8 @@ export async function identify() {
         return authClient.getIdentity();
     }
     let identityProvider = "https://identity.ic0.app/#authorize";
-    if (process.env.DFX_NETWORK != "ic") {
-        identityProvider = `http://${process.env.IDENTITY_PROVIDER_ID}.localhost:8510/#authorize`
+    if (import.meta.env.VITE_DFX_NETWORK != "ic") {
+        identityProvider = `http://${import.meta.env.VITE_IDENTITY_PROVIDER_ID}.localhost:8510/#authorize`
     }
     return await authClient.login({
         identityProvider,
@@ -137,6 +170,7 @@ export async function call_ic_raw(method, stringify) {
 }
 
 export async function call_ic(method, stringify) {
+    console.log('call_ic: ', method)
     let res = await call_ic_raw(method, stringify);
     const noOption = getNoOption(res)
     return noOption;
@@ -144,6 +178,8 @@ export async function call_ic(method, stringify) {
 
 export async function call_ic_np_raw(method) { // np: no parameter
     let actor = await get_actor();
+    console.log(actor);
+    console.log(method);
     let res = await actor[method]()
     return res;
 }

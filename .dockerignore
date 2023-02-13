@@ -5,7 +5,6 @@
 /.github
 frontend/.env
 .dfx
-/declarations
 /node_modules
 .cache
 .parcel-cache

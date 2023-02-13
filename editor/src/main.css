@@ -86,8 +86,6 @@ table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     align-self: center;
-    width: 100%;
-    max-width: 300px;
 }
 
 td, th {

@@ -5,7 +5,6 @@
 /.github
 frontend/.env
 .dfx
-/declarations
 /node_modules
 .cache
 .parcel-cache
@@ -14,4 +13,4 @@ frontend/.env
 internet_identity.wasm
 internet_identity.did
 canisters/internet_identity/**
-**/declarations/**
+

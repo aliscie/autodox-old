@@ -11,7 +11,7 @@ macro_rules! log {
         log_1(
             &format!(
                 r#"
-            {:#?},line:{:#?}
+            {}:{}
             type:{:#?}
             {:#?}"#,
                 dir,
