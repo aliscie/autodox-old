@@ -62,3 +62,6 @@ reset_cargo:
 	rm -rf ~/.cargo/.package-cache
 	cargo clean
 	cargo update
+
+run_editor:
+	cd editor && trunk serve

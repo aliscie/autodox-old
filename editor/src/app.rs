@@ -30,8 +30,25 @@ pub struct EditorProps {
 
 // this is used for the work space
 
+
+use emojic::text::EmojiTextParser;
+
+fn search_for_emojis(search_term: &str) -> Vec<String> {
+    let mut matches: Vec<String> = Vec::new();
+    // get list of all emoji aliases
+    for i in EmojiTextParser::new(":sandwich:").take(10 as usize) {
+        log!(i);
+    };
+    matches.push(EmojiTextParser::new(":cat:").to_string());
+    matches
+}
+
+
 #[function_component]
 pub fn Editor(props: &EditorProps) -> Html {
+    log!(
+        search_for_emojis("smile")
+    );
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
