@@ -14,28 +14,49 @@ use ic_stable_memory::{
 use indexmap::IndexSet;
 use serde::Serialize;
 use shared::id::Id;
-use shared::schema::{
-    EditorChange, ElementTree, FileDirectory, FileMode, FileNode, FileNodeCreate, FileNodeDelete,
-    FileNodeMove, FileNodeUpdate,
-};
+use shared::schema::{EditorChange, EditorElement, ElementTree, FileDirectory, FileMode, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate};
 use shared::Tree;
 use std::collections::HashMap;
 use std::collections::VecDeque;
 
+
+// async fn dummy_data() -> ElementTree {
+//     let mut default_element_tree = ElementTree::default();
+//     let root_id = default_element_tree.elements.root.unwrap();
+//     let id: Id = Id::ic_new().await;
+//     default_element_tree.elements.push_children(
+//         root_id,
+//         id.clone(),
+//         EditorElement::new(
+//             id,
+//             "bold text".to_string(),
+//             HashMap::from([("style".to_string(), "font-weight: bold;".to_string())]),
+//         ),
+//     );
+//     let id: Id = Id::ic_new().await;
+//     default_element_tree.elements.push_children(
+//         root_id,
+//         id,
+//         EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
+//     );
+//     return default_element_tree;
+// }
+
 #[update]
 #[candid_method(update)]
-pub fn create_file(data: String) -> String {
+pub async fn create_file(data: String) -> String {
     let create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();
     let user = User::current();
     if user.is_none() {
         return "user not found".to_string();
     };
     let mut user_files: UserFiles = s!(UserFiles);
+
     // TODO
-    //     let mut element_trees: ElementTrees = s!(ElementTrees);
-    //     let new_element_tree = ElementTree::default();
-    //     let new_element_tree = HashMap::from_iter(vec![(create_file_data.id.clone(), new_element_tree)]);
-    //     element_trees.insert(user.clone().unwrap(), new_element_tree);
+    // let mut element_trees: ElementTrees = s!(ElementTrees);
+    // let new_element_tree = dummy_data().await;
+    // let new_element_tree = HashMap::from_iter(vec![(create_file_data.id.clone(), new_element_tree)]);
+    // element_trees.insert(user.clone().unwrap(), new_element_tree);
 
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
         let mut parent_adjacency = file_directory
