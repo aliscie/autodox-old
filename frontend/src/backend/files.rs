@@ -56,6 +56,7 @@ pub async fn create_file(tree_id: Id, parent_id: Id, name: String, id: Id) -> Re
         name,
         id: id.into(),
         children: None,
+        element_tree: None,
     };
     // log!(&data);
     if info.get().is_web || info.get().is_online {

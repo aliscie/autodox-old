@@ -46,6 +46,14 @@ type ElementTree = record {
     elements: Tree;
 };
 
+type getElementTreesResult = variant {
+    Ok: vec record {
+        text;
+        ElementTree
+    };
+    Err: text
+};
+
     //type getFile = variant {
     //    Ok: record {
     //        FileNode;
@@ -79,10 +87,7 @@ service : {
         Ok: text;
         Err: text
     });
-    "get_element_trees": () -> (opt record {
-        text;
-        ElementTree
-    }) query;
+    "get_element_trees": () -> (getElementTreesResult) query;
     //    "get_element_trees": () -> (variant {
     //        Ok: ElementTree;
     //        Err: text
