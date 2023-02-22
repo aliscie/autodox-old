@@ -2,13 +2,17 @@ use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
 use yew::{function_component, html};
+use shared::id::Id;
+use shared::schema::EditorElement;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
     // pub columns: Vec<String>,
     // pub rows: Vec<String>,
     #[prop_or_default]
-    pub children: Children,
+    // pub children: Children,
+    #[prop_or_default]
+    pub children: Option<Vec<Id>>,
 }
 
 #[function_component]
@@ -32,9 +36,15 @@ pub fn Table(props: &Props) -> Html {
                 <span>{"hello"}</span> <select>{filters_items}</select> <select>{views}</select>
                 </div>
 
-            // Here we can show the table in different ways.
             <table>
-                {props.children.clone()}
+                // {props.children.into_iter().map(|row| {
+                //     html! {
+                //         <tr>
+                //             {map(|cell| {<td>{cell}</td>}}
+                //
+                //         </tr>
+                //     }
+                // }).collect::<Html>()}
             </table>
 
         </div>

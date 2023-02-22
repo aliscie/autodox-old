@@ -1,5 +1,6 @@
 // editor/src/editor_
 use std::collections::HashMap;
+use js_sys::map;
 
 use shared::id::Id;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
@@ -7,6 +8,7 @@ use web_sys::{console, window, Element};
 use yew::prelude::*;
 use yew::virtual_dom::VTag;
 use yew::{function_component, html};
+use yewdux::log::kv::Source;
 
 use shared::schema::EditorElement;
 
@@ -15,8 +17,10 @@ use crate::editor_components::{FromComponent, Table};
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub node: EditorElement,
+    // #[prop_or_default]
+    // pub children: Children,
     #[prop_or_default]
-    pub children: Children,
+    pub children: Option<Vec<Id>>,
 }
 
 #[derive(Properties, PartialEq)]
@@ -46,16 +50,17 @@ pub fn EditorComponent(props: &Props) -> Html {
     let node = &props.node;
     let tag = node.tag.clone();
     let response = match tag.unwrap_or(String::from("")).as_str() {
-        "table" => html! { <Table> {props.children.clone()}</Table>},
+        "table" => html! { <Table children={props.children.clone()}/>},
         "form" => html! { <FromComponent/>},
         _ => {
+            let children = props.children.into_iter().map(|f| map.borrow().get(f).unwrap().to_owned()).collect::<Html>();
             html! {
             <ConstructElement
                 tag={node.tag.clone()}
                 attrs={node.clone().attrs}
                 id = {node.id}
                 text={node.clone().text}>
-            {props.children.clone()}
+            {children}
             </ConstructElement>
             }
         }
