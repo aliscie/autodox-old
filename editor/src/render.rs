@@ -1,6 +1,6 @@
 use crate::editor_components::EditorComponent;
 use shared::id::Id;
-use shared::schema::ElementTree;
+use shared::schema::{EditorElement, ElementTree};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -13,20 +13,12 @@ pub(crate) fn render(tree: &ElementTree, start: Id) -> Html {
         if let Some(children) = tree.elements.adjacency.get(id) {
             has_children = !children.is_empty();
         }
+        let children: Option<EditorElement> = Some(tree.elements.vertices.get(id).unwrap().clone());
+        let children: Option<Vec<Id>> = Some(tree.elements.adjacency.get(id).unwrap().clone());
+
 
         let html_node = html! {
-            <EditorComponent
-                key = { id.to_string() }
-                node={node.clone()}>
-                if has_children {{
-                    tree.elements.adjacency.get(id)
-                        .unwrap()
-                        .into_iter()
-                        .map(|f| map.borrow().get(f).unwrap().to_owned())
-                        .collect::<Html>()
-                }}
-            </EditorComponent>
-
+            <EditorComponent key = { id.to_string() } node={node.clone()} children={children} />
         };
         map.borrow_mut().insert(*id, html_node);
     }
