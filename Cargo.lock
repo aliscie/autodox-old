@@ -1553,6 +1553,7 @@ dependencies = [
  "fuzzy-matcher",
  "gloo-timers",
  "html-minifier",
+ "indexmap",
  "js-sys",
  "markup5ever_rcdom",
  "serde",

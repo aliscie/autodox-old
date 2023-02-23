@@ -1,11 +1,12 @@
 // editor/src/editor_
 use std::collections::HashMap;
 
+use indexmap::IndexMap;
 use shared::id::Id;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{console, window, Element};
 use yew::prelude::*;
-use yew::virtual_dom::VTag;
+use yew::virtual_dom::{Attributes, VTag};
 use yew::{function_component, html};
 
 use shared::schema::EditorElement;
@@ -33,12 +34,22 @@ pub struct ConstractorProps {
 fn ConstructElement(props: &ConstractorProps) -> Html {
     let mut tag = props.tag.clone();
     let tag = format!("{}", tag.unwrap_or(String::from("div")));
-    html! {
-        <@{tag} id = {{props.id.to_string()}}>
-            {&props.text}
-            { props.children.clone() }
-        </@>
-    }
+    let mut tag = VTag::new(tag);
+    let mut attrs: IndexMap<AttrValue, AttrValue> = props
+        .attrs
+        .clone()
+        .into_iter()
+        .map(|(key, value)| -> (AttrValue, AttrValue) { (key.into(), value.into()) })
+        .collect();
+    // setting id
+    attrs.insert("id".into(), props.id.to_string().into());
+    //adding the text
+    tag.add_child(html! { {props.text.clone()}});
+    // adding children
+    tag.add_children(props.children.clone());
+    // setting attributes
+    tag.set_attributes(attrs);
+    tag.into()
 }
 
 #[function_component]
