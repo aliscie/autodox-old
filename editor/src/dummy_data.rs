@@ -4,6 +4,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
+use crate::utils::get_example_table;
 
 pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
     let mut default_element_tree = ElementTree::default();
@@ -15,7 +16,7 @@ pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
         tag: Some("i".to_string()),
         attrs: HashMap::new(),
     };
-    default_element_tree.elements.push_children(
+    &default_element_tree.elements.push_children(
         root,
         id.clone(),
         EditorElement {
@@ -28,7 +29,7 @@ pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
     );
 
     let id: Id = Uuid::new_v4().into();
-    default_element_tree.elements.push_children(
+    &default_element_tree.elements.push_children(
         root,
         id,
         EditorElement::new(id, r#"Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -38,6 +39,12 @@ pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
             remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
             sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
     );
+
+    let (dummy_table_elements, table_vertices) = get_example_table();
+    for element in dummy_table_elements {
+        &default_element_tree.elements.push_children(root, element.id, element);
+    };
+
 
     Rc::new(RefCell::new(default_element_tree.clone()))
 }

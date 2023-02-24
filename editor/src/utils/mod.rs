@@ -47,7 +47,7 @@ pub fn on_slash_input(
     Some(())
 }
 
-fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
+pub fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
     let root_table = EditorElement {
         id: Id::new(),
         text: "".to_string(),
@@ -83,8 +83,5 @@ fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
         (heading.id, vec![company.id, company.id, company.id]),
         (table_body.id, vec![table_row.id, table_row.id, table_row.id]),
     ]);
-    return (
-        vec![root_table, heading, company, table_body, table_row],
-        adjacency_list,
-    );
+    (vec![root_table, heading, company, table_body, table_row], adjacency_list)
 }
