@@ -27,8 +27,7 @@ pub async fn init_files() -> Result<(), String> {
 
 
     let mut element_trees = crate::backend::get_element_trees().await
-        .map_err(|e| e)
-        .unwrap_or_default();
+        .map_err(|e| e);
     log!(&element_trees);
     let mut directories = crate::backend::get_directories()
         .await
@@ -48,10 +47,10 @@ pub async fn init_files() -> Result<(), String> {
     }
 
     match element_trees {
-        Some(element_trees) => {
+        Ok(element_trees) => {
             dispatch_element_tree.set(ElementTreeStore { map: element_trees });
         }
-        None => {
+        _ => {
             // let file_directory = ElementTree::default();
             // let x = crate::backend::create_element_tree(&file_directory).await;
             // dispatch_element_tree.set(HashMap::new());
