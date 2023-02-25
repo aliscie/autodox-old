@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
 
-pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
+pub fn generate_dummy() -> ElementTree {
     let mut default_element_tree = ElementTree::default();
     let root = default_element_tree.elements.root.unwrap();
     let id: Id = Uuid::new_v4().into();
@@ -39,5 +39,5 @@ pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
             sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
     );
 
-    Rc::new(RefCell::new(default_element_tree.clone()))
+    default_element_tree
 }

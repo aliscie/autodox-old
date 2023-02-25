@@ -8,12 +8,13 @@ use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{Element, MutationRecord};
+use yew::prelude::*;
 use yew::Callback;
 
 pub fn handle_mutation(
     mutation_event: &Vec<MutationRecord>,
-    onchange: &Callback<EditorChange>,
-    element_tree: Rc<RefCell<ElementTree>>,
+    onchange: &Callback<(UseStateHandle<ElementTree>, EditorChange)>,
+    element_tree: UseStateHandle<ElementTree>,
 ) -> Option<()> {
     for mutation in mutation_event {
         if let Some(current_element) = mutation.target() {
@@ -25,12 +26,12 @@ pub fn handle_mutation(
                             let update = EditorElementUpdate {
                                 id,
                                 text: parent_element.text_content(),
-                                tree_id: element_tree.borrow().id.clone(),
+                                tree_id: element_tree.id.clone(),
                                 attrs: None,
                                 parent: None,
                                 children: None,
                             };
-                            onchange.emit(EditorChange::Update(update));
+                            onchange.emit((element_tree.clone(), EditorChange::Update(update)));
                         }
                     }
                 }
@@ -51,8 +52,6 @@ pub fn handle_mutation(
                             .map(Id::from)
                             .and_then(|id| {
                                 let parent_id = element_tree
-                                    .as_ref()
-                                    .borrow()
                                     .elements
                                     .adjacency
                                     .iter()
@@ -61,10 +60,10 @@ pub fn handle_mutation(
                                     .clone();
                                 let delete = EditorElementDelete {
                                     id,
-                                    tree_id: element_tree.as_ref().borrow().id.clone(),
+                                    tree_id: element_tree.id.clone(),
                                     parent_id,
                                 };
-                                onchange.emit(EditorChange::Delete(delete));
+                                onchange.emit((element_tree.clone(), EditorChange::Delete(delete)));
                                 Some(())
                             });
                     }
@@ -85,24 +84,19 @@ pub fn handle_mutation(
                             .map(|el| el.id())
                             .and_then(|id| Uuid::parse_str(&id).ok())
                             .map(Id::from)
-                            .or(element_tree.as_ref().borrow().elements.root.clone())
+                            .or(element_tree.elements.root.clone())
                             .unwrap();
-                        create_element(
-                            &mut changes,
-                            element,
-                            parent_id,
-                            element_tree.as_ref().borrow().id.clone(),
-                        );
+                        create_element(&mut changes, element, parent_id, element_tree.id.clone());
                     }
                     for i in changes {
-                        onchange.emit(i.into())
+                        onchange.emit((element_tree.clone(), i.into()))
                     }
                 }
                 anything_else => unimplemented!(), //crate::shared::log!(anything_else),
             }
         }
     }
-    // log!(element_tree.as_ref().borrow());
+    // log!(element_tree.;
     Some(())
 }
 

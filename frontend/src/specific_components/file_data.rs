@@ -1,7 +1,9 @@
+use crate::backend;
 use crate::backend::create_element;
 use crate::backend::create_element_tree;
 use crate::backend::delete_element;
 use crate::backend::get_element_tree;
+use std::ops::Deref;
 // use crate::backend::update_element;
 use editor::Editor;
 use shared::id::Id;
@@ -30,43 +32,31 @@ pub struct Props {
     pub author: String,
 }
 
-fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
-    let changes = Dispatch::<UseChangeHandle>::new();
-    Callback::from(move |e: EditorChange| {
-        changes.reduce_mut(|s| s.changes.push_back(e.clone()));
-        match e {
-            EditorChange::Update(x) => {
-                // let update_data = x.clone();
-                // spawn_local(async move {
-                //     let x = update_element(update_data).await;
-                // });
-                if let Some(element) = element_tree
-                    .as_ref()
-                    .borrow_mut()
-                    .elements
-                    .vertices
-                    .get_mut(&x.id)
-                {
-                    if let Some(text) = x.text {
+fn onchange_element_tree((element_tree, e): (UseStateHandle<ElementTree>, EditorChange)) {
+    match e {
+        EditorChange::Update(update_data) => {
+            element_tree.set({
+                let mut element_tree = element_tree.deref().clone();
+                if let Some(element) = element_tree.elements.vertices.get_mut(&update_data.id) {
+                    if let Some(text) = update_data.text {
                         element.text = text;
                     }
-                    if let Some(attrs) = x.attrs {
+                    if let Some(attrs) = update_data.attrs {
                         element.attrs = attrs;
                     }
                 }
-            }
-            EditorChange::Create(x) => {
-                let create_data = x.clone();
-                spawn_local(async move {
-                    let result = create_element(create_data).await;
-                });
-                element_tree.clone().borrow_mut().elements.push_children(
+                element_tree
+            });
+        }
+        EditorChange::Create(x) => {
+            element_tree.set({
+                let mut element_tree = element_tree.deref().clone();
+                element_tree.elements.push_children(
                     x.parent_id.clone(),
                     x.id.clone(),
                     x.clone().into(),
                 );
                 if let Some(prev_element_id) = x.prev_element_id {
-                    let mut element_tree = element_tree.as_ref().borrow_mut();
                     let children_list_of_parent_element = element_tree
                         .elements
                         .adjacency
@@ -83,25 +73,25 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                     children_list_of_parent_element
                         .swap(index_of_last_element, index_of_prev_element);
                 }
-            }
-            EditorChange::Delete(data) => {
-                element_tree.as_ref().borrow_mut().elements.remove(&data.id);
-                spawn_local(async move {
-                    let result = delete_element(data).await;
-                });
-            }
-        };
-    })
+                element_tree
+            });
+        }
+        EditorChange::Delete(data) => {
+            element_tree.set({
+                let mut element_tree = element_tree.deref().clone();
+                element_tree.elements.remove(&data.id);
+                element_tree
+            });
+        }
+    };
 }
-
-use crate::backend;
 
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
     let res = use_element_tree(props.id)?;
 
     let result_html = match &*res {
-        Ok((file_node, ref tree)) => {
+        Ok((file_node, ref element_tree)) => {
             // log!(&tree);
             // let file_node = Dispatch::<FileDirectory>::new()
             //     .get()
@@ -110,13 +100,13 @@ pub fn FileData(props: &Props) -> HtmlResult {
             //     .get(&props.id)
             //     .unwrap()
             //     .clone();
-            let element_tree = Rc::new(RefCell::new(tree.clone()));
+            //let element_tree = Rc::new(RefCell::new(tree.clone()));
 
             html! {
                 <Editor
                 title = { file_node.name.clone() }
                 element_tree = { element_tree.clone() }
-                onchange = { onchange_element_tree(element_tree.clone())}
+                onchange = { Callback::from(onchange_element_tree)}
                >
                 </Editor>
             }
@@ -175,7 +165,7 @@ fn use_element_tree(
                                 .get(&file_id)
                                 .unwrap()
                                 .clone();
-                            return Ok((file_node, get_element_tree(&tree_id).await.unwrap()));
+                            return Ok((file_node, get_element_tree(&tree_id).await?));
                         }
                         None => {
                             // let element_tree = dummy_data();

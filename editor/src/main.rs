@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::ops::Deref;
 use std::rc::Rc;
 
 use uuid::Uuid;
@@ -35,37 +36,34 @@ use shared::*;
 use shared::*;
 use wasm_bindgen::JsCast;
 use web_sys::{MutationObserverInit, MutationRecord, Node};
+use yew::prelude::*;
 use yew::{function_component, html};
 
-fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
-    Callback::from(move |e| {
-        match e {
-            EditorChange::Update(x) => {
-                let update_data = x.clone();
-                if let Some(element) = element_tree
-                    .as_ref()
-                    .borrow_mut()
-                    .elements
-                    .vertices
-                    .get_mut(&x.id)
-                {
-                    if let Some(text) = x.text {
+fn onchange((element_tree, e): (UseStateHandle<ElementTree>, EditorChange)) {
+    match e {
+        EditorChange::Update(update_data) => {
+            element_tree.set({
+                let mut element_tree = element_tree.deref().clone();
+                if let Some(element) = element_tree.elements.vertices.get_mut(&update_data.id) {
+                    if let Some(text) = update_data.text {
                         element.text = text;
                     }
-                    if let Some(attrs) = x.attrs {
+                    if let Some(attrs) = update_data.attrs {
                         element.attrs = attrs;
                     }
                 }
-            }
-            EditorChange::Create(x) => {
-                let create_data = x.clone();
-                element_tree.as_ref().borrow_mut().elements.push_children(
+                element_tree
+            });
+        }
+        EditorChange::Create(x) => {
+            element_tree.set({
+                let mut element_tree = element_tree.deref().clone();
+                element_tree.elements.push_children(
                     x.parent_id.clone(),
                     x.id.clone(),
                     x.clone().into(),
                 );
                 if let Some(prev_element_id) = x.prev_element_id {
-                    let mut element_tree = element_tree.as_ref().borrow_mut();
                     let children_list_of_parent_element = element_tree
                         .elements
                         .adjacency
@@ -82,12 +80,17 @@ fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
                     children_list_of_parent_element
                         .swap(index_of_last_element, index_of_prev_element);
                 }
-            }
-            EditorChange::Delete(data) => {
-                element_tree.as_ref().borrow_mut().elements.remove(&data.id);
-            }
-        };
-    })
+                element_tree
+            });
+        }
+        EditorChange::Delete(data) => {
+            element_tree.set({
+                let mut element_tree = element_tree.deref().clone();
+                element_tree.elements.remove(&data.id);
+                element_tree
+            });
+        }
+    };
 }
 
 use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
@@ -107,8 +110,8 @@ pub fn App() -> Html {
     html! {
     <Editor
              title = {"untitled".to_string()}
-             element_tree={element_tree.clone()}
-             onchange = { onchange(element_tree.clone())}
+             element_tree={element_tree}
+             onchange = { Callback::from(onchange)}
     >
       </Editor>
      }

@@ -24,14 +24,15 @@ use yew::{function_component, html};
 #[derive(Properties, PartialEq)]
 pub struct EditorProps {
     pub title: String,
-    pub element_tree: Rc<RefCell<ElementTree>>,
-    pub onchange: Callback<EditorChange>,
+    pub element_tree: ElementTree,
+    pub onchange: Callback<(UseStateHandle<ElementTree>, EditorChange)>,
 }
 
 // this is used for the work space
 
 #[function_component]
 pub fn Editor(props: &EditorProps) -> Html {
+    let element_tree = use_state_eq(|| props.element_tree.clone());
     // get mouse position and sort it in yewdux
     // each time the mouse move sort the pagex and pagey again
 
@@ -43,10 +44,9 @@ pub fn Editor(props: &EditorProps) -> Html {
 
     //
     // let state = use_state(|| "".to_string());
-    let toggle = use_force_update();
     let editor_ref = NodeRef::default();
     let oninput_event = {
-        let element_tree = props.element_tree.clone();
+        let element_tree = element_tree.clone();
         let onchange = props.onchange.clone();
         Closure::wrap(Box::new(
             move |mutation_event: Vec<MutationRecord>, _observer: MutationObserver| {
@@ -95,7 +95,7 @@ pub fn Editor(props: &EditorProps) -> Html {
         editor_ref.clone(),
     );
 
-    let element_tree = props.element_tree.clone();
+    let element_tree = element_tree.clone();
 
     let onkeydown: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
         if _e.key() == "Tab" {
@@ -122,13 +122,12 @@ pub fn Editor(props: &EditorProps) -> Html {
         let element_tree = element_tree.clone();
         Callback::from(move |(event, range)| {
             on_slash_input(event, range, element_tree.clone());
-            toggle.force_update();
         })
     };
     let action: Callback<String> = Callback::from(move |e: String| {
         // log!(e.clone());
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
-        //     id: element_tree.as_ref().borrow().elements.root.unwrap(),
+        //     id: element_tree.elements.root.unwrap(),
         //     text_format: Some(format),
         //     ..Default::default()
         // }));
@@ -147,11 +146,7 @@ pub fn Editor(props: &EditorProps) -> Html {
             <h2 contenteditable="true" class={"editor_title heading"}>
             {props.title.clone()}
         </h2>
-            <span
-            {onkeydown}
-            class = "text_editor_container"
-            id = "text_editor_container"
-           >
+            <span>
             <EditorToolbar
                 editor_ref = { editor_ref.clone()}
             // command={Callback::from(move |(e, r)| format_command(e, r))}
@@ -169,7 +164,7 @@ pub fn Editor(props: &EditorProps) -> Html {
                 trigger={":".to_string()}
                 command={Callback::from(move |(e, r) | emojis_command(e, r))}/>
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
-            { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
+            { render(&element_tree, element_tree.elements.root.unwrap()) }
         </div>
             </span>
             </span>
