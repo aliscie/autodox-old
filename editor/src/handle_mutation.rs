@@ -11,10 +11,52 @@ use web_sys::{Element, MutationRecord};
 use yew::prelude::*;
 use yew::Callback;
 
+/// helper function for mutating tree
+pub fn mutate_tree(element_tree: &mut ElementTree, change: &EditorChange) {
+    match change {
+        EditorChange::Update(update_data) => {
+            if let Some(element) = element_tree.elements.vertices.get_mut(&update_data.id) {
+                if let Some(ref text) = update_data.text {
+                    element.text = text.clone();
+                }
+                if let Some(ref attrs) = update_data.attrs {
+                    element.attrs = attrs.clone();
+                }
+            }
+        }
+        EditorChange::Create(x) => {
+            element_tree.elements.push_children(
+                x.parent_id.clone(),
+                x.id.clone(),
+                x.clone().into(),
+            );
+            if let Some(prev_element_id) = x.prev_element_id {
+                let children_list_of_parent_element = element_tree
+                    .elements
+                    .adjacency
+                    .get_mut(&x.parent_id)
+                    .unwrap();
+                let index_of_prev_element = children_list_of_parent_element
+                    .into_iter()
+                    .position(|y| *y == x.id)
+                    .unwrap();
+                let index_of_last_element = children_list_of_parent_element
+                    .into_iter()
+                    .position(|y| *y == x.id)
+                    .unwrap();
+                children_list_of_parent_element.swap(index_of_last_element, index_of_prev_element);
+            }
+        }
+        EditorChange::Delete(delete) => {
+            element_tree.elements.remove(&delete.id);
+        }
+    }
+}
+
 pub fn handle_mutation(
     mutation_event: &Vec<MutationRecord>,
-    onchange: &Callback<(UseStateHandle<ElementTree>, EditorChange)>,
-    element_tree: UseStateHandle<ElementTree>,
+    onchange: &Callback<EditorChange>,
+    element_tree: &mut ElementTree,
 ) -> Option<()> {
     for mutation in mutation_event {
         if let Some(current_element) = mutation.target() {
@@ -23,15 +65,16 @@ pub fn handle_mutation(
                     if let Some(parent_element) = current_element.parent_element() {
                         if let Ok(id) = Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
                         {
-                            let update = EditorElementUpdate {
+                            let update_data = EditorChange::Update(EditorElementUpdate {
                                 id,
                                 text: parent_element.text_content(),
                                 tree_id: element_tree.id.clone(),
                                 attrs: None,
                                 parent: None,
                                 children: None,
-                            };
-                            onchange.emit((element_tree.clone(), EditorChange::Update(update)));
+                            });
+                            mutate_tree(element_tree, &update_data);
+                            onchange.emit(update_data);
                         }
                     }
                 }
@@ -63,7 +106,9 @@ pub fn handle_mutation(
                                     tree_id: element_tree.id.clone(),
                                     parent_id,
                                 };
-                                onchange.emit((element_tree.clone(), EditorChange::Delete(delete)));
+                                let delete = EditorChange::Delete(delete);
+                                mutate_tree(element_tree, &delete);
+                                onchange.emit(delete);
                                 Some(())
                             });
                     }
@@ -88,8 +133,9 @@ pub fn handle_mutation(
                             .unwrap();
                         create_element(&mut changes, element, parent_id, element_tree.id.clone());
                     }
-                    for i in changes {
-                        onchange.emit((element_tree.clone(), i.into()))
+                    for x in changes {
+                        mutate_tree(element_tree, &x);
+                        onchange.emit(x.into());
                     }
                 }
                 anything_else => unimplemented!(), //crate::shared::log!(anything_else),
