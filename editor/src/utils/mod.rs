@@ -15,7 +15,7 @@ use crate::{plugins::DropDownItem, render::render};
 pub fn on_slash_input(
     event: DropDownItem,
     range: Option<Range>,
-    element_tree: UseStateHandle<ElementTree>,
+    element_tree: &mut ElementTree,
 ) -> Option<()> {
     // if no focused element is found we are selecting the root element as focused
     let current_element = window()?
@@ -31,19 +31,19 @@ pub fn on_slash_input(
             // TODO we should hav ea generic way to create elements without using event.text.as_str()
             let (elements, adjacency) = get_example_table();
             {
-                element_tree.set({
-                    let mut value = element_tree.deref().clone();
-                    value.elements.adjacency.get_mut(&current_element).map(|f| {
+                element_tree
+                    .elements
+                    .adjacency
+                    .get_mut(&current_element)
+                    .map(|f| {
                         f.push(elements[0].id);
                     });
-                    for i in elements {
-                        value.elements.push_vertex(i.id, i);
-                    }
-                    for (id, children_id) in adjacency {
-                        value.elements.adjacency.insert(id, children_id);
-                    }
-                    value
-                });
+                for i in elements {
+                    element_tree.elements.push_vertex(i.id, i);
+                }
+                for (id, children_id) in adjacency {
+                    element_tree.elements.adjacency.insert(id, children_id);
+                }
             }
         }
         _ => {}

@@ -38,6 +38,7 @@ pub struct Editor {
 pub enum EditorMsg {
     Mutation(Vec<MutationRecord>),
     EditorChange(EditorChange),
+    SlashInput(DropDownItem, Option<Range>),
 }
 
 impl Component for Editor {
@@ -63,6 +64,10 @@ impl Component for Editor {
                 mutate_tree(&mut self.element_tree, &change);
                 ctx.props().onchange.emit(change);
                 // rerender
+                true
+            }
+            EditorMsg::SlashInput(event, range) => {
+                on_slash_input(event, range, &mut self.element_tree);
                 true
             }
         }
@@ -118,6 +123,7 @@ impl Component for Editor {
     fn view(&self, ctx: &Context<Self>) -> Html {
         let mention_clouser = |event: DropDownItem, range: Option<Range>| {};
         let emojis_command = |event: DropDownItem, range: Option<Range>| {
+            log!(&event);
             // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
             let window = web_sys::window().unwrap();
             let document = window.document().unwrap();
@@ -126,12 +132,9 @@ impl Component for Editor {
                 .exec_command_with_show_ui_and_value("InsertText", false, &event.value)
                 .unwrap();
         };
-        let slash_command = {
-            //let element_tree = element_tree.clone();
-            Callback::from(move |(event, range)| {
-                //on_slash_input(event, range, element_tree.clone());
-            })
-        };
+        let slash_command = ctx
+            .link()
+            .callback(|(event, range)| EditorMsg::SlashInput(event, range));
         html! {
             <span
                 class={css_file_macro!("main.css")}
@@ -147,15 +150,18 @@ impl Component for Editor {
                 <EditorInsert
                     items={insertion_closures::components()}
                     trigger={"/".to_string()}
-                    command={slash_command}/>
+                    command={slash_command}
+                    editor_ref = {self.editor_ref.clone()} />
                 <EditorInsert
                     items={insertion_closures::mentions()}
                     trigger={"@".to_string()}
-                    command={Callback::from(move |(e, r)| mention_clouser(e, r))}/>
+                    command={Callback::from(move |(e, r)| mention_clouser(e, r))}
+                    editor_ref = {self.editor_ref.clone()}/>
                 <EditorInsert
                     items={insertion_closures::emojies()}
                     trigger={":".to_string()}
-                    command={Callback::from(move |(e, r) | emojis_command(e, r))}/>
+                    command={Callback::from(move |(e, r) | emojis_command(e, r))}
+                    editor_ref = {self.editor_ref.clone()} />
                 <div  ref =  {&self.editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
                 { render(&self.element_tree, self.element_tree.elements.root.unwrap()) }
             </div>
