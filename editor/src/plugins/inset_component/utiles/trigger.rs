@@ -1,7 +1,7 @@
-use crate::backend;
 use crate::plugins;
 use crate::plugins::inset_component::types::Position;
 use crate::plugins::DropDownItem;
+use shared::log;
 use std::ops::Deref;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::*;
@@ -42,19 +42,23 @@ where
         let position = position.clone();
         let input_text = input_text.clone();
         let range_state = range_state.clone();
+        let mut range = window()
+            .unwrap_throw()
+            .document()
+            .unwrap_throw()
+            .create_range()
+            .unwrap();
+        let selection = window().unwrap_throw().get_selection().unwrap().unwrap();
         use_event(editor_ref, "keydown", move |e: KeyboardEvent| {
-            let mut range = window()
-                .unwrap_throw()
-                .document()
-                .unwrap_throw()
-                .create_range()
-                .unwrap();
-            let selection = window().unwrap_throw().get_selection().unwrap().unwrap();
             let curr_focus: Node = selection.focus_node().unwrap();
-            let _ = range.set_start(
-                &curr_focus,
-                selection.anchor_offset() - input_text.len() as u32 - trigger.len() as u32,
-            );
+            if selection.anchor_offset() != 0 {
+                let _ = range.set_start(
+                    &curr_focus,
+                    selection.anchor_offset() - input_text.len() as u32 - trigger.len() as u32,
+                );
+            } else {
+                let _ = range.set_start(&curr_focus, 0);
+            }
             let _ = range.set_end(&curr_focus, selection.anchor_offset());
             if position.is_none() && e.key() == trigger {
                 if let Some(p) = range.get_client_rects() {
@@ -67,9 +71,9 @@ where
             }
             if position.is_some() && (e.key() == "Enter" || e.key() == "Tab") {
                 e.prevent_default();
+                range.delete_contents();
                 position.set(None);
                 input_text.set("".to_string());
-                range.delete_contents();
                 command(range.clone());
             }
             if position.is_some() && (e.key() != "Enter" && e.key() != "Tab") {
