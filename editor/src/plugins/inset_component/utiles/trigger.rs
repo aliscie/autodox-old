@@ -77,24 +77,36 @@ where
                 command(range.clone());
             }
             if position.is_some() && (e.key() != "Enter" && e.key() != "Tab") {
-                // if input text is none and we get a backspace
-                // remove the popover
-                if input_text.as_str() == "" && e.key_code() == 8 {
-                    range_state.set(None);
-                    position.set(None);
-                    input_text.set("".to_string());
-                    return;
-                }
-                // backspace remove the last character
-                if e.key_code() == 8 {
-                    let mut text = input_text.deref().to_owned();
-                    text.remove(text.len() - 1);
-                    input_text.set(text);
-                } else {
-                    // pushing new character
-                    let mut text = input_text.deref().to_owned();
-                    text = format!("{}{}", text, &e.key());
-                    input_text.set(text);
+                match e.key().as_str() {
+                    "Backspace" if input_text.as_str() == "" => {
+                        // if input text is none and we get a backspace
+                        // remove the popover
+                        range_state.set(None);
+                        position.set(None);
+                        input_text.set("".to_string());
+                        return;
+                    }
+                    "Delete" => {
+                        range.delete_contents();
+                        range_state.set(None);
+                        position.set(None);
+                        input_text.set("".to_string());
+                        return;
+                    }
+                    "Backspace" => {
+                        // removing input
+                        let mut text = input_text.deref().to_owned();
+                        text.remove(text.len() - 1);
+                        input_text.set(text);
+                    }
+                    // no-op
+                    "Ctrl" | "Meta" | "Alt" | "Shift" => {}
+                    x => {
+                        // pushing new character
+                        let mut text = input_text.deref().to_owned();
+                        text = format!("{}{}", text, x);
+                        input_text.set(text);
+                    }
                 }
                 range_state.set(Some(range.clone()));
                 if let Some(p) = range.get_client_rects() {
