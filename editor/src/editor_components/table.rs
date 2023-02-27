@@ -1,3 +1,4 @@
+use shared::schema::EditorElement;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{window, MouseEvent};
 use yew::prelude::*;
@@ -7,6 +8,7 @@ use yew::{function_component, html};
 pub struct Props {
     // pub columns: Vec<String>,
     // pub rows: Vec<String>,
+    pub node: EditorElement,
     #[prop_or_default]
     pub children: Children,
 }
@@ -15,7 +17,7 @@ pub struct Props {
 pub fn Table(props: &Props) -> Html {
     html! {
     <table>
-        {"hello"}
+        {&props.node.text}
         {props.children.clone()}
     </table>}
 }

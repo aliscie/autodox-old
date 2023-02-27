@@ -65,7 +65,7 @@ pub fn App() -> Html {
     html! {
     <Editor<EditorComponent>
              title = {"untitled".to_string()}
-             element_tree={element_tree}
+             element_tree={Rc::new(element_tree)}
              onchange = { Callback::from(onchange)}
     >
       </Editor<EditorComponent>>

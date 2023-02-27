@@ -61,7 +61,7 @@ pub fn FileData(props: &Props) -> HtmlResult {
             html! {
                 <Editor<EditorComponent>
                 title = { file_node.name.clone() }
-                element_tree = { element_tree.clone() }
+                element_tree = { Rc::new(element_tree.clone()) }
                 onchange = { Callback::from(onchange_element_tree)}
                >
                 </Editor<EditorComponent>>

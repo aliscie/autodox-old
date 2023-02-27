@@ -57,7 +57,7 @@ pub fn EditorComponent(props: &EditorElementProps) -> Html {
     let node = &props.node;
     let tag = node.tag.clone();
     let response = match tag.unwrap_or(String::from("")).as_str() {
-        "table" => html! { <Table> {props.children.clone()}</Table>},
+        "table" => html! { <Table node = {node.clone()}> {props.children.clone()}</Table>},
         "form" => html! { <FromComponent/>},
         _ => {
             html! {
