@@ -18,6 +18,8 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 
+use editor::EditorComponent;
+
 use web_sys::{window, Range};
 
 use yew::prelude::*;
@@ -57,12 +59,12 @@ pub fn FileData(props: &Props) -> HtmlResult {
             //let element_tree = Rc::new(RefCell::new(tree.clone()));
 
             html! {
-                <Editor
+                <Editor<EditorComponent>
                 title = { file_node.name.clone() }
                 element_tree = { element_tree.clone() }
                 onchange = { Callback::from(onchange_element_tree)}
                >
-                </Editor>
+                </Editor<EditorComponent>>
             }
         }
         Err(ref failure) => failure.to_string().into(),
