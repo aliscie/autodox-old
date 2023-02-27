@@ -4,6 +4,7 @@ use shared::id::Id;
 use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
 use yewdux::prelude::Dispatch;
 use std::collections::HashMap;
+use shared::log;
 use crate::backend;
 use super::call_ic;
 
@@ -102,12 +103,12 @@ pub async fn create_element_tree(data: &ElementTree, file_id: Id) -> Result<(), 
     }
 }
 
-pub async fn get_element_trees() -> Result<Option<HashMap<Id, ElementTree>>, String> {
+pub async fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let response = backend::call_ic_np("get_element_trees".to_string()).await;
-
-        let element_trees: Result<Option<HashMap<Id, ElementTree>>, _> =  serde_wasm_bindgen::from_value(response);
+        log!(&response);
+        // let element_trees: Result<HashMap<Id, ElementTree>, _> = serde_wasm_bindgen::from_value(response);
         // log!(&element_trees);
         // return element_trees.map_err(|e| "serde error".to_string());
         return Err("not implemented".to_string());

@@ -41,7 +41,6 @@ export const backend = createActor(canisterId);
 
 export const get_actor = async () => {
     await new Promise(resolve => !loading && resolve());
-    console.log('get_actor')
     loading = true
 
     if (!backendActor) {
@@ -164,6 +163,7 @@ const getNoOption = (data) => {
 }
 
 export async function call_ic_raw(method, stringify) {
+    console.log('call_ic_raw: ', method)
     let actor = await get_actor();
     let res = await actor[method](stringify)
     return res;
@@ -177,15 +177,17 @@ export async function call_ic(method, stringify) {
 }
 
 export async function call_ic_np_raw(method) { // np: no parameter
+    console.log('call_ic_np_raw: ', method)
     let actor = await get_actor();
-    console.log(actor);
-    console.log(method);
     let res = await actor[method]()
+    console.log(method+' call_ic_np_raw res: ', res)
     return res;
 }
 
 export async function call_ic_np(method) { // np: no parameter
+    console.log('call_ic_np: ', method)
     let res = await call_ic_np_raw(method);
     const noOption = getNoOption(res)
+    console.log(method+'call_ic_np res: ', noOption)
     return noOption;
 }
