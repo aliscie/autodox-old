@@ -148,6 +148,8 @@ where
             .link()
             .callback(|(event, range)| EditorMsg::SlashInput(event, range));
         html! {
+            <span class="text_editor_container">
+
             <span
                 class={css_file_macro!("main.css")}
            >
@@ -179,6 +181,7 @@ where
             </div>
                 </span>
                 </span>
+            </span>
         }
     }
 }
