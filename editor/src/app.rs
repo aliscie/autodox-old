@@ -40,7 +40,7 @@ where
     editor_ref: NodeRef,
     observer: Option<MutationObserver>,
     oninput_event: Option<Closure<dyn FnMut(Vec<MutationRecord>, MutationObserver)>>,
-    element: PhantomData<T>,
+    _element_marker: PhantomData<T>,
 }
 
 pub enum EditorMsg {
@@ -61,7 +61,7 @@ where
             observer: None,
             oninput_event: None,
             element_tree: ctx.props().element_tree.clone(),
-            element: PhantomData,
+            _element_marker: PhantomData,
         }
     }
     // we are getting mutation from the browser so no need to rerender then
