@@ -1,3 +1,4 @@
+use crate::editor_components::EditorElementProps;
 use crate::handle_mutation::{handle_mutation, mutate_tree};
 use crate::insertion_closures;
 use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
@@ -6,11 +7,13 @@ use crate::utils::on_slash_input;
 use serde::{Deserialize, Serialize};
 use shared::id::Id;
 use shared::schema::{
-    EditorChange, EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree,
+    EditorChange, EditorElement, EditorElementCreate, EditorElementDelete, EditorElementUpdate,
+    ElementTree,
 };
 use shared::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::marker::PhantomData;
 use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
@@ -18,6 +21,7 @@ use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{
     window, Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range,
 };
+use yew::html::{HasAllProps, HasProp, IntoPropValue};
 use yew::prelude::*;
 use yew::{function_component, html};
 
@@ -28,11 +32,15 @@ pub struct EditorProps {
     pub onchange: Callback<EditorChange>,
 }
 
-pub struct Editor {
+pub struct Editor<T>
+where
+    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
+{
     element_tree: ElementTree,
     editor_ref: NodeRef,
     observer: Option<MutationObserver>,
     oninput_event: Option<Closure<dyn FnMut(Vec<MutationRecord>, MutationObserver)>>,
+    element: PhantomData<T>,
 }
 
 pub enum EditorMsg {
@@ -41,7 +49,10 @@ pub enum EditorMsg {
     SlashInput(DropDownItem, Option<Range>),
 }
 
-impl Component for Editor {
+impl<T> Component for Editor<T>
+where
+    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
+{
     type Message = EditorMsg;
     type Properties = EditorProps;
     fn create(ctx: &Context<Self>) -> Self {
@@ -50,6 +61,7 @@ impl Component for Editor {
             observer: None,
             oninput_event: None,
             element_tree: ctx.props().element_tree.clone(),
+            element: PhantomData,
         }
     }
     // we are getting mutation from the browser so no need to rerender then
@@ -162,8 +174,8 @@ impl Component for Editor {
                     trigger={":".to_string()}
                     command={Callback::from(move |(e, r) | emojis_command(e, r))}
                     editor_ref = {self.editor_ref.clone()} />
-                <div  ref =  {&self.editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
-                { render(&self.element_tree, self.element_tree.elements.root.unwrap()) }
+                <div  ref =  {&self.editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor"> // now we can pass different component as type
+                { render::<T>(&self.element_tree, self.element_tree.elements.root.unwrap()) }
             </div>
                 </span>
                 </span>

@@ -1,3 +1,4 @@
+use crate::editor_components::EditorComponent;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ops::Deref;
@@ -62,12 +63,12 @@ pub fn App() -> Html {
         // }));
     });
     html! {
-    <Editor
+    <Editor<EditorComponent>
              title = {"untitled".to_string()}
              element_tree={element_tree}
              onchange = { Callback::from(onchange)}
     >
-      </Editor>
+      </Editor<EditorComponent>>
      }
 }
 

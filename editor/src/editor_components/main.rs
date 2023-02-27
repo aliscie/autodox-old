@@ -14,7 +14,7 @@ use shared::schema::EditorElement;
 use crate::editor_components::{FromComponent, Table};
 
 #[derive(Properties, PartialEq)]
-pub struct Props {
+pub struct EditorElementProps {
     pub node: EditorElement,
     #[prop_or_default]
     pub children: Children,
@@ -53,7 +53,7 @@ fn ConstructElement(props: &ConstractorProps) -> Html {
 }
 
 #[function_component]
-pub fn EditorComponent(props: &Props) -> Html {
+pub fn EditorComponent(props: &EditorElementProps) -> Html {
     let node = &props.node;
     let tag = node.tag.clone();
     let response = match tag.unwrap_or(String::from("")).as_str() {
