@@ -57,7 +57,7 @@ pub fn EditorInsert(props: &Props) -> Html {
                     let b_distance = matcher.fuzzy_match(&b.text, &input_text);
                     b_distance.cmp(&a_distance).then(a.text.cmp(&b.text))
                 });
-                items.set(sorted_items.clone());
+                items.set(sorted_items);
             },
             input_text.clone(),
         );

@@ -116,14 +116,27 @@ pub fn handle_mutation(
                     if element.id() == "text_editor" {
                         continue;
                     }
-                    let added_nodes = mutation.added_nodes();
-                    let mut changes = Vec::new();
-                    for i in 0..added_nodes.length() {
-                        let node = added_nodes.get(i).unwrap();
-                        let element = node.unchecked_into::<Element>();
-                        if element.node_name() == "#text" {
+                    if let Ok(id) = element.id().parse::<Uuid>().map(Id::from) {
+                        if element_tree.elements.vertices.contains_key(&id) {
                             continue;
                         }
+                    }
+                    let mut changes = Vec::new();
+                    let parent_id = element
+                        .parent_element()
+                        .map(|el| el.id())
+                        .and_then(|id| Uuid::parse_str(&id).ok())
+                        .map(Id::from)
+                        .or(element_tree.elements.root)
+                        .unwrap();
+                    create_element(&mut changes, element, parent_id, element_tree.id.clone());
+                    let added_nodes = mutation.added_nodes();
+                    for i in 0..added_nodes.length() {
+                        let node = added_nodes.get(i).unwrap();
+                        if node.node_name() == "#text" {
+                            continue;
+                        }
+                        let element = node.dyn_into::<Element>().unwrap();
                         let parent_id = element
                             .parent_element()
                             .map(|el| el.id())
@@ -133,9 +146,9 @@ pub fn handle_mutation(
                             .unwrap();
                         create_element(&mut changes, element, parent_id, element_tree.id.clone());
                     }
-                    for x in changes {
-                        mutate_tree(element_tree, &x);
-                        onchange.emit(x.into());
+                    for i in changes {
+                        mutate_tree(element_tree, &i);
+                        onchange.emit(i);
                     }
                 }
                 anything_else => unimplemented!(), //crate::shared::log!(anything_else),
@@ -148,11 +161,13 @@ pub fn handle_mutation(
 
 fn create_element(changes: &mut Vec<EditorChange>, element: Element, parent_id: Id, tree_id: Id) {
     let new_id = Id::new();
+    log!(element.id());
     let prev_element_id = element
         .previous_element_sibling()
         .map(|el| el.id())
         .and_then(|id| Uuid::parse_str(&id).ok())
         .map(Id::from);
+    log!(&prev_element_id);
     let create = EditorElementCreate {
         id: new_id,
         text: element.text_content().unwrap_or_default(),
@@ -165,8 +180,4 @@ fn create_element(changes: &mut Vec<EditorChange>, element: Element, parent_id: 
     };
     element.set_id(&new_id.to_string());
     changes.push(EditorChange::Create(create));
-    let children = element.children();
-    for i in 0..children.length() {
-        create_element(changes, children.item(i).unwrap(), new_id, tree_id);
-    }
 }

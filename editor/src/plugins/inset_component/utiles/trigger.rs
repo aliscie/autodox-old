@@ -1,4 +1,6 @@
 use crate::plugins;
+use wasm_bindgen::JsCast;
+
 use crate::plugins::inset_component::types::Position;
 use crate::plugins::DropDownItem;
 use shared::log;
@@ -61,8 +63,9 @@ where
             }
             let _ = range.set_end(&curr_focus, selection.anchor_offset());
             if position.is_none() && e.key() == trigger {
-                if let Some(p) = range.get_client_rects() {
-                    let p = p.get(0).unwrap();
+                if let Some(p) = range.get_client_rects().and_then(|p| p.get(0))
+                //.or(Some(curr_focus.get_bounding_client_rect()))
+                {
                     position.set(Some(Position {
                         x: p.right() + 10 as f64,
                         y: p.y(),
@@ -109,8 +112,9 @@ where
                     }
                 }
                 range_state.set(Some(range.clone()));
-                if let Some(p) = range.get_client_rects() {
-                    let p = p.get(0).unwrap();
+                if let Some(p) = range.get_client_rects().and_then(|p| p.get(0))
+                //.or(Some(curr_focus.get_bounding_client_rect()))
+                {
                     position.set(Some(Position {
                         x: p.right() + 10 as f64,
                         y: p.y(),
