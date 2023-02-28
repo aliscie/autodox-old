@@ -62,6 +62,12 @@ fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
         id: Id::new(),
         text: "".to_string(),
         attrs: HashMap::new(),
+        tag: Some("thead".to_string()),
+    };
+    let heading_row = EditorElement {
+        id: Id::new(),
+        text: "".to_string(),
+        attrs: HashMap::new(),
         tag: Some("tr".to_string()),
     };
     let company = EditorElement {
@@ -74,27 +80,37 @@ fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
         id: Id::new(),
         text: "".to_string(),
         attrs: HashMap::new(),
-        tag: Some("tr".to_string()),
+        tag: Some("tbody".to_string()),
     };
     let table_row = EditorElement {
+        id: Id::new(),
+        text: "".to_string(),
+        attrs: HashMap::new(),
+        tag: Some("tr".to_string()),
+    };
+    let table_row_el = EditorElement {
         id: Id::new(),
         text: "Alfreds Futterkiste".to_string(),
         attrs: HashMap::new(),
         tag: Some("td".to_string()),
     };
     let adjacency_list = HashMap::from([
-        (
-            root_table.id,
-            vec![heading.id, table_body.id, table_body.id],
-        ),
-        (heading.id, vec![company.id, company.id, company.id]),
-        (
-            table_body.id,
-            vec![table_row.id, table_row.id, table_row.id],
-        ),
+        (root_table.id, vec![heading.id, table_body.id]),
+        (heading.id, vec![heading_row.id]),
+        (heading_row.id, vec![company.id]),
+        (table_body.id, vec![table_row.id]),
+        (table_row.id, vec![table_row_el.id]),
     ]);
     return (
-        vec![root_table, heading, company, table_body, table_row],
+        vec![
+            root_table,
+            heading,
+            company,
+            table_body,
+            table_row,
+            heading_row,
+            table_row_el,
+        ],
         adjacency_list,
     );
 }
