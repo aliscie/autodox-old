@@ -41,7 +41,6 @@ pub fn EditorInsert(props: &Props) -> Html {
         let items = items.clone();
         let command = command.clone();
         Callback::from(move |range: Range| {
-            // TODO  items[0].clone()  // why this always return the same item ??
             log!(format!("{}", range.clone().to_string()).to_string());
             range.delete_contents();
             command.emit((items[0].clone(), Some(range)));
