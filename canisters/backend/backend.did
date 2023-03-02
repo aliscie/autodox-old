@@ -12,7 +12,7 @@ type FileNode = record {
     //    users_can_see: vec UserQuery;
 };
 
-type Tree = record {
+type FileTree = record {
     root : opt text;
     vertices : vec record {
         text;
@@ -24,10 +24,32 @@ type Tree = record {
     };
 };
 
+type EditorElement = record {
+    id : text;
+    content : text;
+    tag: opt text;
+    attrs: vec record {
+        text;
+        text
+    };
+};
+
+type EditorTree = record {
+    root : opt text;
+    vertices : vec record {
+        text;
+        EditorElement
+    };
+    adjacency : vec record {
+        text;
+        vec text;
+    };
+};
+
 type FileDirectory = record {
     id : text;
     name: text;
-    files: Tree;
+    files: FileTree;
 };
 
 type UserQuery = record {
@@ -41,9 +63,10 @@ type UserQuery = record {
     emails: opt vec text;
 };
 
+
 type ElementTree = record {
     id: text;
-    elements: Tree;
+    elements: EditorTree;
 };
 
 type getElementTreesResult = variant {

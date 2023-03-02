@@ -12,7 +12,9 @@ use std::collections::HashMap;
 pub fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
     let user = User::current().expect("No user found");
     let element_trees: ElementTrees = s!(ElementTrees);
-    Ok(element_trees.get(&user).expect("User has no element trees").clone())
+    element_trees.get(&user).cloned().ok_or_else(|| "User has no elements.".to_string())
+
+    // Ok(element_trees.get(&user).unwrap().clone())
     // TODO
     //     panicked at 'unexpected exception: JsValue(Error: Cannot find field name
     //     Error: Cannot find field name

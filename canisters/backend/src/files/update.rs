@@ -27,7 +27,7 @@ async fn dummy_data() -> ElementTree {
     let element = EditorElement {
         id: Id::ic_new().await,
         tag: None,
-        text: "".to_owned(),
+        content: "".to_owned(),
         attrs: HashMap::new(),
     };
     tree.root = Some(element.id);
@@ -169,8 +169,8 @@ pub async fn group_update(data: String) -> Option<String> {
             EditorChange::Update(data) => {
                 let element_tree: &mut ElementTree = element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 if let Some(element) = element_tree.elements.vertices.get_mut(&data.id) {
-                    if let Some(text) = data.text {
-                        element.text = text;
+                    if let Some(text) = data.content {
+                        element.content = text;
                     }
                     if let Some(attrs) = data.attrs {
                         element.attrs = attrs;
