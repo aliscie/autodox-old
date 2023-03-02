@@ -108,7 +108,7 @@ pub fn Editor(props: &EditorProps) -> Html {
                 .unwrap();
         }
     });
-    // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
+
     let emojis_command: fn(DropDownItem, Option<Range>) = (|event, range| {
         // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
         let window = web_sys::window().unwrap();
