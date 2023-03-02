@@ -24,7 +24,7 @@ pub fn handle_mutation(
                         {
                             let update = EditorElementUpdate {
                                 id,
-                                text: parent_element.text_content(),
+                                content: parent_element.text_content(),
                                 tree_id: element_tree.borrow().id.clone(),
                                 attrs: None,
                                 parent: None,
@@ -115,7 +115,7 @@ fn create_element(changes: &mut Vec<EditorChange>, element: Element, parent_id: 
         .map(Id::from);
     let create = EditorElementCreate {
         id: new_id,
-        text: element.text_content().unwrap_or_default(),
+        content: element.text_content().unwrap_or_default(),
         tag: Some(element.tag_name()),
         attrs: HashMap::new(),
         tree_id,
