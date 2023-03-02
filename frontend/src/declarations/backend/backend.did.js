@@ -10,17 +10,28 @@ export const idlFactory = ({ IDL }) => {
     'file_mode' : FileMode,
     'element_tree' : IDL.Opt(IDL.Text),
   });
-  const Tree = IDL.Record({
+  const FileTree = IDL.Record({
     'root' : IDL.Opt(IDL.Text),
     'vertices' : IDL.Vec(IDL.Tuple(IDL.Text, FileNode)),
     'adjacency' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(IDL.Text))),
   });
   const FileDirectory = IDL.Record({
     'id' : IDL.Text,
-    'files' : Tree,
+    'files' : FileTree,
     'name' : IDL.Text,
   });
-  const ElementTree = IDL.Record({ 'id' : IDL.Text, 'elements' : Tree });
+  const EditorElement = IDL.Record({
+    'id' : IDL.Text,
+    'tag' : IDL.Opt(IDL.Text),
+    'content' : IDL.Text,
+    'attrs' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+  });
+  const EditorTree = IDL.Record({
+    'root' : IDL.Opt(IDL.Text),
+    'vertices' : IDL.Vec(IDL.Tuple(IDL.Text, EditorElement)),
+    'adjacency' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(IDL.Text))),
+  });
+  const ElementTree = IDL.Record({ 'id' : IDL.Text, 'elements' : EditorTree });
   const getElementTreesResult = IDL.Variant({
     'Ok' : IDL.Vec(IDL.Tuple(IDL.Text, ElementTree)),
     'Err' : IDL.Text,
