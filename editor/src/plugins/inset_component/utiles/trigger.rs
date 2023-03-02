@@ -86,15 +86,28 @@ pub fn use_trigger_popover(
                     };
                 } else if is_track && &e.key() != "Enter" && e.key() != "Tab" {
                     _range_state.set(Some(range.clone()));
-                    log!(format!("{}", range.to_string()).to_string());
-                    // _input_text.set(format!("{}", range.to_string()).to_string());
-                    if let Some(p) = range.get_client_rects() {
-                        let p = p.get(0).unwrap();
-                        is_track = true;
-                        _position.set(Some(Position {
-                            x: p.right() + 10 as f64,
-                            y: p.y(),
-                        }));
+                    let search_text: String = range.to_string().into();
+
+                    if search_text.len() > 15 {
+                        is_track = false;
+                        range = window()
+                            .unwrap_throw()
+                            .document()
+                            .unwrap_throw()
+                            .create_range()
+                            .unwrap();
+                        _position.set(None);
+                        _range_state.set(None);
+                    }
+
+                    if let Some(rects) = range.get_client_rects() {
+                        if let Some(rect) = rects.get(0) {
+                            is_track = true;
+                            _position.set(Some(Position {
+                                x: rect.right() + 10 as f64,
+                                y: rect.y(),
+                            }));
+                        };
                     };
                 }
             }) as Box<dyn FnMut(_)>);

@@ -21,6 +21,10 @@ export const idlFactory = ({ IDL }) => {
     'name' : IDL.Text,
   });
   const ElementTree = IDL.Record({ 'id' : IDL.Text, 'elements' : Tree });
+  const getElementTreesResult = IDL.Variant({
+    'Ok' : IDL.Vec(IDL.Tuple(IDL.Text, ElementTree)),
+    'Err' : IDL.Text,
+  });
   const UserQuery = IDL.Record({
     'username' : IDL.Opt(IDL.Text),
     'birthdate' : IDL.Opt(IDL.Text),
@@ -43,14 +47,15 @@ export const idlFactory = ({ IDL }) => {
     'delete_file' : IDL.Func([IDL.Text], [IDL.Text], []),
     'get_directories' : IDL.Func([], [IDL.Opt(FileDirectory)], ['query']),
     'get_directory' : IDL.Func([IDL.Text], [IDL.Opt(FileDirectory)], ['query']),
-    'get_element_trees' : IDL.Func(
-        [],
-        [IDL.Opt(IDL.Tuple(IDL.Text, ElementTree))],
-        ['query'],
-      ),
+    'get_element_trees' : IDL.Func([], [getElementTreesResult], ['query']),
     'get_file' : IDL.Func(
         [IDL.Text],
-        [IDL.Opt(IDL.Tuple(FileNode, ElementTree))],
+        [
+          IDL.Variant({
+            'Ok' : IDL.Tuple(FileNode, ElementTree),
+            'Err' : IDL.Text,
+          }),
+        ],
         ['query'],
       ),
     'get_profile' : IDL.Func([], [IDL.Opt(UserQuery)], ['query']),
