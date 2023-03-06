@@ -1551,6 +1551,7 @@ version = "0.1.0"
 dependencies = [
  "emojis",
  "fuzzy-matcher",
+ "gloo 0.4.2",
  "gloo-timers",
  "html-minifier",
  "indexmap",
