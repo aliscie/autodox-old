@@ -36,7 +36,7 @@ pub async fn delete_element(data: EditorElementDelete) -> Result<(), String> {
             "delete_element".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -53,7 +53,7 @@ pub async fn create_element(data: EditorElementCreate) -> Result<(), String> {
             "create_element".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -70,7 +70,7 @@ pub async fn get_element_tree(id: &Id) -> Result<ElementTree, String> {
             "get_element_tree".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -86,9 +86,9 @@ pub async fn create_element_tree(data: &ElementTree, file_id: Id) -> Result<(), 
                 "data" : data,
                 "file_id" : file_id
             })
-            .to_string(),
+                .to_string(),
         )
-        .await;
+            .await;
         return Ok(());
     }
     if !info.get().is_web {
@@ -96,7 +96,7 @@ pub async fn create_element_tree(data: &ElementTree, file_id: Id) -> Result<(), 
             "create_element_tree".to_string(),
             Some(&serde_json::json!({ "data": data , "file_id" : file_id})),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -108,8 +108,8 @@ pub async fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
     if info.get().is_web || info.get().is_online {
         let response = backend::call_ic_np("get_element_trees".to_string()).await;
         let element_trees: Result<HashMap<Id, ElementTree>, _> = serde_wasm_bindgen::from_value(response);
-        return element_trees.map_err(|e| "serde error".to_string());
-        return Err("not implemented".to_string());
+        return element_trees.map_err(|e| "serde error".to_string())
+        // return Err("not implemented".to_string());
     }
     if !info.get().is_web {
         return crate::backend::call_surreal(
@@ -121,5 +121,4 @@ pub async fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
         // user is offline throw a error
         return Err("user is offline".to_string());
     }
-
 }
