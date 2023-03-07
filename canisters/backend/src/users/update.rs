@@ -9,7 +9,7 @@ use crate::ElementTree;
 use crate::FileDirectory;
 use crate::FileNode;
 use candid::export_service;
-use ic_kit::macros::update;
+use ic_kit::macros::{query, update};
 use ic_stable_memory::s;
 use ic_stable_memory::utils::ic_types::SPrincipal;
 use shared::id::Id;
@@ -80,10 +80,19 @@ pub fn update_profile(data: String) -> String {
     "User not registered.".to_string()
 }
 
-export_service!();
+#[query(name = "__get_candid_interface_tmp_hack")]
+fn export_candid() -> String {
+    export_service!();
+    __export_service()
+}
 
-#[test]
-fn export_did() {
-    let expected = __export_service();
-    std::fs::write("backend.did", expected).unwrap();
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs::write;
+
+    #[test]
+    fn save_candid() {
+        write("backend.did", export_candid()).expect("Write failed.");
+    }
 }
