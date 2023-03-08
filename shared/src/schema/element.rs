@@ -145,7 +145,7 @@ impl From<EditorElementCreate> for EditorElement {
         Self {
             id: v.id,
             text: v.text,
-            tag: None,
+            tag: v.tag,
             attrs: v.attrs,
         }
     }

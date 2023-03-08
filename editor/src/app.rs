@@ -30,7 +30,7 @@ use yew::{function_component, html};
 #[derive(PartialEq, Clone)]
 pub struct GlobalEditorState {
     pub element_tree: Rc<ElementTree>,
-    pub mutation: Callback<EditorChange>,
+    pub mutation: Callback<Vec<EditorChange>>,
     pub render_context_menu: Callback<(MouseEvent, Html)>,
 }
 
@@ -56,7 +56,7 @@ where
 
 pub enum EditorMsg {
     Mutation(Vec<MutationRecord>),
-    EditorChange(EditorChange),
+    EditorChange(Vec<EditorChange>),
     SlashInput(DropDownItem, Option<Range>),
     ContextMenuRender((MouseEvent, Html)),
 }
@@ -91,8 +91,10 @@ where
                 false
             }
             EditorMsg::EditorChange(change) => {
-                mutate_tree(Rc::make_mut(&mut self.element_tree), &change);
-                ctx.props().onchange.emit(change);
+                for i in change {
+                    mutate_tree(Rc::make_mut(&mut self.element_tree), &i);
+                    ctx.props().onchange.emit(i);
+                }
                 // rerender
                 true
             }
