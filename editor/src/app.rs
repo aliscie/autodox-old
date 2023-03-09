@@ -108,9 +108,9 @@ pub fn Editor(props: &EditorProps) -> Html {
                 .unwrap();
         }
     });
-    // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
-    let emojis_command: fn(DropDownItem, Option<Range>) = (|event, range| {
-        // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
+    let emojis_command: Callback<(DropDownItem, Option<Range>)> = Callback::from(move |values: (DropDownItem, Option<Range>)| {
+        let event = values.0;
+        let range = values.1;
         let window = web_sys::window().unwrap();
         let document = window.document().unwrap();
         let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
@@ -118,6 +118,8 @@ pub fn Editor(props: &EditorProps) -> Html {
             .exec_command_with_show_ui_and_value("InsertText", false, &event.value)
             .unwrap();
     });
+
+
     let slash_command = {
         let element_tree = element_tree.clone();
         Callback::from(move |(event, range)| {
@@ -125,6 +127,8 @@ pub fn Editor(props: &EditorProps) -> Html {
             toggle.force_update();
         })
     };
+
+
     let action: Callback<String> = Callback::from(move |e: String| {
         // log!(e.clone());
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
@@ -134,11 +138,11 @@ pub fn Editor(props: &EditorProps) -> Html {
         // }));
     });
 
-    let mention_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {});
 
-    // let format_command: fn(String, selectoin) -> Option<()> =  (|event, range| return Some((
-    //     onchange.emit(EditorChange::Update(update)); // TODO this should be the same for  on_slash_input, mention_clouser and emojis_command
-    //     )));
+    let mention_clouser: Callback<(DropDownItem, Option<Range>)> = Callback::from(move |values: (DropDownItem, Option<Range>)| {
+        let event = values.0;
+        let range = values.1;
+    });
 
     html! {
         <span
@@ -163,11 +167,11 @@ pub fn Editor(props: &EditorProps) -> Html {
             <EditorInsert
                 items={insertion_closures::mentions()}
                 trigger={"@".to_string()}
-                command={Callback::from(move |(e, r)| mention_clouser(e, r))}/>
+                command={mention_clouser}/>
             <EditorInsert
                 items={insertion_closures::emojies()}
                 trigger={":".to_string()}
-                command={Callback::from(move |(e, r) | emojis_command(e, r))}/>
+                command={emojis_command}/>
             <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
             { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
         </div>
