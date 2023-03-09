@@ -6,7 +6,8 @@ use shared::{
     schema::{EditorElement, ElementTree},
 };
 use uuid::Uuid;
-use web_sys::{window, Range};
+use wasm_bindgen::UnwrapThrowExt;
+use web_sys::{window, Range, Node};
 use yewdux::prelude::Dispatch;
 
 use crate::{plugins::DropDownItem, render::render};
@@ -23,7 +24,16 @@ pub fn on_slash_input(
         .and_then(|f| f.id().parse::<Uuid>().ok())
         .map(Id::from)
         .or(element_tree.as_ref().borrow().elements.root)?;
-    // log!(current_element.clone());
+
+    let selection = window().unwrap_throw().get_selection().unwrap().unwrap();
+    let curr_focus: Node = selection.focus_node().unwrap();
+    let caret_position = selection.focus_offset();
+    let end_offset = curr_focus.node_value().unwrap().len() as u32;
+
+    // if caret_position != end_offset {
+    //     // TODo Split the current element at the current crate position and insert the new element and the end of the first part then set the caret position at the end of new inserted element
+    // };
+
     log!(&event.text.as_str()); // TODo on hit enter this return code instead of table?
     match event.text.as_str() {
         "table" => {
