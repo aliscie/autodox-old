@@ -3,7 +3,6 @@ use std::collections::HashMap;
 
 use crate::plugins::Position;
 use shared::id::Id;
-use shared::log;
 use shared::schema::{EditorChange, EditorElement};
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{window, MouseEvent};
@@ -124,17 +123,14 @@ fn add_row(global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
         .elements
         .adjacency
         .get(&table_id)?;
-    let number_of_col = root_table_children
+    let number_of_col = global_state
+        .element_tree
+        .elements
+        .adjacency
+        .get(root_table_children.first()?)?
         .first()
-        .and_then(|thead_id| {
-            // getting the thead children
-            global_state.element_tree.elements.adjacency.get(thead_id)
-        })
-        .map(|thead_children| {
-            // the number of children thead has should be equal to
-            // the number of columns in the table!
-            thead_children.len()
-        })?;
+        .and_then(|thead_id| global_state.element_tree.elements.adjacency.get(thead_id))?
+        .len();
     let tbody_id = root_table_children.get(1)?;
     let prev_element_id = global_state
         .element_tree
