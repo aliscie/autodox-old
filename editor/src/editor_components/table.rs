@@ -13,9 +13,30 @@ pub struct Props {
 
 #[function_component]
 pub fn Table(props: &Props) -> Html {
+    let filters_items: Vec<Html> = vec![
+        html! {<option>{"my filter"}</option>},
+        html! {<option>{"other filer"}</option>},
+        html! {<option>{"todos filer"}</option>},
+        html! {<option>{"Add a filter +"}</option>},
+    ];
+    let views: Vec<Html> = vec![
+        html! {<option>{"grid"}</option>},
+        html! {<option>{"other"}</option>},
+        html! {<option>{"blab_blab"}</option>},
+        html! {<option>{"Add a view +"}</option>},
+    ];
+
     html! {
-    <table>
-        {"hello"}
-        {props.children.clone()}
-    </table>}
+        <div>
+                <div style="background:gray">
+                <span>{"hello"}</span> <select>{filters_items}</select> <select>{views}</select>
+                </div>
+
+            // Here we can show the table in different ways.
+            <table>
+                {props.children.clone()}
+            </table>
+
+        </div>
+    }
 }

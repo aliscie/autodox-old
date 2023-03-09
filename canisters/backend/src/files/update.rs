@@ -1,23 +1,60 @@
-use crate::elements::types::ElementTrees;
-use crate::files::types::*;
-use crate::users::types::*;
-use crate::utils::{Status, UpdateResponse};
+use std::collections::HashMap;
+use std::collections::VecDeque;
+
 use candid::{CandidType, Deserialize, Principal};
 use ic_cdk;
 use ic_kit::candid::candid_method;
 use ic_kit::macros::update;
-use ic_stable_memory::collections::vec::SVec;
-use ic_stable_memory::utils::ic_types::SPrincipal;
 use ic_stable_memory::{
     s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade,
 };
+use ic_stable_memory::collections::vec::SVec;
+use ic_stable_memory::utils::ic_types::SPrincipal;
 use indexmap::IndexSet;
 use serde::Serialize;
+
 use shared::id::Id;
 use shared::schema::{EditorChange, EditorElement, ElementTree, FileDirectory, FileMode, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate};
 use shared::Tree;
-use std::collections::HashMap;
-use std::collections::VecDeque;
+
+use crate::elements::types::ElementTrees;
+use crate::files::types::*;
+use crate::users::types::*;
+use crate::utils::{Status, UpdateResponse};
+
+async fn dummy_data() -> ElementTree {
+    let mut tree = Tree::new();
+    let element = EditorElement {
+        id: Id::ic_new().await,
+        tag: None,
+        content: "".to_owned(),
+        attrs: HashMap::new(),
+    };
+    tree.root = Some(element.id);
+    tree.vertices.insert(element.id, element);
+    let mut default_element_tree = ElementTree {
+        id: Id::ic_new().await,
+        elements: tree,
+    };
+    let root_id = default_element_tree.elements.root.unwrap();
+    let id: Id = Id::ic_new().await;
+    default_element_tree.elements.push_children(
+        root_id,
+        id.clone(),
+        EditorElement::new(
+            id,
+            "bold text".to_string(),
+            HashMap::from([("style".to_string(), "font-weight: bold;".to_string())]),
+        ),
+    );
+    let id: Id = Id::ic_new().await;
+    default_element_tree.elements.push_children(
+        root_id,
+        id,
+        EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
+    );
+    return default_element_tree;
+}
 
 
 // async fn dummy_data() -> ElementTree {
@@ -53,14 +90,17 @@ use std::collections::VecDeque;
 #[update]
 #[candid_method(update)]
 pub async fn create_file(data: String) -> String {
-    let create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();
-    let user = User::current();
+    let mut create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();    let user = User::current();
     if user.is_none() {
         return "user not found".to_string();
     };
     let mut user_files: UserFiles = s!(UserFiles);
-    let mut element_trees: ElementTrees = s!(ElementTrees);
 
+    let mut element_trees: ElementTrees = s!(ElementTrees);
+    let new_element_tree = dummy_data().await;
+    create_file_data.element_tree = Some(new_element_tree.id.clone());
+    let new_element_tree = HashMap::from_iter(vec![(create_file_data.id.clone(), new_element_tree)]);
+    element_trees.insert(user.clone().unwrap(), new_element_tree);
 
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
         let mut parent_adjacency = file_directory
@@ -163,8 +203,8 @@ pub async fn group_update(data: String) -> Option<String> {
             EditorChange::Update(data) => {
                 let element_tree: &mut ElementTree = element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 if let Some(element) = element_tree.elements.vertices.get_mut(&data.id) {
-                    if let Some(text) = data.text {
-                        element.text = text;
+                    if let Some(text) = data.content {
+                        element.content = text;
                     }
                     if let Some(attrs) = data.attrs {
                         element.attrs = attrs;

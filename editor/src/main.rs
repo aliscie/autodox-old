@@ -49,8 +49,8 @@ fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
                     .vertices
                     .get_mut(&x.id)
                 {
-                    if let Some(text) = x.text {
-                        element.text = text;
+                    if let Some(text) = x.content {
+                        element.content = text;
                     }
                     if let Some(attrs) = x.attrs {
                         element.attrs = attrs;

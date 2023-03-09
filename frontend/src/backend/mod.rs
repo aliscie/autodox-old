@@ -46,4 +46,8 @@ extern "C" {
 
     #[wasm_bindgen(js_name = call_ic_np)]
     pub async fn call_ic_np(method: String) -> JsValue; // np: no parameter
+
+
+    #[wasm_bindgen(js_name = get_element_trees)]
+    pub async fn get_element_trees_ic() -> JsValue; // np: no parameter
 }

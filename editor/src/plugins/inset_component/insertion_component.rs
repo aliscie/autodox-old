@@ -59,7 +59,8 @@ pub fn EditorInsert(props: &Props) -> Html {
         input_text = format!("{}", _range.to_string()).to_string();
     };
     let _input_text = input_text.clone();
-
+    let _position = position.clone();
+    let _range = range.clone();
     use_effect_with_deps(
         move |editor_ref| {
             // sorted_items.sort_by(|a, b| {
@@ -88,10 +89,12 @@ pub fn EditorInsert(props: &Props) -> Html {
                 .replace(" ", "")
                 .replace(_trigger.as_str(), "");
             let matcher = SkimMatcherV2::default();
+
             sorted_items.sort_unstable_by(|a, b| {
                 let a_distance = matcher.fuzzy_match(&a.text, &input_text);
                 let b_distance = matcher.fuzzy_match(&b.text, &input_text);
                 b_distance.cmp(&a_distance).then(a.text.cmp(&b.text))
+
             });
             _items.set(sorted_items.clone());
         },

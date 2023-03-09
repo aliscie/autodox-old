@@ -1,10 +1,21 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
-export interface ElementTree { 'id' : string, 'elements' : Tree }
+export interface EditorElement {
+  'id' : string,
+  'tag' : [] | [string],
+  'content' : string,
+  'attrs' : Array<[string, string]>,
+}
+export interface EditorTree {
+  'root' : [] | [string],
+  'vertices' : Array<[string, EditorElement]>,
+  'adjacency' : Array<[string, Array<string>]>,
+}
+export interface ElementTree { 'id' : string, 'elements' : EditorTree }
 export interface FileDirectory {
   'id' : string,
-  'files' : Tree,
+  'files' : FileTree,
   'name' : string,
 }
 export type FileMode = { 'Private' : null } |
@@ -16,7 +27,7 @@ export interface FileNode {
   'file_mode' : FileMode,
   'element_tree' : [] | [string],
 }
-export interface Tree {
+export interface FileTree {
   'root' : [] | [string],
   'vertices' : Array<[string, FileNode]>,
   'adjacency' : Array<[string, Array<string>]>,
@@ -31,6 +42,8 @@ export interface UserQuery {
   'last_name' : [] | [string],
   'image' : [] | [Uint8Array],
 }
+export type getElementTreesResult = { 'Ok' : Array<[string, ElementTree]> } |
+  { 'Err' : string };
 export interface _SERVICE {
   'change_directory' : ActorMethod<[string], string>,
   'create_directory' : ActorMethod<[], string>,
@@ -43,8 +56,12 @@ export interface _SERVICE {
   'delete_file' : ActorMethod<[string], string>,
   'get_directories' : ActorMethod<[], [] | [FileDirectory]>,
   'get_directory' : ActorMethod<[string], [] | [FileDirectory]>,
-  'get_element_trees' : ActorMethod<[], [] | [[string, ElementTree]]>,
-  'get_file' : ActorMethod<[string], [] | [[FileNode, ElementTree]]>,
+  'get_element_trees' : ActorMethod<[], getElementTreesResult>,
+  'get_file' : ActorMethod<
+    [string],
+    { 'Ok' : [FileNode, ElementTree] } |
+      { 'Err' : string }
+  >,
   'get_profile' : ActorMethod<[], [] | [UserQuery]>,
   'get_users' : ActorMethod<[], Array<UserQuery>>,
   'group_update' : ActorMethod<[string], [] | [string]>,

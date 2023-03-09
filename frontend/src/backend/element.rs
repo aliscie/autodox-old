@@ -103,10 +103,11 @@ pub async fn create_element_tree(data: &ElementTree, file_id: Id) -> Result<(), 
     }
 }
 
-pub async fn get_element_trees() -> Result<Option<HashMap<Id, ElementTree>>, String> {
+pub async fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let response = backend::call_ic_np("get_element_trees".to_string()).await;
+        log!(&response);
 
         let element_trees: Result<Option<HashMap<Id, ElementTree>>, _> = serde_wasm_bindgen::from_value(response);
         log!(element_trees);  // TODO Here U should be able to get data element_trees.elements.id etc...

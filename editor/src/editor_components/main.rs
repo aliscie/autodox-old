@@ -54,7 +54,7 @@ pub fn EditorComponent(props: &Props) -> Html {
                 tag={node.tag.clone()}
                 attrs={node.clone().attrs}
                 id = {node.id}
-                text={node.clone().text}>
+                text={node.clone().content}>
             {props.children.clone()}
             </ConstructElement>
             }
