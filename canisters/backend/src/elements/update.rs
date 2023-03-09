@@ -38,5 +38,7 @@ pub fn create_element_tree(data: String) -> Result<String, String> {
     let mut new_element = HashMap::new();
     new_element.insert(data.id, data);
     element_trees.insert(user, new_element);
+    s! { UserFiles = user_files }
+    s! { ElementTrees = element_trees }
     Ok("ok".to_string())
 }

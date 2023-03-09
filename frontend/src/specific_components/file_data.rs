@@ -47,8 +47,8 @@ fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<Edi
                     .vertices
                     .get_mut(&x.id)
                 {
-                    if let Some(text) = x.text {
-                        element.text = text;
+                    if let Some(text) = x.content {
+                        element.content = text;
                     }
                     if let Some(attrs) = x.attrs {
                         element.attrs = attrs;
@@ -210,9 +210,9 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                     let data = serde_json::json!((auther, file_id.clone()));
                     let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
                     log!(&res);
-                    let file_dir: Result<Option<(FileNode, ElementTree)>, _> = serde_wasm_bindgen::from_value(res);
+                    let file_dir: Result<Result<(FileNode, ElementTree), String>, _> = serde_wasm_bindgen::from_value(res);
                     if let Ok(file_dir) = file_dir {
-                        if let Some((file_node, element_tree)) = file_dir {
+                        if let Ok((file_node, element_tree)) = file_dir {
                             return Ok((file_node, element_tree));
                         }
                     }
