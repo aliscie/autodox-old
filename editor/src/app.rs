@@ -187,14 +187,14 @@ where
             .callback(|(event, range)| EditorMsg::SlashInput(event, range));
         html! {
         <ContextProvider<GlobalEditorState> context = {global_state}>
-            <span class="text_editor_container">
+            <span>
             <span
                 class={css_file_macro!("main.css")}
            >
                 <h2 contenteditable="true" class={"editor_title heading"}>
                 {ctx.props().title.clone()}
             </h2>
-                <span>
+                <span class="text_editor_container">
                 <EditorToolbar
                     editor_ref = { self.editor_ref.clone()}
                 // command={Callback::from(move |(e, r)| format_command(e, r))}
