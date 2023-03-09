@@ -37,29 +37,4 @@ fn post_upgrade() {
     stable_memory_post_upgrade(0);
 }
 
-// #[ic_cdk_macros::query(name = "__get_candid_interface_tmp_hack")]
-// fn export_candid() -> String {
-//     export_service!();
-//     __export_service()
-// }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use std::env;
-//     use std::fs::{create_dir_all, write};
-//     use std::path::PathBuf;
-//
-//     #[test]
-//     fn save_candid() {
-//         let dir = PathBuf::from("/Users/ahmed/Desktop/autodox-tauri/canisters/backend");
-//         match create_dir_all(&dir) {
-//             Ok(_) => println!("Successfully created directory"),
-//             Err(e) => println!("Failed to create directory: {}", e),
-//         }
-//
-//         let res = write(dir.join("backend.did"), export_candid());
-//         println!("-------- Wrote to {:?}", dir);
-//         println!("-------- res {:?}", res);
-//     }
-// }
