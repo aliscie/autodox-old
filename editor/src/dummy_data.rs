@@ -1,18 +1,18 @@
+use crate::utils::get_example_table;
 use shared::id::Id;
 use shared::schema::{EditorElement, ElementTree};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
-use crate::utils::get_example_table;
 
-pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
+pub fn generate_dummy() -> ElementTree {
     let mut default_element_tree = ElementTree::default();
     let root = default_element_tree.elements.root.unwrap();
     let id: Id = Uuid::new_v4().into();
     let new_element = EditorElement {
         id: Uuid::new_v4().into(),
-        text: "this is a bold and italic".to_string(),
+        content: "this is a bold and italic".to_string(),
         tag: Some("i".to_string()),
         attrs: HashMap::new(),
     };
@@ -21,7 +21,7 @@ pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
         id.clone(),
         EditorElement {
             id,
-            text: "this is a bold text".to_string(),
+            content: "this is a bold text".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::from([("style".to_string(), "color: tomato;".to_string())]),
             // TODO children: [new_element, ], I need the be an html child of the bold element
@@ -40,11 +40,5 @@ pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
             sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
     );
 
-    let (dummy_table_elements, table_vertices) = get_example_table();
-    for element in dummy_table_elements {
-        &default_element_tree.elements.push_children(root, element.id, element);
-    };
-
-
-    Rc::new(RefCell::new(default_element_tree.clone()))
+    default_element_tree
 }

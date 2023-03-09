@@ -1,7 +1,7 @@
 extern crate web_sys;
 extern crate yew;
 
-pub use app::{Editor};
+pub use app::Editor;
 
 mod app;
 mod backend;
@@ -13,3 +13,5 @@ pub mod plugins;
 pub mod render;
 pub(crate) mod spesific_components;
 mod utils;
+
+pub use editor_components::EditorComponent;

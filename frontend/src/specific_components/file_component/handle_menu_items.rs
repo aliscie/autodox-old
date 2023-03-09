@@ -1,20 +1,19 @@
+use crate::{backend, components::PopOverMenu, router::Route};
+use shared::schema::FileMode;
+use web_sys::{Element, HtmlInputElement, KeyboardEvent, MouseEvent};
 use yew::prelude::*;
 use yew::suspense::*;
 use yew_router::prelude::*;
 use yewdux::functional::use_store;
 use yewdux::prelude::*;
-use web_sys::{Element, HtmlInputElement, KeyboardEvent, MouseEvent};
-use shared::schema::FileMode;
-use crate::{backend, components::PopOverMenu, router::Route};
 
+use crate::specific_components::file_component::FileComponentProps;
 use shared::{
     id::Id,
     log,
     schema::{FileDirectory, FileNode, FileNodeDelete},
 };
-use crate::specific_components::file_component::FileComponentProps;
 use yew_router::prelude::{use_navigator, use_route};
-
 
 #[hook]
 pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
@@ -79,7 +78,6 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
     let _file_mode_state = file_mode_state.clone();
     let file_mode = (*file_mode_state).clone();
 
-
     let _id = id.clone();
     let handle_public: Callback<MouseEvent> =
         fd_dispatch.reduce_mut_future_callback_with(move |state, _e: MouseEvent| {
@@ -108,7 +106,6 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
             })
         });
 
-
     let ondelete = {
         let id = id.clone();
         let _dispatch_file_directory = Dispatch::<FileDirectory>::new();
@@ -128,7 +125,7 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
         _dispatch_file_directory.reduce_mut_future_callback(move |state| {
             match route {
                 // the current file is in use navigate to home!
-                Route::File { id, auther: _ } => {
+                Route::File { id, author: _ } => {
                     if file_id == id {
                         _navigator.push(&Route::Home);
                     }
@@ -165,10 +162,14 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
 
                 if _e.key() == "Enter" && value.is_empty() {
                     input.class_list().add_1("tool").unwrap();
-                    input.set_attribute("data-tip", "File must have at least 1 character.").unwrap();
+                    input
+                        .set_attribute("data-tip", "File must have at least 1 character.")
+                        .unwrap();
                 } else if &_name == &value {
                     input.class_list().add_1("tool").unwrap();
-                    input.set_attribute("data-tip", "Name is the same.").unwrap();
+                    input
+                        .set_attribute("data-tip", "Name is the same.")
+                        .unwrap();
                 } else if _e.key() == "Enter" {
                     if let Some(file_node) = state.files.vertices.get_mut(&_id) {
                         file_node.name = value.clone();
@@ -182,10 +183,10 @@ pub fn use_file_items(props: &FileComponentProps) -> Vec<Html> {
         });
     return vec![
         html! {<a><span
-                {onkeydown}
-                contenteditable="true"
-                data-tip="File must have at least 1 character."
-                autofocus=true placeholder="rename..">{props.file_node.name.clone()}</span></a>},
+        {onkeydown}
+        contenteditable="true"
+        data-tip="File must have at least 1 character."
+        autofocus=true placeholder="rename..">{props.file_node.name.clone()}</span></a>},
         // html! {<a onclick={on_share}><i class="fa-solid fa-upload"/>{"Share"}</a>},
         // html! {<a onclick={on_permission}><i class="fa-solid fa-eye"/>{"Permissions"}</a>},
         html! {<a onclick = {ondelete}><i class="fa-solid fa-trash"/>{"Delete"}</a>},
