@@ -27,7 +27,7 @@ async fn dummy_data() -> ElementTree {
     let element = EditorElement {
         id: Id::ic_new().await,
         tag: None,
-        text: "".to_owned(),
+        content: "".to_owned(),
         attrs: HashMap::new(),
     };
     tree.root = Some(element.id);
@@ -56,11 +56,41 @@ async fn dummy_data() -> ElementTree {
     return default_element_tree;
 }
 
+
+// async fn dummy_data() -> ElementTree {
+//     let mut default_element_tree = ElementTree{
+//         id: Ic::ic_new().await,
+//         elements: Tree{
+//             vertices: (),
+//             adjacency: (),
+//             root: None,
+//         },
+//     };
+//     let root_id = default_element_tree.elements.root.unwrap();
+//     let id: Id = Id::ic_new().await;;
+//     default_element_tree.elements.push_children(
+//         root_id,
+//         id.clone(),
+//         EditorElement::new(
+//             id,
+//             "bold text".to_string(),
+//             HashMap::from([("style".to_string(), "font-weight: bold;".to_string())]),
+//         ),
+//     );
+//     let id: Id = Id::ic_new().await;
+//     default_element_tree.elements.push_children(
+//         root_id,
+//         id,
+//         EditorElement::new(id, r#"Element is here."#.to_string(), HashMap::new()),
+//     );
+//     return default_element_tree;
+// }
+
+
 #[update]
 #[candid_method(update)]
 pub async fn create_file(data: String) -> String {
-    let mut create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();
-    let user = User::current();
+    let mut create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();    let user = User::current();
     if user.is_none() {
         return "user not found".to_string();
     };
@@ -82,12 +112,16 @@ pub async fn create_file(data: String) -> String {
         file_directory
             .files
             .vertices
-            .insert(create_file_data.id, create_file_data.into());
+            .insert(create_file_data.id.clone(), create_file_data.into());
     }
-    s! { UserFiles = user_files }
-    s! { ElementTrees = element_trees }
+
+    // TODO creat files here.
+    // element_trees.insert(user.clone().unwrap(), HashMap::from([(create_file_data.id, dummy_data().await)]));
+    s! { UserFiles = user_files}
     ;
-    "New file is created.".to_string()
+    s! { ElementTrees = element_trees}
+    ;
+    return "New file is created.".to_string();
 }
 
 #[update]
@@ -169,8 +203,8 @@ pub async fn group_update(data: String) -> Option<String> {
             EditorChange::Update(data) => {
                 let element_tree: &mut ElementTree = element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 if let Some(element) = element_tree.elements.vertices.get_mut(&data.id) {
-                    if let Some(text) = data.text {
-                        element.text = text;
+                    if let Some(text) = data.content {
+                        element.content = text;
                     }
                     if let Some(attrs) = data.attrs {
                         element.attrs = attrs;

@@ -1,10 +1,21 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
-export interface ElementTree { 'id' : string, 'elements' : Tree }
+export interface EditorElement {
+  'id' : string,
+  'tag' : [] | [string],
+  'content' : string,
+  'attrs' : Array<[string, string]>,
+}
+export interface EditorTree {
+  'root' : [] | [string],
+  'vertices' : Array<[string, EditorElement]>,
+  'adjacency' : Array<[string, Array<string>]>,
+}
+export interface ElementTree { 'id' : string, 'elements' : EditorTree }
 export interface FileDirectory {
   'id' : string,
-  'files' : Tree,
+  'files' : FileTree,
   'name' : string,
 }
 export type FileMode = { 'Private' : null } |
@@ -16,7 +27,7 @@ export interface FileNode {
   'file_mode' : FileMode,
   'element_tree' : [] | [string],
 }
-export interface Tree {
+export interface FileTree {
   'root' : [] | [string],
   'vertices' : Array<[string, FileNode]>,
   'adjacency' : Array<[string, Array<string>]>,

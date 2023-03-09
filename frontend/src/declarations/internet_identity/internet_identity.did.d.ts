@@ -14,7 +14,6 @@ export type AddTentativeDeviceResponse = {
 export interface ArchiveConfig {
   'polling_interval_ns' : bigint,
   'entries_buffer_limit' : bigint,
-  'archive_integration' : [] | [{ 'pull' : null } | { 'push' : null }],
   'module_hash' : Uint8Array,
   'entries_fetch_limit' : number,
 }
@@ -45,6 +44,7 @@ export type DeployArchiveResult = { 'creation_in_progress' : null } |
   { 'failed' : string };
 export interface DeviceData {
   'alias' : string,
+  'origin' : [] | [string],
   'protection' : DeviceProtection,
   'pubkey' : DeviceKey,
   'key_type' : KeyType,
@@ -79,7 +79,6 @@ export interface IdentityAnchorInfo {
   'device_registration' : [] | [DeviceRegistrationInfo],
 }
 export interface InternetIdentityInit {
-  'upgrade_persistent_state' : [] | [boolean],
   'assigned_user_number_range' : [] | [[bigint, bigint]],
   'archive_config' : [] | [ArchiveConfig],
   'canister_creation_cycles_cost' : [] | [bigint],

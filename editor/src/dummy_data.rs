@@ -21,7 +21,7 @@ pub fn generate_dummy() -> Rc<RefCell<ElementTree>> {
         id.clone(),
         EditorElement {
             id,
-            text: "this is a bold text".to_string(),
+            content: "this is a bold text".to_string(),
             tag: Some("b".to_string()),
             attrs: HashMap::from([("style".to_string(), "color: tomato;".to_string())]),
             // TODO children: [new_element, ], I need the be an html child of the bold element

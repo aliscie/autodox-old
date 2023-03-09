@@ -60,7 +60,7 @@ pub fn EditorToolbar(props: &Props) -> Html {
             .exec_command_with_show_ui_and_value("foreColor", false, "rgba(0,0,0,0.5)")
             .unwrap();
         if let Some(data) = _e.data() {
-            // TODO why thi is not working? (not this is a compensatory task)
+            // ToDO why thi is not working? (not this is a compensatory task)
             // let x = html_document.exec_command_with_show_ui_and_value("foreColor", false, data).unwrap();
             // _action.emit(data)
         }

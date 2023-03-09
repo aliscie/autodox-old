@@ -21,7 +21,7 @@ pub async fn create_element_tree(
         let children = data.elements.adjacency.entry(*id).or_default().clone();
         let element_create = EditorElementCreate {
             id: *id,
-            text: i.text.clone(),
+            content: i.content.clone(),
             tag: i.tag.clone(),
             children: Some(children),
             attrs: i.attrs.clone(),

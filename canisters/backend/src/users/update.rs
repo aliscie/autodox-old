@@ -5,9 +5,15 @@ use shared::schema::UserQuery;
 use crate::custom_traits::*;
 use crate::users::types::{User, Users};
 use crate::utils::{Status, UpdateResponse};
-use ic_kit::macros::update;
+use crate::ElementTree;
+use crate::FileDirectory;
+use crate::FileNode;
+use candid::export_service;
+use ic_kit::macros::{query, update};
 use ic_stable_memory::s;
 use ic_stable_memory::utils::ic_types::SPrincipal;
+use shared::id::Id;
+use std::collections::HashMap;
 
 #[update]
 #[candid_method(update)]
@@ -39,8 +45,7 @@ pub fn register(username: String) -> String {
         return "Please try to login".to_string();
     }
     users.push(caller.unwrap());
-    s! { Users = users}
-    ;
+    s! { Users = users};
     // UpdateResponse {
     //     status: Status::Success,
     //     message: "ok".to_string(),
@@ -60,8 +65,7 @@ pub fn update_profile(data: String) -> String {
         if &user.address == &caller {
             user.image = profile_data.image;
             user.username = profile_data.username;
-            s! { Users = users}
-            ;
+            s! { Users = users};
             // return UpdateResponse {
             //     status: Status::Success,
             //     message: "Your profile has been s updated.".to_string(),
@@ -74,4 +78,21 @@ pub fn update_profile(data: String) -> String {
     //     message: "User not registered.".to_string(),
     // }
     "User not registered.".to_string()
+}
+
+#[query(name = "__get_candid_interface_tmp_hack")]
+fn export_candid() -> String {
+    export_service!();
+    __export_service()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs::write;
+
+    #[test]
+    fn save_candid() {
+        write("backend.did", export_candid()).expect("Write failed.");
+    }
 }
