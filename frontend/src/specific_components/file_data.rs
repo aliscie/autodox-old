@@ -153,6 +153,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
     let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     let dispatch_element_tree = Dispatch::<crate::hooks::ElementTreeStore>::new();
 
+
     use_future_with_deps(
         |file_id| async move {
             match dispatch_file_directory
@@ -163,7 +164,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                 .to_owned()
             {
                 Some(current_file_data) => {
-                    log!(current_file_data);
+                    // log!(current_file_data);
                     match current_file_data.element_tree {
                         Some(tree_id) => {
                             let file_node = dispatch_file_directory
@@ -186,12 +187,13 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                                 .get(&file_id)
                                 .unwrap()
                                 .clone();
+
+                            // if let Some(element_tree) = dispatch_element_tree.get().map.get(&file_node.id){
+                            //     return Ok((file_node, element_tree.clone()));
+                            // }
+
                             let dummy_element_tree = dummy_data();
                             let element_tree = dispatch_element_tree.get().map.get(&file_node.id).unwrap_or(&dummy_element_tree).clone();
-                            if dispatch_element_tree.get().map.get(&file_node.id).is_none() {
-                                let _ = backend::create_element_tree(&element_tree, *file_id).await?;
-                                // dispatch_element_tree.dispatch(ElementTreeStoreAction::AddElementTree(file_node.id, element_tree.clone()));
-                            }
                             return Ok((file_node, element_tree));
                         }
                     };

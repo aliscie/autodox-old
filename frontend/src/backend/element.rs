@@ -19,7 +19,7 @@ pub async fn update_element(data: EditorElementUpdate) -> Result<(), String> {
             "update_element".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -62,9 +62,9 @@ pub async fn create_element(data: EditorElementCreate) -> Result<(), String> {
 
 pub async fn get_element_tree(id: &Id) -> Result<ElementTree, String> {
     let info = Dispatch::<DeviceInfo>::new();
-    if info.get().is_web || info.get().is_online {
-        unimplemented!();
-    }
+    // if info.get().is_web || info.get().is_online {
+    //     unimplemented!();
+    // }
     if !info.get().is_web {
         return call_surreal(
             "get_element_tree".to_string(),
@@ -107,12 +107,18 @@ pub async fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let response = backend::call_ic_np("get_element_trees".to_string()).await;
-        log!(&response);
-
-        let element_trees: Result<Option<HashMap<Id, ElementTree>>, _> = serde_wasm_bindgen::from_value(response);
-        log!(element_trees);  // TODO Here U should be able to get data element_trees.elements.id etc...
-        // return element_trees.map_err(|e| "serde error".to_string());
-        return Err("not implemented".to_string());
+        let element_trees: Result<HashMap<Id, ElementTree>, _> = serde_wasm_bindgen::from_value(response);
+        return element_trees.map_err(|e| "serde error".to_string())
+        // return Err("not implemented".to_string());
     }
-    return Err("user is offline".to_string());
+    if !info.get().is_web {
+        return crate::backend::call_surreal(
+            "get_element_trees".to_string(),
+            Some(&serde_json::json!({})),
+        )
+            .await;
+    } else {
+        // user is offline throw a error
+        return Err("user is offline".to_string());
+    }
 }

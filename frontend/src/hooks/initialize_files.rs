@@ -28,7 +28,7 @@ pub async fn init_files() -> Result<(), String> {
 
     let mut element_trees = crate::backend::get_element_trees().await
         .map_err(|e| e);
-    log!(&element_trees);
+
     let mut directories = crate::backend::get_directories()
         .await
         .map_err(|e| e)
@@ -46,6 +46,8 @@ pub async fn init_files() -> Result<(), String> {
         }
     }
 
+    log!(&element_trees);
+    // Todo save element trees in the yewdux store
     match element_trees {
         Ok(element_trees) => {
             dispatch_element_tree.set(ElementTreeStore { map: element_trees });
