@@ -1,8 +1,8 @@
 type EditorElement = record {
   id : text;
   tag : opt text;
+  content : text;
   attrs : vec record { text; text };
-  "text" : text;
 };
 type ElementTree = record { id : text; elements : Tree_1 };
 type FileDirectory = record { id : text; files : Tree; name : text };
@@ -14,6 +14,8 @@ type FileNode = record {
   element_tree : opt text;
 };
 type Result = variant { Ok : text; Err : text };
+type Result_1 = variant { Ok : vec record { text; ElementTree }; Err : text };
+type Result_2 = variant { Ok : record { FileNode; ElementTree }; Err : text };
 type Tree = record {
   root : opt text;
   vertices : vec record { text; FileNode };
@@ -42,8 +44,8 @@ service : {
   delete_file : (text) -> (text);
   get_directories : () -> (opt FileDirectory) query;
   get_directory : (text) -> (opt FileDirectory) query;
-  get_element_trees : () -> (opt vec record { text; ElementTree }) query;
-  get_file : (text) -> (opt record { FileNode; ElementTree }) query;
+  get_element_trees : () -> (Result_1) query;
+  get_file : (text) -> (Result_2) query;
   get_profile : () -> (opt UserQuery) query;
   get_users : () -> (vec UserQuery) query;
   group_update : (text) -> (opt text);

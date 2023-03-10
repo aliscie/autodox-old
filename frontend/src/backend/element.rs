@@ -4,6 +4,7 @@ use shared::id::Id;
 use shared::schema::{EditorElementCreate, EditorElementDelete, EditorElementUpdate, ElementTree};
 use yewdux::prelude::Dispatch;
 use std::collections::HashMap;
+use js_sys::Math::log;
 use shared::log;
 use crate::backend;
 use super::call_ic;
@@ -19,7 +20,7 @@ pub async fn update_element(data: EditorElementUpdate) -> Result<(), String> {
             "update_element".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-        .await;
+            .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -62,9 +63,9 @@ pub async fn create_element(data: EditorElementCreate) -> Result<(), String> {
 
 pub async fn get_element_tree(id: &Id) -> Result<ElementTree, String> {
     let info = Dispatch::<DeviceInfo>::new();
-    // if info.get().is_web || info.get().is_online {
-    //     unimplemented!();
-    // }
+    if info.get().is_web || info.get().is_online {
+        unimplemented!();
+    }
     if !info.get().is_web {
         return call_surreal(
             "get_element_tree".to_string(),
@@ -107,18 +108,26 @@ pub async fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let response = backend::call_ic_np("get_element_trees".to_string()).await;
-        let element_trees: Result<HashMap<Id, ElementTree>, _> = serde_wasm_bindgen::from_value(response);
-        return element_trees.map_err(|e| "serde error".to_string())
-        // return Err("not implemented".to_string());
+        // log!(&response);
+
+        let element_trees: Result<Option<HashMap<Id, ElementTree>>, _> = serde_wasm_bindgen::from_value(response);
+        log!(&element_trees);
+        // TODO
+        //     type:"&core::result::Result<core::option::Option<std::collections::hash::map::HashMap<shared::data_fields::id::Id, shared::schema::element::ElementTree>>, serde_wasm_bindgen::error::Error>"
+        //                 Err(
+        //         Error(
+        //             JsValue(Error: UUID parsing failed: invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `O` at 1
+        //             Error: UUID parsing failed: invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `O` at 1
+        //                 at imports.wbg.__wbindgen_error_new (http://localhost:5173/pkg/frontend.js:567:21)
+        if let Ok(Some(element_trees)) = element_trees {
+            for (id, element_tree) in element_trees.iter() {
+                log!(id);
+                log!(element_tree);
+            }
+        }
+
+
+        return Err("not implemented".to_string());
     }
-    if !info.get().is_web {
-        return crate::backend::call_surreal(
-            "get_element_trees".to_string(),
-            Some(&serde_json::json!({})),
-        )
-            .await;
-    } else {
-        // user is offline throw a error
-        return Err("user is offline".to_string());
-    }
+    return Err("user is offline".to_string());
 }

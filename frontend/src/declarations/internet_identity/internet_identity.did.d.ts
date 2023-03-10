@@ -1,6 +1,14 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
+export interface ActiveAnchorCounter {
+  'counter' : bigint,
+  'start_timestamp' : Timestamp,
+}
+export interface ActiveAnchorStatistics {
+  'completed' : CompletedActiveAnchorStats,
+  'ongoing' : OngoingActiveAnchorStats,
+}
 export type AddTentativeDeviceResponse = {
     'device_registration_mode_off' : null
   } |
@@ -11,6 +19,11 @@ export type AddTentativeDeviceResponse = {
       'device_registration_timeout' : Timestamp,
     }
   };
+export interface AnchorCredentials {
+  'recovery_phrases' : Array<PublicKey>,
+  'credentials' : Array<WebAuthnCredential>,
+  'recovery_credentials' : Array<WebAuthnCredential>,
+}
 export interface ArchiveConfig {
   'polling_interval_ns' : bigint,
   'entries_buffer_limit' : bigint,
@@ -33,6 +46,10 @@ export interface Challenge {
 }
 export type ChallengeKey = string;
 export interface ChallengeResult { 'key' : ChallengeKey, 'chars' : string }
+export interface CompletedActiveAnchorStats {
+  'monthly_active_anchors' : [] | [ActiveAnchorCounter],
+  'daily_active_anchors' : [] | [ActiveAnchorCounter],
+}
 export type CredentialId = Uint8Array;
 export interface Delegation {
   'pubkey' : PublicKey,
@@ -58,6 +75,16 @@ export interface DeviceRegistrationInfo {
   'tentative_device' : [] | [DeviceData],
   'expiration' : Timestamp,
 }
+export interface DeviceWithUsage {
+  'alias' : string,
+  'last_usage' : [] | [Timestamp],
+  'origin' : [] | [string],
+  'protection' : DeviceProtection,
+  'pubkey' : DeviceKey,
+  'key_type' : KeyType,
+  'purpose' : Purpose,
+  'credential_id' : [] | [CredentialId],
+}
 export type FrontendHostname = string;
 export type GetDelegationResponse = { 'no_such_delegation' : null } |
   { 'signed_delegation' : SignedDelegation };
@@ -71,11 +98,12 @@ export interface HttpRequest {
 export interface HttpResponse {
   'body' : Uint8Array,
   'headers' : Array<HeaderField>,
+  'upgrade' : [] | [boolean],
   'streaming_strategy' : [] | [StreamingStrategy],
   'status_code' : number,
 }
 export interface IdentityAnchorInfo {
-  'devices' : Array<DeviceData>,
+  'devices' : Array<DeviceWithUsage>,
   'device_registration' : [] | [DeviceRegistrationInfo],
 }
 export interface InternetIdentityInit {
@@ -89,11 +117,16 @@ export interface InternetIdentityStats {
   'assigned_user_number_range' : [bigint, bigint],
   'archive_info' : ArchiveInfo,
   'canister_creation_cycles_cost' : bigint,
+  'active_anchor_stats' : [] | [ActiveAnchorStatistics],
 }
 export type KeyType = { 'platform' : null } |
   { 'seed_phrase' : null } |
   { 'cross_platform' : null } |
   { 'unknown' : null };
+export interface OngoingActiveAnchorStats {
+  'monthly_active_anchors' : Array<ActiveAnchorCounter>,
+  'daily_active_anchors' : ActiveAnchorCounter,
+}
 export type PublicKey = Uint8Array;
 export type Purpose = { 'authentication' : null } |
   { 'recovery' : null };
@@ -122,6 +155,10 @@ export type VerifyTentativeDeviceResponse = {
   { 'verified' : null } |
   { 'wrong_code' : { 'retries_left' : number } } |
   { 'no_device_to_verify' : null };
+export interface WebAuthnCredential {
+  'pubkey' : PublicKey,
+  'credential_id' : CredentialId,
+}
 export interface _SERVICE {
   'acknowledge_entries' : ActorMethod<[bigint], undefined>,
   'add' : ActorMethod<[UserNumber, DeviceData], undefined>,
@@ -134,6 +171,7 @@ export interface _SERVICE {
   'enter_device_registration_mode' : ActorMethod<[UserNumber], Timestamp>,
   'exit_device_registration_mode' : ActorMethod<[UserNumber], undefined>,
   'fetch_entries' : ActorMethod<[], Array<BufferedArchiveEntry>>,
+  'get_anchor_credentials' : ActorMethod<[UserNumber], AnchorCredentials>,
   'get_anchor_info' : ActorMethod<[UserNumber], IdentityAnchorInfo>,
   'get_delegation' : ActorMethod<
     [UserNumber, FrontendHostname, SessionKey, Timestamp],
@@ -141,6 +179,7 @@ export interface _SERVICE {
   >,
   'get_principal' : ActorMethod<[UserNumber, FrontendHostname], Principal>,
   'http_request' : ActorMethod<[HttpRequest], HttpResponse>,
+  'http_request_update' : ActorMethod<[HttpRequest], HttpResponse>,
   'init_salt' : ActorMethod<[], undefined>,
   'lookup' : ActorMethod<[UserNumber], Array<DeviceData>>,
   'prepare_delegation' : ActorMethod<

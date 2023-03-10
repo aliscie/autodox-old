@@ -1,7 +1,9 @@
+use crate::backend;
 use crate::backend::create_element;
 use crate::backend::create_element_tree;
 use crate::backend::delete_element;
 use crate::backend::get_element_tree;
+use std::ops::Deref;
 // use crate::backend::update_element;
 use editor::Editor;
 use shared::id::Id;
@@ -16,6 +18,8 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 
+use editor::EditorComponent;
+
 use web_sys::{window, Range};
 
 use yew::prelude::*;
@@ -27,81 +31,23 @@ use yewdux::prelude::*;
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub id: Id,
-    pub auther: String,
+    pub author: String,
 }
 
-fn onchange_element_tree(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
-    let changes = Dispatch::<UseChangeHandle>::new();
-    Callback::from(move |e: EditorChange| {
-        changes.reduce_mut(|s| s.changes.push_back(e.clone()));
-        match e {
-            EditorChange::Update(x) => {
-                // let update_data = x.clone();
-                // spawn_local(async move {
-                //     let x = update_element(update_data).await;
-                // });
-                if let Some(element) = element_tree
-                    .as_ref()
-                    .borrow_mut()
-                    .elements
-                    .vertices
-                    .get_mut(&x.id)
-                {
-                    if let Some(text) = x.content {
-                        element.content = text;
-                    }
-                    if let Some(attrs) = x.attrs {
-                        element.attrs = attrs;
-                    }
-                }
-            }
-            EditorChange::Create(x) => {
-                let create_data = x.clone();
-                spawn_local(async move {
-                    let result = create_element(create_data).await;
-                });
-                element_tree.clone().borrow_mut().elements.push_children(
-                    x.parent_id.clone(),
-                    x.id.clone(),
-                    x.clone().into(),
-                );
-                if let Some(prev_element_id) = x.prev_element_id {
-                    let mut element_tree = element_tree.as_ref().borrow_mut();
-                    let children_list_of_parent_element = element_tree
-                        .elements
-                        .adjacency
-                        .get_mut(&x.parent_id)
-                        .unwrap();
-                    let index_of_prev_element = children_list_of_parent_element
-                        .into_iter()
-                        .position(|y| *y == x.id)
-                        .unwrap();
-                    let index_of_last_element = children_list_of_parent_element
-                        .into_iter()
-                        .position(|y| *y == x.id)
-                        .unwrap();
-                    children_list_of_parent_element
-                        .swap(index_of_last_element, index_of_prev_element);
-                }
-            }
-            EditorChange::Delete(data) => {
-                element_tree.as_ref().borrow_mut().elements.remove(&data.id);
-                spawn_local(async move {
-                    let result = delete_element(data).await;
-                });
-            }
-        };
-    })
+fn onchange_element_tree(e: EditorChange) {
+    // call backend here
+    match e {
+        EditorChange::Update(update_data) => {}
+        EditorChange::Create(x) => {}
+        EditorChange::Delete(data) => {}
+    };
 }
-
-use crate::backend;
-
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
     let res = use_element_tree(props.id)?;
 
     let result_html = match &*res {
-        Ok((file_node, ref tree)) => {
+        Ok((file_node, ref element_tree)) => {
             // log!(&tree);
             // let file_node = Dispatch::<FileDirectory>::new()
             //     .get()
@@ -110,15 +56,15 @@ pub fn FileData(props: &Props) -> HtmlResult {
             //     .get(&props.id)
             //     .unwrap()
             //     .clone();
-            let element_tree = Rc::new(RefCell::new(tree.clone()));
+            //let element_tree = Rc::new(RefCell::new(tree.clone()));
 
             html! {
-                <Editor
+                <Editor<EditorComponent>
                 title = { file_node.name.clone() }
-                element_tree = { element_tree.clone() }
-                onchange = { onchange_element_tree(element_tree.clone())}
+                element_tree = { Rc::new(element_tree.clone()) }
+                onchange = { Callback::from(onchange_element_tree)}
                >
-                </Editor>
+                </Editor<EditorComponent>>
             }
         }
         Err(ref failure) => failure.to_string().into(),
@@ -149,10 +95,11 @@ fn dummy_data() -> ElementTree {
 }
 
 #[hook]
-fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(FileNode, ElementTree), String>>> {
+fn use_element_tree(
+    file_id: Id,
+) -> SuspensionResult<UseFutureHandle<Result<(FileNode, ElementTree), String>>> {
     let dispatch_file_directory = Dispatch::<FileDirectory>::new();
     let dispatch_element_tree = Dispatch::<crate::hooks::ElementTreeStore>::new();
-
 
     use_future_with_deps(
         |file_id| async move {
@@ -164,7 +111,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                 .to_owned()
             {
                 Some(current_file_data) => {
-                    // log!(current_file_data);
+                    log!(current_file_data);
                     match current_file_data.element_tree {
                         Some(tree_id) => {
                             let file_node = dispatch_file_directory
@@ -174,7 +121,7 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                                 .get(&file_id)
                                 .unwrap()
                                 .clone();
-                            return Ok((file_node, get_element_tree(&tree_id).await.unwrap()));
+                            return Ok((file_node, get_element_tree(&tree_id).await?));
                         }
                         None => {
                             // let element_tree = dummy_data();
@@ -187,13 +134,18 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                                 .get(&file_id)
                                 .unwrap()
                                 .clone();
-
-                            // if let Some(element_tree) = dispatch_element_tree.get().map.get(&file_node.id){
-                            //     return Ok((file_node, element_tree.clone()));
-                            // }
-
                             let dummy_element_tree = dummy_data();
-                            let element_tree = dispatch_element_tree.get().map.get(&file_node.id).unwrap_or(&dummy_element_tree).clone();
+                            let element_tree = dispatch_element_tree
+                                .get()
+                                .map
+                                .get(&file_node.id)
+                                .unwrap_or(&dummy_element_tree)
+                                .clone();
+                            if dispatch_element_tree.get().map.get(&file_node.id).is_none() {
+                                let _ =
+                                    backend::create_element_tree(&element_tree, *file_id).await?;
+                                // dispatch_element_tree.dispatch(ElementTreeStoreAction::AddElementTree(file_node.id, element_tree.clone()));
+                            }
                             return Ok((file_node, element_tree));
                         }
                     };
@@ -212,7 +164,8 @@ fn use_element_tree(file_id: Id) -> SuspensionResult<UseFutureHandle<Result<(Fil
                     let data = serde_json::json!((auther, file_id.clone()));
                     let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
                     log!(&res);
-                    let file_dir: Result<Result<(FileNode, ElementTree), String>, _> = serde_wasm_bindgen::from_value(res);
+                    let file_dir: Result<Result<(FileNode, ElementTree), String>, _> =
+                        serde_wasm_bindgen::from_value(res);
                     if let Ok(file_dir) = file_dir {
                         if let Ok((file_node, element_tree)) = file_dir {
                             return Ok((file_node, element_tree));
