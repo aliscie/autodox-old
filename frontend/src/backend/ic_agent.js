@@ -192,6 +192,5 @@ export async function call_ic_np(method) { // np: no parameter
     console.log('call_ic_np: ', method)
     let res = await call_ic_np_raw(method);
     const noOption = getNoOption(res)
-    console.log(method+'call_ic_np res: ', noOption)
     return noOption;
 }
