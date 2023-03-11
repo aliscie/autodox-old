@@ -10,7 +10,7 @@ use std::collections::HashMap;
 #[query]
 #[candid_method(query)]
 pub fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
-    ic_cdk::print!("get_element_trees");
+    ic_cdk::println!("Timer canister: Counter: {}", 1);
     let user = User::current().expect("No user found");
     let element_trees: ElementTrees = s!(ElementTrees);
     element_trees.get(&user).cloned().ok_or_else(|| "User has no elements.".to_string())

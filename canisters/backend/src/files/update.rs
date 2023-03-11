@@ -25,7 +25,7 @@ use crate::utils::{Status, UpdateResponse};
 async fn dummy_data() -> ElementTree {
     let mut tree = Tree::new();
     let element = EditorElement {
-        id: Id::ic_new().await,
+        id: Id::ic_new().await.into(),
         tag: None,
         content: "".to_owned(),
         attrs: HashMap::new(),
@@ -33,11 +33,13 @@ async fn dummy_data() -> ElementTree {
     tree.root = Some(element.id);
     tree.vertices.insert(element.id, element);
     let mut default_element_tree = ElementTree {
-        id: Id::ic_new().await,
+        id: Id::ic_new().await.into(),
         elements: tree,
     };
     let root_id = default_element_tree.elements.root.unwrap();
-    let id: Id = Id::ic_new().await;
+    let id: Id = Id::ic_new().await.into();
+    ic_cdk::println!("---------------------------- {:#?}", &id);
+
     default_element_tree.elements.push_children(
         root_id,
         id.clone(),
@@ -47,7 +49,7 @@ async fn dummy_data() -> ElementTree {
             HashMap::from([("style".to_string(), "font-weight: bold;".to_string())]),
         ),
     );
-    let id: Id = Id::ic_new().await;
+    let id: Id = Id::ic_new().await.into();
     default_element_tree.elements.push_children(
         root_id,
         id,

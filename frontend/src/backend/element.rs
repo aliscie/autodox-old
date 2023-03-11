@@ -108,9 +108,7 @@ pub async fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         let response = backend::call_ic_np("get_element_trees".to_string()).await;
-        // log!(&response);
-
-        let element_trees: Result<Option<HashMap<Id, ElementTree>>, _> = serde_wasm_bindgen::from_value(response);
+        let element_trees: Result<Option<Result<HashMap<Id, ElementTree>, String>>, _> = serde_wasm_bindgen::from_value(response);
         log!(&element_trees);
         // TODO
         //     type:"&core::result::Result<core::option::Option<std::collections::hash::map::HashMap<shared::data_fields::id::Id, shared::schema::element::ElementTree>>, serde_wasm_bindgen::error::Error>"
@@ -119,12 +117,13 @@ pub async fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
         //             JsValue(Error: UUID parsing failed: invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `O` at 1
         //             Error: UUID parsing failed: invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `O` at 1
         //                 at imports.wbg.__wbindgen_error_new (http://localhost:5173/pkg/frontend.js:567:21)
-        if let Ok(Some(element_trees)) = element_trees {
-            for (id, element_tree) in element_trees.iter() {
-                log!(id);
-                log!(element_tree);
-            }
-        }
+
+        // if let Ok(Some(element_trees)) = element_trees {
+        //     for (id, element_tree) in element_trees.iter() {
+        //         log!(id);
+        //         log!(element_tree);
+        //     }
+        // }
 
 
         return Err("not implemented".to_string());
