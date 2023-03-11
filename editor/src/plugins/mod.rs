@@ -1,12 +1,14 @@
 use web_sys::Element;
 
+pub use context_menu::*;
 pub use editor_toolbar_plugin::*;
 pub use inset_component::*;
 pub use paste_converter::PasteConverter;
 
-mod paste_converter;
 mod inset_component;
+mod paste_converter;
 
+mod context_menu;
 mod drag_and_drop;
 mod editor_toolbar_plugin;
 
@@ -21,8 +23,8 @@ pub trait EditorPlugin {
 pub trait PluginTraits {}
 
 impl<T> EditorPlugin for T
-    where
-        T: PluginTraits,
+where
+    T: PluginTraits,
 {
     // fn remove_menu<'a>(curr: &'a Element, doc: &'a Document) {}
     // fn make_menu<'a>( curr: &'a Element, doc: &'a Document) {

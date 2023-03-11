@@ -14,12 +14,14 @@ pub struct MenuProps {
     pub items: Vec<Html>,
     pub position: UseStateHandle<Option<MouseEvent>>,
     pub click_on: Option<bool>,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[function_component]
 pub fn PopOverMenu(props: &MenuProps) -> Html {
-    let _popover = NodeRef::default();
-    let _clicked_element: Option<Element> = if let Some(p) = &*props.position {
+    let popover = NodeRef::default();
+    let clicked_element: Option<Element> = if let Some(p) = &*props.position {
         Some(p.target_unchecked_into::<Element>())
     } else {
         None
@@ -37,41 +39,40 @@ pub fn PopOverMenu(props: &MenuProps) -> Html {
         if right > width as i32 {
             x -= popover_width;
         }
-        format!(
-            "display : block; top:{}px; left:{}px;",
-            &p.page_y(),
-            &x
-        )
+        format!("display : block; top:{}px; left:{}px;", &p.page_y(), &x)
     } else {
         String::from("display: none;")
     };
 
-    let position = props.position.clone();
-    let clicked_element = _clicked_element.clone();
-    let popover = _popover.clone();
-    let click_on = props.click_on.clone();
-    use_event_with_window("click", move |_e: MouseEvent| {
-        let element = popover.cast::<Node>();
-        let target = &_e.target_unchecked_into::<Element>();
-        let target_node = &_e.target_unchecked_into::<Node>();
-        let mut is_click_on: bool = element.clone().unwrap().contains(Some(target_node));
-        if click_on.is_none() {
-            is_click_on = false;
-        }
-        if let Some(element) = &clicked_element.clone() {
-            if element != target && !is_click_on {
-                &position.set(None);
+    {
+        let position = props.position.clone();
+        let clicked_element = clicked_element.clone();
+        let popover = popover.clone();
+        let click_on = props.click_on.clone();
+        use_event_with_window("click", move |_e: MouseEvent| {
+            let element = popover.cast::<Node>();
+            let target = &_e.target_unchecked_into::<Element>();
+            let target_node = &_e.target_unchecked_into::<Node>();
+            let mut is_click_on: bool = element.clone().unwrap().contains(Some(target_node));
+            if click_on.is_none() {
+                is_click_on = false;
             }
-        }
-    });
+            if let Some(element) = &clicked_element.clone() {
+                if element != target && !is_click_on {
+                    &position.set(None);
+                }
+            }
+        });
+    }
 
     return html! {
         <div
-        ref={_popover}
+        ref={popover}
         style={format!("{}", display)}
         class={"dropdown-content"}
         >
             {props.items.clone()}
+            {props.children.clone()}
         </div>
     };
 }
