@@ -37,10 +37,7 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : IDL.Vec(IDL.Tuple(IDL.Text, ElementTree)),
     'Err' : IDL.Text,
   });
-  const Result_2 = IDL.Variant({
-    'Ok' : IDL.Tuple(FileNode, ElementTree),
-    'Err' : IDL.Text,
-  });
+  const Result_2 = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const UserQuery = IDL.Record({
     'username' : IDL.Opt(IDL.Text),
     'birthdate' : IDL.Opt(IDL.Text),

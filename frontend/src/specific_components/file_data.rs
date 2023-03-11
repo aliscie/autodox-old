@@ -162,13 +162,16 @@ fn use_element_tree(
                     let data = auther.split("/").collect::<Vec<&str>>();
                     let auther = data[3];
                     let data = serde_json::json!((auther, file_id.clone()));
-                    let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
-                    log!(&res);
-                    let file_dir: Result<Result<(FileNode, ElementTree), String>, _> =
+                    let res = backend::call_ic_raw("get_file".to_string(), data.to_string()).await;
+                    let file_dir: Result<Result<String, String>, _> =
                         serde_wasm_bindgen::from_value(res);
                     if let Ok(file_dir) = file_dir {
-                        if let Ok((file_node, element_tree)) = file_dir {
-                            return Ok((file_node, element_tree));
+                        if let Ok(file_dir) = file_dir {
+                            if let Ok((file_node, element_tree)) =
+                                serde_json::from_str::<(FileNode, ElementTree)>(&file_dir)
+                            {
+                                return Ok((file_node, element_tree));
+                            }
                         }
                     }
                 }

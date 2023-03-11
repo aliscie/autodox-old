@@ -15,7 +15,7 @@ type FileNode = record {
 };
 type Result = variant { Ok : text; Err : text };
 type Result_1 = variant { Ok : vec record { text; ElementTree }; Err : text };
-type Result_2 = variant { Ok : record { FileNode; ElementTree }; Err : text };
+type Result_2 = variant { Ok : text; Err : text };
 type Tree = record {
   root : opt text;
   vertices : vec record { text; FileNode };

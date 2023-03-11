@@ -26,7 +26,7 @@ export type Result = { 'Ok' : string } |
   { 'Err' : string };
 export type Result_1 = { 'Ok' : Array<[string, ElementTree]> } |
   { 'Err' : string };
-export type Result_2 = { 'Ok' : [FileNode, ElementTree] } |
+export type Result_2 = { 'Ok' : string } |
   { 'Err' : string };
 export interface Tree {
   'root' : [] | [string],
