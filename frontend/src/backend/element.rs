@@ -63,9 +63,9 @@ pub async fn create_element(data: EditorElementCreate) -> Result<(), String> {
 
 pub async fn get_element_tree(id: &Id) -> Result<ElementTree, String> {
     let info = Dispatch::<DeviceInfo>::new();
-    if info.get().is_web || info.get().is_online {
-        unimplemented!();
-    }
+    // if info.get().is_web || info.get().is_online {
+    //     unimplemented!();
+    // }
     if !info.get().is_web {
         return call_surreal(
             "get_element_tree".to_string(),
