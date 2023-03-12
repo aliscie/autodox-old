@@ -31,6 +31,8 @@ export interface UserQuery {
   'last_name' : [] | [string],
   'image' : [] | [Uint8Array],
 }
+export type getElementTreesResult = { 'Ok' : Array<[string, ElementTree]> } |
+  { 'Err' : string };
 export interface _SERVICE {
   'change_directory' : ActorMethod<[string], string>,
   'create_directory' : ActorMethod<[], string>,
@@ -43,8 +45,12 @@ export interface _SERVICE {
   'delete_file' : ActorMethod<[string], string>,
   'get_directories' : ActorMethod<[], [] | [FileDirectory]>,
   'get_directory' : ActorMethod<[string], [] | [FileDirectory]>,
-  'get_element_trees' : ActorMethod<[], [] | [[string, ElementTree]]>,
-  'get_file' : ActorMethod<[string], [] | [[FileNode, ElementTree]]>,
+  'get_element_trees' : ActorMethod<[], getElementTreesResult>,
+  'get_file' : ActorMethod<
+    [string],
+    { 'Ok' : [FileNode, ElementTree] } |
+      { 'Err' : string }
+  >,
   'get_profile' : ActorMethod<[], [] | [UserQuery]>,
   'get_users' : ActorMethod<[], Array<UserQuery>>,
   'group_update' : ActorMethod<[string], [] | [string]>,
