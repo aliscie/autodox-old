@@ -36,11 +36,10 @@ pub struct Props {
 
 fn onchange_element_tree(e: EditorChange) {
     // call backend here
-    match e {
-        EditorChange::Update(update_data) => {}
-        EditorChange::Create(x) => {}
-        EditorChange::Delete(data) => {}
-    };
+    let dispatch = Dispatch::<UseChangeHandle>::new();
+    dispatch.reduce_mut(|f| {
+        f.changes.push_back(e);
+    });
 }
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
@@ -111,7 +110,6 @@ fn use_element_tree(
                 .to_owned()
             {
                 Some(current_file_data) => {
-                    log!(current_file_data);
                     match current_file_data.element_tree {
                         Some(tree_id) => {
                             let file_node = dispatch_file_directory

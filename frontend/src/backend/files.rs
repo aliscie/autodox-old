@@ -38,7 +38,7 @@ pub async fn rename_file(id: Id, new_name: String) -> Result<(), String> {
             "rename_file".to_string(),
             serde_json::json!(data).to_string(),
         )
-            .await;
+        .await;
         let _ = curr.class_list().toggle("loader");
         return Ok(());
     } else {
@@ -118,7 +118,7 @@ pub async fn delete_file(data: FileNodeDelete) -> Result<(), String> {
             "delete_file".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -138,7 +138,7 @@ pub async fn create_directory(data: &FileDirectory) -> Result<String, String> {
             "create_directory".to_string(),
             Some(&serde_json::json!({ "data": data })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -159,7 +159,7 @@ pub async fn get_directory(id: Id, auther_id: Id) -> Result<FileDirectory, Strin
             "get_directory".to_string(),
             Some(&serde_json::json!({ "id": id })),
         )
-            .await;
+        .await;
     } else {
         // user is offline throw a error
         return Err("user is offline".to_string());
@@ -197,9 +197,16 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
     let info = Dispatch::<DeviceInfo>::new();
     if info.get().is_web || info.get().is_online {
         // let response = backend::call_ic_np("get_directories".to_string()).await;
-        let file_tree_component = window().unwrap_throw().document().unwrap_throw().query_selector("#aside-content").unwrap().unwrap();
+        let file_tree_component = window()
+            .unwrap_throw()
+            .document()
+            .unwrap_throw()
+            .query_selector("#aside-content")
+            .unwrap()
+            .unwrap();
         file_tree_component.class_list().add_1("loader");
         let response = backend::get_directories_ic().await;
+        log!(&response);
         let file_tree: Result<Option<FileDirectory>, _> = serde_wasm_bindgen::from_value(response);
         file_tree_component.class_list().remove_1("loader");
         return file_tree.map_err(|e| "serde error".to_string());
@@ -209,7 +216,7 @@ pub async fn get_directories() -> Result<Option<FileDirectory>, String> {
             "get_directories".to_string(),
             None,
         )
-            .await;
+        .await;
         log!(&x);
         return x;
     } else {

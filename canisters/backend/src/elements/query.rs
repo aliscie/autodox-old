@@ -1,19 +1,23 @@
 use crate::elements::types::ElementTrees;
-use shared::{id::Id, schema::*, schema::ElementTree, Tree};
 use crate::users::types::Users;
 use crate::users::types::{User, UserFiles};
 use ic_kit::candid::candid_method;
 use ic_kit::macros::query;
 use ic_stable_memory::{s, utils::ic_types::SPrincipal};
+use shared::{id::Id, schema::ElementTree, schema::*, Tree};
 use std::collections::HashMap;
 
 #[query]
 #[candid_method(query)]
-pub fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
+pub fn get_element_trees() -> Result<String, String> {
     ic_cdk::println!("Timer canister: Counter: {}", 1);
     let user = User::current().expect("No user found");
     let element_trees: ElementTrees = s!(ElementTrees);
-    element_trees.get(&user).cloned().ok_or_else(|| "User has no elements.".to_string())
+    let r = element_trees
+        .get(&user)
+        .cloned()
+        .ok_or_else(|| "User has no elements.".to_string())?;
+    Ok(serde_json::to_string(&r).unwrap())
 
     // Ok(element_trees.get(&user).unwrap().clone())
     // TODO
@@ -31,4 +35,16 @@ pub fn get_element_trees() -> Result<HashMap<Id, ElementTree>, String> {
     //         at Array.map (<anonymous>))', frontend/src/backend/mod.rs:15:1
     //
     //     Stack:
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_element_tree(id: String) -> Result<String, String> {
+    let user = User::current().expect("No user found");
+    let element_trees: ElementTrees = s!(ElementTrees);
+    let id: Id = id.try_into().unwrap();
+    let r = element_trees
+        .get(&user)
+        .and_then(|tree_map| tree_map.get(&id));
+    Ok(serde_json::to_string(&r).unwrap())
 }

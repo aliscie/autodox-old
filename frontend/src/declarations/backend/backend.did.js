@@ -21,22 +21,7 @@ export const idlFactory = ({ IDL }) => {
     'files' : Tree,
     'name' : IDL.Text,
   });
-  const EditorElement = IDL.Record({
-    'id' : IDL.Text,
-    'tag' : IDL.Opt(IDL.Text),
-    'content' : IDL.Text,
-    'attrs' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
-  });
-  const Tree_1 = IDL.Record({
-    'root' : IDL.Opt(IDL.Text),
-    'vertices' : IDL.Vec(IDL.Tuple(IDL.Text, EditorElement)),
-    'adjacency' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(IDL.Text))),
-  });
-  const ElementTree = IDL.Record({ 'id' : IDL.Text, 'elements' : Tree_1 });
-  const Result_1 = IDL.Variant({
-    'Ok' : IDL.Vec(IDL.Tuple(IDL.Text, ElementTree)),
-    'Err' : IDL.Text,
-  });
+  const Result_1 = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const Result_2 = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const UserQuery = IDL.Record({
     'username' : IDL.Opt(IDL.Text),
@@ -56,6 +41,7 @@ export const idlFactory = ({ IDL }) => {
     'delete_file' : IDL.Func([IDL.Text], [IDL.Text], []),
     'get_directories' : IDL.Func([], [IDL.Opt(FileDirectory)], ['query']),
     'get_directory' : IDL.Func([IDL.Text], [IDL.Opt(FileDirectory)], ['query']),
+    'get_element_tree' : IDL.Func([IDL.Text], [Result_1], ['query']),
     'get_element_trees' : IDL.Func([], [Result_1], ['query']),
     'get_file' : IDL.Func([IDL.Text], [Result_2], ['query']),
     'get_profile' : IDL.Func([], [IDL.Opt(UserQuery)], ['query']),
