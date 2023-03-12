@@ -12,10 +12,10 @@ pub struct Props {
 
 
 #[function_component]
-pub fn Table(props: &Props) -> Html {
+pub fn Calendar(props: &Props) -> Html {
     html! {
-        <table>
-            { "hello table" }
-        </table>
+        <div>
+            {"hello calendar"}
+        </div>
     }
 }

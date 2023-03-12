@@ -12,6 +12,10 @@ pub struct Props {
 
 
 #[function_component]
-pub fn FromComponent(props: &Props) -> Html {
-    html! {<table>{"hello from"}</table>}
+pub fn Form(props: &Props) -> Html {
+    html! {
+        <div>
+            { "hello form" }
+        </div>
+    }
 }

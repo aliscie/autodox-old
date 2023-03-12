@@ -8,7 +8,14 @@ use yew::{function_component, html};
 
 use shared::schema::EditorElement;
 
-use crate::editor_components::{FromComponent, Table};
+use crate::editor_components::{
+    Calendar,
+    Form, 
+    Image,
+    Qout,
+    Table,
+    Video
+};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -42,14 +49,24 @@ fn ConstructElement(props: &ConstractorProps) -> Html {
 pub fn EditorComponent(props: &Props) -> Html {
     let node = &props.node;
     if node.tag.is_none() {
-        return html! {<p>{&node.text}</p>};
+        return html! { <p>{ &node.text }</p>} ;
     }
-    let tag = node.tag.clone();
+    let tag = node.tag.clone();    
     let response = match tag.clone().unwrap().as_str() {
-        "table" => html! { <Table/>},
-        "form" => html! { <FromComponent/>},
+        "calendar" => html! { <Calendar /> },
+        "form" => html! { <Form /> },
+        "image" => html! { <Image />} ,
+        "qout" => html! { <Qout /> },
+        "table" => html! { <Table /> },
+        "video" => html! { <Video /> },
         _ => {
-            html! {<ConstructElement tag={tag} attrs={node.clone().attrs} text={node.clone().text}/>}
+            html! {
+                <ConstructElement 
+                    tag={ tag } 
+                    attrs={ node.clone().attrs } 
+                    text={ node.clone().text }
+                />
+            }
         }
     };
 
@@ -95,7 +112,7 @@ pub fn EditorComponent(props: &Props) -> Html {
     //<span ref={node_ref} >
              //<Drag position={format!("{}",*(position.clone()))}/>
         <>
-        {response}
+            { response }
         </>
     //</span>
      }
