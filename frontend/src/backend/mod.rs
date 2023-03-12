@@ -4,11 +4,13 @@
 pub use element::*;
 pub use files::*;
 pub use main::*;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsValue;
+pub use users::*;
 mod element;
 mod files;
 mod main;
+mod users;
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsValue;
 
 #[wasm_bindgen(module = "/src/backend/ic_agent.js")]
 extern "C" {
@@ -33,8 +35,14 @@ extern "C" {
     #[wasm_bindgen(js_name = get_directories)]
     pub async fn get_directories_ic() -> JsValue;
 
+    #[wasm_bindgen(js_name = call_ic_raw)]
+    pub async fn call_ic_raw(method: String, stringify: String) -> JsValue;
+
     #[wasm_bindgen(js_name = call_ic)]
     pub async fn call_ic(method: String, stringify: String) -> JsValue;
+
+    #[wasm_bindgen(js_name = call_ic_np_raw)]
+    pub async fn call_ic_np_raw(method: String) -> JsValue; // np: no parameter
 
     #[wasm_bindgen(js_name = call_ic_np)]
     pub async fn call_ic_np(method: String) -> JsValue; // np: no parameter

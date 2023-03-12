@@ -5,9 +5,10 @@ use crate::utils::filetree::FileTree;
 use crate::utils::{DeviceInfo, GetTitleBar};
 use shared::schema::UserQuery;
 use shared::schema::{FileDirectory, FileNode};
+
 use shared::*;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, HtmlInputElement, MouseEvent};
+use web_sys::{Element, window, HtmlInputElement, MouseEvent, FocusEvent};
 use yew::prelude::*;
 use yew::suspense::*;
 use yew_router::prelude::*;
@@ -21,15 +22,12 @@ fn use_load_data() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
     use_future_with_deps(
         move |_| async move {
             let auth = backend::is_logged().await.as_bool().unwrap();
-            log!(auth);
             let _ = &dispatch_device_info.reduce_mut(|state| state.is_authed = auth);
             let register = backend::register("ali".to_string()).await;
-            log!(register);
-            let profile_jv = backend::get_profile().await;
-            log!(&profile_jv);
+            // let profile_jv = backend::get_profile().await;
+            let profile_jv = backend::call_ic_np("get_profile".to_string()).await;
             let profile_res = serde_wasm_bindgen::from_value::<UserQuery>(profile_jv);
             if let Ok(profile_obj) = profile_res {
-                log!(&profile_obj);
                 let _ = &dispatch_device_info.reduce_mut(|state| state.profile = profile_obj);
             }
             let _ = crate::hooks::init_files().await;
@@ -83,7 +81,7 @@ pub fn app() -> Html {
                         value,
                         file.id,
                     )
-                    .await;
+                        .await;
                     if x.is_ok() {
                         state
                             .files
@@ -102,15 +100,23 @@ pub fn app() -> Html {
     let mut main_style = "";
     if rc_device_info.is_aside
         && window()
-            .unwrap_throw()
-            .inner_width()
-            .unwrap()
-            .as_f64()
-            .unwrap()
-            > 750 as f64
+        .unwrap_throw()
+        .inner_width()
+        .unwrap()
+        .as_f64()
+        .unwrap()
+        > 750 as f64
     {
         main_style = "margin-left:250px";
     }
+    let add_file_blur: Callback<FocusEvent> = Callback::from(move |_e: FocusEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_inner_html("Hit enter to add new file.");
+    });
+    let add_file_focus: Callback<FocusEvent> = Callback::from(move |_e: FocusEvent| {
+        let curr: Element = _e.target_unchecked_into();
+        curr.set_inner_html("");
+    });
 
     html! {
         <BrowserRouter>
@@ -123,12 +129,12 @@ pub fn app() -> Html {
                         <div class="files-tree">
                             <FileTree/>
                         </div>
-                            <span onkeydown={on_create_file} contenteditable="true" class="btn" data-tip="File must have at least 1 character." style="width:100%" > {"Add new file."}</span>
+                            <span onfocus={add_file_focus} onblur={add_file_blur} onkeydown={on_create_file} contenteditable="true" class="btn" data-tip="File must have at least 1 character." style="width:100%" > {"Hit enter to add new file."}</span>
                             // <span><input placeholder="Add from test"/></span>
                             <button style="width:100%" onclick={on_market_place}><i class=" fa-solid fa-globe"></i>{"Market place"}</button>
                     </ul>
                 </aside>
-                <main style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
+                <main class="main_container" style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
                     <Switch<Route> render= {switch}/>
                 </main>
             </div>

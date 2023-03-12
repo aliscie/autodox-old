@@ -17,6 +17,7 @@ use yew::{html, Html};
 use yew_hooks::{use_bool_toggle, use_toggle};
 use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
+use crate::utils::DeviceInfo;
 
 #[function_component]
 pub fn FileTree() -> Html {
@@ -24,8 +25,8 @@ pub fn FileTree() -> Html {
     let start = tree.clone().files.root.unwrap().clone();
     let map: Rc<RefCell<HashMap<Id, VNode>>> = Rc::new(RefCell::new(HashMap::new()));
 
-    if format!("{:#?}", &tree.clone().files).len()< 355 {
-        return html!{<div class="loader"/>}
+    if format!("{:#?}", &tree.clone().files).len() < 355 {
+        return html! {<div class="filetree loader"/>};
     }
 
     for (id, file_node) in tree.clone().files.into_iter(start) {
@@ -70,15 +71,17 @@ struct RenderFileElementProps {
     class_name: &'static str,
 }
 
-#[function_component(RenderFileElement)]
-fn render_file_element(props: &RenderFileElementProps) -> Html {
+#[function_component]
+fn RenderFileElement(props: &RenderFileElementProps) -> Html {
     let display = use_toggle("", "active");
     let history = use_navigator().unwrap();
-
+    let (device, _) = use_store::<DeviceInfo>();
+    let address = device.profile.address.clone();
     let on_file = Callback::from(move |e: MouseEvent| {
         let element: Element = e.target_unchecked_into();
         history.push(&Route::File {
             id: element.id().parse().unwrap(),
+            auther: address.clone(),
         });
     });
 
@@ -93,15 +96,14 @@ fn render_file_element(props: &RenderFileElementProps) -> Html {
     html! {
         <>
             <FileComponent
-                key = {props.file_node.id.to_string()}
-                id = {props.file_node.id}
+                // key = {props.file_node.id.to_string()}
+                file_node={props.file_node.clone()}
                 class={format!("{}",props.class_name)}
                 onclickfile = {on_file}
                 onclick={on_toggle}
-                name={props.file_node.name.clone()}
             />
             if props.has_children && *display == "active" {
-                <ul class={"nested active"}>
+                <ul style="margin-left: 25px;" class={"nested active"}>
                 {
                     props.file_directory.files.adjacency.get(&props.file_node.id)
                         .unwrap()

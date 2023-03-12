@@ -3,9 +3,8 @@
 /.idea
 /target/
 /.github
-.env
+frontend/.env
 .dfx
-/declarations
 /node_modules
 .cache
 .parcel-cache

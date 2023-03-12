@@ -18,12 +18,19 @@ use crate::{
     Error, Tree,
 };
 
+#[cfg(feature = "backend")]
+use {
+    candid::CandidType,
+    speedy::{Readable, Writable},
+};
+
 /// marker trait of id
 //pub trait InternalId : Into<Uuid>{}
 
 //impl InternalId for Uuid {}
 //impl InternalId for String {}
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct ElementTree {
     pub id: Id,
     pub elements: Tree<Id, EditorElement>,
@@ -31,6 +38,7 @@ pub struct ElementTree {
 
 /// make id as generic
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElement {
     pub id: Id,
     pub text: String,
@@ -106,39 +114,30 @@ impl Entity for EditorElement {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementCreate {
     pub id: Id,
     pub text: String,
     pub attrs: HashMap<String, String>,
+    pub tag: Option<String>,
     pub tree_id: Id,
     pub parent_id: Id,
     pub children: Option<Vec<Id>>,
-    // represents the element after which the current element should be pushed
+    /// represents the element after which the current element should be pushed
     pub prev_element_id: Option<Id>,
 }
 
 /// type for updating editor elements
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementUpdate {
     pub id: Id,
+    pub tree_id: Id,
     pub text: Option<String>,
     pub attrs: Option<HashMap<String, String>>,
     pub parent: Option<Id>,
-    pub children: Option<IndexSet<Id>>,
-}
-
-#[cfg(any(feature = "frontend", feature = "tauri"))]
-impl Default for EditorElementUpdate {
-    fn default() -> Self {
-        Self {
-            id: Id::new(),
-            text: None,
-            attrs: None,
-            parent: None,
-            children: None,
-        }
-    }
+    pub children: Option<Vec<Id>>,
 }
 
 impl From<EditorElementCreate> for EditorElement {
@@ -359,6 +358,7 @@ impl Store for ElementTree {
 
 impl ElementTree {
     #[cfg(feature = "frontend")]
+    /// breaks the element into three parts
     pub fn break_element(&mut self, parent_id: Id, from: usize, till: usize) -> Option<(Id, Id)> {
         let element = self.elements.vertices.get_mut(&parent_id)?;
         let (first_part, second_part) = element.text.split_at(from);
@@ -384,7 +384,8 @@ impl ElementTree {
     }
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementDelete {
     pub parent_id: Id,
     pub id: Id,

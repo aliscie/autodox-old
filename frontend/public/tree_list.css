@@ -30,13 +30,12 @@
 
 
 .crate_button {
-    color: gray;
+    color: var(--text-color);
     left: 0;
     top: 50%;
     width: 20px;
-    position: absolute;
-    -webkit-transform: translateY(-50%);
-    color: black;
+    position: relative;
+    transform-origin: center !important;
     display: inline-block;
     transition: 0.3s;
 }
@@ -47,7 +46,6 @@
     top: 50%;
     width: 20px;
     position: absolute;
-    -webkit-transform: translateY(-50%);
     color: black;
     display: inline-block;
     z-index: 299;
@@ -56,8 +54,9 @@
 
 .caret-down {
     transition: 0.3s;
-    -ms-transform: rotate(90deg); /* IE 9 */
-    -webkit-transform: translateY(-50%) rotate(90deg); /* Safari */
+    -ms-transform: rotate(90deg);
+    transform-origin: center !important;
+    /*-webkit-transform: translateY(-50%) rotate(90deg);*/
     transform: rotate(90deg);
 }
 

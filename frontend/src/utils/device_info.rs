@@ -9,8 +9,6 @@ pub struct DeviceInfo {
     pub is_aside: bool,
     pub is_light_mode: bool,
     pub profile: UserQuery,
-    pub is_saved: bool,
-    // pub updates: Vec<EditorElementUpdate>
 
 }
 
@@ -23,8 +21,6 @@ impl Default for DeviceInfo {
             is_aside: false,
             is_light_mode: false,
             profile: UserQuery::default() ,
-            is_saved: false,
-            // updates: Vec::new(),
         }
     }
 }

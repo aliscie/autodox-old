@@ -13,7 +13,7 @@ pub fn cur_directory() -> Html {
     let (file_tree, _) = use_store::<FileDirectory>();
     let route = use_route::<Route>().unwrap_or_default();
     let mut path: Vec<Id> = match route {
-        Route::File { id } => file_tree
+        Route::File { id, auther } => file_tree
             .files
             .find_path(file_tree.files.root.as_ref().unwrap(), &id.into()),
         _ => Vec::new(),
