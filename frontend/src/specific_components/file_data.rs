@@ -1,3 +1,4 @@
+use crate::app::FrontendState;
 use crate::backend;
 use crate::backend::create_element;
 use crate::backend::create_element_tree;
@@ -18,8 +19,7 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 
-use editor::EditorComponent;
-
+use crate::editor_components::EditorComponent;
 use web_sys::{window, Range};
 
 use yew::prelude::*;
@@ -43,6 +43,7 @@ fn onchange_element_tree(e: EditorChange) {
 }
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
+    let global_state = use_context::<FrontendState>().expect("cannot acccess frontend state!");
     let res = use_element_tree(props.id)?;
 
     let result_html = match &*res {
@@ -62,6 +63,7 @@ pub fn FileData(props: &Props) -> HtmlResult {
                 title = { file_node.name.clone() }
                 element_tree = { Rc::new(element_tree.clone()) }
                 onchange = { Callback::from(onchange_element_tree)}
+                render_context_menu = {global_state.render_context_menu.clone()}
                >
                 </Editor<EditorComponent>>
             }

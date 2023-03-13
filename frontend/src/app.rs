@@ -3,17 +3,23 @@ use crate::router::{switch, Route};
 use crate::specific_components::{FilesCategory, SearchFilters};
 use crate::utils::filetree::FileTree;
 use crate::utils::{DeviceInfo, GetTitleBar};
+use editor::plugins::{ContextMenu, Position};
 use shared::schema::UserQuery;
 use shared::schema::{FileDirectory, FileNode};
 
 use shared::*;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{Element, window, HtmlInputElement, MouseEvent, FocusEvent};
+use web_sys::{window, Element, FocusEvent, HtmlInputElement, MouseEvent};
 use yew::prelude::*;
 use yew::suspense::*;
 use yew_router::prelude::*;
 use yewdux::functional::use_store;
 use yewdux::prelude::*;
+
+#[derive(PartialEq, Clone)]
+pub struct FrontendState {
+    pub render_context_menu: Callback<(MouseEvent, Html)>,
+}
 
 #[hook]
 fn use_load_data() -> SuspensionResult<UseFutureHandle<Result<(), String>>> {
@@ -81,7 +87,7 @@ pub fn app() -> Html {
                         value,
                         file.id,
                     )
-                        .await;
+                    .await;
                     if x.is_ok() {
                         state
                             .files
@@ -100,12 +106,12 @@ pub fn app() -> Html {
     let mut main_style = "";
     if rc_device_info.is_aside
         && window()
-        .unwrap_throw()
-        .inner_width()
-        .unwrap()
-        .as_f64()
-        .unwrap()
-        > 750 as f64
+            .unwrap_throw()
+            .inner_width()
+            .unwrap()
+            .as_f64()
+            .unwrap()
+            > 750 as f64
     {
         main_style = "margin-left:250px";
     }
@@ -117,9 +123,27 @@ pub fn app() -> Html {
         let curr: Element = _e.target_unchecked_into();
         curr.set_inner_html("");
     });
+    let context_menu_items = use_state(|| html! {});
+    let context_menu_position: UseStateHandle<Option<Position>> = use_state_eq(|| None);
+    let render_context_menu = {
+        let context_menu_position = context_menu_position.clone();
+        let context_menu_items = context_menu_items.clone();
+        Callback::from(move |(e, items): (MouseEvent, Html)| {
+            e.prevent_default();
+            context_menu_position.set(Some(Position {
+                x: e.x().into(),
+                y: e.y().into(),
+            }));
+            context_menu_items.set(items);
+        })
+    };
+    let global_state = FrontendState {
+        render_context_menu,
+    };
 
     html! {
         <BrowserRouter>
+        <ContextProvider<FrontendState> context = {global_state}>
             <div id = "app">
                 <GetTitleBar/>
                 <aside style={aside_style}>
@@ -134,10 +158,14 @@ pub fn app() -> Html {
                             <button style="width:100%" onclick={on_market_place}><i class=" fa-solid fa-globe"></i>{"Market place"}</button>
                     </ul>
                 </aside>
+               <ContextMenu position = {(*context_menu_position).clone()}>
+                   {(*context_menu_items).clone()}
+               </ContextMenu>
                 <main class="main_container" style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
                     <Switch<Route> render= {switch}/>
                 </main>
             </div>
+        </ContextProvider<FrontendState>>
         </BrowserRouter>
     }
 }

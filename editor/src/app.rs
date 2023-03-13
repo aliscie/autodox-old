@@ -1,4 +1,3 @@
-use crate::editor_components::EditorElementProps;
 use crate::handle_mutation::handle_mutation;
 use crate::insertion_closures;
 use crate::plugins::{
@@ -39,6 +38,14 @@ pub struct EditorProps {
     pub title: String,
     pub element_tree: Rc<ElementTree>,
     pub onchange: Callback<EditorChange>,
+    pub render_context_menu: Callback<(MouseEvent, Html)>,
+}
+
+#[derive(Properties, PartialEq)]
+pub struct EditorElementProps {
+    pub node: EditorElement,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 pub struct Editor<T>
@@ -49,8 +56,6 @@ where
     editor_ref: NodeRef,
     observer: Option<MutationObserver>,
     oninput_event: Option<Closure<dyn FnMut(Vec<MutationRecord>, MutationObserver)>>,
-    context_menu_position: Option<Position>,
-    context_menu_items: Html,
     _element_marker: PhantomData<T>,
 }
 
@@ -73,8 +78,6 @@ where
             observer: None,
             oninput_event: None,
             element_tree: ctx.props().element_tree.clone(),
-            context_menu_position: None,
-            context_menu_items: html! {},
             _element_marker: PhantomData,
         }
     }
@@ -103,13 +106,8 @@ where
                 true
             }
             EditorMsg::ContextMenuRender((e, items)) => {
-                e.prevent_default();
-                self.context_menu_position = Some(Position {
-                    x: e.x().into(),
-                    y: e.y().into(),
-                });
-                self.context_menu_items = items;
-                true
+                ctx.props().render_context_menu.emit((e, items));
+                false
             }
         }
     }
@@ -214,9 +212,6 @@ where
                     trigger={":".to_string()}
                     command={Callback::from(move |(e, r) | emojis_command(e, r))}
                     editor_ref = {self.editor_ref.clone()} />
-                <ContextMenu position = {self.context_menu_position.clone()}>
-                    {self.context_menu_items.clone()}
-                </ContextMenu>
                 <div  ref =  {&self.editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor"> // now we can pass different component as type
                 { render::<T>(&self.element_tree, self.element_tree.elements.root.unwrap()) }
             </div>

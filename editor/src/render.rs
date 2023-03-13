@@ -1,5 +1,4 @@
-use crate::editor_components::EditorComponent;
-use crate::editor_components::EditorElementProps;
+use crate::EditorElementProps;
 use shared::id::Id;
 use shared::schema::ElementTree;
 use std::cell::RefCell;

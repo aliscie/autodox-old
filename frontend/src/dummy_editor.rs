@@ -1,15 +1,14 @@
-// use crate::editor_components::EditorComponent;
-use editor::EditorComponent;
+use crate::editor_components::EditorComponent;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::Rc;
 
+use editor::Editor;
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{Element, Range, window};
+use web_sys::{window, Element, Range};
 use yew::*;
-use editor::Editor;
 // use app::Editor;
 // pub use frontend::dummy_data::*;
 use shared::id::Id;
@@ -19,7 +18,6 @@ use shared::schema::{
 use shared::tree::Tree;
 
 use shared::schema::EditorChange;
-
 
 use shared::*;
 
@@ -77,7 +75,6 @@ fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
     );
 }
 
-
 pub fn generate_dummy() -> ElementTree {
     let mut default_element_tree = ElementTree::default();
     let root = default_element_tree.elements.root.unwrap();
@@ -111,11 +108,6 @@ pub fn generate_dummy() -> ElementTree {
             remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
             sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
     );
-    // here we rander all type of elements in order to test them.
-    let table = get_example_table();
-    for element in table.0 {
-        default_element_tree.elements.push_children(root, element.id, element);
-    }
     default_element_tree
 }
 
@@ -127,11 +119,27 @@ fn onchange(e: EditorChange) {
     };
 }
 
-use editor::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
+use editor::plugins::{
+    CommandItems, ContextMenu, DropDownItem, EditorInsert, EditorToolbar, Position,
+};
 
 #[function_component]
 pub fn DummyEditor() -> Html {
     let element_tree = generate_dummy();
+    let context_menu_items = use_state(|| html! {});
+    let context_menu_position: UseStateHandle<Option<Position>> = use_state_eq(|| None);
+    let render_context_menu = {
+        let context_menu_position = context_menu_position.clone();
+        let context_menu_items = context_menu_items.clone();
+        Callback::from(move |(e, items): (MouseEvent, Html)| {
+            e.prevent_default();
+            context_menu_position.set(Some(Position {
+                x: e.x().into(),
+                y: e.y().into(),
+            }));
+            context_menu_items.set(items);
+        })
+    };
 
     let action: Callback<String> = Callback::from(move |e: String| {
         // log!(e.clone());
@@ -142,13 +150,19 @@ pub fn DummyEditor() -> Html {
         // }));
     });
     html! {
-        <Editor<EditorComponent>
-             title = {"untitled".to_string()}
-             element_tree={Rc::new(element_tree)}
-             onchange = { Callback::from(onchange)}
-    >
-      </Editor<EditorComponent>>
-     }
+       <>
+           <ContextMenu position = {(*context_menu_position).clone()}>
+               {(*context_menu_items).clone()}
+           </ContextMenu>
+           <Editor<EditorComponent>
+                title = {"untitled".to_string()}
+                element_tree={Rc::new(element_tree)}
+                onchange = { Callback::from(onchange)}
+                render_context_menu = {render_context_menu}
+       >
+         </Editor<EditorComponent>>
+       </>
+    }
 }
 
 // fn main() {

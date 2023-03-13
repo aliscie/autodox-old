@@ -1,7 +1,7 @@
 use shared::schema::EditorElementCreate;
 use std::collections::HashMap;
 
-use crate::plugins::Position;
+use editor::plugins::Position;
 use shared::id::Id;
 use shared::schema::{EditorChange, EditorElement};
 use wasm_bindgen::UnwrapThrowExt;
@@ -10,7 +10,7 @@ use yew::prelude::*;
 use yew::{function_component, html};
 use yew_hooks::prelude::*;
 
-use crate::app::GlobalEditorState;
+use editor::GlobalEditorState;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -37,12 +37,17 @@ pub fn Table(props: &Props) -> Html {
     ];
     let global_state = use_context::<GlobalEditorState>().expect("cannot access global state");
     let table_id = props.node.id.clone();
-    let oncontextmenu = Callback::from(move |e: MouseEvent| {
-        let element = html! {
-            <TableContextMenu event = {e.clone()} {table_id}/ >
-        };
-        global_state.render_context_menu.emit((e, element))
-    });
+    let oncontextmenu = {
+        let global_state = global_state.clone();
+        Callback::from(move |e: MouseEvent| {
+            let element = html! {
+                <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
+                    <TableContextMenu event = {e.clone()} {table_id}/ >
+                </ContextProvider<GlobalEditorState>>
+            };
+            global_state.render_context_menu.emit((e, element))
+        })
+    };
     let children = global_state
         .element_tree
         .elements
