@@ -1,4 +1,4 @@
-use crate::backend;
+use crate::{backend, GlobalEditorState};
 use crate::backend::create_element;
 use crate::backend::create_element_tree;
 use crate::backend::delete_element;
@@ -18,7 +18,7 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use wasm_bindgen_futures::spawn_local;
 
-use editor::EditorComponent;
+// use editor::EditorComponent;
 
 use web_sys::{window, Range};
 
@@ -27,6 +27,7 @@ use yew::suspense::use_future_with_deps;
 use yew::suspense::SuspensionResult;
 use yew::suspense::UseFutureHandle;
 use yewdux::prelude::*;
+use crate::editor_components::EditorComponentFE;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -41,6 +42,7 @@ fn onchange_element_tree(e: EditorChange) {
         f.changes.push_back(e);
     });
 }
+
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
     let res = use_element_tree(props.id)?;
@@ -56,14 +58,21 @@ pub fn FileData(props: &Props) -> HtmlResult {
             //     .unwrap()
             //     .clone();
             //let element_tree = Rc::new(RefCell::new(tree.clone()));
+            let global_state = GlobalEditorState {
+                element_tree: Rc::new(element_tree.clone()),
+                // mutation: callback,
+                // render_context_menu,
+            };
 
             html! {
-                <Editor<EditorComponent>
-                title = { file_node.name.clone() }
-                element_tree = { Rc::new(element_tree.clone()) }
-                onchange = { Callback::from(onchange_element_tree)}
-               >
-                </Editor<EditorComponent>>
+                <ContextProvider<GlobalEditorState> context = {global_state}>
+                    <Editor<EditorComponentFE>
+                        title = { file_node.name.clone() }
+                        element_tree = { Rc::new(element_tree.clone()) }
+                        onchange = { Callback::from(onchange_element_tree)}
+                   >
+                    </Editor<EditorComponentFE>>
+                </ContextProvider<GlobalEditorState>>
             }
         }
         Err(ref failure) => failure.to_string().into(),

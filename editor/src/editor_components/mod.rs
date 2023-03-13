@@ -1,7 +1,5 @@
-mod main;
-mod table;
+pub mod main;
 mod form;
 
 pub use form::*;
-pub use table::*;
 pub use main::*;
