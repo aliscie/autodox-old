@@ -1,5 +1,6 @@
 use crate::files::types::MyStrings;
 use crate::users::types::{UserFiles, Users};
+use crate::smart_contract::types::{NftCollection};
 use crate::elements::types::{ElementTrees};
 use ic_cdk_macros::*;
 use ic_stable_memory::{
@@ -15,4 +16,5 @@ fn init() {
     s!(Users = Users::new());
     s!(UserFiles = UserFiles::new());
     s!(ElementTrees = ElementTrees::new());
+    s!(NftCollection = NftCollection::new());
 }
