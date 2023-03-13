@@ -115,5 +115,5 @@ pub fn EditorComponent(props: &Props) -> Html {
             { response }
         </>
     //</span>
-     }
+    }
 }

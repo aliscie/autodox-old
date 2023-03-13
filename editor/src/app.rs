@@ -1,15 +1,33 @@
-use crate::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
 use crate::render::render;
-use serde::{Deserialize, Serialize};
+use serde::{
+    Deserialize, 
+    Serialize
+};
 use shared::id::Id;
-use shared::schema::{EditorElementCreate, EditorElementUpdate, ElementTree};
+use shared::schema::{
+    EditorElementCreate, 
+    EditorElementUpdate, 
+    ElementTree, 
+    EditorElementDelete
+};
 use shared::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use uuid::Uuid;
-use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range, window};
+use wasm_bindgen::{
+    prelude::Closure, 
+    JsCast
+};
+use web_sys::{
+    Element, 
+    MutationObserver, 
+    MutationObserverInit, 
+    MutationRecord, 
+    Node, 
+    Range, 
+    window
+};
 use yew::prelude::*;
 use yew::{function_component, html};
 
@@ -196,24 +214,31 @@ pub fn Editor(props: &EditorProps) -> Html {
             let _ = html_document.exec_command_with_show_ui_and_value("InsertText", false, "    ").unwrap();
         }
     });
+
     html! {
-        <span
-            class={css_file_macro!("main.css")}
-       >
-            <h2 contenteditable="true" class={"editor_title heading"}>
-            {props.title.clone()}
-        </h2>
+        <span class={css_file_macro!("main.css")}>
+            <h2 
+                contenteditable="true" 
+                class={ "editor_title heading" }
+            >
+                { props.title.clone() }
+            </h2>
             <span
-            {onkeydown}
-            class = "text_editor_container"
-            id = "text_editor_container"
-           >
-            {props.children.clone()}
-            <div  ref =  {editor_ref}  contenteditable = "true" class="text_editor" id = "text_editor">
-            { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
-        </div>
+                class="text_editor_container"
+                id="text_editor_container"
+                { onkeydown }
+            >
+                { props.children.clone() }
+                <div  
+                    ref={ editor_ref }  
+                    contenteditable="true" 
+                    class="text_editor" 
+                    id="text_editor"
+                >
+                    { render(&element_tree.as_ref().borrow(), element_tree.as_ref().borrow().elements.root.unwrap()) }
+                </div>
             </span>
-            </span>
+        </span>
     }
 }
 

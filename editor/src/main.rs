@@ -7,21 +7,43 @@ use std::rc::Rc;
 
 use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{Element, Range, window};
+use web_sys::{
+    Element, 
+    Range, 
+    window
+};
 use yew::*;
 
 use app::Editor;
 pub use dummy_data::*;
 use shared::id::Id;
 use shared::schema::{
-    EditorElement, EditorElementCreate, EditorElementUpdate, ElementTree, FileNode,
+    EditorElement, 
+    EditorElementCreate, 
+    EditorElementUpdate, 
+    ElementTree, 
+    FileNode,
 };
 use shared::tree::Tree;
 
+use shared::*;
+use wasm_bindgen::{JsCast};
+use web_sys::{
+    MutationObserverInit, 
+    MutationRecord, 
+    Node
+};
+use yew::{function_component, html};
+
 use crate::app::EditorChange;
+use crate::plugins::{
+    EditorToolbar, 
+    EditorInsert, 
+    CommandItems, 
+    DropDownItem
+};
 
 mod editor_components;
-
 mod insertion_closures;
 mod app;
 mod backend;
@@ -31,22 +53,12 @@ mod render;
 pub(crate) mod spesific_components;
 mod dummy_data;
 
-use shared::*;
-
-
-use shared::*;
-use wasm_bindgen::{JsCast};
-use web_sys::{MutationObserverInit, MutationRecord, Node};
-use yew::{function_component, html};
-
-
 fn onchange(element_tree: Rc<RefCell<ElementTree>>) -> Callback<EditorChange> {
     Callback::from(move |e| {
         // log!(&e)
     })
 }
 
-use crate::plugins::{EditorToolbar, EditorInsert, CommandItems, DropDownItem};
 
 #[function_component]
 pub fn App() -> Html {
@@ -60,6 +72,7 @@ pub fn App() -> Html {
         //     ..Default::default()
         // }));
     });
+
     let slash_clouser: fn(DropDownItem, Option<Range>) = (|event, range| {
         let text = event.text.as_str();
         match text {
@@ -73,9 +86,10 @@ pub fn App() -> Html {
             _ => {}
         };
     });
-// TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
+
+    // TODO make the commands Callback<DropDownItem, Option<Range>> instead of fn(DropDownItem, Option<Range>)
     let emojis_command: fn(DropDownItem, Option<Range>) = (|event, range| {
-// let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
+        // let _ = range.unwrap().insert_node(&window().unwrap_throw().document().unwrap_throw().create_text_node(&event.value));
         let window = web_sys::window().unwrap();
         let document = window.document().unwrap();
         let html_document = document.dyn_into::<web_sys::HtmlDocument>().unwrap();
@@ -87,18 +101,30 @@ pub fn App() -> Html {
     });
 
     html! {
-       <div>
-       <Editor
-           title = {"untitled".to_string()}
-           element_tree={element_tree.clone()}
-           onchange = { onchange(element_tree.clone())}
-      >
-           <EditorToolbar  action={action}/>
-            <EditorInsert items={insertion_closures::components()}  trigger={"/".to_string()} command={slash_clouser}/>
-            <EditorInsert items={insertion_closures::mentions()}  trigger={"@".to_string()} command={mention_clouser}/>
-            <EditorInsert items={insertion_closures::emojies()}  trigger={":".to_string()}  command={emojis_command}/>
-        </Editor>
-       </div>
+        <div>
+            <Editor
+                title={ "untitled".to_string() }
+                element_tree={ element_tree.clone() }
+                onchange={ onchange(element_tree.clone()) }
+            >
+                <EditorToolbar action={ action }/>
+                <EditorInsert 
+                    items={ insertion_closures::components() }  
+                    trigger={ "/".to_string() } 
+                    command={ slash_clouser }
+                />
+                <EditorInsert 
+                    items={ insertion_closures::mentions() }  
+                    trigger={ "@".to_string() } 
+                    command={ mention_clouser }
+                />
+                <EditorInsert 
+                    items={ insertion_closures::emojies() }  
+                    trigger={ ":".to_string() }  
+                    command={ emojis_command }
+                />
+            </Editor>
+        </div>
    }
 }
 
