@@ -31,6 +31,8 @@ pub fn get_nft_collection() -> NftCollection {
             data: nft.data,
             created_time: nft.created_time,
             owner_address: nft.owner_address,
+            rows: nft.rows,
+            columns: nft.columns,
         });
     }
     query_nfts
