@@ -9,16 +9,10 @@ use yew::prelude::*;
 use yew::virtual_dom::{Attributes, VTag};
 use yew::{function_component, html};
 
+use crate::editor_components::*;
 use shared::schema::EditorElement;
 
-use crate::editor_components::{FromComponent, Table};
-
-#[derive(Properties, PartialEq)]
-pub struct EditorElementProps {
-    pub node: EditorElement,
-    #[prop_or_default]
-    pub children: Children,
-}
+use editor::EditorElementProps;
 
 #[derive(Properties, PartialEq)]
 pub struct ConstractorProps {
