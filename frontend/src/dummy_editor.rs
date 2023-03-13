@@ -1,5 +1,17 @@
 // use crate::editor_components::EditorComponent;
-use editor::EditorComponent;
+// use editor::EditorComponent;
+
+
+// use crate::editor_components::EditorElementProps;
+use serde::{Deserialize, Serialize};
+use shared::*;
+use std::marker::PhantomData;
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::Closure};
+use yew::html::{HasAllProps, HasProp, IntoPropValue};
+use yew::prelude::*;
+
+
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ops::Deref;
@@ -28,6 +40,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{MutationObserverInit, MutationRecord, Node};
 use yew::prelude::*;
 use yew::{function_component, html};
+use crate::editor_components::EditorComponentFE;
 
 fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
     let root_table = EditorElement {
@@ -128,11 +141,13 @@ fn onchange(e: EditorChange) {
 }
 
 use editor::plugins::{CommandItems, DropDownItem, EditorInsert, EditorToolbar};
+use crate::GlobalEditorState;
+
 
 #[function_component]
 pub fn DummyEditor() -> Html {
     let element_tree = generate_dummy();
-
+    log!(element_tree.id);
     let action: Callback<String> = Callback::from(move |e: String| {
         // log!(e.clone());
         // onchange.emit(EditorChange::Update(EditorElementUpdate {
@@ -141,13 +156,26 @@ pub fn DummyEditor() -> Html {
         //     ..Default::default()
         // }));
     });
+    // let callback = ctx
+    //     .link()
+    //     .callback(|change| EditorMsg::EditorChange(change));
+    // let render_context_menu = ctx.link().callback(|c| EditorMsg::ContextMenuRender(c));
+    let global_state = GlobalEditorState {
+        element_tree: Rc::new(element_tree.clone()),
+        // mutation: callback,
+        // render_context_menu,
+    };
+
+
     html! {
-        <Editor<EditorComponent>
-             title = {"untitled".to_string()}
-             element_tree={Rc::new(element_tree)}
-             onchange = { Callback::from(onchange)}
-    >
-      </Editor<EditorComponent>>
+        <ContextProvider<GlobalEditorState> context = {global_state}>
+                <Editor<EditorComponentFE >
+                     title = {"untitled".to_string()}
+                     element_tree={Rc::new(element_tree)}
+                     onchange = { Callback::from(onchange)}
+                    >
+              </Editor<EditorComponentFE>>
+        </ContextProvider<GlobalEditorState>>
      }
 }
 
