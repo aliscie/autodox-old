@@ -1,6 +1,6 @@
 use crate::id::Id;
 use indexmap::IndexSet;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::{
     collections::{BTreeMap, HashMap},
     hash::Hash,
@@ -17,6 +17,8 @@ use crate::{
     traits::{Creatable, Entity, GetId, Queryable, Updatable},
     Error, Tree,
 };
+
+use super::EditorChange;
 
 #[cfg(feature = "backend")]
 use {
@@ -381,6 +383,43 @@ impl ElementTree {
         self.elements.push_vertex(element_1.id, element_1);
         self.elements.push_vertex(element_2.id, element_2);
         Some((first_id, second_id))
+    }
+
+    /// helper function for mutating tree
+    pub fn mutate_tree(&mut self, change: &EditorChange) {
+        match change {
+            EditorChange::Update(update_data) => {
+                if let Some(element) = self.elements.vertices.get_mut(&update_data.id) {
+                    if let Some(ref content) = update_data.content {
+                        element.content = content.clone();
+                    }
+                    if let Some(ref attrs) = update_data.attrs {
+                        element.attrs = attrs.clone();
+                    }
+                }
+            }
+            EditorChange::Create(x) => {
+                self.elements
+                    .push_children(x.parent_id.clone(), x.id.clone(), x.clone().into());
+                if let Some(prev_element_id) = x.prev_element_id {
+                    let children_list_of_parent_element =
+                        self.elements.adjacency.get_mut(&x.parent_id).unwrap();
+                    let index_of_prev_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == x.id)
+                        .unwrap();
+                    let index_of_last_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == x.id)
+                        .unwrap();
+                    children_list_of_parent_element
+                        .swap(index_of_last_element, index_of_prev_element);
+                }
+            }
+            EditorChange::Delete(delete) => {
+                self.elements.remove(&delete.id);
+            }
+        }
     }
 }
 

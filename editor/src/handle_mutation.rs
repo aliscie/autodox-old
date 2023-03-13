@@ -11,48 +11,6 @@ use web_sys::{Element, MutationRecord};
 use yew::prelude::*;
 use yew::Callback;
 
-/// helper function for mutating tree
-pub fn mutate_tree(element_tree: &mut ElementTree, change: &EditorChange) {
-    match change {
-        EditorChange::Update(update_data) => {
-            if let Some(element) = element_tree.elements.vertices.get_mut(&update_data.id) {
-                if let Some(ref content) = update_data.content {
-                    element.content = content.clone();
-                }
-                if let Some(ref attrs) = update_data.attrs {
-                    element.attrs = attrs.clone();
-                }
-            }
-        }
-        EditorChange::Create(x) => {
-            element_tree.elements.push_children(
-                x.parent_id.clone(),
-                x.id.clone(),
-                x.clone().into(),
-            );
-            if let Some(prev_element_id) = x.prev_element_id {
-                let children_list_of_parent_element = element_tree
-                    .elements
-                    .adjacency
-                    .get_mut(&x.parent_id)
-                    .unwrap();
-                let index_of_prev_element = children_list_of_parent_element
-                    .into_iter()
-                    .position(|y| *y == x.id)
-                    .unwrap();
-                let index_of_last_element = children_list_of_parent_element
-                    .into_iter()
-                    .position(|y| *y == x.id)
-                    .unwrap();
-                children_list_of_parent_element.swap(index_of_last_element, index_of_prev_element);
-            }
-        }
-        EditorChange::Delete(delete) => {
-            element_tree.elements.remove(&delete.id);
-        }
-    }
-}
-
 pub fn handle_mutation(
     mutation_event: &Vec<MutationRecord>,
     onchange: &Callback<EditorChange>,
@@ -73,7 +31,7 @@ pub fn handle_mutation(
                                 parent: None,
                                 children: None,
                             });
-                            mutate_tree(element_tree, &update_data);
+                            element_tree.mutate_tree(&update_data);
                             onchange.emit(update_data);
                         }
                     }
@@ -107,7 +65,7 @@ pub fn handle_mutation(
                                     parent_id,
                                 };
                                 let delete = EditorChange::Delete(delete);
-                                mutate_tree(element_tree, &delete);
+                                element_tree.mutate_tree(&delete);
                                 onchange.emit(delete);
                                 Some(())
                             });
@@ -147,7 +105,7 @@ pub fn handle_mutation(
                         create_element(&mut changes, element, parent_id, element_tree.id.clone());
                     }
                     for i in changes {
-                        mutate_tree(element_tree, &i);
+                        element_tree.mutate_tree(&i);
                         onchange.emit(i);
                     }
                 }

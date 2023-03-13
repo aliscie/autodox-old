@@ -1,5 +1,5 @@
 use crate::editor_components::EditorElementProps;
-use crate::handle_mutation::{handle_mutation, mutate_tree};
+use crate::handle_mutation::handle_mutation;
 use crate::insertion_closures;
 use crate::plugins::{
     CommandItems, ContextMenu, DropDownItem, EditorInsert, EditorToolbar, Position,
@@ -92,7 +92,7 @@ where
             }
             EditorMsg::EditorChange(change) => {
                 for i in change {
-                    mutate_tree(Rc::make_mut(&mut self.element_tree), &i);
+                    Rc::make_mut(&mut self.element_tree).mutate_tree(&i);
                     ctx.props().onchange.emit(i);
                 }
                 // rerender

@@ -39,16 +39,100 @@ pub fn Table(props: &Props) -> Html {
     let table_id = props.node.id.clone();
     let oncontextmenu = Callback::from(move |e: MouseEvent| {
         let element = html! {
-            <TableContextMenu event = {e.clone()} {table_id}/>
+            <TableContextMenu event = {e.clone()} {table_id}/ >
         };
         global_state.render_context_menu.emit((e, element))
     });
-
+    let children = global_state
+        .element_tree
+        .elements
+        .adjacency
+        .get(&props.node.id)
+        .unwrap();
+    shared::log!(&children);
+    let thead = children
+        .first()
+        .and_then(|id| global_state.element_tree.elements.vertices.get(id))
+        .and_then(|node| {
+            let children = global_state
+                .element_tree
+                .elements
+                .adjacency
+                .get(&node.id)
+                .unwrap_or(&Vec::new())
+                .into_iter()
+                .map(|heading| {
+                    if let Some(el) = global_state.element_tree.elements.vertices.get(heading) {
+                        let children = global_state
+                            .element_tree
+                            .elements
+                            .adjacency
+                            .get(&el.id)
+                            .unwrap_or(&Vec::new())
+                            .into_iter()
+                            .map(|element| {
+                                if let Some(el) =
+                                    global_state.element_tree.elements.vertices.get(element)
+                                {
+                                    return html! { <td id = {el.id.to_string()}>{el.content.clone()}</td> };
+                                }
+                                html! {}
+                            })
+                            .collect::<Html>();
+                        return html! {
+                            <th id = {el.id.to_string()}>
+                                {el.content.clone()}
+                                {children}
+                            </th>
+                        };
+                    }
+                    html! {}
+                })
+                .collect::<Html>();
+            Some(html! {
+                <thead id = {node.id.to_string()}>
+                    {children}
+                </thead>
+            })
+        });
+    let tbody = children
+        .get(1)
+        .and_then(|id| global_state.element_tree.elements.adjacency.get(id))
+        .unwrap_or(&Vec::new())
+        .into_iter()
+        .map(|el| {
+            if let Some(el) = global_state.element_tree.elements.vertices.get(el) {
+                let children = global_state
+                    .element_tree
+                    .elements
+                    .adjacency
+                    .get(&el.id)
+                    .unwrap_or(&Vec::new())
+                    .into_iter()
+                    .map(|table_cell| {
+                        if let Some(table_cell) = global_state.element_tree.elements.vertices.get(table_cell) {
+                            return html!{
+                                <td id = { table_cell.id.to_string()}> {table_cell.content.clone()}</td>
+                            }
+                        }
+                        html!{}
+                    }).collect::<Html>();
+                return html! {
+                    <tr id = { el.id.to_string()}>
+                        {el.content.clone()}
+                        {children}
+                    </tr>
+                };
+            }
+            html! {}
+        })
+        .collect::<Html>();
     html! {
     <>
         <table id = {props.node.id.to_string()} {oncontextmenu}>
             {&props.node.content}
-            {props.children.clone()}
+            {thead}
+            {tbody}
         </table>
     </>
     }

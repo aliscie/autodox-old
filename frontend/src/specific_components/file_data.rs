@@ -36,11 +36,10 @@ pub struct Props {
 
 fn onchange_element_tree(e: EditorChange) {
     // call backend here
-    match e {
-        EditorChange::Update(update_data) => {}
-        EditorChange::Create(x) => {}
-        EditorChange::Delete(data) => {}
-    };
+    let dispatch = Dispatch::<UseChangeHandle>::new();
+    dispatch.reduce_mut(|f| {
+        f.changes.push_back(e);
+    });
 }
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
@@ -111,7 +110,6 @@ fn use_element_tree(
                 .to_owned()
             {
                 Some(current_file_data) => {
-                    log!(current_file_data);
                     match current_file_data.element_tree {
                         Some(tree_id) => {
                             let file_node = dispatch_file_directory
@@ -162,13 +160,16 @@ fn use_element_tree(
                     let data = auther.split("/").collect::<Vec<&str>>();
                     let auther = data[3];
                     let data = serde_json::json!((auther, file_id.clone()));
-                    let res = backend::call_ic("get_file".to_string(), data.to_string()).await;
-                    log!(&res);
-                    let file_dir: Result<Result<(FileNode, ElementTree), String>, _> =
+                    let res = backend::call_ic_raw("get_file".to_string(), data.to_string()).await;
+                    let file_dir: Result<Result<String, String>, _> =
                         serde_wasm_bindgen::from_value(res);
                     if let Ok(file_dir) = file_dir {
-                        if let Ok((file_node, element_tree)) = file_dir {
-                            return Ok((file_node, element_tree));
+                        if let Ok(file_dir) = file_dir {
+                            if let Ok((file_node, element_tree)) =
+                                serde_json::from_str::<(FileNode, ElementTree)>(&file_dir)
+                            {
+                                return Ok((file_node, element_tree));
+                            }
                         }
                     }
                 }
