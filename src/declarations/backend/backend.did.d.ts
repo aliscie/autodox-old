@@ -24,9 +24,9 @@ export interface FileNode {
 }
 export type Result = { 'Ok' : string } |
   { 'Err' : string };
-export type Result_1 = { 'Ok' : string } |
+export type Result_1 = { 'Ok' : Array<[string, ElementTree]> } |
   { 'Err' : string };
-export type Result_2 = { 'Ok' : string } |
+export type Result_2 = { 'Ok' : [FileNode, ElementTree] } |
   { 'Err' : string };
 export interface Tree {
   'root' : [] | [string],
@@ -56,7 +56,6 @@ export interface _SERVICE {
   'delete_file' : ActorMethod<[string], string>,
   'get_directories' : ActorMethod<[], [] | [FileDirectory]>,
   'get_directory' : ActorMethod<[string], [] | [FileDirectory]>,
-  'get_element_tree' : ActorMethod<[string], Result_1>,
   'get_element_trees' : ActorMethod<[], Result_1>,
   'get_file' : ActorMethod<[string], Result_2>,
   'get_profile' : ActorMethod<[], [] | [UserQuery]>,

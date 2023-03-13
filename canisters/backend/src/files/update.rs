@@ -5,16 +5,19 @@ use candid::{CandidType, Deserialize, Principal};
 use ic_cdk;
 use ic_kit::candid::candid_method;
 use ic_kit::macros::update;
+use ic_stable_memory::collections::vec::SVec;
+use ic_stable_memory::utils::ic_types::SPrincipal;
 use ic_stable_memory::{
     s, stable_memory_init, stable_memory_post_upgrade, stable_memory_pre_upgrade,
 };
-use ic_stable_memory::collections::vec::SVec;
-use ic_stable_memory::utils::ic_types::SPrincipal;
 use indexmap::IndexSet;
 use serde::Serialize;
 
 use shared::id::Id;
-use shared::schema::{EditorChange, EditorElement, ElementTree, FileDirectory, FileMode, FileNode, FileNodeCreate, FileNodeDelete, FileNodeMove, FileNodeUpdate};
+use shared::schema::{
+    EditorChange, EditorElement, ElementTree, FileDirectory, FileMode, FileNode, FileNodeCreate,
+    FileNodeDelete, FileNodeMove, FileNodeUpdate,
+};
 use shared::Tree;
 
 use crate::elements::types::ElementTrees;
@@ -25,7 +28,7 @@ use crate::utils::{Status, UpdateResponse};
 async fn dummy_data() -> ElementTree {
     let mut tree = Tree::new();
     let element = EditorElement {
-        id: Id::ic_new().await,
+        id: Id::ic_new().await.into(),
         tag: None,
         content: "".to_owned(),
         attrs: HashMap::new(),
@@ -33,11 +36,13 @@ async fn dummy_data() -> ElementTree {
     tree.root = Some(element.id);
     tree.vertices.insert(element.id, element);
     let mut default_element_tree = ElementTree {
-        id: Id::ic_new().await,
+        id: Id::ic_new().await.into(),
         elements: tree,
     };
     let root_id = default_element_tree.elements.root.unwrap();
-    let id: Id = Id::ic_new().await;
+    let id: Id = Id::ic_new().await.into();
+    ic_cdk::println!("---------------------------- {:#?}", &id);
+
     default_element_tree.elements.push_children(
         root_id,
         id.clone(),
@@ -47,7 +52,7 @@ async fn dummy_data() -> ElementTree {
             HashMap::from([("style".to_string(), "font-weight: bold;".to_string())]),
         ),
     );
-    let id: Id = Id::ic_new().await;
+    let id: Id = Id::ic_new().await.into();
     default_element_tree.elements.push_children(
         root_id,
         id,
@@ -55,7 +60,6 @@ async fn dummy_data() -> ElementTree {
     );
     return default_element_tree;
 }
-
 
 // async fn dummy_data() -> ElementTree {
 //     let mut default_element_tree = ElementTree{
@@ -86,11 +90,11 @@ async fn dummy_data() -> ElementTree {
 //     return default_element_tree;
 // }
 
-
 #[update]
 #[candid_method(update)]
 pub async fn create_file(data: String) -> String {
-    let mut create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();    let user = User::current();
+    let mut create_file_data = serde_json::from_str::<FileNodeCreate>(&data).unwrap();
+    let user = User::current();
     if user.is_none() {
         return "user not found".to_string();
     };
@@ -99,7 +103,8 @@ pub async fn create_file(data: String) -> String {
     let mut element_trees: ElementTrees = s!(ElementTrees);
     let new_element_tree = dummy_data().await;
     create_file_data.element_tree = Some(new_element_tree.id.clone());
-    let new_element_tree = HashMap::from_iter(vec![(create_file_data.id.clone(), new_element_tree)]);
+    let new_element_tree =
+        HashMap::from_iter(vec![(create_file_data.id.clone(), new_element_tree)]);
     element_trees.insert(user.clone().unwrap(), new_element_tree);
 
     if let Some(file_directory) = user_files.get_mut(&user.unwrap()) {
@@ -117,10 +122,8 @@ pub async fn create_file(data: String) -> String {
 
     // TODO creat files here.
     // element_trees.insert(user.clone().unwrap(), HashMap::from([(create_file_data.id, dummy_data().await)]));
-    s! { UserFiles = user_files}
-    ;
-    s! { ElementTrees = element_trees}
-    ;
+    s! { UserFiles = user_files};
+    s! { ElementTrees = element_trees};
     return "New file is created.".to_string();
 }
 
@@ -139,8 +142,7 @@ pub fn update_file(data: String) -> String {
             .vertices
             .insert(file_node.id, file_node.into());
     }
-    s! { UserFiles = user_files}
-    ;
+    s! { UserFiles = user_files};
     "file is updated.".to_string()
 }
 
@@ -165,8 +167,7 @@ pub fn delete_file(json_data: String) -> String {
         }
         file_directory.files.vertices.remove(&data.id);
     }
-    s! {UserFiles = user_files}
-    ;
+    s! {UserFiles = user_files};
     "File is deleted.".to_string()
 }
 
@@ -181,7 +182,8 @@ pub async fn group_update(data: String) -> Option<String> {
     for change in changes {
         match change {
             EditorChange::Create(data) => {
-                let element_tree: &mut ElementTree = element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
+                let element_tree: &mut ElementTree =
+                    element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 element_tree.elements.push_children(
                     data.parent_id.clone(),
                     data.id.clone(),
@@ -201,7 +203,8 @@ pub async fn group_update(data: String) -> Option<String> {
                 }
             }
             EditorChange::Update(data) => {
-                let element_tree: &mut ElementTree = element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
+                let element_tree: &mut ElementTree =
+                    element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 if let Some(element) = element_tree.elements.vertices.get_mut(&data.id) {
                     if let Some(text) = data.content {
                         element.content = text;
@@ -212,29 +215,30 @@ pub async fn group_update(data: String) -> Option<String> {
                 }
             }
             EditorChange::Delete(data) => {
-                let element_tree: &mut ElementTree = element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
+                let element_tree: &mut ElementTree =
+                    element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
                 element_tree.elements.remove(&data.id);
             } // EditorChange::MoveFile(data) => {
-            //     let adjacency = file_directory
-            //         .files
-            //         .adjacency
-            //         .get_mut(&data.parent_id)
-            //         .unwrap();
-            //     if adjacency.len() > 0 {
-            //         let index = adjacency.iter().position(|x| *x == data.id).unwrap();
-            //         adjacency.remove(index);
-            //     }
-            //     let mut parent_adjacency = file_directory
-            //         .files
-            //         .adjacency
-            //         .entry(data.new_parent_id)
-            //         .or_default();
-            //     parent_adjacency.push(data.id);
-            // }
+              //     let adjacency = file_directory
+              //         .files
+              //         .adjacency
+              //         .get_mut(&data.parent_id)
+              //         .unwrap();
+              //     if adjacency.len() > 0 {
+              //         let index = adjacency.iter().position(|x| *x == data.id).unwrap();
+              //         adjacency.remove(index);
+              //     }
+              //     let mut parent_adjacency = file_directory
+              //         .files
+              //         .adjacency
+              //         .entry(data.new_parent_id)
+              //         .or_default();
+              //     parent_adjacency.push(data.id);
+              // }
         }
     }
-    s! { UserFiles = user_files}
-    ;
+    s! { UserFiles = user_files};
+    s! {ElementTrees = element_trees};
     Some("Files are updated.".to_string())
 }
 
@@ -272,8 +276,7 @@ pub async fn create_directory() -> String {
         .insert(id.clone().into(), Vec::new());
     file_directory.files.root = Some(id.into());
     user_files.insert(current_user.unwrap(), file_directory.clone());
-    s! { UserFiles = user_files}
-    ;
+    s! { UserFiles = user_files};
     "New directory is created.".to_string()
 }
 
@@ -290,8 +293,7 @@ pub async fn rename_file(data: String) -> String {
             .get_mut(&json_data.id)
             .unwrap()
             .name = json_data.name.unwrap().clone();
-        s! { UserFiles = user_files}
-        ;
+        s! { UserFiles = user_files};
     };
     return "File is renamed".to_string();
 }
@@ -323,8 +325,7 @@ pub async fn change_directory(data: String) -> String {
             .entry(json_data.new_parent_id)
             .or_default();
         new_adjacency.push(json_data.id);
-        s! {UserFiles = user_files}
-        ;
+        s! {UserFiles = user_files};
     };
     return "File is moved".to_string();
 }
