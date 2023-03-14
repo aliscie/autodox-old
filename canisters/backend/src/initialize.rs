@@ -1,5 +1,6 @@
 use crate::files::types::MyStrings;
 use crate::users::types::{UserFiles, Users};
+use crate::smart_contract::types::{NftCollection};
 use crate::elements::types::{ElementTrees};
 use ic_cdk_macros::*;
 use ic_stable_memory::{
@@ -7,7 +8,7 @@ use ic_stable_memory::{
 };
 
 #[init]
-fn init() {
+pub fn init() {
     stable_memory_init(true, 0);
 
     // now, our stable variable will hold an SVec pointer instead of the the whole Vec as it was previously
@@ -15,4 +16,5 @@ fn init() {
     s!(Users = Users::new());
     s!(UserFiles = UserFiles::new());
     s!(ElementTrees = ElementTrees::new());
+    s!(NftCollection = NftCollection::new());
 }
