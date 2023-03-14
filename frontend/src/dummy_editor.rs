@@ -9,8 +9,6 @@ use uuid::Uuid;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{window, Element, Range};
 use yew::*;
-// use app::Editor;
-// pub use frontend::dummy_data::*;
 use shared::id::Id;
 use shared::schema::{
     EditorElement, EditorElementCreate, EditorElementUpdate, ElementTree, FileNode,
@@ -108,13 +106,13 @@ pub fn generate_dummy() -> ElementTree {
             remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
             sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
     );
-    let (elements, adj) = get_example_table();
-    for (id, children) in adj {
-        default_element_tree.elements.adjacency.insert(id, children);
-    }
-    for e in elements {
-        default_element_tree.elements.push_children(root, e.id, e)
-    }
+    // let (elements, adjacency) = get_example_table();
+    // for i in elements {
+    //     default_element_tree.elements.push_children(root,i.id, i);
+    // }
+    // for (id, children_id) in adjacency {
+    //     default_element_tree.elements.adjacency.insert(id, children_id);
+    // }
     default_element_tree
 }
 

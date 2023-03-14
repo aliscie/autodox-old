@@ -7,8 +7,8 @@ use std::rc::Rc;
 use yew::prelude::*;
 
 pub(crate) fn render<T>(tree: &ElementTree, start: Id) -> Html
-where
-    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
+    where
+        T: BaseComponent + BaseComponent<Properties=EditorElementProps>,
 {
     let map: Rc<RefCell<HashMap<Id, Html>>> = Rc::new(RefCell::new(HashMap::new()));
     for (id, node) in tree.elements.into_iter(start) {
@@ -17,8 +17,15 @@ where
             has_children = !children.is_empty();
         }
 
+        // let on_slash_event = on_slash_input(
+        //     event,
+        //     element_tree,
+        //     &node.id.clone(), // TODO this is how to get the id.
+        // );
+
         let html_node = html! {
             <T
+                // onkeydown={on_slash_input}
                 key = { id.to_string() }
                 node={node.clone()}>
                 if has_children {{

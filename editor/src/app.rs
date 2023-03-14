@@ -102,7 +102,7 @@ where
                 true
             }
             EditorMsg::SlashInput(event, range) => {
-                on_slash_input(event, range, Rc::make_mut(&mut self.element_tree));
+                // on_slash_input(event, range, Rc::make_mut(&mut self.element_tree));
                 true
             }
             EditorMsg::ContextMenuRender((e, items)) => {

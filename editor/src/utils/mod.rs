@@ -1,3 +1,6 @@
+mod constrector;
+pub use constrector::*;
+
 use std::{cell::RefCell, collections::HashMap, ops::Deref, rc::Rc};
 
 use shared::{
@@ -6,6 +9,7 @@ use shared::{
     schema::{EditorElement, ElementTree},
 };
 use uuid::Uuid;
+use wasm_bindgen::UnwrapThrowExt;
 use web_sys::{window, Range};
 use yew::prelude::*;
 use yewdux::prelude::*;
@@ -14,18 +18,11 @@ use crate::{plugins::DropDownItem, render::render};
 
 pub fn on_slash_input(
     event: DropDownItem,
-    range: Option<Range>,
+    // range: Option<Range>,
     element_tree: &mut ElementTree,
+    current_element: &Id,
 ) -> Option<()> {
-    // if no focused element is found we are selecting the root element as focused
-    let current_element = window()?
-        .document()?
-        .active_element()
-        .and_then(|f| f.id().parse::<Uuid>().ok())
-        .map(Id::from)
-        .or(element_tree.elements.root)?;
-    // log!(current_element.clone());
-    log!(&event.text.as_str()); // TODo on hit enter this return code instead of table?
+    // let current_element =  props.node.id.clone();
     match event.text.as_str() {
         "table" => {
             // TODO we should hav ea generic way to create elements without using event.text.as_str()
@@ -45,6 +42,25 @@ pub fn on_slash_input(
                     element_tree.elements.adjacency.insert(id, children_id);
                 }
             }
+        }
+        "code" => {
+            let id = Id::new();
+            let element = EditorElement {
+                id,
+                content: "E=mc^2".to_string(),
+                tag: None,
+                attrs: HashMap::from([("style".to_string(), "padding:3ps; background: darkgreen; color: tomato;".to_string())]),
+            };
+
+            element_tree
+                .elements
+                .adjacency
+                .get_mut(&current_element)
+                .map(|f| {
+                    f.push(element.id);
+                });
+            element_tree.elements.push_vertex(id, element);
+            // element_tree.elements.adjacency.insert(id, element.clone());
         }
         _ => {}
     }
