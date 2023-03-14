@@ -15,6 +15,7 @@ fn export_candid() -> String {
 mod tests {
     use super::*;
     use std::fs::write;
+    use backend::*;
 
     #[test]
     fn save_candid() {
@@ -22,9 +23,25 @@ mod tests {
     }
 
     #[test]
-    fn row_test() {
-        println!(">>>>>>>>>> row_test <<<<<<<<<");
+    fn test_queries() {
+        println!(">>>>>>>>>> test_queries <<<<<<<<<");
         init();
+
+        let mut backend = backend.unwrap();
+        let response = backend.get_element_trees();
+        assert_ne!(response, Err("No user found"));
+
+        let user = make_dummy_user();
+        let response = internet_idenity.login(user);
+        let response = backend.register();
+        let response = backend.get_element_trees();
+        assert_ne!(response, Err("User has no elements"));
+
+        nft_test();
+    }
+
+    fn nft_test() {
+        println!(">>>>>>>>>> row_test <<<<<<<<<");        
 
         let nft_u = create_nft(
             "0x1000".to_string(),
@@ -35,7 +52,11 @@ mod tests {
 
         assert_ne!(nft_u, None);
         let mut nft = nft_u.unwrap();
-        
+
+        // test get_nft_data
+        let nft1 = get_nft_data("0x1000".to_string());
+        assert_ne!(nft1, None);
+
         let row: Row = vec!["a".to_string(), "b".to_string()];
 
         nft.add_row(row.clone());
@@ -45,28 +66,6 @@ mod tests {
         assert_ne!(row.len(), 0);
 
         println!("{:?}", nft);
-
-        write("smart.did", export_candid()).expect("Write failed.");
-    }
-
-    //#[test]
-    fn create_nft_test() {
-        println!(">>>>>>>>>> create_nft_test <<<<<<<<<");
-        init();
-
-        let nft = create_nft(
-            "0x1000".to_string(),
-            "autodox_1".to_string(),
-            "image_01".to_string(),
-            "0x4000".to_string(),
-        );
-
-        assert_ne!(nft, None);
-        println!("{:?} ===================", nft.unwrap());
-
-        let nft1 = get_nft_data("0x1000".to_string());
-        
-        assert_ne!(nft1, None);        
     }
 
 }

@@ -1,0 +1,18 @@
+type Column = record { filters : vec Filter; name : text; formula : text };
+type Filter = record { name : text; formula : text };
+type NftData = record {
+  data : opt text;
+  name : opt text;
+  rows : vec vec text;
+  address : text;
+  owner_address : opt text;
+  created_time : opt nat64;
+  columns : vec Column;
+};
+service : {
+  create_nft : (text, text, text, text) -> (opt NftData);
+  find_update_nft_owner : (text, opt text) -> (bool);
+  get_nft_collection : () -> (vec NftData) query;
+  get_nft_data : (text) -> (opt NftData) query;
+  update_nft_owner : (NftData, opt text) -> (bool);
+}
