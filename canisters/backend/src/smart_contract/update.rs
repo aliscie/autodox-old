@@ -1,11 +1,13 @@
-use candid::candid_method;
-use ic_kit::macros::update;
+use candid::{candid_method, export_service};
+use ic_kit::macros::{query, update};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use ic_stable_memory::s;
 
-use crate::get_nft_data;
+use crate::{do_vecs_match, get_nft_data, get_nft_collection};
 use crate::{Column, NftCollection, NftData, Row};
+
+use crate::initialize::init;
 
 pub fn get_secs() -> u64 {
     SystemTime::now()
@@ -24,7 +26,13 @@ pub fn create_nft(
 ) -> Option<NftData> {
     let now = get_secs();
 
-    Some(NftData {
+    let found = get_nft_data(address.clone());
+
+    if found != None {
+        return found;
+    }
+
+    let nft: NftData = NftData {
         address,
         name: Some(name),
         data: Some(data),
@@ -32,7 +40,14 @@ pub fn create_nft(
         created_time: Some(now),
         rows: Vec::new(),
         columns: Vec::new(),
-    })
+    };
+
+    let mut nfts = s!(NftCollection);
+    nfts.push(nft.clone());
+    s! {NftCollection = nfts};
+    println!("collection={:?}", nfts);
+
+    Some(nft)
 }
 
 #[update]
@@ -54,11 +69,11 @@ pub fn find_update_nft_owner(address: String, owner_address: Option<String>) -> 
 }
 
 impl NftData {
-    fn find_row(mut self, row: Row) -> usize {
+    fn find_row(&mut self, row: Row) -> usize {
         let index = self
             .rows
             .iter()
-            .position(|r1| do_vecs_match::<String>(&r1, &row))
+            .position(|r1| do_vecs_match::<String>(r1, &row))
             .unwrap_or(0xFFFFFFFF);
 
         index
@@ -76,11 +91,11 @@ impl NftData {
         true
     }
 
-    fn find_column(mut self, column: Column) -> usize {
+    fn find_column(&mut self, column: Column) -> usize {
         let index = self
             .columns
             .iter()
-            .position(|c1| c1 == column)
+            .position(|c1| *c1 == column)
             .unwrap_or(0xFFFFFFFF);
 
         index
@@ -90,7 +105,7 @@ impl NftData {
         self.columns.push(column);
     }
 
-    pub fn delete_column(&mut self, column: Column) {
+    pub fn delete_column(&mut self, column: Column) -> bool {
         let idx = self.find_column(column);
         if idx == 0xFFFFFFF {
             return false;
@@ -98,4 +113,70 @@ impl NftData {
         self.columns.remove(idx);
         true
     }
+}
+
+#[query(name = "__get_candid_interface")]
+fn export_candid() -> String {
+    export_service!();
+    __export_service()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs::write;
+
+    #[test]
+    fn save_candid() {
+        write("smart.did", export_candid()).expect("Write failed.");
+    }
+
+    #[test]
+    fn row_test() {
+        println!(">>>>>>>>>> row_test <<<<<<<<<");
+        init();
+
+        let nft_u = create_nft(
+            "0x1000".to_string(),
+            "autodox_1".to_string(),
+            "image_01".to_string(),
+            "0x4000".to_string(),
+        );
+
+        assert_ne!(nft_u, None);
+        let mut nft = nft_u.unwrap();
+        
+        let row: Row = vec!["a".to_string(), "b".to_string()];
+
+        nft.add_row(row.clone());
+
+        println!("row {:?}", row);
+
+        assert_ne!(row.len(), 0);
+
+        println!("{:?}", nft);
+
+        write("smart.did", export_candid()).expect("Write failed.");
+    }
+
+    //#[test]
+    fn create_nft_test() {
+        println!(">>>>>>>>>> create_nft_test <<<<<<<<<");
+        init();
+
+        let nft = create_nft(
+            "0x1000".to_string(),
+            "autodox_1".to_string(),
+            "image_01".to_string(),
+            "0x4000".to_string(),
+        );
+
+        assert_ne!(nft, None);
+        println!("{:?} ===================", nft.unwrap());
+
+        let nft1 = get_nft_data("0x1000".to_string());
+        
+        assert_ne!(nft1, None);        
+    }
+
 }

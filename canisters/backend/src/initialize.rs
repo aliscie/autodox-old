@@ -8,7 +8,7 @@ use ic_stable_memory::{
 };
 
 #[init]
-fn init() {
+pub fn init() {
     stable_memory_init(true, 0);
 
     // now, our stable variable will hold an SVec pointer instead of the the whole Vec as it was previously
