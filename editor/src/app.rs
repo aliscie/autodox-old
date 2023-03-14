@@ -180,9 +180,9 @@ where
                 .exec_command_with_show_ui_and_value("InsertText", false, &event.value)
                 .unwrap();
         };
-        let slash_command = ctx
-            .link()
-            .callback(|(event, range)| EditorMsg::SlashInput(event, range));
+        // let slash_command = ctx
+        //     .link()
+        //     .callback(|(event, range)| EditorMsg::SlashInput(event, range, id));
         html! {
         <ContextProvider<GlobalEditorState> context = {global_state}>
             <span>
