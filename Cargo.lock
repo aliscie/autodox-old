@@ -5519,6 +5519,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a507befe795404456341dfab10cef66ead4c041f62b8b11bbb92bffe5d0953e0"
 
 [[package]]
+name = "smart_contract"
+version = "0.1.0"
+dependencies = [
+ "candid 0.7.18",
+ "ic-cdk 0.6.10",
+ "ic-cdk-macros",
+ "ic-kit",
+ "ic-stable-memory",
+ "indexmap",
+ "serde",
+ "serde_json",
+ "shared",
+ "speedy",
+]
+
+[[package]]
 name = "socket2"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
