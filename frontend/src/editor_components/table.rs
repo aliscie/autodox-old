@@ -37,15 +37,32 @@ pub fn Table(props: &Props) -> Html {
     ];
     let global_state = use_context::<GlobalEditorState>().expect("cannot access global state");
     let table_id = props.node.id.clone();
+
+    let add_row_callback = {
+        let global_state = global_state.clone();
+        let table_id = table_id.clone();
+        Callback::from(move |e: MouseEvent| {
+            let _ = add_row(&global_state, &table_id);
+        })
+    };
+    let add_col_callback = {
+        let global_state = global_state.clone();
+        let table_id = table_id.clone();
+        Callback::from(move |e: MouseEvent| {
+            let _ = add_col(&global_state, &table_id);
+        })
+    };
+
+
     let oncontextmenu = {
         let global_state = global_state.clone();
-        Callback::from(move |e: MouseEvent| {
+        Callback::from(move |mouse_event: MouseEvent| {
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <TableContextMenu event = {e.clone()} {table_id}/ >
+                    <ContextMenu items={vec![html!{<a onclick={add_row_callback.clone()}>{"add row"}</a>}, html!{<a onclick={add_col_callback.clone()}>{"add column"}</a>}]} event = {mouse_event.clone()}/ >
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((e, element))
+            global_state.render_context_menu.emit((mouse_event, element))
         })
     };
     let children = global_state
@@ -146,35 +163,22 @@ pub fn Table(props: &Props) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct TableContextMenuProps {
     event: MouseEvent,
-    table_id: Id,
+    // table_id: Id,
+    pub items: Vec<Html>,
 }
 
 #[function_component]
-pub fn TableContextMenu(props: &TableContextMenuProps) -> Html {
-    let global_state = use_context::<GlobalEditorState>().expect("cannot access global state");
-    let add_row_callback = {
-        let global_state = global_state.clone();
-        let table_id = props.table_id.clone();
-        Callback::from(move |e: MouseEvent| {
-            let _ = add_row(&global_state, &table_id);
-        })
-    };
-    let add_col_callback = {
-        let global_state = global_state.clone();
-        let table_id = props.table_id.clone();
-        Callback::from(move |e: MouseEvent| {
-            let _ = add_col(&global_state, &table_id);
-        })
-    };
+pub fn ContextMenu(props: &TableContextMenuProps) -> Html {
+
+
+    let x = props.event.page_x();
+    let y = props.event.page_y();
+    let style = format!("position: absolute; display : block; top:{}px; left:{}px;",&y, &x);
+
     html! {
-        <>
-        <button onclick = {add_row_callback}>
-        {"Add row!"}
-        </button>
-        <button onclick = {add_col_callback}>
-        {"Add Column!"}
-        </button>
-        </>
+        <div {style} class={"dropdown-content"}>
+        {props.items.clone()}
+        </div>
     }
 }
 

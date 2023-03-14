@@ -60,19 +60,19 @@ pub fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
     };
     let heading = EditorElement {
         id: Id::new(),
-        content: "".to_string(),
+        content: "heading".to_string(),
         attrs: HashMap::new(),
         tag: Some("thead".to_string()),
     };
     let heading_row = EditorElement {
         id: Id::new(),
-        content: "".to_string(),
+        content: "heading row".to_string(),
         attrs: HashMap::new(),
         tag: Some("tr".to_string()),
     };
     let company = EditorElement {
         id: Id::new(),
-        content: "Company".to_string(),
+        content: "company".to_string(),
         attrs: HashMap::new(),
         tag: Some("th".to_string()),
     };

@@ -108,6 +108,13 @@ pub fn generate_dummy() -> ElementTree {
             remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
             sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."#.to_string(), HashMap::new()),
     );
+    let (elements, adj) = get_example_table();
+    for (id, children) in adj {
+        default_element_tree.elements.adjacency.insert(id, children);
+    }
+    for e in elements {
+        default_element_tree.elements.push_children(root, e.id, e)
+    }
     default_element_tree
 }
 
