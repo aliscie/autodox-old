@@ -25,9 +25,6 @@ use initialize::*;
 
 pub mod custom_traits;
 
-// pub mod smart_contract;
-// pub use smart_contract::*;
-
 use shared::schema::*;
 
 // before upgrading the code of the canister (before deploying the app)

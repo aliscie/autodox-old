@@ -330,7 +330,7 @@ impl TryFrom<Object> for FileNode {
                 _ => None,
             }),
             file_mode: todo!(),
-            users_can_see: todo!(),
+            // users_can_see: todo!(),
         })
     }
 }

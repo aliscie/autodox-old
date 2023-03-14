@@ -2,8 +2,7 @@ use candid::candid_method;
 use ic_kit::macros::query;
 use ic_stable_memory::s;
 
-use crate::NftCollection;
-use crate::NftData;
+use crate::nft::{NftCollection, NftData};
 
 #[query]
 #[candid_method(query)]
