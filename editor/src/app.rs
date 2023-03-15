@@ -19,9 +19,7 @@ use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{
-    window, Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range,
-};
+use web_sys::{window, Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range, HtmlElement};
 use yew::html::{HasAllProps, HasProp, IntoPropValue};
 use yew::prelude::*;
 use yew::{function_component, html};
@@ -49,8 +47,8 @@ pub struct EditorElementProps {
 }
 
 pub struct Editor<T>
-where
-    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
+    where
+        T: BaseComponent + BaseComponent<Properties=EditorElementProps>,
 {
     element_tree: Rc<ElementTree>,
     editor_ref: NodeRef,
@@ -67,8 +65,8 @@ pub enum EditorMsg {
 }
 
 impl<T> Component for Editor<T>
-where
-    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
+    where
+        T: BaseComponent + BaseComponent<Properties=EditorElementProps>,
 {
     type Message = EditorMsg;
     type Properties = EditorProps;
@@ -102,7 +100,14 @@ where
                 true
             }
             EditorMsg::SlashInput(event, range) => {
-                on_slash_input(event, range, Rc::make_mut(&mut self.element_tree));
+                let id = on_slash_input(event, range, Rc::make_mut(&mut self.element_tree));
+                // TODO
+                //     if let Some(id) = id {
+                //         let item = window().unwrap_throw().document().unwrap().get_element_by_id(&id.to_string()).unwrap();
+                //         if let Ok(html_element) = item.dyn_into::<HtmlElement>() {
+                //             html_element.focus().unwrap();
+                //         }
+                //     }
                 true
             }
             EditorMsg::ContextMenuRender((e, items)) => {
@@ -144,7 +149,7 @@ where
                 .as_ref()
                 .unchecked_ref(),
         )
-        .unwrap();
+            .unwrap();
         mutation_observer.observe_with_options(
             &self.editor_ref.get().unwrap(),
             MutationObserverInit::new()
@@ -182,7 +187,9 @@ where
         };
         let slash_command = ctx
             .link()
-            .callback(|(event, range)| EditorMsg::SlashInput(event, range));
+            .callback(|(event, range)| {
+                EditorMsg::SlashInput(event, range)
+            });
         html! {
         <ContextProvider<GlobalEditorState> context = {global_state}>
             <span>

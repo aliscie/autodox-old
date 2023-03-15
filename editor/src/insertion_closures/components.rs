@@ -46,5 +46,11 @@ pub fn components() -> CommandItems {
             tag: Some("b".to_string()),
             attrs: HashMap::new(),
         },
+        DropDownItem {
+            value: "title".to_string(),
+            text: "title".to_string(),
+            tag: Some("h1".to_string()),
+            attrs: HashMap::new(),
+        },
     ]
 }
