@@ -3,12 +3,14 @@ use shared::id::Id;
 use shared::schema::{EditorChange, EditorElementCreate};
 use std::collections::HashMap;
 
-pub fn add_col(global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
+pub fn add_col(id: Id, global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
     let root_table = global_state
         .element_tree
         .elements
         .adjacency
         .get(&table_id)?;
+    // TODO
+    //     based on the id insert the new column at to the right side of the clicked cell.
 
     // TODO Note: You don't need this
     //     let thead_row = root_table

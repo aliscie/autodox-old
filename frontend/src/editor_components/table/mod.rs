@@ -16,12 +16,13 @@ use editor::plugins::Position;
 use shared::id::Id;
 use shared::schema::{EditorChange, EditorElement};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{MouseEvent, window};
+use web_sys::{HtmlInputElement, MouseEvent, window};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yew_hooks::prelude::*;
 
 use editor::GlobalEditorState;
+use shared::log;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -56,21 +57,27 @@ pub fn Table(props: &Props) -> Html {
             let _ = add_row::add_row(&global_state, &table_id);
         })
     };
-    let add_col_callback = {
-        let global_state = global_state.clone();
-        let table_id = table_id.clone();
-        Callback::from(move |e: MouseEvent| {
-            let _ = add_column::add_col(&global_state, &table_id);
-        })
-    };
 
 
     let oncontextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
+            let curr: HtmlInputElement = mouse_event.target_unchecked_into();
+            let id = curr.id();
+            let id: Id = Id::try_from(id).unwrap_throw();
+
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <ContextMenu items={vec![html!{<a onclick={add_row_callback.clone()}>{"add row"}</a>}, html!{<a onclick={add_col_callback.clone()}>{"add column"}</a>}]} event = {mouse_event.clone()}/ >
+                    <ContextMenu items={vec![html!{<a onclick={add_row_callback.clone()}>{"add row"}</a>}, html!{<a
+                    onclick={
+                        let global_state = global_state.clone();
+                        let table_id = table_id.clone();
+                        Callback::from(move |e: MouseEvent| {
+                            let _ = add_column::add_col(id, &global_state, &table_id);
+                        })
+                    }
+
+                    >{"add column"}</a>}]} event = {mouse_event.clone()}/ >
                 </ContextProvider<GlobalEditorState>>
             };
             global_state.render_context_menu.emit((mouse_event, element))
@@ -107,7 +114,8 @@ pub fn Table(props: &Props) -> Html {
                                 if let Some(el) =
                                     global_state.element_tree.elements.vertices.get(element)
                                 {
-                                    return html! { <td id = {el.id.to_string()}>{el.content.clone()}</td> };
+                                    return html! { <td
+                                        id = {el.id.to_string()}>{el.content.clone()}</td> };
                                 }
                                 html! {}
                             })
@@ -145,7 +153,9 @@ pub fn Table(props: &Props) -> Html {
                     .map(|table_cell| {
                         if let Some(table_cell) = global_state.element_tree.elements.vertices.get(table_cell) {
                             return html! {
-                                <td id = { table_cell.id.to_string()}> {table_cell.content.clone()}</td>
+                                <td
+                                oncontextmenu={oncontextmenu.clone()}
+                                id = { table_cell.id.to_string()}> {table_cell.content.clone()}</td>
                             };
                         }
                         html! {}
@@ -162,7 +172,7 @@ pub fn Table(props: &Props) -> Html {
         .collect::<Html>();
     html! {
     <>
-        <table id = {props.node.id.to_string()} {oncontextmenu}>
+        <table id = {props.node.id.to_string()}>
             {&props.node.content}
             {thead}
             {tbody}
