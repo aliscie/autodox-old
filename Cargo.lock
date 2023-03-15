@@ -375,7 +375,7 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 name = "backend"
 version = "0.1.0"
 dependencies = [
- "candid 0.8.4",
+ "candid 0.7.18",
  "ic-cdk 0.6.10",
  "ic-cdk-macros",
  "ic-kit",
@@ -1551,8 +1551,10 @@ version = "0.1.0"
 dependencies = [
  "emojis",
  "fuzzy-matcher",
+ "gloo 0.4.2",
  "gloo-timers",
  "html-minifier",
+ "indexmap",
  "js-sys",
  "markup5ever_rcdom",
  "serde",
@@ -5515,6 +5517,22 @@ name = "smallvec"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a507befe795404456341dfab10cef66ead4c041f62b8b11bbb92bffe5d0953e0"
+
+[[package]]
+name = "smart_contract"
+version = "0.1.0"
+dependencies = [
+ "candid 0.7.18",
+ "ic-cdk 0.6.10",
+ "ic-cdk-macros",
+ "ic-kit",
+ "ic-stable-memory",
+ "indexmap",
+ "serde",
+ "serde_json",
+ "shared",
+ "speedy",
+]
 
 [[package]]
 name = "socket2"

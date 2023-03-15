@@ -5,6 +5,11 @@
       "package": "backend",
       "type": "rust"
     },
+    "smart_contract": {
+      "candid": "canisters/smart_contract/smart_contract.did",
+      "package": "smart_contract",
+      "type": "rust"
+    },
     "internet_identity": {
       "type": "custom",
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",

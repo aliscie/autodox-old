@@ -1,6 +1,7 @@
 #selection-popper  .btn {
     color: rgb(var(--text-color));
     background: rgb(var(--primary-background));
+    backdrop-filter: blur(100px);
     width: 25px;
 }
 

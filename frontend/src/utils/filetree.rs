@@ -1,5 +1,6 @@
 use crate::router::Route;
 use crate::specific_components::FileComponent;
+use crate::utils::DeviceInfo;
 use gloo::console::log;
 use indexmap::IndexSet;
 use shared::id::Id;
@@ -17,7 +18,6 @@ use yew::{html, Html};
 use yew_hooks::{use_bool_toggle, use_toggle};
 use yew_router::prelude::use_navigator;
 use yewdux::prelude::*;
-use crate::utils::DeviceInfo;
 
 #[function_component]
 pub fn FileTree() -> Html {
@@ -81,7 +81,7 @@ fn RenderFileElement(props: &RenderFileElementProps) -> Html {
         let element: Element = e.target_unchecked_into();
         history.push(&Route::File {
             id: element.id().parse().unwrap(),
-            auther: address.clone(),
+            author: address.clone(),
         });
     });
 

@@ -1,4 +1,5 @@
 export const idlFactory = ({ IDL }) => {
+  const Result = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const FileMode = IDL.Variant({
     'Private' : IDL.Null,
     'Public' : IDL.Null,
@@ -20,7 +21,8 @@ export const idlFactory = ({ IDL }) => {
     'files' : Tree,
     'name' : IDL.Text,
   });
-  const ElementTree = IDL.Record({ 'id' : IDL.Text, 'elements' : Tree });
+  const Result_1 = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
+  const Result_2 = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text });
   const UserQuery = IDL.Record({
     'username' : IDL.Opt(IDL.Text),
     'birthdate' : IDL.Opt(IDL.Text),
@@ -34,25 +36,14 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     'change_directory' : IDL.Func([IDL.Text], [IDL.Text], []),
     'create_directory' : IDL.Func([], [IDL.Text], []),
-    'create_element_tree' : IDL.Func(
-        [IDL.Text],
-        [IDL.Variant({ 'Ok' : IDL.Text, 'Err' : IDL.Text })],
-        [],
-      ),
+    'create_element_tree' : IDL.Func([IDL.Text], [Result], []),
     'create_file' : IDL.Func([IDL.Text], [IDL.Text], []),
     'delete_file' : IDL.Func([IDL.Text], [IDL.Text], []),
     'get_directories' : IDL.Func([], [IDL.Opt(FileDirectory)], ['query']),
     'get_directory' : IDL.Func([IDL.Text], [IDL.Opt(FileDirectory)], ['query']),
-    'get_element_trees' : IDL.Func(
-        [],
-        [IDL.Opt(IDL.Tuple(IDL.Text, ElementTree))],
-        ['query'],
-      ),
-    'get_file' : IDL.Func(
-        [IDL.Text],
-        [IDL.Opt(IDL.Tuple(FileNode, ElementTree))],
-        ['query'],
-      ),
+    'get_element_tree' : IDL.Func([IDL.Text], [Result_1], ['query']),
+    'get_element_trees' : IDL.Func([], [Result_1], ['query']),
+    'get_file' : IDL.Func([IDL.Text], [Result_2], ['query']),
     'get_profile' : IDL.Func([], [IDL.Opt(UserQuery)], ['query']),
     'get_users' : IDL.Func([], [IDL.Vec(UserQuery)], ['query']),
     'group_update' : IDL.Func([IDL.Text], [IDL.Opt(IDL.Text)], []),
