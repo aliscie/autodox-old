@@ -7,7 +7,9 @@
         "clean": "rimraf dist pkg target",
         "wasm": "RUSTFLAGS=\"$RUSTFLAGS -A unused\" wasm-pack build . --target web --dev -- --features \"web\"",
         "wasm:watch": "RUSTFLAGS=\"$RUSTFLAGS -A unused\" cargo watch -i .gitignore -i \"pkg/*\" -i \"dist/*\" -s 'wasm-pack build . --target web --dev -- --features \"web\"'",
+        "wasm:editor": "RUSTFLAGS=\"$RUSTFLAGS -A unused\" wasm-pack build . --target web --dev -- --features \"editor\"",
         "dev": "yarn wasm && vite",
+        "dev:editor" : "yarn wasm:editor && vite",
         "dev:watch": "concurrently \"yarn wasm:watch\" \"vite\"",
         "build": "vite build"
     },

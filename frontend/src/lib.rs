@@ -18,11 +18,13 @@ use dummy_editor::DummyEditor;
 use app::App;
 use wasm_bindgen::prelude::*;
 
-// #[wasm_bindgen]
-// pub fn run() {
-//    yew::Renderer::<App>::new().render();
-// }
+#[cfg(not(feature = "editor"))]
+#[wasm_bindgen]
+pub fn run() {
+    yew::Renderer::<App>::new().render();
+}
 
+#[cfg(feature = "editor")]
 #[wasm_bindgen]
 pub fn run() {
     yew::Renderer::<dummy_editor::DummyEditor>::new().render();
