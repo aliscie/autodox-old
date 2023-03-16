@@ -1,7 +1,6 @@
 mod add_row;
 
 use add_row::*;
-
 mod add_column;
 
 use add_column::*;
@@ -16,7 +15,7 @@ use editor::plugins::Position;
 use shared::id::Id;
 use shared::schema::{EditorChange, EditorElement};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{HtmlInputElement, MouseEvent, window};
+use web_sys::{HtmlTableCellElement, HtmlInputElement, MouseEvent, window};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yew_hooks::prelude::*;
@@ -62,8 +61,10 @@ pub fn Table(props: &Props) -> Html {
     let oncontextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
-            let curr: HtmlInputElement = mouse_event.target_unchecked_into();
+            let curr: HtmlTableCellElement = mouse_event.target_unchecked_into();
             let id = curr.id();
+            let index =  curr.cell_index();
+            log!(index);
             let id: Id = Id::try_from(id).unwrap_throw();
 
             let element = html! {
@@ -73,7 +74,7 @@ pub fn Table(props: &Props) -> Html {
                         let global_state = global_state.clone();
                         let table_id = table_id.clone();
                         Callback::from(move |e: MouseEvent| {
-                            let _ = add_column::add_col(id, &global_state, &table_id);
+                            let _ = add_column::add_col(index, &global_state, &table_id);
                         })
                     }
 

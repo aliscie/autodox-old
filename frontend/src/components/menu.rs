@@ -68,7 +68,7 @@ pub fn PopOverMenu(props: &MenuProps) -> Html {
     return html! {
         <div
         ref={popover}
-        style={format!("{}", display)}
+        style={format!("position: absolute; {}", display)}
         class={"dropdown-content"}
         >
             {props.items.clone()}

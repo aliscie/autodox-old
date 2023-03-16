@@ -63,7 +63,7 @@
     min-width: 100px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 400;
-    position: absolute;
+
     transition: 0.2s;
     animation-duration: 0.2s;
     animation-fill-mode: both;
