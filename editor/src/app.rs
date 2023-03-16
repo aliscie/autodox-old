@@ -19,7 +19,10 @@ use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::{window, Element, MutationObserver, MutationObserverInit, MutationRecord, Node, Range, HtmlElement};
+use web_sys::{
+    window, Element, HtmlElement, MutationObserver, MutationObserverInit, MutationRecord, Node,
+    Range,
+};
 use yew::html::{HasAllProps, HasProp, IntoPropValue};
 use yew::prelude::*;
 use yew::{function_component, html};
@@ -47,8 +50,8 @@ pub struct EditorElementProps {
 }
 
 pub struct Editor<T>
-    where
-        T: BaseComponent + BaseComponent<Properties=EditorElementProps>,
+where
+    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
 {
     element_tree: Rc<ElementTree>,
     editor_ref: NodeRef,
@@ -65,8 +68,8 @@ pub enum EditorMsg {
 }
 
 impl<T> Component for Editor<T>
-    where
-        T: BaseComponent + BaseComponent<Properties=EditorElementProps>,
+where
+    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
 {
     type Message = EditorMsg;
     type Properties = EditorProps;
@@ -100,7 +103,15 @@ impl<T> Component for Editor<T>
                 true
             }
             EditorMsg::SlashInput(event, range) => {
-                let id = on_slash_input(event, range, Rc::make_mut(&mut self.element_tree));
+                if let Some((id, changes)) =
+                    on_slash_input(event, range, self.element_tree.as_ref())
+                {
+                    for i in changes {
+                        Rc::make_mut(&mut self.element_tree).mutate_tree(&i);
+                        ctx.props().onchange.emit(i);
+                    }
+                    return true;
+                }
                 // TODO
                 //     if let Some(id) = id {
                 //         let item = window().unwrap_throw().document().unwrap().get_element_by_id(&id.to_string()).unwrap();
@@ -108,7 +119,7 @@ impl<T> Component for Editor<T>
                 //             html_element.focus().unwrap();
                 //         }
                 //     }
-                true
+                false
             }
             EditorMsg::ContextMenuRender((e, items)) => {
                 ctx.props().render_context_menu.emit((e, items));
@@ -149,7 +160,7 @@ impl<T> Component for Editor<T>
                 .as_ref()
                 .unchecked_ref(),
         )
-            .unwrap();
+        .unwrap();
         mutation_observer.observe_with_options(
             &self.editor_ref.get().unwrap(),
             MutationObserverInit::new()
@@ -187,9 +198,7 @@ impl<T> Component for Editor<T>
         };
         let slash_command = ctx
             .link()
-            .callback(|(event, range)| {
-                EditorMsg::SlashInput(event, range)
-            });
+            .callback(|(event, range)| EditorMsg::SlashInput(event, range));
         html! {
         <ContextProvider<GlobalEditorState> context = {global_state}>
             <span>

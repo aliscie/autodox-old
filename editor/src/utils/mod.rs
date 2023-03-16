@@ -3,10 +3,10 @@ use std::{cell::RefCell, collections::HashMap, ops::Deref, rc::Rc};
 use shared::{
     id::Id,
     log,
-    schema::{EditorElement, ElementTree},
+    schema::{EditorChange, EditorElement, EditorElementCreate, ElementTree},
 };
 use uuid::Uuid;
-use web_sys::{window, Range, HtmlElement};
+use web_sys::{window, HtmlElement, Range};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
@@ -16,8 +16,8 @@ use wasm_bindgen::JsCast;
 pub fn on_slash_input(
     event: DropDownItem,
     range: Option<Range>,
-    element_tree: &mut ElementTree,
-) -> Option<Id> {
+    element_tree: &ElementTree,
+) -> Option<(Id, Vec<EditorChange>)> {
     // if no focused element is found we are selecting the root element as focused
     let current_element = window()?
         .document()?
@@ -28,91 +28,87 @@ pub fn on_slash_input(
     // log!(current_element.clone());
     log!(&event.text.as_str()); // TODo on hit enter this return code instead of table?
     let id = Id::new();
+    let mut changes: Vec<EditorChange> = Vec::new();
     match event.text.as_str() {
         "table" => {
             // TODO we should hav ea generic way to create elements without using event.text.as_str()
             let (elements, adjacency) = get_example_table();
-            {
-                element_tree
-                    .elements
-                    .adjacency
-                    .get_mut(&current_element)
-                    .map(|f| {
-                        f.push(elements[0].id.clone());
-                    });
-                for i in elements.clone() {
-                    element_tree.elements.push_vertex(i.id, i);
-                }
-                for (id, children_id) in adjacency {
-                    element_tree.elements.adjacency.insert(id, children_id);
-                }
+            for i in elements {
+                let parent_id = adjacency
+                    .iter()
+                    .find(|(id, children)| {
+                        for j in *children {
+                            if *j == i.id {
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                    .map(|(id, children)| id);
+                changes.push(EditorChange::Create(EditorElementCreate {
+                    id: i.id,
+                    content: i.content,
+                    attrs: i.attrs,
+                    tag: i.tag,
+                    tree_id: element_tree.id,
+                    parent_id: *parent_id.unwrap_or(&current_element),
+                    children: adjacency.get(&i.id).cloned(),
+                    prev_element_id: None,
+                }));
             }
-            return Some(elements[0].id);
+            return Some((id, changes));
         }
 
         "code" => {
-            let element = EditorElement {
+            changes.push(EditorChange::Create(EditorElementCreate {
                 id,
                 content: "E=mc^2".to_string(),
                 tag: None,
-                attrs: HashMap::from([("style".to_string(), "padding:3ps; background: darkgreen; color: tomato;".to_string())]),
-            };
-
-            element_tree
-                .elements
-                .adjacency
-                .get_mut(&current_element)
-                .map(|f| {
-                    f.push(element.id);
-                });
-            element_tree.elements.push_vertex(id, element);
-            // element_tree.elements.adjacency.insert(id, element.clone());
-            return Some(id);
+                attrs: HashMap::from([(
+                    "style".to_string(),
+                    "padding:3ps; background: darkgreen; color: tomato;".to_string(),
+                )]),
+                tree_id: element_tree.id,
+                parent_id: current_element,
+                children: None,
+                prev_element_id: None,
+            }));
+            return Some((id, changes));
         }
         "title" => {
-            let element = EditorElement {
+            changes.push(EditorChange::Create(EditorElementCreate {
                 id,
                 content: "title is here.".to_string(),
                 tag: Some("h1".to_string()),
                 attrs: HashMap::new(),
-            };
-            element_tree
-                .elements
-                .adjacency
-                .get_mut(&current_element)
-                .map(|f| {
-                    f.push(element.id);
-                });
-            element_tree.elements.push_vertex(id, element);
-            // element_tree.elements.adjacency.insert(id, element.clone());
-            return Some(id);
+                tree_id: element_tree.id,
+                parent_id: current_element,
+                children: None,
+                prev_element_id: None,
+            }));
+            return Some((id, changes));
         }
 
         "image" => {
-            let element = EditorElement {
+            changes.push(EditorChange::Create(EditorElementCreate {
                 id,
                 content: "".to_string(),
                 tag: Some("img".to_string()),
-                attrs: HashMap::from([("src".to_string(), "https://picsum.photos/200".to_string()), ("style".to_string(), "float: left; width:100;".to_string())]),
-            };
-            element_tree
-                .elements
-                .adjacency
-                .get_mut(&current_element)
-                .map(|f| {
-                    f.push(element.id);
-                });
-            element_tree.elements.push_vertex(id, element);
-            // element_tree.elements.adjacency.insert(id, element.clone());
-            return Some(id);
+                attrs: HashMap::from([
+                    ("src".to_string(), "https://picsum.photos/200".to_string()),
+                    ("style".to_string(), "float: left; width:100;".to_string()),
+                ]),
+                tree_id: element_tree.id,
+                parent_id: current_element,
+                children: None,
+                prev_element_id: None,
+            }));
+            return Some((id, changes));
         }
         _ => {}
     }
-
-
     None
 }
-
 
 pub fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
     let root_table = EditorElement {

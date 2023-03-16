@@ -1,15 +1,15 @@
-use std::collections::VecDeque;
 use serde::{Deserialize, Serialize};
+use shared::log;
+use shared::schema::EditorChange;
+use std::collections::VecDeque;
 use wasm_bindgen::prelude::Closure;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
 use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use shared::schema::EditorChange;
-use shared::log;
-use wasm_bindgen_futures::spawn_local;
 
 // use shared::{invoke, log};
 
@@ -30,7 +30,6 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
     let (changes, dispatch) = use_store::<UseChangeHandle>();
     let is_saved = changes.changes.is_empty();
 
-
     let onclick = {
         let dispatch = dispatch.clone();
         Callback::from(move |e: MouseEvent| {
@@ -46,7 +45,9 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
             let dispatch = dispatch.clone();
             spawn_local(async move {
                 let input_data = serde_json::to_string(&changes).unwrap_throw();
-                let res = backend::call_ic("group_update".to_string(), input_data.to_string()).await;
+                log!(&input_data);
+                let res =
+                    backend::call_ic("group_update".to_string(), input_data.to_string()).await;
                 log!("group is saved");
                 log!(&res);
                 // if res.is_ok() {

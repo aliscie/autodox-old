@@ -86,5 +86,6 @@ features = [
 
 [features]
 web = []
+editor = ["web"]
 # [dev-dependencies]
 # colored = "2.0.0"
