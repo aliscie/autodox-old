@@ -9,6 +9,11 @@ input, select {
     color: var(--text-color);
 }
 
+button {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
 
 @property --rotate {
     syntax: "<angle>";
@@ -308,7 +313,7 @@ h2 {
     backdrop-filter: blur(30px);
     min-width: 100px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 400
+    z-index: 400;
     position: absolute;
     transition: 0.2s;
     animation-duration: 0.2s;

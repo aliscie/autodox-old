@@ -79,6 +79,7 @@
     /*max-width: 80%;*/
     padding-bottom: 30vh;
     transition: 0.3s;
+    width: 100%;
 }
 
 @media (max-width: 730px) {
