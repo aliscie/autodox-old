@@ -44,7 +44,7 @@ export const get_actor = async () => {
     loading = true
 
     if (!backendActor) {
-        if (import.meta.env.VITE_USE_WALLET) {
+        if (import.meta.env.VITE_USE_WALLET == "true") {
             try {
                 if (!(await is_logged())) {
                     await plug.requestConnect({
@@ -61,7 +61,7 @@ export const get_actor = async () => {
                 return
             }
 
-            backendActor = await plug.createActor({ canisterId, interfaceFactory: idlFactory, agent: plug.agent });
+            backendActor = await plug.createActor({canisterId, interfaceFactory: idlFactory, agent: plug.agent});
         } else {
             const authClient = await AuthClient.create();
             const identity = await authClient.getIdentity();
@@ -84,7 +84,7 @@ export async function identify() {
         return authClient.getIdentity();
     }
     let identityProvider = "https://identity.ic0.app/#authorize";
-    if (import.meta.env.VITE_DFX_NETWORK != "ic") {
+    if (import.meta.env.VITE_USE_WALLET == "true") {
         identityProvider = `http://${import.meta.env.VITE_IDENTITY_PROVIDER_ID}.localhost:8510/#authorize`
     }
     return await authClient.login({
@@ -184,7 +184,7 @@ export async function call_ic_np_raw(method) { // np: no parameter
     console.log('call_ic_np_raw: ', method)
     let actor = await get_actor();
     let res = await actor[method]()
-    console.log(method+' call_ic_np_raw res: ', res)
+    console.log(method + ' call_ic_np_raw res: ', res)
     return res;
 }
 
