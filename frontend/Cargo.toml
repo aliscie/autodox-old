@@ -48,6 +48,7 @@ dotenv = "0.15.0"
 gloo = "0.8.0"
 blob = "0.3.0"
 cargo-watch = "8.3.0"
+mexprp = "0.1.0"
 
 [dependencies.web-sys]
 version = "0.3.60"

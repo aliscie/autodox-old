@@ -55,12 +55,6 @@ pub fn app() -> Html {
         // history.push(Route::File { id: market_page });
     });
 
-    // let on_create_file: Callback<KeyboardEvent> = Callback::from(move |_e: KeyboardEvent| {
-    //     let input: HtmlInputElement = _e.target_unchecked_into();
-    //     let value: String = input.value();
-    //
-    //     input.class_list().toggle("tool").unwrap();
-    // });
 
     let on_create_file: Callback<KeyboardEvent> = dispatch_file_directory
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
@@ -131,8 +125,8 @@ pub fn app() -> Html {
         Callback::from(move |(e, items): (MouseEvent, Html)| {
             e.prevent_default();
             context_menu_position.set(Some(Position {
-                x: e.x().into(),
-                y: e.y().into(),
+                x: e.page_x().into(),
+                y: e.page_y().into(),
             }));
             context_menu_items.set(items);
         })
