@@ -8,7 +8,7 @@ use super::Position;
 
 #[derive(Properties, PartialEq)]
 pub struct ContextMenuProps {
-    pub position: Option<Position>,
+    pub position: Option<MouseEvent>,
     #[prop_or_default]
     pub children: Children,
 }
@@ -18,7 +18,7 @@ pub enum ContextMenuMessage {
 }
 
 pub struct ContextMenu {
-    pub position: Option<Position>,
+    pub position: Option<MouseEvent>,
     pub menu_ref: NodeRef,
     pub listener: Option<EventListener>,
 }
@@ -46,9 +46,20 @@ impl Component for ContextMenu {
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             ContextMenuMessage::Click(event) => {
-                if self.position.is_some() {
-                    self.position = None;
-                    return true;
+                let element = self.menu_ref.cast::<Node>();
+                let clicked_element = ctx
+                    .props()
+                    .position
+                    .clone()
+                    .map(|p| p.target_unchecked_into::<Element>());
+                let target = &event.target_unchecked_into::<Element>();
+                let target_node = &event.target_unchecked_into::<Node>();
+                let mut is_click_on: bool = element.clone().unwrap().contains(Some(target_node));
+                if let Some(element) = &clicked_element.clone() {
+                    if element != target && !is_click_on {
+                        self.position = None;
+                        return true;
+                    }
                 }
                 false
             }
@@ -74,7 +85,7 @@ impl Component for ContextMenu {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let style = match &self.position {
-            Some(p) => format!("display: block; top : {}px; left:{}px;", p.y, p.x),
+            Some(p) => format!("display: block; top : {}px; left:{}px;", p.y(), p.x()),
             None => "display: None;".to_string(),
         };
         html! {

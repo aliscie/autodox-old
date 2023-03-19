@@ -9,15 +9,15 @@ use add_column::*;
 
 mod table_context_menu;
 
-use table_context_menu::*;
 use shared::schema::EditorElementCreate;
 use std::collections::HashMap;
+use table_context_menu::*;
 
 use editor::plugins::Position;
 use shared::id::Id;
 use shared::schema::{EditorChange, EditorElement};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{HtmlTableCellElement, HtmlInputElement, MouseEvent, window};
+use web_sys::{window, HtmlInputElement, HtmlTableCellElement, MouseEvent};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yew_hooks::prelude::*;
@@ -59,7 +59,6 @@ pub fn Table(props: &Props) -> Html {
         })
     };
 
-
     let oncontextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
@@ -71,52 +70,55 @@ pub fn Table(props: &Props) -> Html {
 
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <ContextMenu items={vec![html!{<a onclick={add_row_callback.clone()}>{"add row"}</a>}, html!{<a
-                    onclick={
-                        let global_state = global_state.clone();
-                        let table_id = table_id.clone();
-                        Callback::from(move |e: MouseEvent| {
-                            let _ = add_column::add_col(index, &global_state, &table_id);
-                        })
-                    }
-
-                    >{"add column"}</a>}]} event = {mouse_event.clone()}/ >
+                    <TableContextMenu event = {mouse_event.clone()} >
+                        <a onclick={add_row_callback.clone()}>{"add row"}</a>
+                        <a onclick={
+                            let global_state = global_state.clone();
+                            let table_id = table_id.clone();
+                            Callback::from(move |e: MouseEvent| {
+                                let _ = add_column::add_col(index, &global_state, &table_id);
+                        })}>{"add column"}</a>
+                    </TableContextMenu>
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((mouse_event, element))
+            global_state
+                .render_context_menu
+                .emit((mouse_event, element))
         })
     };
-
 
     let on_column_contextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
-
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <ContextMenu items={vec![
-                    html!{<a>{"add formula"}</a>},
-                    html!{<a>{"add filter"}</a>},]} event = {mouse_event.clone()}/ >
+                    <TableContextMenu event = {mouse_event.clone()}>
+                        <a>{"add formula"}</a>
+                        <a>{"add filter"}</a>
+                    </TableContextMenu>
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((mouse_event, element))
+            global_state
+                .render_context_menu
+                .emit((mouse_event, element))
         })
     };
-
 
     let on_filter_contextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
-
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <ContextMenu items={vec![
-                    html!{<a>{"filter one"}</a>},
-                    html!{<a>{"filter two"}</a>},
-                    html!{<a>{"add filter"}</a>},]} event = {mouse_event.clone()}/ >
+                    <TableContextMenu event = {mouse_event.clone()}>
+                        <a>{"filter one"}</a>
+                        <a>{"filter two"}</a>
+                        <a>{"add filter"}</a>
+                    </TableContextMenu>
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((mouse_event, element))
+            global_state
+                .render_context_menu
+                .emit((mouse_event, element))
         })
     };
     let children = global_state
@@ -151,7 +153,7 @@ pub fn Table(props: &Props) -> Html {
                                     global_state.element_tree.elements.vertices.get(element)
                                 {
                                     return html! { <td
-                                        id = {el.id.to_string()}>{el.content.clone()}</td> };
+                                    id = {el.id.to_string()}>{el.content.clone()}</td> };
                                 }
                                 html! {}
                             })
@@ -189,7 +191,9 @@ pub fn Table(props: &Props) -> Html {
                     .unwrap_or(&Vec::new())
                     .into_iter()
                     .map(|table_cell| {
-                        if let Some(table_cell) = global_state.element_tree.elements.vertices.get(table_cell) {
+                        if let Some(table_cell) =
+                            global_state.element_tree.elements.vertices.get(table_cell)
+                        {
                             return html! {
                                 <td
                                 oncontextmenu={oncontextmenu.clone()}
@@ -197,7 +201,8 @@ pub fn Table(props: &Props) -> Html {
                             };
                         }
                         html! {}
-                    }).collect::<Html>();
+                    })
+                    .collect::<Html>();
                 return html! {
                     <tr id = { el.id.to_string()}>
                         {el.content.clone()}
@@ -229,14 +234,9 @@ pub fn Table(props: &Props) -> Html {
     //     _filter_menu_position.set(Some(e));
     // });
 
-
-
-
     // let filter_items: Vec<Html> = vec![
     //     html! {<a><i class="fa-solid fa-right-from-bracket"></i>{"+ Add filter"}</a>},
     // ];
-
-
 
     // let _view_menu_position = view_menu_position.clone();
     // let onclick_view = Callback::from(move |e: MouseEvent| {
@@ -244,16 +244,12 @@ pub fn Table(props: &Props) -> Html {
     //     _view_menu_position.set(Some(e));
     // });
 
-
-
-
-
     html! {
     <>
         // <PopOverMenu items={view_items} position = {view_menu_position.clone()}/>
         // <PopOverMenu items={filter_items} position = {filter_menu_position.clone()}/>
 
-        <span style="border: 2px solid green">
+        <span style="border: 2px solid green" contenteditable = "false">
             <h3 style="display:inline-block; margin-right: 5px"> {"table title"}</h3>
             <button
         // onclick={onclick_view}

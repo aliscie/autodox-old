@@ -64,10 +64,7 @@ fn get_example_table() -> (Vec<EditorElement>, HashMap<Id, Vec<Id>>) {
             vec![heading.id, table_body.id, table_body.id],
         ),
         (heading.id, vec![company.id]),
-        (
-            table_body.id,
-            vec![table_row.id],
-        ),
+        (table_body.id, vec![table_row.id]),
     ]);
     return (
         vec![root_table, heading, company, table_body, table_row],
@@ -134,16 +131,13 @@ use editor::plugins::{
 pub fn DummyEditor() -> Html {
     let element_tree = generate_dummy();
     let context_menu_items = use_state(|| html! {});
-    let context_menu_position: UseStateHandle<Option<Position>> = use_state_eq(|| None);
+    let context_menu_position: UseStateHandle<Option<MouseEvent>> = use_state_eq(|| None);
     let render_context_menu = {
         let context_menu_position = context_menu_position.clone();
         let context_menu_items = context_menu_items.clone();
         Callback::from(move |(e, items): (MouseEvent, Html)| {
             e.prevent_default();
-            context_menu_position.set(Some(Position {
-                x: e.x().into(),
-                y: e.y().into(),
-            }));
+            context_menu_position.set(Some(e));
             context_menu_items.set(items);
         })
     };
