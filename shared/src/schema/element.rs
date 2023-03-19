@@ -398,24 +398,25 @@ impl ElementTree {
                     }
                 }
             }
-            EditorChange::Create(x) => {
-                self.elements
-                    .push_children(x.parent_id.clone(), x.id.clone(), x.clone().into());
-                if let Some(prev_element_id) = x.prev_element_id {
+            EditorChange::Create(x) => match x.prev_element_id {
+                Some(prev_element_id) => {
                     let children_list_of_parent_element =
                         self.elements.adjacency.get_mut(&x.parent_id).unwrap();
                     let index_of_prev_element = children_list_of_parent_element
                         .into_iter()
-                        .position(|y| *y == x.id)
+                        .position(|y| *y == prev_element_id)
                         .unwrap();
-                    let index_of_last_element = children_list_of_parent_element
-                        .into_iter()
-                        .position(|y| *y == x.id)
-                        .unwrap();
-                    children_list_of_parent_element
-                        .swap(index_of_last_element, index_of_prev_element);
+                    children_list_of_parent_element.insert(index_of_prev_element + 1, x.id);
+                    self.elements.push_vertex(x.id, x.clone().into());
                 }
-            }
+                None => {
+                    self.elements.push_children(
+                        x.parent_id.clone(),
+                        x.id.clone(),
+                        x.clone().into(),
+                    );
+                }
+            },
             EditorChange::Delete(delete) => {
                 self.elements.remove(&delete.id);
             }

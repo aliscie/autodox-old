@@ -118,16 +118,15 @@ pub fn app() -> Html {
         curr.set_inner_html("");
     });
     let context_menu_items = use_state(|| html! {});
-    let context_menu_position: UseStateHandle<Option<Position>> = use_state_eq(|| None);
+    let context_menu_position: UseStateHandle<Option<MouseEvent>> = use_state_eq(|| None);
     let render_context_menu = {
         let context_menu_position = context_menu_position.clone();
         let context_menu_items = context_menu_items.clone();
         Callback::from(move |(e, items): (MouseEvent, Html)| {
             e.prevent_default();
-            context_menu_position.set(Some(Position {
-                x: e.page_x().into(),
-                y: e.page_y().into(),
-            }));
+
+            context_menu_position.set(Some(e));
+
             context_menu_items.set(items);
         })
     };

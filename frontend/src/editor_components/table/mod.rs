@@ -8,9 +8,11 @@ mod add_column;
 use add_column::*;
 
 mod table_context_menu;
+
 mod table_controls;
 use table_controls::TableControls;
 use table_context_menu::*;
+
 use shared::schema::EditorElementCreate;
 use std::collections::HashMap;
 
@@ -18,7 +20,7 @@ use editor::plugins::Position;
 use shared::id::Id;
 use shared::schema::{EditorChange, EditorElement};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{HtmlTableCellElement, HtmlInputElement, MouseEvent, window};
+use web_sys::{window, HtmlInputElement, HtmlTableCellElement, MouseEvent};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yew_hooks::prelude::*;
@@ -62,7 +64,6 @@ pub fn Table(props: &Props) -> Html {
         })
     };
 
-
     let oncontextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
@@ -74,22 +75,22 @@ pub fn Table(props: &Props) -> Html {
 
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <ContextMenu items={vec![html!{<a onclick={add_row_callback.clone()}>{"add row"}</a>}, html!{<a
-                    onclick={
-                        let global_state = global_state.clone();
-                        let table_id = table_id.clone();
-                        Callback::from(move |e: MouseEvent| {
-                            let _ = add_column::add_col(index, &global_state, &table_id);
-                        })
-                    }
-
-                    >{"add column"}</a>}]} event = {mouse_event.clone()}/ >
+                    <TableContextMenu event = {mouse_event.clone()} >
+                        <a onclick={add_row_callback.clone()}>{"add row"}</a>
+                        <a onclick={
+                            let global_state = global_state.clone();
+                            let table_id = table_id.clone();
+                            Callback::from(move |e: MouseEvent| {
+                                let _ = add_column::add_col(index, &global_state, &table_id);
+                        })}>{"add column"}</a>
+                    </TableContextMenu>
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((mouse_event, element))
+            global_state
+                .render_context_menu
+                .emit((mouse_event, element))
         })
     };
-
 
 
     let children = global_state
@@ -123,8 +124,8 @@ pub fn Table(props: &Props) -> Html {
                                 if let Some(el) =
                                     global_state.element_tree.elements.vertices.get(element)
                                 {
-                                    return html! { <td
-                                        id = {el.id.to_string()}>{el.content.clone()}</td> };
+                                    return html! { <th
+                                    id = {el.id.to_string()}>{el.content.clone()}</th> };
                                 }
                                 html! {}
                             })
@@ -132,11 +133,12 @@ pub fn Table(props: &Props) -> Html {
                         return html! {
                             <th
                             contenteditable="true"
+
                             oncontextmenu={on_column_contextmenu.clone()}
                                 id = {el.id.to_string()}>
                                 {el.content.clone()}
                                 {children}
-                            </th>
+                            </tr>
                         };
                     }
                     html! {}
@@ -163,7 +165,9 @@ pub fn Table(props: &Props) -> Html {
                     .unwrap_or(&Vec::new())
                     .into_iter()
                     .map(|table_cell| {
-                        if let Some(table_cell) = global_state.element_tree.elements.vertices.get(table_cell) {
+                        if let Some(table_cell) =
+                            global_state.element_tree.elements.vertices.get(table_cell)
+                        {
                             return html! {
                                 <td
                                 oncontextmenu={oncontextmenu.clone()}
@@ -171,7 +175,8 @@ pub fn Table(props: &Props) -> Html {
                             };
                         }
                         html! {}
-                    }).collect::<Html>();
+                    })
+                    .collect::<Html>();
                 return html! {
                     <tr contenteditable="true" id = { el.id.to_string()}>
                         {el.content.clone()}
@@ -184,14 +189,18 @@ pub fn Table(props: &Props) -> Html {
         .collect::<Html>();
 
 
+
     html! {
     <div contenteditable="false" class={css_file_macro!("main.css")}>
         <TableControls />
 
+
         <table style="width:100%" id = {props.node.id.to_string()}>
             {&props.node.content}
             {thead}
+            <tbody id = {children.get(1).unwrap().to_string()}>
             {tbody}
+            </tbody>
         </table>
     </div>
     }

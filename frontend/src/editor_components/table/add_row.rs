@@ -9,6 +9,8 @@ pub fn add_row(global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
         .elements
         .adjacency
         .get(&table_id)?;
+    shared::log!(&root_table_children);
+    shared::log!(&global_state.element_tree.elements);
     let number_of_col = global_state
         .element_tree
         .elements
@@ -17,6 +19,7 @@ pub fn add_row(global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
         .first()
         .and_then(|thead_id| global_state.element_tree.elements.adjacency.get(thead_id))?
         .len();
+    shared::log!("this is running");
     let tbody_id = root_table_children.get(1)?;
     let prev_element_id = global_state
         .element_tree
