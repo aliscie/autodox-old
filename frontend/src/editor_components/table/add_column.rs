@@ -1,48 +1,35 @@
 use editor::GlobalEditorState;
+use futures::TryFutureExt;
 use shared::id::Id;
+use shared::log;
 use shared::schema::{EditorChange, EditorElementCreate};
 use std::collections::HashMap;
-use futures::TryFutureExt;
-use shared::log;
 
 pub fn add_col(index: i32, global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
-    let root_table = global_state
+    let root_table_children = global_state
         .element_tree
         .elements
         .adjacency
         .get(&table_id)?;
-
-    // TODO
-    //     based on the id insert the new column at to the right side of the clicked cell.
-
-    // get the thead of table
-    let thead = root_table
-        .get(0)
-        .and_then(|thead_id| global_state.element_tree.elements.adjacency.get(thead_id));
-    let curr_column_id: Id = Id::try_from(thead.unwrap()[index as usize]).unwrap();
-
+    let thead_row = root_table_children
+        .first()
+        .and_then(|thead_id| global_state.element_tree.elements.adjacency.get(thead_id))
+        .and_then(|thead_row| thead_row.first())?;
     let mut changes = Vec::new();
-
-    let tbody_children = root_table
+    let tbody_children = root_table_children
         .get(1)
         .and_then(|tbody_id| global_state.element_tree.elements.adjacency.get(tbody_id))?;
     changes.push(EditorChange::Create(EditorElementCreate {
         id: Id::new(),
-        content: "test1".to_string(),
+        content: "test".to_string(),
         attrs: HashMap::new(),
         tag: Some("th".to_string()),
         tree_id: global_state.element_tree.id,
-        parent_id: root_table.first().unwrap().clone(),
+        parent_id: *thead_row,
         children: None,
-        prev_element_id: Some(curr_column_id),
+        prev_element_id: None,
     }));
     for row_id in tbody_children {
-        let current_cell_id = global_state
-            .element_tree
-            .elements
-            .adjacency
-            .get(row_id)?
-            .get(index as usize)?;
         changes.push(EditorChange::Create(EditorElementCreate {
             id: Id::new(),
             content: "test".to_string(),
@@ -51,7 +38,7 @@ pub fn add_col(index: i32, global_state: &GlobalEditorState, table_id: &Id) -> O
             tree_id: global_state.element_tree.id,
             parent_id: *row_id,
             children: None,
-            prev_element_id: Some(current_cell_id.clone()),
+            prev_element_id: None,
         }));
     }
     global_state.mutation.emit(changes);

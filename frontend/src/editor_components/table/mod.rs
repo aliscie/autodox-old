@@ -152,19 +152,19 @@ pub fn Table(props: &Props) -> Html {
                                 if let Some(el) =
                                     global_state.element_tree.elements.vertices.get(element)
                                 {
-                                    return html! { <td
-                                    id = {el.id.to_string()}>{el.content.clone()}</td> };
+                                    return html! { <th
+                                    id = {el.id.to_string()}>{el.content.clone()}</th> };
                                 }
                                 html! {}
                             })
                             .collect::<Html>();
                         return html! {
-                            <th
+                            <tr
                             oncontextmenu={on_column_contextmenu.clone()}
                                 id = {el.id.to_string()}>
                                 {el.content.clone()}
                                 {children}
-                            </th>
+                            </tr>
                         };
                     }
                     html! {}
@@ -261,7 +261,9 @@ pub fn Table(props: &Props) -> Html {
         <table id = {props.node.id.to_string()}>
             {&props.node.content}
             {thead}
+            <tbody id = {children.get(1).unwrap().to_string()}>
             {tbody}
+            </tbody>
         </table>
     </>
     }
