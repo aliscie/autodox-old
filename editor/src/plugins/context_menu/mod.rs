@@ -89,7 +89,7 @@ impl Component for ContextMenu {
             None => "display: None;".to_string(),
         };
         html! {
-            <div ref = {self.menu_ref.clone()} style = {style} >
+            <div ref = {self.menu_ref.clone()} style = {style} class="dropdown-content">
                 {ctx.props().children.clone()}
             </div>
         }
