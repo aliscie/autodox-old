@@ -56,7 +56,7 @@ impl Component for ContextMenu {
                 let target_node = &event.target_unchecked_into::<Node>();
                 let mut is_click_on: bool = element.clone().unwrap().contains(Some(target_node));
                 if let Some(element) = &clicked_element.clone() {
-                    if element != target && !is_click_on {
+                    if element != target || is_click_on {
                         self.position = None;
                         return true;
                     }
