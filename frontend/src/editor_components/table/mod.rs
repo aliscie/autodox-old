@@ -1,4 +1,5 @@
 mod add_row;
+use editor::plugins::ContextMenu;
 
 use crate::components::PopOverMenu;
 use add_row::*;
@@ -10,8 +11,8 @@ use add_column::*;
 mod table_context_menu;
 
 mod table_controls;
-use table_controls::TableControls;
 use table_context_menu::*;
+use table_controls::TableControls;
 
 use shared::schema::EditorElementCreate;
 use std::collections::HashMap;
@@ -44,15 +45,15 @@ pub fn Table(props: &Props) -> Html {
     let on_column_contextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
-
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <ContextMenu items={vec![
-                    html!{<a>{"add formula"}</a>},
-                    html!{<a>{"add filter"}</a>},]} event = {mouse_event.clone()}/ >
+                    <a>{"add formula"}</a>
+                    <a>{"add filter"}</a>
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((mouse_event, element))
+            global_state
+                .render_context_menu
+                .emit((mouse_event, element))
         })
     };
 
@@ -75,15 +76,13 @@ pub fn Table(props: &Props) -> Html {
 
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <TableContextMenu event = {mouse_event.clone()} >
-                        <a onclick={add_row_callback.clone()}>{"add row"}</a>
-                        <a onclick={
-                            let global_state = global_state.clone();
-                            let table_id = table_id.clone();
-                            Callback::from(move |e: MouseEvent| {
-                                let _ = add_column::add_col(index, &global_state, &table_id);
-                        })}>{"add column"}</a>
-                    </TableContextMenu>
+                    <a onclick={add_row_callback.clone()}>{"add row"}</a>
+                    <a onclick={
+                        let global_state = global_state.clone();
+                        let table_id = table_id.clone();
+                        Callback::from(move |e: MouseEvent| {
+                            let _ = add_column::add_col(index, &global_state, &table_id);
+                    })}>{"add column"}</a>
                 </ContextProvider<GlobalEditorState>>
             };
             global_state
@@ -91,7 +90,6 @@ pub fn Table(props: &Props) -> Html {
                 .emit((mouse_event, element))
         })
     };
-
 
     let children = global_state
         .element_tree
@@ -131,7 +129,7 @@ pub fn Table(props: &Props) -> Html {
                             })
                             .collect::<Html>();
                         return html! {
-                            <th
+                            <tr
                             contenteditable="true"
 
                             oncontextmenu={on_column_contextmenu.clone()}
@@ -187,8 +185,6 @@ pub fn Table(props: &Props) -> Html {
             html! {}
         })
         .collect::<Html>();
-
-
 
     html! {
     <div contenteditable="false" class={css_file_macro!("main.css")}>

@@ -1,8 +1,6 @@
-
 use crate::components::PopOverMenu;
 
 use super::table_context_menu::*;
-
 
 use shared::schema::EditorElementCreate;
 use std::collections::HashMap;
@@ -11,7 +9,7 @@ use editor::plugins::Position;
 use shared::id::Id;
 use shared::schema::{EditorChange, EditorElement};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{HtmlTableCellElement, HtmlInputElement, MouseEvent, window};
+use web_sys::{window, HtmlInputElement, HtmlTableCellElement, MouseEvent};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yew_hooks::prelude::*;
@@ -20,26 +18,25 @@ use editor::GlobalEditorState;
 use shared::*;
 
 #[derive(Properties, PartialEq)]
-pub struct Props {
-}
+pub struct Props {}
 
 #[function_component]
 pub fn TableControls(props: &Props) -> Html {
     let global_state = use_context::<GlobalEditorState>().expect("cannot access global state");
-
 
     let on_view_contextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <ContextMenu items={vec![
-                    html!{<a>{"+ add view"}</a>},
-                    html!{<a>{"edite view"}</a>},
-                    html!{<a>{"view formula"}</a>},]} event = {mouse_event.clone()}/ >
+                    <a>{"+ add view"}</a>
+                    <a>{"edite view"}</a>
+                    <a>{"view formula"}</a>
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((mouse_event, element))
+            global_state
+                .render_context_menu
+                .emit((mouse_event, element))
         })
     };
 
@@ -48,11 +45,12 @@ pub fn TableControls(props: &Props) -> Html {
         Callback::from(move |mouse_event: MouseEvent| {
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
-                    <ContextMenu items={vec![
-                    html!{<a>{"+ add filter"}</a>},]} event = {mouse_event.clone()}/ >
+                    <a>{"+ add filter"}</a>
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((mouse_event, element))
+            global_state
+                .render_context_menu
+                .emit((mouse_event, element))
         })
     };
 
@@ -63,13 +61,12 @@ pub fn TableControls(props: &Props) -> Html {
             position.set(Some(e));
         })
     };
-    let filters_items  = vec![
-        html!{<a>
+    let filters_items = vec![
+        html! {<a>
             <input type="checkbox" id="vehicle2" name="vehicle2" value="Bike2"/>
             <label for="vehicle2">{"age filter"}</label>
         </a>},
-
-        html!{<a>
+        html! {<a>
             <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike2"/>
             <label for="vehicle1">{"name filter"}</label>
         </a>},
