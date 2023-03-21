@@ -38,8 +38,12 @@ pub fn handle_mutation(
                 }
                 "attributes" => {
                     if let Some(element) = current_element.parent_element() {
+                        // log!(element.get_attribute("class"));
                         if let Ok(id) = Uuid::parse_str(element.id().as_ref()).map(Id::from) {
+                            log!(id);
                             log!("get element attrs here and fire element_update");
+                        } else {
+                            return None;
                         }
                     }
                 }
