@@ -86,7 +86,14 @@ where
     // but EditorMsg::EditorChange is from code so we rerender on that
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
+
+            // ToDo if rending context menue return true
+            //     EditorMsg::ContextMenuRender((event, html)) => {
+            //         ctx.props().render_context_menu.emit((event, html));
+            //         false // prevent mutation
+            //     }
             EditorMsg::Mutation(mutation) => {
+                log!(mutation.clone());
                 handle_mutation(
                     &mutation,
                     &ctx.props().onchange,

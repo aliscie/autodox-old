@@ -1,5 +1,5 @@
 
-use crate::components::PopOverMenu;
+// use crate::components::PopOverMenu;
 
 use super::table_context_menu::*;
 
@@ -56,13 +56,13 @@ pub fn TableControls(props: &Props) -> Html {
         })
     };
 
-    let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
-    let onclick_filters = {
-        let position = position.clone();
-        Callback::from(move |e: MouseEvent| {
-            position.set(Some(e));
-        })
-    };
+    // let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
+    // let onclick_filters = {
+    //     let position = position.clone();
+    //     Callback::from(move |e: MouseEvent| {
+    //         position.set(Some(e));
+    //     })
+    // };
     let filters_items  = vec![
         html!{<a>
             <input type="checkbox" id="vehicle2" name="vehicle2" value="Bike2"/>
@@ -77,7 +77,7 @@ pub fn TableControls(props: &Props) -> Html {
 
     html! {
     <div class="table_title" >
-            <PopOverMenu click_on={Some(true)} items = {filters_items} position = {position.clone()}/>
+            // <PopOverMenu click_on={Some(true)} items = {filters_items} position = {position.clone()}/>
 
             <h3 contenteditable="true"  style="display:inline-block; margin-right: 5px"> {"table title"}</h3>
 
@@ -91,7 +91,7 @@ pub fn TableControls(props: &Props) -> Html {
             <span
             style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;"
             contenteditable="false"
-            onclick={onclick_filters}
+            // onclick={onclick_filters}
             oncontextmenu={on_filter_contextmenu.clone()}
             > {"filters"}
             </span>
