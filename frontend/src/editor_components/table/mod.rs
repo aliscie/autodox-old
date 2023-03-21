@@ -98,7 +98,7 @@ pub fn Table(props: &Props) -> Html {
         .adjacency
         .get(&props.node.id)
         .unwrap();
-    shared::log!(&children);
+    // shared::log!(&children);
     let thead = children
         .first()
         .and_then(|id| global_state.element_tree.elements.vertices.get(id))

@@ -26,7 +26,7 @@ pub fn on_slash_input(
         .map(Id::from)
         .or(element_tree.elements.root)?;
     // log!(current_element.clone());
-    log!(&event.text.as_str()); // TODo on hit enter this return code instead of table?
+    // log!(&event.text.as_str()); // TODo on hit enter this return code instead of table?
     let id = Id::new();
     let mut changes: Vec<EditorChange> = Vec::new();
     match event.text.as_str() {

@@ -93,7 +93,7 @@ where
             //         false // prevent mutation
             //     }
             EditorMsg::Mutation(mutation) => {
-                log!(mutation.clone());
+                // log!(mutation.clone());
                 handle_mutation(
                     &mutation,
                     &ctx.props().onchange,
