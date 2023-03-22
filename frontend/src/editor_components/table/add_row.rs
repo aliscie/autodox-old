@@ -4,7 +4,7 @@ use shared::log;
 use shared::schema::{EditorChange, EditorElementCreate};
 use std::collections::HashMap;
 
-pub fn add_row(global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
+pub fn add_row(global_state: &GlobalEditorState, table_id: &Id, row_number: usize) -> Option<()> {
     let root_table_children = global_state
         .element_tree
         .elements
@@ -26,7 +26,8 @@ pub fn add_row(global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
         .elements
         .adjacency
         .get(tbody_id)
-        .and_then(|row| row.last());
+        .and_then(|row| row.get(row_number));
+    log!(prev_element_id);
     let row_id = Id::new();
     log!("add row");
     let mut changes = vec![EditorChange::Create(EditorElementCreate {
