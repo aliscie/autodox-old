@@ -43,7 +43,7 @@ fn onchange_element_tree(e: EditorChange) {
 }
 #[function_component]
 pub fn FileData(props: &Props) -> HtmlResult {
-    let global_state = use_context::<FrontendState>().expect("cannot acccess frontend state!");
+    let global_state = use_context::<FrontendState>().expect("cannot access frontend state!");
     let res = use_element_tree(props.id)?;
 
     let result_html = match &*res {

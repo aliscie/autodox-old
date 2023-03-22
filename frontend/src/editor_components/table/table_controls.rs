@@ -1,6 +1,3 @@
-
-// use crate::components::PopOverMenu;
-
 use super::table_context_menu::*;
 
 
@@ -20,8 +17,7 @@ use editor::GlobalEditorState;
 use shared::*;
 
 #[derive(Properties, PartialEq)]
-pub struct Props {
-}
+pub struct Props {}
 
 #[function_component]
 pub fn TableControls(props: &Props) -> Html {
@@ -42,6 +38,35 @@ pub fn TableControls(props: &Props) -> Html {
             global_state.render_context_menu.emit((mouse_event, element))
         })
     };
+    let onclick_filter = {
+        let global_state = global_state.clone();
+        Callback::from(move |mouse_event: MouseEvent| {
+            let element = html! {
+                <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
+                    <ContextMenu items={vec![
+                    html!{<>
+                    <a>
+                    <input type="checkbox" id="vehicle2" name="vehicle2" value="Bike2"/>
+                    <label for="vehicle2">{"age filter"}</label>
+                    <span class="btn" style="color:tomato">{"delete"}</span>
+                    </a>
+
+                    <a>
+                    <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike2"/>
+                    <label for="vehicle1">{"name filter"}</label>
+                    <span class="btn" style="color:tomato">{"delete"}</span>
+                    </a>
+
+                    <a style="color:lightgreen"  class="btn">
+                    {"+ add filter"}
+                    </a>
+                </>},
+                    ]} event = {mouse_event.clone()}/ >
+                </ContextProvider<GlobalEditorState>>
+            };
+            global_state.render_context_menu.emit((mouse_event, element));
+        })
+    };
 
     let on_filter_contextmenu = {
         let global_state = global_state.clone();
@@ -49,35 +74,19 @@ pub fn TableControls(props: &Props) -> Html {
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
                     <ContextMenu items={vec![
-                    html!{<a>{"+ add filter"}</a>},]} event = {mouse_event.clone()}/ >
+                    html!{<a>{"+ add filter"}</a>},
+                    ]} event = {mouse_event.clone()}/ >
                 </ContextProvider<GlobalEditorState>>
             };
-            global_state.render_context_menu.emit((mouse_event, element))
+            log!("filters clicked");
+            global_state.render_context_menu.emit((mouse_event, element));
+            log!("filters clicked 2");
         })
     };
 
-    // let position: UseStateHandle<Option<MouseEvent>> = use_state(|| None);
-    // let onclick_filters = {
-    //     let position = position.clone();
-    //     Callback::from(move |e: MouseEvent| {
-    //         position.set(Some(e));
-    //     })
-    // };
-    let filters_items  = vec![
-        html!{<a>
-            <input type="checkbox" id="vehicle2" name="vehicle2" value="Bike2"/>
-            <label for="vehicle2">{"age filter"}</label>
-        </a>},
-
-        html!{<a>
-            <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike2"/>
-            <label for="vehicle1">{"name filter"}</label>
-        </a>},
-    ];
 
     html! {
     <div class="table_title" >
-            // <PopOverMenu click_on={Some(true)} items = {filters_items} position = {position.clone()}/>
 
             <h3 contenteditable="true"  style="display:inline-block; margin-right: 5px"> {"table title"}</h3>
 
@@ -91,7 +100,7 @@ pub fn TableControls(props: &Props) -> Html {
             <span
             style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;"
             contenteditable="false"
-            // onclick={onclick_filters}
+            onclick={onclick_filter.clone()}
             oncontextmenu={on_filter_contextmenu.clone()}
             > {"filters"}
             </span>
