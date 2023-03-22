@@ -97,18 +97,11 @@ pub fn app() -> Html {
         aside_style = "width:250px";
     }
 
-    let mut main_style = "";
-    if rc_device_info.is_aside
-        && window()
-            .unwrap_throw()
-            .inner_width()
-            .unwrap()
-            .as_f64()
-            .unwrap()
-            > 750 as f64
-    {
-        main_style = "margin-left:250px";
-    }
+    let mut main_style = "10%";
+    if rc_device_info.is_aside  && window().unwrap_throw().inner_width().unwrap().as_f64().unwrap() > 750 as f64  {
+           main_style = "255px";
+    };
+
     let add_file_blur: Callback<FocusEvent> = Callback::from(move |_e: FocusEvent| {
         let curr: Element = _e.target_unchecked_into();
         curr.set_inner_html("Hit enter to add new file.");
@@ -155,7 +148,7 @@ pub fn app() -> Html {
                <ContextMenu position = {(*context_menu_position).clone()}>
                    {(*context_menu_items).clone()}
                </ContextMenu>
-                <main class="main_container" style={format!("transition: 0.2s; margin-top: 35px; {}", main_style)}>
+                <main class="main_container" style={format!("transition: 0.2s; margin-top: 35px; margin-left: {}; margin-right:10%;", main_style)}>
                     <Switch<Route> render= {switch}/>
                 </main>
             </div>

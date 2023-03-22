@@ -25,10 +25,9 @@ pub fn on_slash_input(
         .and_then(|f| f.id().parse::<Uuid>().ok())
         .map(Id::from)
         .or(element_tree.elements.root)?;
-    // log!(current_element.clone());
-    // log!(&event.text.as_str()); // TODo on hit enter this return code instead of table?
     let id = Id::new();
     let mut changes: Vec<EditorChange> = Vec::new();
+
     match event.text.as_str() {
         "table" => {
             // TODO we should hav ea generic way to create elements without using event.text.as_str()
@@ -53,7 +52,7 @@ pub fn on_slash_input(
                     tree_id: element_tree.id,
                     parent_id: *parent_id.unwrap_or(&current_element),
                     children: adjacency.get(&i.id).cloned(),
-                    prev_element_id: None,
+                    prev_element_id: Some(current_element),
                 }));
             }
             return Some((id, changes));

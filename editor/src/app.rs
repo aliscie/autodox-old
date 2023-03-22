@@ -93,7 +93,7 @@ where
             //         false // prevent mutation
             //     }
             EditorMsg::Mutation(mutation) => {
-                // log!(mutation.clone());
+                log!("Mutation");
                 handle_mutation(
                     &mutation,
                     &ctx.props().onchange,
@@ -106,7 +106,6 @@ where
                     Rc::make_mut(&mut self.element_tree).mutate_tree(&i);
                     ctx.props().onchange.emit(i);
                 }
-                // rerender
                 true
             }
             EditorMsg::SlashInput(event, range) => {
@@ -212,7 +211,8 @@ where
             <span
                 class={css_file_macro!("main.css")}
            >
-                <h2 contenteditable="true" class={"editor_title heading"}>
+                <h2
+                contenteditable="true" class={"editor_title"}>
                 {ctx.props().title.clone()}
             </h2>
                 <span class="text_editor_container">

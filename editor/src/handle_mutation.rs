@@ -18,6 +18,7 @@ pub fn handle_mutation(
 ) -> Option<()> {
     for mutation in mutation_event {
         if let Some(current_element) = mutation.target() {
+            log!(mutation.type_().clone());
             match mutation.type_().as_ref() {
                 "characterData" => {
                     if let Some(parent_element) = current_element.parent_element() {
@@ -49,7 +50,9 @@ pub fn handle_mutation(
                 }
                 "childList" => {
                     let removed_nodes = mutation.removed_nodes();
+                    // handle remove elements
                     for i in 0..removed_nodes.length() {
+                        log!("removed");
                         removed_nodes
                             .get(i)
                             .and_then(|node| node.dyn_into::<Element>().ok())
@@ -74,6 +77,7 @@ pub fn handle_mutation(
                                 Some(())
                             });
                     }
+
                     let element = current_element.unchecked_into::<Element>();
                     if element.id() == "text_editor" {
                         continue;
@@ -92,8 +96,11 @@ pub fn handle_mutation(
                         .or(element_tree.elements.root)
                         .unwrap();
                     create_element(&mut changes, element, parent_id, element_tree.id.clone());
+
+                    // handle add elements
                     let added_nodes = mutation.added_nodes();
                     for i in 0..added_nodes.length() {
+                        log!("added");
                         let node = added_nodes.get(i).unwrap();
                         if node.node_name() == "#text" {
                             continue;
