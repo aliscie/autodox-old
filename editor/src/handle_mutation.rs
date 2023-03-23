@@ -38,6 +38,7 @@ pub fn handle_mutation(
                     }
                 }
                 "attributes" => {
+                    log!("change attr"); // TODO save attributes
                     if let Some(element) = current_element.parent_element() {
                         // log!(element.get_attribute("class"));
                         if let Ok(id) = Uuid::parse_str(element.id().as_ref()).map(Id::from) {

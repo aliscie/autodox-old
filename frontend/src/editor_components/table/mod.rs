@@ -18,7 +18,7 @@ use editor::plugins::Position;
 use shared::id::Id;
 use shared::schema::{EditorChange, EditorElement};
 use wasm_bindgen::UnwrapThrowExt;
-use web_sys::{window, HtmlInputElement, HtmlTableCellElement, MouseEvent};
+use web_sys::{window, HtmlInputElement, HtmlTableCellElement, MouseEvent, HtmlElement};
 use yew::prelude::*;
 use yew::{function_component, html};
 use yew_hooks::prelude::*;
@@ -48,10 +48,18 @@ pub fn Table(props: &Props) -> Html {
     let on_column_contextmenu = {
         let global_state = global_state.clone();
         Callback::from(move |mouse_event: MouseEvent| {
+            let curr :HtmlElement = mouse_event.target_unchecked_into();
+
             let element = html! {
                 <ContextProvider<GlobalEditorState> context = {global_state.clone()}>
                     <ContextMenu items={vec![
-                    html!{<a>{"add formula"}</a>},
+                    html!{<a
+                        onclick={
+                            Callback::from(move |e: MouseEvent| {
+                                curr.set_attribute("formula", "1+1").unwrap_throw();
+                            })
+                        }
+                        >{"add formula"}</a>},
                     html!{<a>{"add filter"}</a>},]} event = {mouse_event.clone()}/ >
                 </ContextProvider<GlobalEditorState>>
             };

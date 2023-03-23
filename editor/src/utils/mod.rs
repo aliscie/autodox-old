@@ -62,7 +62,8 @@ pub fn on_slash_input(
                     tree_id: element_tree.id,
                     parent_id: *parent_id.unwrap_or(&current_element),
                     children: adjacency.get(&i.id).cloned(),
-                    prev_element_id: Some(current_element),
+                    // TODO fix this prev_element_id: Some(current_element),
+                    prev_element_id: None,
                 }));
             }
             return Some((id, changes));
