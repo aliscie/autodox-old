@@ -100,7 +100,7 @@ pub fn on_slash_input(
                 tree_id: element_tree.id,
                 parent_id: current_element,
                 children: None,
-                prev_element_id: None,
+                prev_element_id: Some(current_element), // TODO when command `/image+Enter` it does not enter anything.
             }));
             return Some((id, changes));
         }
