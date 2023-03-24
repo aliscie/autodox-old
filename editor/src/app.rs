@@ -50,8 +50,8 @@ pub struct EditorElementProps {
 }
 
 pub struct Editor<T>
-where
-    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
+    where
+        T: BaseComponent + BaseComponent<Properties=EditorElementProps>,
 {
     element_tree: Rc<ElementTree>,
     editor_ref: NodeRef,
@@ -68,8 +68,8 @@ pub enum EditorMsg {
 }
 
 impl<T> Component for Editor<T>
-where
-    T: BaseComponent + BaseComponent<Properties = EditorElementProps>,
+    where
+        T: BaseComponent + BaseComponent<Properties=EditorElementProps>,
 {
     type Message = EditorMsg;
     type Properties = EditorProps;
@@ -109,8 +109,14 @@ where
                 true
             }
             EditorMsg::SlashInput(event, range) => {
+                // let id: Id =  Id::try_from(props.node.id());
                 if let Some((id, changes)) =
-                    on_slash_input(event, range, self.element_tree.as_ref())
+                    on_slash_input(
+                        event,
+                        // id, TODO
+                        range,
+                        self.element_tree.as_ref(),
+                    )
                 {
                     for i in changes {
                         Rc::make_mut(&mut self.element_tree).mutate_tree(&i);
@@ -166,7 +172,7 @@ where
                 .as_ref()
                 .unchecked_ref(),
         )
-        .unwrap();
+            .unwrap();
         mutation_observer.observe_with_options(
             &self.editor_ref.get().unwrap(),
             MutationObserverInit::new()

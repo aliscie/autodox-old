@@ -184,22 +184,29 @@ pub async fn group_update(data: String) -> Option<String> {
             EditorChange::Create(data) => {
                 let element_tree: &mut ElementTree =
                     element_trees.get_mut(&user)?.get_mut(&data.tree_id)?;
-                element_tree.elements.push_children(
-                    data.parent_id.clone(),
-                    data.id.clone(),
-                    data.clone().into(),
-                );
-                if let Some(prev_element_id) = data.prev_element_id {
-                    let children_list_of_parent_element =
-                        element_tree.elements.adjacency.get_mut(&data.parent_id)?;
-                    let index_of_prev_element = children_list_of_parent_element
-                        .into_iter()
-                        .position(|y| *y == data.id)?;
-                    let index_of_last_element = children_list_of_parent_element
-                        .into_iter()
-                        .position(|y| *y == data.id)?;
-                    children_list_of_parent_element
-                        .swap(index_of_last_element, index_of_prev_element);
+                match data.prev_element_id {
+                    Some(prev_element_id) => {
+                        let children_list_of_parent_element = element_tree
+                            .elements
+                            .adjacency
+                            .get_mut(&data.parent_id)
+                            .unwrap();
+                        let index_of_prev_element = children_list_of_parent_element
+                            .into_iter()
+                            .position(|y| *y == prev_element_id)
+                            .unwrap();
+                        children_list_of_parent_element.insert(index_of_prev_element + 1, data.id);
+                        element_tree
+                            .elements
+                            .push_vertex(data.id, data.clone().into());
+                    }
+                    None => {
+                        element_tree.elements.push_children(
+                            data.parent_id.clone(),
+                            data.id.clone(),
+                            data.clone().into(),
+                        );
+                    }
                 }
             }
             EditorChange::Update(data) => {

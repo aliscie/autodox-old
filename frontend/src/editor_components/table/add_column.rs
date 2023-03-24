@@ -1,11 +1,11 @@
 use editor::GlobalEditorState;
+use futures::TryFutureExt;
 use shared::id::Id;
+use shared::log;
 use shared::schema::{EditorChange, EditorElementCreate};
 use std::collections::HashMap;
-use futures::TryFutureExt;
-use shared::log;
 
-pub fn add_col(index: i32, global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
+pub fn add_col(global_state: &GlobalEditorState, table_id: &Id, col_number: usize) -> Option<()> {
     let root_table = global_state
         .element_tree
         .elements
@@ -18,8 +18,8 @@ pub fn add_col(index: i32, global_state: &GlobalEditorState, table_id: &Id) -> O
     // get the thead of table
     let thead = root_table
         .get(0)
-        .and_then(|thead_id| global_state.element_tree.elements.adjacency.get(thead_id));
-    let curr_column_id: Id = Id::try_from(thead.unwrap()[index as usize]).unwrap();
+        .and_then(|thead_id| global_state.element_tree.elements.adjacency.get(thead_id))?;
+    let curr_column_id: Id = Id::try_from(*thead.get(col_number)?).ok()?;
 
     let mut changes = Vec::new();
 
@@ -42,7 +42,7 @@ pub fn add_col(index: i32, global_state: &GlobalEditorState, table_id: &Id) -> O
             .elements
             .adjacency
             .get(row_id)?
-            .get(index as usize)?;
+            .get(col_number as usize)?;
         changes.push(EditorChange::Create(EditorElementCreate {
             id: Id::new(),
             content: "test".to_string(),

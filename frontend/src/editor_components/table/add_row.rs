@@ -1,24 +1,23 @@
 use editor::GlobalEditorState;
 use shared::id::Id;
+use shared::log;
 use shared::schema::{EditorChange, EditorElementCreate};
 use std::collections::HashMap;
-use shared::log;
 
-pub fn add_row(global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
-
+pub fn add_row(global_state: &GlobalEditorState, table_id: &Id, row_number: usize) -> Option<()> {
     let root_table_children = global_state
         .element_tree
         .elements
         .adjacency
         .get(&table_id)?;
+    log!("add row");
+    log!(&root_table_children);
 
     let number_of_col = global_state
         .element_tree
         .elements
         .adjacency
         .get(root_table_children.first()?)?
-        .first()
-        .and_then(|thead_id| global_state.element_tree.elements.adjacency.get(thead_id))?
         .len();
     log!("add row");
     let tbody_id = root_table_children.get(1)?;
@@ -27,9 +26,10 @@ pub fn add_row(global_state: &GlobalEditorState, table_id: &Id) -> Option<()> {
         .elements
         .adjacency
         .get(tbody_id)
-        .and_then(|row| row.last());
+        .and_then(|row| row.get(row_number));
+    log!(prev_element_id);
     let row_id = Id::new();
-log!("add row");
+    log!("add row");
     let mut changes = vec![EditorChange::Create(EditorElementCreate {
         id: row_id,
         content: "".to_string(),
@@ -40,7 +40,7 @@ log!("add row");
         children: None,
         prev_element_id: prev_element_id.cloned(),
     })];
-log!("add row");
+    log!("add row");
     for i in 0..number_of_col {
         changes.push(EditorChange::Create(EditorElementCreate {
             id: Id::new(),
