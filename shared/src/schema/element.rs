@@ -389,6 +389,7 @@ impl ElementTree {
     pub fn mutate_tree(&mut self, change: &EditorChange) {
         match change {
             EditorChange::Update(update_data) => {
+                // log!("mutate_tree Update");
                 if let Some(element) = self.elements.vertices.get_mut(&update_data.id) {
                     if let Some(ref content) = update_data.content {
                         element.content = content.clone();
@@ -399,7 +400,9 @@ impl ElementTree {
                 }
             }
             EditorChange::Create(x) => match x.prev_element_id {
+
                 Some(prev_element_id) => {
+                    // log!("mutate_tree Create");
                     let children_list_of_parent_element =
                         self.elements.adjacency.get_mut(&x.parent_id).unwrap();
                     let index_of_prev_element = children_list_of_parent_element
@@ -410,6 +413,7 @@ impl ElementTree {
                     self.elements.push_vertex(x.id, x.clone().into());
                 }
                 None => {
+                    // log!("mutate_tree None");
                     self.elements.push_children(
                         x.parent_id.clone(),
                         x.id.clone(),
@@ -418,6 +422,7 @@ impl ElementTree {
                 }
             },
             EditorChange::Delete(delete) => {
+                // log!("mutate_tree Delete");
                 self.elements.remove(&delete.id);
             }
         }

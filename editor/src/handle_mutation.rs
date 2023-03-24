@@ -18,7 +18,7 @@ pub fn handle_mutation(
 ) -> Option<()> {
     for mutation in mutation_event {
         if let Some(current_element) = mutation.target() {
-            log!(mutation.type_().clone());
+            // log!(mutation.type_().clone());
             match mutation.type_().as_ref() {
                 "characterData" => {
                     if let Some(parent_element) = current_element.parent_element() {
@@ -38,7 +38,7 @@ pub fn handle_mutation(
                     }
                 }
                 "attributes" => {
-                    log!("change attr"); // TODO save attributes
+                    // log!("change attr"); // TODO save attributes
                     if let Some(element) = current_element.parent_element() {
                         // log!(element.get_attribute("class"));
                         if let Ok(id) = Uuid::parse_str(element.id().as_ref()).map(Id::from) {
@@ -117,6 +117,7 @@ pub fn handle_mutation(
                         create_element(&mut changes, element, parent_id, element_tree.id.clone());
                     }
                     for i in changes {
+                        log!(&i);
                         element_tree.mutate_tree(&i);
                         onchange.emit(i);
                     }
@@ -131,13 +132,13 @@ pub fn handle_mutation(
 
 fn create_element(changes: &mut Vec<EditorChange>, element: Element, parent_id: Id, tree_id: Id) {
     let new_id = Id::new();
-    log!(element.id());
+    // log!(element.id());
     let prev_element_id = element
         .previous_element_sibling()
         .map(|el| el.id())
         .and_then(|id| Uuid::parse_str(&id).ok())
         .map(Id::from);
-    log!(&prev_element_id);
+    // log!(&prev_element_id);
     let create = EditorElementCreate {
         id: new_id,
         content: element.text_content().unwrap_or_default(),
