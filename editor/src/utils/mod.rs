@@ -6,27 +6,37 @@ use shared::{
     schema::{EditorChange, EditorElement, EditorElementCreate, ElementTree},
 };
 use uuid::Uuid;
-use web_sys::{window, HtmlElement, Range};
+use web_sys::{window, HtmlElement, Range, Element};
 use yew::prelude::*;
 use yewdux::prelude::*;
 
 use crate::{plugins::DropDownItem, render::render};
 use wasm_bindgen::JsCast;
+use crate::plugins::get_caret_position;
 
 pub fn on_slash_input(
     event: DropDownItem,
+    // id: Id, // TODO get id of current element
     range: Option<Range>,
     element_tree: &ElementTree,
 ) -> Option<(Id, Vec<EditorChange>)> {
-    // if no focused element is found we are selecting the root element as focused
-    let current_element = window()?
-        .document()?
-        .active_element()
-        .and_then(|f| f.id().parse::<Uuid>().ok())
-        .map(Id::from)
-        .or(element_tree.elements.root)?;
+    // let current_element :HtmlElement = window()?.document()?.get_element_by_id(&id.to_string())?.dyn_into().unwrap(); // TODO this is the right way to get elements
+    let current_element: HtmlElement = window()?.document()?.active_element().unwrap().dyn_into::<HtmlElement>().unwrap(); // TODO this is very wrong.
+
     let id = Id::new();
     let mut changes: Vec<EditorChange> = Vec::new();
+
+    //  TODO
+    //     let caret_position = get_caret_position();
+    //     let text = current_element.inner_text().clone();
+    //     log!(&text);
+    //     let (before, after) = text.split_at(caret_position as usize);
+    //     log!(&before);
+    //     log!(&after);
+
+    let current_element = Some(current_element).and_then(|f| f.id().parse::<Uuid>().ok())
+        .map(Id::from)
+        .or(element_tree.elements.root)?;
 
     match event.text.as_str() {
         "table" => {
@@ -52,7 +62,8 @@ pub fn on_slash_input(
                     tree_id: element_tree.id,
                     parent_id: *parent_id.unwrap_or(&current_element),
                     children: adjacency.get(&i.id).cloned(),
-                    prev_element_id: Some(current_element),
+                    // TODO fix this prev_element_id: Some(current_element),
+                    prev_element_id: None,
                 }));
             }
             return Some((id, changes));
@@ -100,7 +111,7 @@ pub fn on_slash_input(
                 tree_id: element_tree.id,
                 parent_id: current_element,
                 children: None,
-                prev_element_id: None,
+                prev_element_id: Some(current_element), // TODO when command `/image+Enter` it does not enter anything.
             }));
             return Some((id, changes));
         }

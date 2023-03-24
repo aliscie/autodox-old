@@ -55,7 +55,6 @@ pub fn app() -> Html {
         // history.push(Route::File { id: market_page });
     });
 
-
     let on_create_file: Callback<KeyboardEvent> = dispatch_file_directory
         .reduce_mut_future_callback_with(move |state, _e: KeyboardEvent| {
             Box::pin(async move {
@@ -98,8 +97,16 @@ pub fn app() -> Html {
     }
 
     let mut main_style = "10%";
-    if rc_device_info.is_aside  && window().unwrap_throw().inner_width().unwrap().as_f64().unwrap() > 750 as f64  {
-           main_style = "255px";
+    if rc_device_info.is_aside
+        && window()
+            .unwrap_throw()
+            .inner_width()
+            .unwrap()
+            .as_f64()
+            .unwrap()
+            > 750 as f64
+    {
+        main_style = "255px";
     };
 
     let add_file_blur: Callback<FocusEvent> = Callback::from(move |_e: FocusEvent| {
@@ -111,16 +118,13 @@ pub fn app() -> Html {
         curr.set_inner_html("");
     });
     let context_menu_items = use_state(|| html! {});
-    let context_menu_position: UseStateHandle<Option<Position>> = use_state_eq(|| None);
+    let context_menu_position: UseStateHandle<Option<MouseEvent>> = use_state_eq(|| None);
     let render_context_menu = {
         let context_menu_position = context_menu_position.clone();
         let context_menu_items = context_menu_items.clone();
         Callback::from(move |(e, items): (MouseEvent, Html)| {
             e.prevent_default();
-            context_menu_position.set(Some(Position {
-                x: e.page_x().into(),
-                y: e.page_y().into(),
-            }));
+            context_menu_position.set(Some(e));
             context_menu_items.set(items);
         })
     };
