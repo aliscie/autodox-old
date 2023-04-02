@@ -1,7 +1,8 @@
 mod table;
 mod form;
 mod image;
-
+mod video;
+use video::Video;
 pub use form::*;
 pub use table::*;
 pub use image::*;
@@ -58,9 +59,10 @@ fn ConstructElement(props: &ConstractorProps) -> Html {
 pub fn EditorComponent(props: &EditorElementProps) -> Html {
     let node = &props.node;
     let tag = node.tag.clone();
-    // log!(&tag);
+    log!(&tag);
     let response = match tag.unwrap_or(String::from("")).as_str() {
         "table" => html! { <Table node = {node.clone()}> {props.children.clone()}</Table>},
+        "video" => html! { <Video node = {node.clone()}> {props.children.clone()}</Video>},
         "img" => html! { <Image node = {node.clone()}> {props.children.clone()}</Image>},
         "form" => html! { <FromComponent/>},
         _ => {

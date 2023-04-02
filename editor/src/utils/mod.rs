@@ -37,7 +37,7 @@ pub fn on_slash_input(
     let current_element = Some(current_element).and_then(|f| f.id().parse::<Uuid>().ok())
         .map(Id::from)
         .or(element_tree.elements.root)?;
-
+    log!(event.text.as_str());
     match event.text.as_str() {
         "table" => {
             // TODO we should hav ea generic way to create elements without using event.text.as_str()
@@ -77,6 +77,22 @@ pub fn on_slash_input(
                 attrs: HashMap::from([(
                     "style".to_string(),
                     "padding:3ps; background: darkgreen; color: tomato;".to_string(),
+                )]),
+                tree_id: element_tree.id,
+                parent_id: current_element,
+                children: None,
+                prev_element_id: None,
+            }));
+            return Some((id, changes));
+        }
+        "video" => {
+            changes.push(EditorChange::Create(EditorElementCreate {
+                id,
+                content: "test 4".to_string(),
+                tag: Some("video".to_string()),
+                attrs: HashMap::from([(
+                    "style".to_string(),
+                    "".to_string(),
                 )]),
                 tree_id: element_tree.id,
                 parent_id: current_element,
