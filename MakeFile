@@ -1,6 +1,9 @@
 run_web:
 	cd frontend && yarn dev
 
+run_editor:
+	cd frontend && yarn dev --editor
+
 run_desktop:
 	cargo tauri dev
 

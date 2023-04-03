@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use web_sys::Range;
 use yew::Html;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct DropDownItem {
     pub value: String,
     pub text: String,

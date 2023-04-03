@@ -1,23 +1,27 @@
+mod table;
+mod form;
+mod image;
+mod video;
+use video::Video;
+pub use form::*;
+pub use table::*;
+pub use image::*;
+
 // editor/src/editor_
 use std::collections::HashMap;
 
+use indexmap::IndexMap;
 use shared::id::Id;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 use web_sys::{console, window, Element};
 use yew::prelude::*;
-use yew::virtual_dom::VTag;
+use yew::virtual_dom::{Attributes, VTag};
 use yew::{function_component, html};
 
 use shared::schema::EditorElement;
 
-use crate::editor_components::{FromComponent, Table};
-
-#[derive(Properties, PartialEq)]
-pub struct Props {
-    pub node: EditorElement,
-    #[prop_or_default]
-    pub children: Children,
-}
+use editor::EditorElementProps;
+use shared::log;
 
 #[derive(Properties, PartialEq)]
 pub struct ConstractorProps {
@@ -33,20 +37,33 @@ pub struct ConstractorProps {
 fn ConstructElement(props: &ConstractorProps) -> Html {
     let mut tag = props.tag.clone();
     let tag = format!("{}", tag.unwrap_or(String::from("div")));
-    html! {
-        <@{tag} id = {{props.id.to_string()}}>
-            {&props.text}
-            { props.children.clone() }
-        </@>
-    }
+    let mut tag = VTag::new(tag);
+    let mut attrs: IndexMap<AttrValue, AttrValue> = props
+        .attrs
+        .clone()
+        .into_iter()
+        .map(|(key, value)| -> (AttrValue, AttrValue) { (key.into(), value.into()) })
+        .collect();
+    // setting id
+    attrs.insert("id".into(), props.id.to_string().into());
+    //adding the text
+    tag.add_child(html! { {props.text.clone()}});
+    // adding children
+    tag.add_children(props.children.clone());
+    // setting attributes
+    tag.set_attributes(attrs);
+    tag.into()
 }
 
 #[function_component]
-pub fn EditorComponent(props: &Props) -> Html {
+pub fn EditorComponent(props: &EditorElementProps) -> Html {
     let node = &props.node;
     let tag = node.tag.clone();
+    log!(&tag);
     let response = match tag.unwrap_or(String::from("")).as_str() {
-        "table" => html! { <Table> {props.children.clone()}</Table>},
+        "table" => html! { <Table node = {node.clone()}> {props.children.clone()}</Table>},
+        "video" => html! { <Video node = {node.clone()}> {props.children.clone()}</Video>},
+        "img" => html! { <Image node = {node.clone()}> {props.children.clone()}</Image>},
         "form" => html! { <FromComponent/>},
         _ => {
             html! {
@@ -54,7 +71,7 @@ pub fn EditorComponent(props: &Props) -> Html {
                 tag={node.tag.clone()}
                 attrs={node.clone().attrs}
                 id = {node.id}
-                text={node.clone().text}>
+                text={node.clone().content}>
             {props.children.clone()}
             </ConstructElement>
             }

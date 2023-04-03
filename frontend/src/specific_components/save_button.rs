@@ -1,15 +1,15 @@
-use std::collections::VecDeque;
 use serde::{Deserialize, Serialize};
+use shared::log;
+use shared::schema::EditorChange;
+use std::collections::VecDeque;
 use wasm_bindgen::prelude::Closure;
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
+use wasm_bindgen_futures::spawn_local;
 use web_sys::{window, DragEvent, Element, MouseEvent};
 use yew::prelude::*;
 use yew::{html, Html};
 use yew_router::prelude::*;
 use yewdux::prelude::*;
-use shared::schema::EditorChange;
-use shared::log;
-use wasm_bindgen_futures::spawn_local;
 
 // use shared::{invoke, log};
 
@@ -30,15 +30,27 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
     let (changes, dispatch) = use_store::<UseChangeHandle>();
     let is_saved = changes.changes.is_empty();
 
-
     let onclick = {
         let dispatch = dispatch.clone();
         Callback::from(move |e: MouseEvent| {
             let doc = window().unwrap_throw().document().unwrap_throw();
             let editor = doc.query_selector(".text_editor");
+            let mut editables = window().unwrap_throw().document().unwrap_throw().query_selector_all("[contenteditable=true]");
             if let Some(editor) = editor.clone().unwrap() {
-                editor.class_list().add_1("loader");
-            };
+                editables = editor.query_selector_all("[contenteditable=true]");
+
+                // prevent user to edit while saving
+                if let Ok(editables) = editables.clone() {
+                    for i in 0..editables.length() {
+                        let editable = editables.get(i).unwrap();
+                        editable
+                            .dyn_ref::<Element>()
+                            .unwrap()
+                            .set_attribute("contenteditable", "false")
+                            .unwrap();
+                    }
+                }
+            }
 
             let target: Element = e.target_unchecked_into();
             let _ = target.class_list().add_1("loader").unwrap();
@@ -46,9 +58,11 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
             let dispatch = dispatch.clone();
             spawn_local(async move {
                 let input_data = serde_json::to_string(&changes).unwrap_throw();
-                let res = backend::call_ic("group_update".to_string(), input_data.to_string()).await;
-                log!("group is saved");
-                log!(&res);
+                // log!(&input_data);
+                let res =
+                    backend::call_ic("group_update".to_string(), input_data.to_string()).await;
+                // log!("group is saved");
+                // log!(&res);
                 // if res.is_ok() {
                 let empty_data: VecDeque<EditorChange> = VecDeque::new();
                 let _ = dispatch.reduce_mut(|state| state.changes = empty_data);
@@ -56,7 +70,18 @@ pub fn SaveButton(props: &DownloadProps) -> Html {
 
                 let _ = target.class_list().remove_1("loader");
                 if let Some(editor) = editor.unwrap() {
-                    editor.class_list().remove_1("loader");
+
+                    // allow user to edit after save
+                    if let Ok(editables) = editables.clone() {
+                        for i in 0..editables.length() {
+                            let editable = editables.get(i).unwrap();
+                            editable
+                                .dyn_ref::<Element>()
+                                .unwrap()
+                                .set_attribute("contenteditable", "true")
+                                .unwrap();
+                        }
+                    }
                 };
             });
         })

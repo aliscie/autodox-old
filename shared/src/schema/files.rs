@@ -40,6 +40,7 @@ pub struct FileNodeCreate {
     pub directory_id: Id,
     pub parent_id: Id,
     pub children: Option<Vec<Id>>,
+    pub element_tree: Option<Id>,
 }
 
 impl From<FileNodeCreate> for FileNode {
@@ -47,7 +48,7 @@ impl From<FileNodeCreate> for FileNode {
         Self {
             id: value.id,
             name: value.name,
-            element_tree: None,
+            element_tree: value.element_tree,
             file_mode: FileMode::Private,
             // users_can_see: [].to_vec(),
         }

@@ -8,42 +8,52 @@ use std::rc::Rc;
 use uuid::Uuid;
 use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{Element, MutationRecord};
+use yew::prelude::*;
 use yew::Callback;
 
 pub fn handle_mutation(
     mutation_event: &Vec<MutationRecord>,
     onchange: &Callback<EditorChange>,
-    element_tree: Rc<RefCell<ElementTree>>,
+    element_tree: &mut ElementTree,
 ) -> Option<()> {
     for mutation in mutation_event {
         if let Some(current_element) = mutation.target() {
+            // log!(mutation.type_().clone());
             match mutation.type_().as_ref() {
                 "characterData" => {
                     if let Some(parent_element) = current_element.parent_element() {
                         if let Ok(id) = Uuid::parse_str(parent_element.id().as_ref()).map(Id::from)
                         {
-                            let update = EditorElementUpdate {
+                            let update_data = EditorChange::Update(EditorElementUpdate {
                                 id,
-                                text: parent_element.text_content(),
-                                tree_id: element_tree.borrow().id.clone(),
+                                content: parent_element.text_content(),
+                                tree_id: element_tree.id.clone(),
                                 attrs: None,
                                 parent: None,
                                 children: None,
-                            };
-                            onchange.emit(EditorChange::Update(update));
+                            });
+                            element_tree.mutate_tree(&update_data);
+                            onchange.emit(update_data);
                         }
                     }
                 }
                 "attributes" => {
+                    // log!("change attr"); // TODO save attributes
                     if let Some(element) = current_element.parent_element() {
+                        // log!(element.get_attribute("class"));
                         if let Ok(id) = Uuid::parse_str(element.id().as_ref()).map(Id::from) {
-                            log!("get element attrs here and fire element_update");
+                            // log!(id);
+                            // log!("get element attrs here and fire element_update");
+                        } else {
+                            return None;
                         }
                     }
                 }
                 "childList" => {
                     let removed_nodes = mutation.removed_nodes();
+                    // handle remove elements
                     for i in 0..removed_nodes.length() {
+                        log!("removed");
                         removed_nodes
                             .get(i)
                             .and_then(|node| node.dyn_into::<Element>().ok())
@@ -51,8 +61,6 @@ pub fn handle_mutation(
                             .map(Id::from)
                             .and_then(|id| {
                                 let parent_id = element_tree
-                                    .as_ref()
-                                    .borrow()
                                     .elements
                                     .adjacency
                                     .iter()
@@ -61,61 +69,79 @@ pub fn handle_mutation(
                                     .clone();
                                 let delete = EditorElementDelete {
                                     id,
-                                    tree_id: element_tree.as_ref().borrow().id.clone(),
+                                    tree_id: element_tree.id.clone(),
                                     parent_id,
                                 };
-                                onchange.emit(EditorChange::Delete(delete));
+                                let delete = EditorChange::Delete(delete);
+                                element_tree.mutate_tree(&delete);
+                                onchange.emit(delete);
                                 Some(())
                             });
                     }
+
                     let element = current_element.unchecked_into::<Element>();
                     if element.id() == "text_editor" {
                         continue;
                     }
-                    let added_nodes = mutation.added_nodes();
-                    let mut changes = Vec::new();
-                    for i in 0..added_nodes.length() {
-                        let node = added_nodes.get(i).unwrap();
-                        let element = node.unchecked_into::<Element>();
-                        if element.node_name() == "#text" {
+                    if let Ok(id) = element.id().parse::<Uuid>().map(Id::from) {
+                        if element_tree.elements.vertices.contains_key(&id) {
                             continue;
                         }
+                    }
+                    let mut changes = Vec::new();
+                    let parent_id = element
+                        .parent_element()
+                        .map(|el| el.id())
+                        .and_then(|id| Uuid::parse_str(&id).ok())
+                        .map(Id::from)
+                        .or(element_tree.elements.root)
+                        .unwrap();
+                    create_element(&mut changes, element, parent_id, element_tree.id.clone());
+
+                    // handle add elements
+                    let added_nodes = mutation.added_nodes();
+                    for i in 0..added_nodes.length() {
+                        log!("added");
+                        let node = added_nodes.get(i).unwrap();
+                        if node.node_name() == "#text" {
+                            continue;
+                        }
+                        let element = node.dyn_into::<Element>().unwrap();
                         let parent_id = element
                             .parent_element()
                             .map(|el| el.id())
                             .and_then(|id| Uuid::parse_str(&id).ok())
                             .map(Id::from)
-                            .or(element_tree.as_ref().borrow().elements.root.clone())
+                            .or(element_tree.elements.root.clone())
                             .unwrap();
-                        create_element(
-                            &mut changes,
-                            element,
-                            parent_id,
-                            element_tree.as_ref().borrow().id.clone(),
-                        );
+                        create_element(&mut changes, element, parent_id, element_tree.id.clone());
                     }
                     for i in changes {
-                        onchange.emit(i.into())
+                        log!(&i);
+                        element_tree.mutate_tree(&i);
+                        onchange.emit(i);
                     }
                 }
                 anything_else => unimplemented!(), //crate::shared::log!(anything_else),
             }
         }
     }
-    // log!(element_tree.as_ref().borrow());
+    // log!(element_tree.;
     Some(())
 }
 
 fn create_element(changes: &mut Vec<EditorChange>, element: Element, parent_id: Id, tree_id: Id) {
     let new_id = Id::new();
+    // log!(element.id());
     let prev_element_id = element
         .previous_element_sibling()
         .map(|el| el.id())
         .and_then(|id| Uuid::parse_str(&id).ok())
         .map(Id::from);
+    // log!(&prev_element_id);
     let create = EditorElementCreate {
         id: new_id,
-        text: element.text_content().unwrap_or_default(),
+        content: element.text_content().unwrap_or_default(),
         tag: Some(element.tag_name()),
         attrs: HashMap::new(),
         tree_id,
@@ -125,8 +151,4 @@ fn create_element(changes: &mut Vec<EditorChange>, element: Element, parent_id: 
     };
     element.set_id(&new_id.to_string());
     changes.push(EditorChange::Create(create));
-    let children = element.children();
-    for i in 0..children.length() {
-        create_element(changes, children.item(i).unwrap(), new_id, tree_id);
-    }
 }

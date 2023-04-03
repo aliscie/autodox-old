@@ -1,6 +1,6 @@
 use crate::id::Id;
 use indexmap::IndexSet;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::{
     collections::{BTreeMap, HashMap},
     hash::Hash,
@@ -17,6 +17,8 @@ use crate::{
     traits::{Creatable, Entity, GetId, Queryable, Updatable},
     Error, Tree,
 };
+
+use super::EditorChange;
 
 #[cfg(feature = "backend")]
 use {
@@ -41,7 +43,7 @@ pub struct ElementTree {
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElement {
     pub id: Id,
-    pub text: String,
+    pub content: String,
     pub tag: Option<String>,
     pub attrs: HashMap<String, String>, //pub attrs: HashMap<String, String>,
 }
@@ -75,7 +77,7 @@ impl Default for EditorElement {
         Self {
             id: Id::new(),
             tag: None,
-            text: "".to_owned(),
+            content: "".to_owned(),
             attrs: HashMap::new(),
         }
     }
@@ -83,13 +85,13 @@ impl Default for EditorElement {
 
 impl EditorElement {
     //#[inline]
-    pub fn new<T>(id: T, text: String, attrs: HashMap<String, String>) -> Self
+    pub fn new<T>(id: T, content: String, attrs: HashMap<String, String>) -> Self
     where
         T: Into<Id>,
     {
         Self {
             id: id.into(),
-            text,
+            content,
             tag: None,
             attrs,
         }
@@ -118,7 +120,7 @@ impl Entity for EditorElement {
 #[cfg_attr(feature = "backend", derive(Readable, Writable, CandidType))]
 pub struct EditorElementCreate {
     pub id: Id,
-    pub text: String,
+    pub content: String,
     pub attrs: HashMap<String, String>,
     pub tag: Option<String>,
     pub tree_id: Id,
@@ -134,7 +136,7 @@ pub struct EditorElementCreate {
 pub struct EditorElementUpdate {
     pub id: Id,
     pub tree_id: Id,
-    pub text: Option<String>,
+    pub content: Option<String>,
     pub attrs: Option<HashMap<String, String>>,
     pub parent: Option<Id>,
     pub children: Option<Vec<Id>>,
@@ -144,8 +146,8 @@ impl From<EditorElementCreate> for EditorElement {
     fn from(v: EditorElementCreate) -> Self {
         Self {
             id: v.id,
-            text: v.text,
-            tag: None,
+            content: v.content,
+            tag: v.tag,
             attrs: v.attrs,
         }
     }
@@ -190,8 +192,8 @@ impl From<EditorElementUpdate> for Object {
                 .collect(),
             None => Vec::new(),
         };
-        if let Some(text) = value.text {
-            object.insert("text".to_string(), text.into());
+        if let Some(content) = value.content {
+            object.insert("content".to_string(), content.into());
         }
         if let Some(attrs) = value.attrs {
             attrs_to_object(attrs, &mut object);
@@ -265,7 +267,7 @@ impl From<EditorElementCreate> for Object {
         };
         let mut x: BTreeMap<String, Value> = BTreeMap::from([
             ("id".into(), value.id.into()),
-            ("text".into(), value.text.into()),
+            ("content".into(), value.content.into()),
             ("children".into(), Array(children).into()),
         ])
         .into();
@@ -279,7 +281,7 @@ impl From<EditorElement> for Object {
     fn from(value: EditorElement) -> Self {
         let mut x = BTreeMap::from([
             ("id".into(), value.id.into()),
-            ("text".into(), value.text.into()),
+            ("content".into(), value.content.into()),
         ]);
         attrs_to_object(value.attrs, &mut x);
         x.into()
@@ -335,9 +337,9 @@ impl TryFrom<Object> for EditorElement {
                 // into uuid
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("uuid"))?,
-            text: value
-                .remove("text")
-                .ok_or(Error::XPropertyNotFound("text".into()))?
+            content: value
+                .remove("content")
+                .ok_or(Error::XPropertyNotFound("content".into()))?
                 .try_into()
                 .map_err(|_| Error::XValueNotOfType("String"))?,
             tag: None,
@@ -361,11 +363,11 @@ impl ElementTree {
     /// breaks the element into three parts
     pub fn break_element(&mut self, parent_id: Id, from: usize, till: usize) -> Option<(Id, Id)> {
         let element = self.elements.vertices.get_mut(&parent_id)?;
-        let (first_part, second_part) = element.text.split_at(from);
+        let (first_part, second_part) = element.content.split_at(from);
         let (second_part, third_part) = second_part.split_at(till);
         let element_1 = EditorElement::new(Id::new(), second_part.to_string(), HashMap::new());
         let element_2 = EditorElement::new(Id::new(), third_part.to_string(), HashMap::new());
-        element.text = String::from(first_part);
+        element.content = String::from(first_part);
         match self.elements.adjacency.get_mut(&parent_id) {
             Some(mut children) => {
                 children.insert(0, element_1.id);
@@ -381,6 +383,49 @@ impl ElementTree {
         self.elements.push_vertex(element_1.id, element_1);
         self.elements.push_vertex(element_2.id, element_2);
         Some((first_id, second_id))
+    }
+
+    /// helper function for mutating tree
+    pub fn mutate_tree(&mut self, change: &EditorChange) {
+        match change {
+            EditorChange::Update(update_data) => {
+                // log!("mutate_tree Update");
+                if let Some(element) = self.elements.vertices.get_mut(&update_data.id) {
+                    if let Some(ref content) = update_data.content {
+                        element.content = content.clone();
+                    }
+                    if let Some(ref attrs) = update_data.attrs {
+                        element.attrs = attrs.clone();
+                    }
+                }
+            }
+            EditorChange::Create(x) => match x.prev_element_id {
+
+                Some(prev_element_id) => {
+                    // log!("mutate_tree Create");
+                    let children_list_of_parent_element =
+                        self.elements.adjacency.get_mut(&x.parent_id).unwrap();
+                    let index_of_prev_element = children_list_of_parent_element
+                        .into_iter()
+                        .position(|y| *y == prev_element_id)
+                        .unwrap();
+                    children_list_of_parent_element.insert(index_of_prev_element + 1, x.id);
+                    self.elements.push_vertex(x.id, x.clone().into());
+                }
+                None => {
+                    // log!("mutate_tree None");
+                    self.elements.push_children(
+                        x.parent_id.clone(),
+                        x.id.clone(),
+                        x.clone().into(),
+                    );
+                }
+            },
+            EditorChange::Delete(delete) => {
+                // log!("mutate_tree Delete");
+                self.elements.remove(&delete.id);
+            }
+        }
     }
 }
 
